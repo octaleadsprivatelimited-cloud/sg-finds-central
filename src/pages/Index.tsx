@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
-import CitySelector from "@/components/CitySelector";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
@@ -42,14 +42,14 @@ const DEMO_LISTINGS: (Listing)[] = [
 ];
 
 const Index = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchQuery, setSearchQuery } = useSearch();
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
-  const [selectedCity, setSelectedCity] = useState("singapore");
+  
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -107,24 +107,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background bg-noise">
-      {/* Mobile/Tablet: Sticky search bar below header */}
-      <div className="sticky top-14 z-40 md:hidden bg-card/95 backdrop-blur-xl border-b border-border/50 px-3 py-2">
-        <div className="flex items-center gap-1.5">
-          <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} iconOnly />
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Search businesses..."
-              className="h-9 pl-8 pr-3 text-sm bg-secondary/60 border-border/50 rounded-xl"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Button size="sm" variant="outline" className="h-9 px-2.5 border-accent/30 text-accent shrink-0" onClick={handleDetectLocation}>
-            <MapPin className="w-3.5 h-3.5" />
-          </Button>
-        </div>
-      </div>
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/50">
@@ -154,7 +136,7 @@ const Index = () => {
           <div className="hidden md:flex flex-col sm:flex-row items-stretch gap-0 max-w-3xl">
             <div className="flex items-center gap-2 px-4 py-3 border border-border rounded-l-xl bg-card border-r-0 min-w-[160px]">
               <MapPin className="w-4 h-4 text-accent shrink-0" />
-              <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} />
+              <span className="text-sm font-medium text-foreground">Singapore</span>
             </div>
             <div className="relative flex-1">
               <Input
