@@ -113,6 +113,7 @@ const BusinessDashboard = () => {
 
   const saveEdit = () => {
     if (!editingListing) return;
+    const sanitizedSlug = toSlug(editCustomSlug || editName);
     setListings(prev => prev.map(l =>
       l.id === editingListing.id ? {
         ...l,
@@ -124,6 +125,7 @@ const BusinessDashboard = () => {
         website: editWebsite,
         email: editEmail,
         description: editDescription,
+        customSlug: sanitizedSlug,
       } : l
     ));
     setEditingListing(null);
