@@ -1,5 +1,7 @@
-import { MapPin, Phone, Globe, Star, Clock, ExternalLink } from "lucide-react";
+import { MapPin, Phone, Globe, Star, Clock, ExternalLink, MessageCircle, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import VerifiedBadge from "./VerifiedBadge";
+import { useNavigate } from "react-router-dom";
 
 export interface Listing {
   id: string;
