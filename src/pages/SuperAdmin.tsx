@@ -674,6 +674,9 @@ const SuperAdmin = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setSelectedListing(listing)}><Eye className="w-4 h-4 mr-2" />View Details</DropdownMenuItem>
+                          {listing.status === "approved" && (
+                            <DropdownMenuItem onClick={() => navigate(getBusinessUrl(listing))}><ExternalLink className="w-4 h-4 mr-2" />View Live Page</DropdownMenuItem>
+                          )}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteListing(listing.id)}><Trash2 className="w-4 h-4 mr-2" />Delete</DropdownMenuItem>
                         </DropdownMenuContent>
