@@ -57,6 +57,7 @@ const AddListing = () => {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [description, setDescription] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
 
   // Step 2
   const [phone, setPhone] = useState("+65");

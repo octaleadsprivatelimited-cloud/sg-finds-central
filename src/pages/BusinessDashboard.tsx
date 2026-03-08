@@ -111,6 +111,7 @@ const BusinessDashboard = () => {
     setEditEmail(listing.email || "");
     setEditDescription(listing.description || "");
     setEditCustomSlug(listing.customSlug || toSlug(listing.name));
+    setEditLogoUrl(listing.logoUrl || "");
   };
 
   const slugError = useMemo(() => {
