@@ -114,68 +114,78 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
 
-      {/* Hero */}
+      {/* Hero + Featured side by side on desktop */}
       <section className="bg-gradient-to-b from-primary/5 to-background border-b border-border/40">
-        <div className="container mx-auto px-4 py-6 md:py-14">
-          <h1 className="text-xl md:text-4xl font-bold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
-            Find the best businesses{" "}
-            <span className="text-primary">in Singapore</span>
-          </h1>
-          <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-lg">
-            Search across 5,000+ verified businesses — restaurants, clinics, services and more.
-          </p>
+        <div className="container mx-auto px-4 py-6 md:py-10">
+          <div className="flex flex-col lg:flex-row lg:gap-8">
+            {/* Left block — Hero content */}
+            <div className="flex-1 min-w-0 lg:max-w-[55%]">
+              <h1 className="text-xl md:text-4xl font-bold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
+                Find the best businesses{" "}
+                <span className="text-primary">in Singapore</span>
+              </h1>
+              <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-lg">
+                Search across 5,000+ verified businesses — restaurants, clinics, services and more.
+              </p>
 
-          {/* Desktop search bar */}
-          <div className="hidden md:flex items-stretch gap-0 max-w-2xl bg-card rounded-xl border border-border shadow-sm">
-            <div className="flex items-center gap-2 px-4 py-3 border-r border-border min-w-[150px]">
-              <MapPin className="w-4 h-4 text-primary shrink-0" />
-              <span className="text-sm font-medium text-foreground">Singapore</span>
+              {/* Desktop search bar */}
+              <div className="hidden md:flex items-stretch gap-0 max-w-2xl bg-card rounded-xl border border-border shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-3 border-r border-border min-w-[150px]">
+                  <MapPin className="w-4 h-4 text-primary shrink-0" />
+                  <span className="text-sm font-medium text-foreground">Singapore</span>
+                </div>
+                <SearchWithSuggestions
+                  placeholder="Search for restaurants, services, businesses..."
+                  className="flex-1"
+                />
+                <Button className="h-auto min-h-[48px] rounded-l-none rounded-r-xl px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm border-0">
+                  <Search className="w-4 h-4 mr-2" />
+                  Search
+                </Button>
+              </div>
+
+              {/* Filter row */}
+              <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl">
+                <Select value={district} onValueChange={setDistrict}>
+                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
+                    <SelectValue placeholder="All Districts" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SINGAPORE_DISTRICTS.map((d) => (
+                      <SelectItem key={d} value={d}>{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BUSINESS_CATEGORIES.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex" onClick={handleDetectLocation}>
+                  <MapPin className="w-3.5 h-3.5 mr-1.5" />
+                  Near Me
+                </Button>
+              </div>
+              
+              {/* Quick stats */}
+              <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-4 md:mt-6 text-[11px] md:text-xs text-muted-foreground">
+                <span><strong className="text-foreground">5,000+</strong> Businesses</span>
+                <span><strong className="text-foreground">15</strong> Categories</span>
+                <span><strong className="text-foreground">50+</strong> Districts</span>
+              </div>
             </div>
-            <SearchWithSuggestions
-              placeholder="Search for restaurants, services, businesses..."
-              className="flex-1"
-            />
-            <Button className="h-auto min-h-[48px] rounded-l-none rounded-r-xl px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm border-0">
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </Button>
-          </div>
 
-          {/* Filter row */}
-          <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl">
-            <Select value={district} onValueChange={setDistrict}>
-              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
-                <SelectValue placeholder="All Districts" />
-              </SelectTrigger>
-              <SelectContent>
-                {SINGAPORE_DISTRICTS.map((d) => (
-                  <SelectItem key={d} value={d}>{d}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                {BUSINESS_CATEGORIES.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex" onClick={handleDetectLocation}>
-              <MapPin className="w-3.5 h-3.5 mr-1.5" />
-              Near Me
-            </Button>
-          </div>
-          
-          {/* Quick stats */}
-          <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-4 md:mt-6 text-[11px] md:text-xs text-muted-foreground">
-            <span><strong className="text-foreground">5,000+</strong> Businesses</span>
-            <span><strong className="text-foreground">15</strong> Categories</span>
-            <span><strong className="text-foreground">50+</strong> Districts</span>
+            {/* Right block — Featured (desktop only) */}
+            <div className="hidden lg:block lg:w-[42%] mt-0">
+              <FeaturedListings listings={filtered} compact />
+            </div>
           </div>
         </div>
       </section>
@@ -188,7 +198,10 @@ const Index = () => {
         {/* Category Grid */}
         {!hasActiveFilters && <CategoryGrid />}
 
-        <FeaturedListings listings={filtered} />
+        {/* Featured on mobile/tablet (below hero) */}
+        <div className="lg:hidden">
+          <FeaturedListings listings={filtered} />
+        </div>
 
         <ExclusiveDeals listings={filtered} />
 
