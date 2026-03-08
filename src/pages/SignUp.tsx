@@ -256,9 +256,9 @@ const SignUp = () => {
               <div className="inline-flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-primary/10 mb-2 md:mb-3">
                 <UserPlus className="w-5 h-5 md:w-7 md:h-7 text-primary" />
               </div>
-              <h1 className="text-lg md:text-2xl font-bold text-foreground">Create Your Account</h1>
+              <h1 className="text-lg md:text-2xl font-bold text-foreground">Get Started Free</h1>
               <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-                Sign up to list your business for free
+                List your business in seconds
               </p>
             </div>
 
