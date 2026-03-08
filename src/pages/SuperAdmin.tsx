@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import AdminAddBusiness from "@/components/admin/AdminAddBusiness";
+import { getBusinessUrl } from "@/lib/url-helpers";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -9,7 +11,7 @@ import {
   TrendingUp, Activity, FileText, ExternalLink, ChevronDown,
   Mail, Phone, Calendar, LayoutDashboard, PieChart, LogOut,
   ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight, Sparkles, Ticket, Loader2,
-  Home, Package, Store, Bell, MessageSquare, Globe,
+  Home, Package, Store, Bell, MessageSquare, Globe, Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -83,6 +85,32 @@ const SuperAdmin = () => {
   const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
   const [rejectingListingId, setRejectingListingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [showAddBusiness, setShowAddBusiness] = useState(false);
+  const [platformSettings, setPlatformSettings] = useState({
+    autoApprove: false,
+    emailNotifications: true,
+    smsVerification: true,
+    documentRequired: true,
+  });
+
+  const toggleSetting = async (key: keyof typeof platformSettings) => {
+    const newVal = !platformSettings[key];
+    setPlatformSettings(prev => ({ ...prev, [key]: newVal }));
+    try {
+      await setDoc(doc(db, "platform_settings", "general"), { ...platformSettings, [key]: newVal }, { merge: true });
+      toast.success("Setting updated");
+    } catch { toast.error("Failed to save setting"); }
+  };
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const snap = await getDocs(collection(db, "platform_settings"));
+        snap.docs.forEach(d => { if (d.id === "general") setPlatformSettings(prev => ({ ...prev, ...d.data() })); });
+      } catch {}
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -560,6 +588,7 @@ const SuperAdmin = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => setSelectedUser(u)}><Eye className="w-4 h-4 mr-2" />View</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setActiveNav("listings"); setListingSearch(u.email); }}><Package className="w-4 h-4 mr-2" />View Listings</DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {u.status !== "active" && <DropdownMenuItem onClick={() => handleUserAction(u.id, "activate")}><UserCheck className="w-4 h-4 mr-2" />Activate</DropdownMenuItem>}
                             {u.status === "active" && u.role !== "superadmin" && <DropdownMenuItem onClick={() => handleUserAction(u.id, "suspend")}><Ban className="w-4 h-4 mr-2" />Suspend</DropdownMenuItem>}
@@ -586,18 +615,23 @@ const SuperAdmin = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#6d7175" }} />
                 <Input placeholder="Search listings..." className="pl-10 border-[#c9cccf] bg-white" value={listingSearch} onChange={(e) => setListingSearch(e.target.value)} />
               </div>
-              <div className="flex gap-1.5">
-                {["all", "pending_approval", "approved", "rejected"].map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setListingFilter(f)}
-                    className={`px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-colors ${
-                      listingFilter === f ? "bg-white border-[#c9cccf] text-[#202223] shadow-sm" : "border-transparent text-[#6d7175] hover:bg-white/60"
-                    }`}
-                  >
-                    {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <Button size="sm" className="h-8 text-xs" onClick={() => setShowAddBusiness(true)}>
+                  <Plus className="w-3.5 h-3.5 mr-1" />Add Business
+                </Button>
+                <div className="flex gap-1.5">
+                  {["all", "pending_approval", "approved", "rejected"].map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setListingFilter(f)}
+                      className={`px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-colors ${
+                        listingFilter === f ? "bg-white border-[#c9cccf] text-[#202223] shadow-sm" : "border-transparent text-[#6d7175] hover:bg-white/60"
+                      }`}
+                    >
+                      {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -641,6 +675,9 @@ const SuperAdmin = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setSelectedListing(listing)}><Eye className="w-4 h-4 mr-2" />View Details</DropdownMenuItem>
+                          {listing.status === "approved" && (
+                            <DropdownMenuItem onClick={() => navigate(getBusinessUrl(listing))}><ExternalLink className="w-4 h-4 mr-2" />View Live Page</DropdownMenuItem>
+                          )}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteListing(listing.id)}><Trash2 className="w-4 h-4 mr-2" />Delete</DropdownMenuItem>
                         </DropdownMenuContent>
@@ -772,21 +809,59 @@ const SuperAdmin = () => {
               <h3 className="text-[13px] font-semibold mb-4" style={{ color: "#202223" }}>Platform Settings</h3>
               <div className="space-y-0">
                 {[
-                  { title: "Auto-approve listings", desc: "Skip manual review for verified owners", on: false },
-                  { title: "Email notifications", desc: "Send alerts for new submissions", on: true },
-                  { title: "SMS verification", desc: "Require phone verification", on: true },
-                  { title: "Document upload required", desc: "Require ACRA profile", on: true },
+                  { key: "autoApprove" as const, title: "Auto-approve listings", desc: "Skip manual review for verified owners" },
+                  { key: "emailNotifications" as const, title: "Email notifications", desc: "Send alerts for new submissions" },
+                  { key: "smsVerification" as const, title: "SMS verification", desc: "Require phone verification" },
+                  { key: "documentRequired" as const, title: "Document upload required", desc: "Require ACRA profile" },
                 ].map((s, i) => (
                   <div key={i} className="flex items-center justify-between py-3.5" style={{ borderBottom: i < 3 ? "1px solid #f1f2f3" : "none" }}>
                     <div>
                       <p className="text-[13px] font-medium" style={{ color: "#202223" }}>{s.title}</p>
                       <p className="text-[12px]" style={{ color: "#6d7175" }}>{s.desc}</p>
                     </div>
-                    <div className={`w-10 h-[22px] rounded-full flex items-center px-[3px] cursor-pointer transition-colors ${s.on ? "bg-[#5c6ac4]" : "bg-[#c4cdd5]"}`}>
-                      <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${s.on ? "translate-x-[18px]" : ""}`} />
+                    <div
+                      onClick={() => toggleSetting(s.key)}
+                      className={`w-10 h-[22px] rounded-full flex items-center px-[3px] cursor-pointer transition-colors ${platformSettings[s.key] ? "bg-[#5c6ac4]" : "bg-[#c4cdd5]"}`}
+                    >
+                      <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${platformSettings[s.key] ? "translate-x-[18px]" : ""}`} />
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="rounded-xl border p-5" style={{ background: "white", borderColor: "#e1e3e5" }}>
+              <h3 className="text-[13px] font-semibold mb-4" style={{ color: "#202223" }}>Quick Actions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Button variant="outline" className="justify-start h-auto py-3 px-4" onClick={() => setActiveNav("users")}>
+                  <Users className="w-4 h-4 mr-2" />
+                  <div className="text-left">
+                    <p className="text-[13px] font-medium">Manage Users</p>
+                    <p className="text-[11px] text-muted-foreground">{users.length} total users</p>
+                  </div>
+                </Button>
+                <Button variant="outline" className="justify-start h-auto py-3 px-4" onClick={() => setActiveNav("listings")}>
+                  <Package className="w-4 h-4 mr-2" />
+                  <div className="text-left">
+                    <p className="text-[13px] font-medium">Manage Listings</p>
+                    <p className="text-[11px] text-muted-foreground">{listings.length} total listings</p>
+                  </div>
+                </Button>
+                <Button variant="outline" className="justify-start h-auto py-3 px-4" onClick={() => setShowAddBusiness(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  <div className="text-left">
+                    <p className="text-[13px] font-medium">Add New Business</p>
+                    <p className="text-[11px] text-muted-foreground">Create a listing for any category</p>
+                  </div>
+                </Button>
+                <Button variant="outline" className="justify-start h-auto py-3 px-4" onClick={() => navigate("/")}>
+                  <Globe className="w-4 h-4 mr-2" />
+                  <div className="text-left">
+                    <p className="text-[13px] font-medium">View Public Site</p>
+                    <p className="text-[11px] text-muted-foreground">Open the directory homepage</p>
+                  </div>
+                </Button>
               </div>
             </div>
           </div>
@@ -895,6 +970,14 @@ const SuperAdmin = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add Business Dialog */}
+      <AdminAddBusiness
+        open={showAddBusiness}
+        onOpenChange={setShowAddBusiness}
+        onCreated={(listing) => setListings(prev => [listing, ...prev])}
+        adminUserId={user?.uid || "admin"}
+      />
     </div>
   );
 };
