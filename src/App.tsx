@@ -23,6 +23,33 @@ import SignUp from "./pages/SignUp";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  const location = useLocation();
+  const hideFooter = ["/signup", "/reset-password"].includes(location.pathname);
+
+  return (
+    <>
+      <ScrollToTop />
+      <Header />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/:areaSlug/:categorySlug/:businessSlug" element={<BusinessDetail />} />
+        <Route path="/add-listing" element={<AddListing />} />
+        <Route path="/dashboard" element={<BusinessDashboard />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/super-admin" element={<SuperAdmin />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/seed" element={<SeedFirestore />} />
+        <Route path="/:citySlug" element={<CityCategory />} />
+        <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {!hideFooter && <Footer />}
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -32,23 +59,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <SearchProvider>
-          <ScrollToTop />
-          <Header />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/:areaSlug/:categorySlug/:businessSlug" element={<BusinessDetail />} />
-            <Route path="/add-listing" element={<AddListing />} />
-            <Route path="/dashboard" element={<BusinessDashboard />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/super-admin" element={<SuperAdmin />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/seed" element={<SeedFirestore />} />
-            <Route path="/:citySlug" element={<CityCategory />} />
-            <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Footer />
+            <AppContent />
           </SearchProvider>
         </BrowserRouter>
       </TooltipProvider>

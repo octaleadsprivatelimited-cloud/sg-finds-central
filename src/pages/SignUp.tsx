@@ -246,10 +246,6 @@ const SignUp = () => {
 
       <div className="container mx-auto px-4 py-6 md:py-10 max-w-md relative z-10">
         {/* Back button */}
-        <Button variant="ghost" size="sm" className="mb-4" onClick={() => step === "credentials" ? navigate("/") : handleCancel()}>
-          <ArrowLeft className="w-4 h-4 mr-1.5" />
-          {step === "credentials" ? "Back to Directory" : "Back"}
-        </Button>
 
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-3 mb-5">
