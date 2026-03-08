@@ -164,9 +164,28 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     setLoading(false);
   };
 
+  const businessEmojis = ["🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦", "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰", "🏗️", "🛍️"];
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md gap-3">
+      <DialogContent className="sm:max-w-md gap-3 overflow-hidden">
+        {/* Floating business emojis background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.07] z-0">
+          {businessEmojis.map((emoji, i) => (
+            <span
+              key={i}
+              className="absolute text-2xl select-none"
+              style={{
+                left: `${(i % 5) * 22 + 4}%`,
+                top: `${Math.floor(i / 5) * 25 + 5}%`,
+                transform: `rotate(${(i * 37) % 360}deg)`,
+              }}
+            >
+              {emoji}
+            </span>
+          ))}
+        </div>
+        <div className="relative z-10">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl font-semibold">
             {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
