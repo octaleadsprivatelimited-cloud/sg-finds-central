@@ -59,11 +59,6 @@ const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
   }
 };
 
-const BUSINESS_EMOJIS = [
-  "🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦",
-  "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰", "🏗️", "🛍️",
-  "🍜", "💼", "🎨", "🏦", "🌿", "☕", "🎵", "🔬", "🛒", "🏨",
-];
 
 // Step 1 = collect credentials, Step 2 = verify phone OTP
 type SignUpStep = "credentials" | "phone-verify";
