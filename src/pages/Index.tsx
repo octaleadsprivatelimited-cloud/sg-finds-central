@@ -154,7 +154,7 @@ const Index = () => {
                   </SelectContent>
                 </Select>
 
-                <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex" onClick={handleDetectLocation}>
+                <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex bg-white/15 border-white/20 text-white hover:bg-white/25" onClick={handleDetectLocation}>
                   <MapPin className="w-3.5 h-3.5 mr-1.5" />
                   Near Me
                 </Button>
