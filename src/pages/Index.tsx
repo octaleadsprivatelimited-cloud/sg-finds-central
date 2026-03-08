@@ -203,7 +203,12 @@ const Index = () => {
       {/* Results */}
       <section className="container mx-auto px-4 py-8">
         {/* Category Grid */}
-        {!hasActiveFilters && <CategoryGrid />}
+        {/* Category Grid — mobile/tablet only */}
+        {!hasActiveFilters && (
+          <div className="lg:hidden">
+            <CategoryGrid />
+          </div>
+        )}
 
         {/* Featured on mobile/tablet (below hero) */}
         <div className="lg:hidden">
