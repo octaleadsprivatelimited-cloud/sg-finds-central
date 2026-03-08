@@ -94,7 +94,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
       </div>
 
       {/* Prominent CTA buttons */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
         {listing.phone && (
           <a href={`tel:${listing.phone}`}>
             <Button className="bg-success hover:bg-success/90 text-success-foreground gap-2 font-semibold">

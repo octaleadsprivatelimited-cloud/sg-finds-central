@@ -86,7 +86,7 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
 
       {/* Lightbox */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-4xl p-0 bg-black border-none">
+        <DialogContent className="max-w-[95vw] sm:max-w-4xl p-0 bg-black border-none">
           <div className="relative">
             <img
               src={allPhotos[activeIndex]}

@@ -134,7 +134,7 @@ const BusinessDetail = () => {
 
             {/* Tabs */}
             <Tabs defaultValue="overview">
-              <TabsList className="bg-secondary border border-border w-full justify-start overflow-x-auto">
+              <TabsList className="bg-secondary border border-border w-full justify-start overflow-x-auto scrollbar-hide flex-nowrap">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="catalogue" className="relative">
                   Catalogue
