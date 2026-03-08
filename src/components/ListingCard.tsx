@@ -54,6 +54,7 @@ export interface Listing {
   customSlug?: string;
   logoUrl?: string;
   offers?: ListingOffer[];
+  operatingHours?: OperatingHours;
 }
 
 interface ListingCardProps {
