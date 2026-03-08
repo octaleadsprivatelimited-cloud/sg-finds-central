@@ -10,6 +10,7 @@ import AddListing from "./pages/AddListing";
 import Admin from "./pages/Admin";
 import SuperAdmin from "./pages/SuperAdmin";
 import BusinessDashboard from "./pages/BusinessDashboard";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
