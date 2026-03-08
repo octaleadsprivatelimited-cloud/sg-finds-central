@@ -1,38 +1,56 @@
 import { useNavigate } from "react-router-dom";
 import { toSlug } from "@/lib/url-helpers";
 
+import foodImg from "@/assets/categories/food.png";
+import retailImg from "@/assets/categories/retail.png";
+import healthcareImg from "@/assets/categories/healthcare.png";
+import educationImg from "@/assets/categories/education.png";
+import professionalImg from "@/assets/categories/professional.png";
+import beautyImg from "@/assets/categories/beauty.png";
+import homeImg from "@/assets/categories/home.png";
+import automotiveImg from "@/assets/categories/automotive.png";
+import technologyImg from "@/assets/categories/technology.png";
+import realestateImg from "@/assets/categories/realestate.png";
+import legalImg from "@/assets/categories/legal.png";
+import financialImg from "@/assets/categories/financial.png";
+import logisticsImg from "@/assets/categories/logistics.png";
+import eventsImg from "@/assets/categories/events.png";
+import constructionImg from "@/assets/categories/construction.png";
+import travelImg from "@/assets/categories/travel.png";
+import petImg from "@/assets/categories/pet.png";
+import fitnessImg from "@/assets/categories/fitness.png";
+import photographyImg from "@/assets/categories/photography.png";
+import cleaningImg from "@/assets/categories/cleaning.png";
+
 const CATEGORIES = [
-  { name: "Food & Beverage", subtitle: "Restaurants & Cafés", emoji: "🍜", bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700" },
-  { name: "Retail & Shopping", subtitle: "Stores & Markets", emoji: "🛍️", bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700" },
-  { name: "Healthcare & Medical", subtitle: "Doctors & Clinics", emoji: "🏥", bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700" },
-  { name: "Education & Training", subtitle: "Schools & Tutors", emoji: "📚", bg: "bg-indigo-50", border: "border-indigo-200", text: "text-indigo-700" },
-  { name: "Professional Services", subtitle: "Consulting & Advisory", emoji: "💼", bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-700" },
-  { name: "Beauty & Wellness", subtitle: "Spas & Salons", emoji: "💅", bg: "bg-pink-50", border: "border-pink-200", text: "text-pink-700" },
-  { name: "Home Services", subtitle: "Plumbing & Cleaning", emoji: "🏠", bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700" },
-  { name: "Automotive", subtitle: "Workshops & Dealers", emoji: "🚗", bg: "bg-zinc-50", border: "border-zinc-200", text: "text-zinc-700" },
-  { name: "Technology & IT", subtitle: "Software & Support", emoji: "💻", bg: "bg-violet-50", border: "border-violet-200", text: "text-violet-700" },
-  { name: "Real Estate", subtitle: "Property & Agents", emoji: "🏢", bg: "bg-cyan-50", border: "border-cyan-200", text: "text-cyan-700" },
-  { name: "Legal Services", subtitle: "Lawyers & Notary", emoji: "⚖️", bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-700" },
-  { name: "Financial Services", subtitle: "Banking & Insurance", emoji: "💰", bg: "bg-green-50", border: "border-green-200", text: "text-green-700" },
-  { name: "Logistics & Transport", subtitle: "Delivery & Moving", emoji: "🚚", bg: "bg-stone-50", border: "border-stone-200", text: "text-stone-700" },
-  { name: "Events & Entertainment", subtitle: "Parties & Shows", emoji: "🎉", bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-700" },
-  { name: "Construction & Renovation", subtitle: "Build & Renovate", emoji: "🔨", bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700" },
-  { name: "Travel & Tourism", subtitle: "Hotels & Tours", emoji: "✈️", bg: "bg-sky-50", border: "border-sky-200", text: "text-sky-700" },
-  { name: "Pet Services", subtitle: "Grooming & Vets", emoji: "🐾", bg: "bg-teal-50", border: "border-teal-200", text: "text-teal-700" },
-  { name: "Fitness & Sports", subtitle: "Gyms & Coaches", emoji: "🏋️", bg: "bg-red-50", border: "border-red-200", text: "text-red-700" },
-  { name: "Photography", subtitle: "Studios & Shoots", emoji: "📸", bg: "bg-fuchsia-50", border: "border-fuchsia-200", text: "text-fuchsia-700" },
-  { name: "Cleaning Services", subtitle: "Home & Office", emoji: "🧹", bg: "bg-lime-50", border: "border-lime-200", text: "text-lime-700" },
+  { name: "Food & Beverage", subtitle: "Restaurants & Cafés", image: foodImg },
+  { name: "Retail & Shopping", subtitle: "Stores & Markets", image: retailImg },
+  { name: "Healthcare & Medical", subtitle: "Doctors & Clinics", image: healthcareImg },
+  { name: "Education & Training", subtitle: "Schools & Tutors", image: educationImg },
+  { name: "Professional Services", subtitle: "Consulting & Advisory", image: professionalImg },
+  { name: "Beauty & Wellness", subtitle: "Spas & Salons", image: beautyImg },
+  { name: "Home Services", subtitle: "Plumbing & Cleaning", image: homeImg },
+  { name: "Automotive", subtitle: "Workshops & Dealers", image: automotiveImg },
+  { name: "Technology & IT", subtitle: "Software & Support", image: technologyImg },
+  { name: "Real Estate", subtitle: "Property & Agents", image: realestateImg },
+  { name: "Legal Services", subtitle: "Lawyers & Notary", image: legalImg },
+  { name: "Financial Services", subtitle: "Banking & Insurance", image: financialImg },
+  { name: "Logistics & Transport", subtitle: "Delivery & Moving", image: logisticsImg },
+  { name: "Events & Entertainment", subtitle: "Parties & Shows", image: eventsImg },
+  { name: "Construction & Renovation", subtitle: "Build & Renovate", image: constructionImg },
+  { name: "Travel & Tourism", subtitle: "Hotels & Tours", image: travelImg },
+  { name: "Pet Services", subtitle: "Grooming & Vets", image: petImg },
+  { name: "Fitness & Sports", subtitle: "Gyms & Coaches", image: fitnessImg },
+  { name: "Photography", subtitle: "Studios & Shoots", image: photographyImg },
+  { name: "Cleaning Services", subtitle: "Home & Office", image: cleaningImg },
 ];
 
 const CategoryGrid = () => {
   const navigate = useNavigate();
 
-  const topCategories = CATEGORIES.slice(0, 5);
-
   return (
     <section className="py-4 lg:py-0">
       <div>
-
         <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-1.5 md:gap-2">
           {CATEGORIES.map((cat) => (
             <button
@@ -40,7 +58,14 @@ const CategoryGrid = () => {
               onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
               className="group flex flex-col items-center gap-1 p-1.5 md:p-2 rounded-lg border border-border lg:border-white/20 lg:bg-white/10 lg:backdrop-blur-sm hover:shadow-sm hover:border-primary/30 lg:hover:border-white/40 lg:hover:bg-white/20 transition-all duration-200 hover:-translate-y-0.5"
             >
-              <span className="text-lg md:text-xl">{cat.emoji}</span>
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg overflow-hidden flex items-center justify-center">
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
               <span className="text-[8px] md:text-[9px] font-medium text-foreground lg:text-white/90 text-center leading-tight line-clamp-2">
                 {cat.name}
               </span>
