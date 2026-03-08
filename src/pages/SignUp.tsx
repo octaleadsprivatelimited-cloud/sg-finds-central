@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +13,12 @@ import {
   OAuthProvider,
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  linkWithCredential,
+  PhoneAuthProvider,
   ConfirmationResult,
+  deleteUser,
 } from "firebase/auth";
-import { Mail, Phone, Loader2, MessageCircle, Building2, ArrowLeft, UserPlus } from "lucide-react";
+import { Mail, Phone, Loader2, MessageCircle, ArrowLeft, UserPlus, CheckCircle2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 const googleProvider = new GoogleAuthProvider();
@@ -52,17 +55,9 @@ const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
           <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
         </svg>
       );
-    case "whatsapp":
-      return (
-        <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="#25D366">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
-        </svg>
-      );
     default: return null;
   }
 };
-
-type AuthMethod = "email" | "phone" | "whatsapp";
 
 const BUSINESS_EMOJIS = [
   "🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦",
@@ -70,24 +65,40 @@ const BUSINESS_EMOJIS = [
   "🍜", "💼", "🎨", "🏦", "🌿", "☕", "🎵", "🔬", "🛒", "🏨",
 ];
 
+// Step 1 = collect credentials, Step 2 = verify phone OTP
+type SignUpStep = "credentials" | "phone-verify";
+type SignUpMethod = "email" | "social";
+
 const SignUp = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [method, setMethod] = useState<AuthMethod>("email");
+
+  // Step tracking
+  const [step, setStep] = useState<SignUpStep>("credentials");
+  const [signUpMethod, setSignUpMethod] = useState<SignUpMethod>("email");
+
+  // Step 1 — email fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Step 2 — phone OTP
   const [phone, setPhone] = useState("+65");
   const [otp, setOtp] = useState("");
   const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
-  // Redirect if already logged in
+  // If user is fully verified, redirect
   useEffect(() => {
-    if (user) navigate("/add-listing");
-  }, [user, navigate]);
+    if (user && phoneVerified) {
+      navigate("/add-listing");
+    }
+  }, [user, phoneVerified, navigate]);
 
+  // ── Step 1: Email sign-up → move to phone verify ──
   const handleEmailSignUp = async () => {
     if (!email.trim() || !password.trim()) {
       toast.error("Please fill in all fields");
@@ -104,14 +115,16 @@ const SignUp = () => {
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      toast.success("Account created successfully!");
-      navigate("/add-listing");
+      setSignUpMethod("email");
+      setStep("phone-verify");
+      toast.success("Email registered! Now verify your phone number.");
     } catch (err: any) {
       toast.error(err.message || "Sign up failed");
     }
     setLoading(false);
   };
 
+  // ── Step 1: Social sign-up → move to phone verify ──
   const handleSocialSignUp = async (providerName: string) => {
     setSocialLoading(providerName);
     try {
@@ -123,8 +136,9 @@ const SignUp = () => {
         default: return;
       }
       await signInWithPopup(auth, provider);
-      toast.success(`Signed up with ${providerName.charAt(0).toUpperCase() + providerName.slice(1)}`);
-      navigate("/add-listing");
+      setSignUpMethod("social");
+      setStep("phone-verify");
+      toast.success("Signed in! Now verify your phone number.");
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         toast.error(err.message || `${providerName} sign-up failed`);
@@ -133,30 +147,72 @@ const SignUp = () => {
     setSocialLoading(null);
   };
 
-  const handleSendOTP = async (viaWhatsApp = false) => {
+  // ── Step 2: Send phone OTP ──
+  const handleSendOTP = async () => {
+    if (!phone.trim() || phone.trim().length < 5) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
     setLoading(true);
     try {
       const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
       const result = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
       setConfirmResult(result);
-      toast.success(`OTP sent to ${phone}${viaWhatsApp ? " via WhatsApp" : ""}`);
+      toast.success(`OTP sent to ${phone}`);
     } catch (err: any) {
       toast.error(err.message || "Failed to send OTP");
     }
     setLoading(false);
   };
 
+  // ── Step 2: Verify OTP and link phone to account ──
   const handleVerifyOTP = async () => {
-    if (!confirmResult) return;
+    if (!confirmResult || !otp.trim()) return;
     setLoading(true);
     try {
-      await confirmResult.confirm(otp);
-      toast.success("Phone verified — account created!");
+      // Verify the OTP
+      const credential = PhoneAuthProvider.credential(confirmResult.verificationId, otp);
+
+      // Try to link phone to existing account
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        try {
+          await linkWithCredential(currentUser, credential);
+        } catch (linkErr: any) {
+          // If already linked or provider exists, that's fine
+          if (linkErr.code !== "auth/provider-already-linked" && linkErr.code !== "auth/credential-already-in-use") {
+            throw linkErr;
+          }
+        }
+      } else {
+        // Fallback: confirm directly (creates phone-only account)
+        await confirmResult.confirm(otp);
+      }
+
+      setPhoneVerified(true);
+      toast.success("Phone verified! Account created successfully.");
       navigate("/add-listing");
-    } catch {
-      toast.error("Invalid OTP");
+    } catch (err: any) {
+      toast.error(err.message || "Invalid OTP — please try again");
     }
     setLoading(false);
+  };
+
+  // ── Cancel: delete partially-created account ──
+  const handleCancel = async () => {
+    const currentUser = auth.currentUser;
+    if (currentUser && !phoneVerified) {
+      try {
+        await deleteUser(currentUser);
+      } catch {
+        // User may need to re-auth to delete — just sign out
+        await auth.signOut();
+      }
+    }
+    setStep("credentials");
+    setConfirmResult(null);
+    setOtp("");
+    setPhone("+65");
   };
 
   return (
@@ -178,77 +234,68 @@ const SignUp = () => {
 
       <div className="container mx-auto px-4 py-6 md:py-10 max-w-md relative z-10">
         {/* Back button */}
-        <Button variant="ghost" size="sm" className="mb-4" onClick={() => navigate("/")}>
+        <Button variant="ghost" size="sm" className="mb-4" onClick={() => step === "credentials" ? navigate("/") : handleCancel()}>
           <ArrowLeft className="w-4 h-4 mr-1.5" />
-          Back to Directory
+          {step === "credentials" ? "Back to Directory" : "Back"}
         </Button>
 
-        {/* Sign Up Card */}
-        <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 shadow-lg">
-          {/* Header */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
-              <UserPlus className="w-7 h-7 text-primary" />
+        {/* Step indicator */}
+        <div className="flex items-center justify-center gap-3 mb-5">
+          <div className={`flex items-center gap-1.5 text-xs font-medium ${step === "credentials" ? "text-primary" : "text-muted-foreground"}`}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === "phone-verify" ? "bg-primary text-primary-foreground" : step === "credentials" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              {step === "phone-verify" ? <CheckCircle2 className="w-4 h-4" /> : "1"}
             </div>
-            <h1 className="text-xl md:text-2xl font-bold text-foreground">Create Your Account</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Sign up to list your business for free
-            </p>
+            <span className="hidden sm:inline">Account</span>
           </div>
-
-          {/* Social Sign-Up */}
-          <div className="grid grid-cols-4 gap-3 mb-4">
-            {(["google", "apple", "microsoft", "whatsapp"] as const).map((provider) => (
-              <Button
-                key={provider}
-                variant="outline"
-                className="h-11 rounded-xl"
-                onClick={() =>
-                  provider === "whatsapp"
-                    ? (() => { setMethod("whatsapp"); setConfirmResult(null); })()
-                    : handleSocialSignUp(provider)
-                }
-                disabled={!!socialLoading}
-                title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
-              >
-                <SocialIcon name={provider} loading={socialLoading === provider} />
-              </Button>
-            ))}
+          <div className="w-8 h-px bg-border" />
+          <div className={`flex items-center gap-1.5 text-xs font-medium ${step === "phone-verify" ? "text-primary" : "text-muted-foreground"}`}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === "phone-verify" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              2
+            </div>
+            <span className="hidden sm:inline">Verify Phone</span>
           </div>
+        </div>
 
-          {/* Divider */}
-          <div className="relative my-4">
-            <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
-              or sign up with
-            </span>
-          </div>
+        {/* ═══ STEP 1: CREDENTIALS ═══ */}
+        {step === "credentials" && (
+          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 shadow-lg animate-fade-in">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
+                <UserPlus className="w-7 h-7 text-primary" />
+              </div>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">Create Your Account</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Sign up to list your business for free
+              </p>
+            </div>
 
-          {/* Method Toggle */}
-          <div className="flex gap-2 mb-4">
-            <Button
-              variant={method === "email" ? "default" : "outline"}
-              size="sm"
-              className="flex-1 text-xs sm:text-sm"
-              onClick={() => { setMethod("email"); setConfirmResult(null); }}
-            >
-              <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />
-              Email
-            </Button>
-            <Button
-              variant={method === "phone" ? "default" : "outline"}
-              size="sm"
-              className="flex-1 text-xs sm:text-sm"
-              onClick={() => { setMethod("phone"); setConfirmResult(null); }}
-            >
-              <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />
-              Mobile OTP
-            </Button>
-          </div>
+            {/* Social Sign-Up */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {(["google", "apple", "microsoft"] as const).map((provider) => (
+                <Button
+                  key={provider}
+                  variant="outline"
+                  className="h-11 rounded-xl"
+                  onClick={() => handleSocialSignUp(provider)}
+                  disabled={!!socialLoading}
+                  title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
+                >
+                  <SocialIcon name={provider} loading={socialLoading === provider} />
+                </Button>
+              ))}
+            </div>
 
-          {/* Email Sign Up */}
-          {method === "email" && (
-            <div className="space-y-3 animate-fade-in">
+            {/* Divider */}
+            <div className="relative my-4">
+              <Separator />
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+                or sign up with email
+              </span>
+            </div>
+
+            {/* Email Sign Up */}
+            <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs sm:text-sm">Email</Label>
                 <Input
@@ -281,72 +328,94 @@ const SignUp = () => {
               </div>
               <Button className="w-full h-10" onClick={handleEmailSignUp} disabled={loading}>
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Create Account
+                Continue
               </Button>
             </div>
-          )}
 
-          {/* Phone / WhatsApp OTP */}
-          {(method === "phone" || method === "whatsapp") && (
-            <div className="space-y-3 animate-fade-in">
-              {!confirmResult ? (
-                <>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs sm:text-sm">
-                      {method === "whatsapp" ? "WhatsApp Number" : "Singapore Mobile Number"}
-                    </Label>
-                    <div className="relative">
-                      {method === "whatsapp" && (
-                        <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      )}
-                      <Input
-                        type="tel"
-                        placeholder="+65 9123 4567"
-                        className={`h-10 text-sm ${method === "whatsapp" ? "pl-10" : ""}`}
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <Button className="w-full h-10" onClick={() => handleSendOTP(method === "whatsapp")} disabled={loading}>
-                    {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                    Send OTP
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs sm:text-sm">Enter OTP</Label>
-                    <Input
-                      type="text"
-                      placeholder="123456"
-                      className="h-10 text-sm"
-                      value={otp}
-                      maxLength={6}
-                      onChange={(e) => setOtp(e.target.value)}
-                    />
-                  </div>
-                  <Button className="w-full h-10" onClick={handleVerifyOTP} disabled={loading}>
-                    {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                    Verify & Create Account
-                  </Button>
-                </>
-              )}
-              <div id="recaptcha-container" />
+            <p className="text-center text-[10px] text-muted-foreground mt-4">
+              You'll need to verify your mobile number in the next step
+            </p>
+
+            {/* Already have account */}
+            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 pt-4 border-t border-border">
+              Already have an account?{" "}
+              <button className="text-primary font-medium hover:underline" onClick={() => navigate("/")}>
+                Sign in
+              </button>
+            </p>
+          </div>
+        )}
+
+        {/* ═══ STEP 2: PHONE VERIFICATION ═══ */}
+        {step === "phone-verify" && (
+          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 shadow-lg animate-fade-in">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
+                <ShieldCheck className="w-7 h-7 text-primary" />
+              </div>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">Verify Your Phone</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Enter your mobile number to receive a verification code
+              </p>
             </div>
-          )}
 
-          {/* Already have account */}
-          <p className="text-center text-xs sm:text-sm text-muted-foreground mt-5">
-            Already have an account?{" "}
-            <button
-              className="text-primary font-medium hover:underline"
-              onClick={() => navigate("/")}
-            >
-              Sign in
-            </button>
-          </p>
-        </div>
+            {!confirmResult ? (
+              <div className="space-y-4 animate-fade-in">
+                <div className="space-y-1.5">
+                  <Label className="text-xs sm:text-sm">Singapore Mobile Number</Label>
+                  <Input
+                    type="tel"
+                    placeholder="+65 9123 4567"
+                    className="h-10 text-sm"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    We'll send a 6-digit OTP to verify your number
+                  </p>
+                </div>
+                <Button className="w-full h-10" onClick={handleSendOTP} disabled={loading}>
+                  {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  <Phone className="w-4 h-4 mr-1.5" />
+                  Send OTP
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4 animate-fade-in">
+                <div className="rounded-lg bg-secondary/50 p-3 text-center">
+                  <p className="text-xs text-muted-foreground">
+                    OTP sent to <span className="font-semibold text-foreground">{phone}</span>
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs sm:text-sm">Enter 6-digit OTP</Label>
+                  <Input
+                    type="text"
+                    placeholder="123456"
+                    className="h-12 text-center text-lg font-mono tracking-[0.5em]"
+                    value={otp}
+                    maxLength={6}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                    autoFocus
+                  />
+                </div>
+                <Button className="w-full h-10" onClick={handleVerifyOTP} disabled={loading || otp.length < 6}>
+                  {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  Verify & Create Account
+                </Button>
+                <button
+                  className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
+                  onClick={() => { setConfirmResult(null); setOtp(""); }}
+                >
+                  Didn't receive OTP? Try again
+                </button>
+              </div>
+            )}
+
+            <div id="recaptcha-container" />
+          </div>
+        )}
 
         {/* Trust badges */}
         <div className="flex items-center justify-center gap-4 mt-6 text-xs text-muted-foreground">
