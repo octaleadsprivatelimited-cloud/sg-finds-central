@@ -360,10 +360,10 @@ const SuperAdmin = () => {
 
             {/* Metric cards row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <MetricCard title="Total Listings" value={String(totalListings)} change="↑ 28%" positive sparkColor="#5c6ac4" />
-              <MetricCard title="Active Users" value={String(activeUsers)} change="↑ 45%" positive sparkColor="#47c1bf" />
-              <MetricCard title="Approved" value={String(approvedListings)} change="↑ 31%" positive sparkColor="#5c6ac4" />
-              <MetricCard title="Pending" value={String(pendingListings)} change={pendingListings > 0 ? "↑ 33%" : "—"} positive={pendingListings === 0} sparkColor="#f49342" />
+              <MetricCard title="Total Listings" value={String(totalListings)} change={`${totalListings} total`} positive sparkColor="#5c6ac4" sparkData={sparkData} />
+              <MetricCard title="Active Users" value={String(activeUsers)} change={`${activeUsers} active`} positive sparkColor="#47c1bf" sparkData={sparkData} />
+              <MetricCard title="Approved" value={String(approvedListings)} change={`${approvedListings} approved`} positive sparkColor="#5c6ac4" sparkData={sparkData} />
+              <MetricCard title="Pending" value={String(pendingListings)} change={pendingListings > 0 ? `${pendingListings} pending` : "—"} positive={pendingListings === 0} sparkColor="#f49342" sparkData={sparkData} />
             </div>
 
             {/* Main chart + breakdown */}
