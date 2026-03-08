@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import ListingCard, { Listing } from "@/components/ListingCard";
+import ListingCard, { Listing, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import ExclusiveDeals from "@/components/ExclusiveDeals";
 import CategoryGrid from "@/components/CategoryGrid";
