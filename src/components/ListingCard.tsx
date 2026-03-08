@@ -62,6 +62,7 @@ export interface Listing {
   city?: string;
   customSlug?: string;
   logoUrl?: string;
+  coverImage?: string;
   offers?: ListingOffer[];
   operatingHours?: OperatingHours;
   specialHours?: SpecialHours[];
