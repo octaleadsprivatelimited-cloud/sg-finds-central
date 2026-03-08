@@ -149,6 +149,17 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
                 ⭐ Featured
               </Badge>
             )}
+            {isOpen !== null && (
+              isOpen ? (
+                <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-transparent text-[10px] sm:text-xs shrink-0 font-medium">
+                  <Clock className="w-2.5 h-2.5 mr-0.5" />Open
+                </Badge>
+              ) : (
+                <Badge className="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 border-transparent text-[10px] sm:text-xs shrink-0 font-medium">
+                  <Clock className="w-2.5 h-2.5 mr-0.5" />Closed
+                </Badge>
+              )
+            )}
           </div>
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mb-2">
             <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-accent" />
