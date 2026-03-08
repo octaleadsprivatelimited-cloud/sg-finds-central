@@ -49,24 +49,27 @@ const CategoryGrid = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-4 lg:py-0">
-      <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-1.5 md:gap-2">
+    <section>
+      <h2 className="text-lg font-bold text-foreground mb-4">Browse by Category</h2>
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-3">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.name}
             onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-            className="group flex flex-col items-center gap-1.5 p-2 md:p-2.5 rounded-xl border border-border bg-card lg:border-white/20 lg:bg-white/10 lg:backdrop-blur-sm hover:shadow-md hover:border-primary/30 lg:hover:border-white/40 lg:hover:bg-white/20 transition-all duration-200 hover:-translate-y-0.5"
+            className="group flex flex-col items-center gap-2 p-3 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
           >
-            <img
-              src={cat.image}
-              alt={cat.name}
-              width={40}
-              height={40}
-              className="w-9 h-9 md:w-10 md:h-10 object-contain"
-              loading="eager"
-              decoding="async"
-            />
-            <span className="text-[9px] md:text-[10px] font-medium text-foreground lg:text-white/90 text-center leading-tight line-clamp-2">
+            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+              <img
+                src={cat.image}
+                alt={cat.name}
+                width={32}
+                height={32}
+                className="w-8 h-8 object-contain"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <span className="text-[10px] md:text-xs font-medium text-foreground text-center leading-tight line-clamp-2">
               {cat.name}
             </span>
           </button>
