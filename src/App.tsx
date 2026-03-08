@@ -16,6 +16,7 @@ import BusinessDetail from "./pages/BusinessDetail";
 import CityCategory from "./pages/CityCategory";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import SeedFirestore from "./pages/SeedFirestore";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/super-admin" element={<SuperAdmin />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/seed" element={<SeedFirestore />} />
             <Route path="/:citySlug" element={<CityCategory />} />
             <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
             <Route path="*" element={<NotFound />} />
