@@ -128,21 +128,6 @@ const Index = () => {
                 Search across 5,000+ verified businesses — restaurants, clinics, services and more.
               </p>
 
-              {/* Desktop search bar */}
-              <div className="hidden md:flex items-stretch gap-0 max-w-2xl bg-card rounded-xl border border-border shadow-sm">
-                <div className="flex items-center gap-2 px-4 py-3 border-r border-border min-w-[150px]">
-                  <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  <span className="text-sm font-medium text-foreground">Singapore</span>
-                </div>
-                <SearchWithSuggestions
-                  placeholder="Search for restaurants, services, businesses..."
-                  className="flex-1"
-                />
-                <Button className="h-auto min-h-[48px] rounded-l-none rounded-r-xl px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm border-0">
-                  <Search className="w-4 h-4 mr-2" />
-                  Search
-                </Button>
-              </div>
 
               {/* Filter row */}
               <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl lg:hidden">
