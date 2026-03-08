@@ -760,6 +760,61 @@ const BusinessDashboard = () => {
                 <Label>Description</Label>
                 <Textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
+              {/* Operating Hours */}
+              <div className="space-y-3 pt-2 border-t border-border">
+                <Label className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  Operating Hours
+                </Label>
+                {Object.keys(DEFAULT_OPERATING_HOURS).map((day) => {
+                  const dayHours = editHours[day] || { open: "", close: "", closed: false };
+                  return (
+                    <div key={day} className="flex items-center gap-3">
+                      <span className="text-sm text-muted-foreground w-24 shrink-0">{day}</span>
+                      <label className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={!!dayHours.closed}
+                          onChange={(e) =>
+                            setEditHours((prev) => ({
+                              ...prev,
+                              [day]: { ...prev[day], closed: e.target.checked },
+                            }))
+                          }
+                          className="rounded border-border"
+                        />
+                        Closed
+                      </label>
+                      {!dayHours.closed && (
+                        <>
+                          <Input
+                            type="time"
+                            className="w-[120px] text-xs"
+                            value={dayHours.open}
+                            onChange={(e) =>
+                              setEditHours((prev) => ({
+                                ...prev,
+                                [day]: { ...prev[day], open: e.target.value },
+                              }))
+                            }
+                          />
+                          <span className="text-xs text-muted-foreground">to</span>
+                          <Input
+                            type="time"
+                            className="w-[120px] text-xs"
+                            value={dayHours.close}
+                            onChange={(e) =>
+                              setEditHours((prev) => ({
+                                ...prev,
+                                [day]: { ...prev[day], close: e.target.value },
+                              }))
+                            }
+                          />
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
               {/* Logo Upload */}
               {user && (
                 <div className="pt-2 border-t border-border">
