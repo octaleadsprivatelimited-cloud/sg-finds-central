@@ -765,13 +765,13 @@ const StatCard = ({ icon, label, value, change, positive }: { icon: React.ReactN
 );
 
 const SettingRow = ({ title, description, enabled }: { title: string; description: string; enabled: boolean }) => (
-  <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
+  <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
     <div>
-      <p className="text-sm font-medium text-slate-800">{title}</p>
-      <p className="text-xs text-slate-500">{description}</p>
+      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className="text-xs text-muted-foreground">{description}</p>
     </div>
-    <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors cursor-pointer ${enabled ? "bg-indigo-600" : "bg-slate-200"}`}>
-      <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${enabled ? "translate-x-4" : ""}`} />
+    <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors cursor-pointer ${enabled ? "bg-primary" : "bg-muted"}`}>
+      <div className={`w-4 h-4 rounded-full bg-primary-foreground shadow transition-transform ${enabled ? "translate-x-4" : ""}`} />
     </div>
   </div>
 );
