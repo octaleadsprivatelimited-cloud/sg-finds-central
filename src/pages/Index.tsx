@@ -124,9 +124,6 @@ const Index = () => {
                 Find the best businesses{" "}
                 <span className="text-primary">in Singapore</span>
               </h1>
-              <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-lg">
-                Search across 5,000+ verified businesses — restaurants, clinics, services and more.
-              </p>
 
 
               {/* Filter row */}
