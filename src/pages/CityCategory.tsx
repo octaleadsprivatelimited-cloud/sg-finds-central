@@ -1,6 +1,8 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useMemo } from "react";
-import { MapPin, Building2, ArrowLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { MapPin, Building2, ArrowLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
@@ -8,7 +10,7 @@ import { BUSINESS_CATEGORIES } from "@/lib/districts";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
-// Demo listings for SEO pages
+// Fallback demo listings for when Firestore is unavailable
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
     id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
@@ -52,13 +54,31 @@ const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating
   },
 ];
 
-
-
 const CityCategory = () => {
   const { citySlug, categorySlug } = useParams<{ citySlug: string; categorySlug?: string }>();
   const navigate = useNavigate();
+  const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
+  const [loadingListings, setLoadingListings] = useState(true);
 
   const city = getCityBySlug(citySlug || "singapore");
+
+  // Fetch approved listings from Firestore
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const q = query(collection(db, "listings"), where("status", "==", "approved"));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Listing));
+          setListings(data);
+        }
+      } catch {
+        // Use demo data as fallback
+      }
+      setLoadingListings(false);
+    };
+    fetchListings();
+  }, []);
 
   const matchedCategory = useMemo(() => {
     if (!categorySlug) return null;
@@ -68,9 +88,9 @@ const CityCategory = () => {
   }, [categorySlug]);
 
   const filtered = useMemo(() => {
-    if (!matchedCategory) return DEMO_LISTINGS;
-    return DEMO_LISTINGS.filter((l) => l.category === matchedCategory);
-  }, [matchedCategory]);
+    if (!matchedCategory) return listings;
+    return listings.filter((l) => l.category === matchedCategory);
+  }, [matchedCategory, listings]);
 
   const categories = BUSINESS_CATEGORIES.filter((c) => c !== "All Categories");
 
