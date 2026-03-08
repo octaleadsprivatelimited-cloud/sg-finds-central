@@ -38,6 +38,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import LogoUpload from "@/components/LogoUpload";
 
 // Demo data fallback
 const MY_DEMO_LISTINGS: Listing[] = [
@@ -91,6 +92,7 @@ const BusinessDashboard = () => {
   const [editEmail, setEditEmail] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editCustomSlug, setEditCustomSlug] = useState("");
+  const [editLogoUrl, setEditLogoUrl] = useState("");
 
   const stats = useMemo(() => ({
     total: listings.length,
@@ -110,6 +112,7 @@ const BusinessDashboard = () => {
     setEditEmail(listing.email || "");
     setEditDescription(listing.description || "");
     setEditCustomSlug(listing.customSlug || toSlug(listing.name));
+    setEditLogoUrl(listing.logoUrl || "");
   };
 
   const slugError = useMemo(() => {
@@ -139,7 +142,7 @@ const BusinessDashboard = () => {
     const sanitizedSlug = toSlug(editCustomSlug || editName);
     setSaving(true);
     try {
-      const updates = {
+      const updates: Record<string, any> = {
         name: editName,
         category: editCategory,
         district: editDistrict,
@@ -149,6 +152,7 @@ const BusinessDashboard = () => {
         email: editEmail,
         description: editDescription,
         customSlug: sanitizedSlug,
+        logoUrl: editLogoUrl,
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l =>
@@ -482,6 +486,17 @@ const BusinessDashboard = () => {
                 <Label>Description</Label>
                 <Textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
+              {/* Logo Upload */}
+              {user && (
+                <div className="pt-2 border-t border-border">
+                  <LogoUpload
+                    currentUrl={editLogoUrl || undefined}
+                    userId={user.uid}
+                    onUploaded={(url) => setEditLogoUrl(url)}
+                    onRemoved={() => setEditLogoUrl("")}
+                  />
+                </div>
+              )}
               <div className="flex gap-2 pt-2">
                 <Button className="flex-1" onClick={saveEdit} disabled={!!slugError || saving}>
                   {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
