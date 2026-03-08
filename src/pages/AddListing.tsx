@@ -91,14 +91,9 @@ const AddListing = () => {
         name, uen, category, district, address, postalCode, description,
         phone, whatsapp, website, email,
         documentsUrl: validLinks,
-
-      await addDoc(collection(db, "listings"), {
-        name, uen, category, district, address, postalCode, description,
-        phone, whatsapp, website, email,
-        documentsUrl,
         status: "pending_approval",
         ownerId: user.uid,
-        location: new GeoPoint(1.3521, 103.8198), // Default SG center
+        location: new GeoPoint(1.3521, 103.8198),
         createdAt: serverTimestamp(),
       });
 
