@@ -31,6 +31,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <SearchProvider>
+          <ScrollToTop />
           <Header />
           <Routes>
             <Route path="/" element={<Index />} />
