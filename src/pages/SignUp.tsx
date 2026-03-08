@@ -149,8 +149,11 @@ const SignUp = () => {
 
   // ── Step 2: Send phone OTP ──
   const handleSendOTP = async () => {
-    if (!phone.trim() || phone.trim().length < 5) {
-      toast.error("Please enter a valid phone number");
+    // Validate Singapore number: must start with +65 and have 8 digits after
+    const cleaned = phone.replace(/\s/g, "");
+    const sgRegex = /^\+65[689]\d{7}$/;
+    if (!sgRegex.test(cleaned)) {
+      toast.error("Please enter a valid Singapore mobile number (+65 8/9xxx xxxx)");
       return;
     }
     setLoading(true);
