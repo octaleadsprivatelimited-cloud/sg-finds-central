@@ -244,11 +244,11 @@ const SignUp = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 md:py-10 max-w-md relative z-10">
+      <div className="container mx-auto px-3 py-3 md:py-10 max-w-md relative z-10">
         {/* Back button */}
 
         {/* Step indicator */}
-        <div className="flex items-center justify-center gap-3 mb-5">
+        <div className="flex items-center justify-center gap-3 mb-3 md:mb-5">
           <div className={`flex items-center gap-1.5 text-xs font-medium ${step === "credentials" ? "text-primary" : "text-muted-foreground"}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === "phone-verify" ? "bg-primary text-primary-foreground" : step === "credentials" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
               {step === "phone-verify" ? <CheckCircle2 className="w-4 h-4" /> : "1"}
@@ -266,25 +266,25 @@ const SignUp = () => {
 
         {/* ═══ STEP 1: CREDENTIALS ═══ */}
         {step === "credentials" && (
-          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 shadow-lg animate-fade-in">
+          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-4 md:p-8 shadow-lg animate-fade-in">
             {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
-                <UserPlus className="w-7 h-7 text-primary" />
+            <div className="text-center mb-4 md:mb-6">
+              <div className="inline-flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-primary/10 mb-2 md:mb-3">
+                <UserPlus className="w-5 h-5 md:w-7 md:h-7 text-primary" />
               </div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground">Create Your Account</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <h1 className="text-lg md:text-2xl font-bold text-foreground">Create Your Account</h1>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
                 Sign up to list your business for free
               </p>
             </div>
 
             {/* Social Sign-Up */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4">
               {(["google", "apple", "microsoft"] as const).map((provider) => (
                 <Button
                   key={provider}
                   variant="outline"
-                  className="h-11 rounded-xl"
+                  className="h-9 md:h-11 rounded-xl"
                   onClick={() => handleSocialSignUp(provider)}
                   disabled={!!socialLoading}
                   title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
@@ -295,7 +295,7 @@ const SignUp = () => {
             </div>
 
             {/* Divider */}
-            <div className="relative my-4">
+            <div className="relative my-3 md:my-4">
               <Separator />
               <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
                 or sign up with email
@@ -303,13 +303,13 @@ const SignUp = () => {
             </div>
 
             {/* Email Sign Up */}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs sm:text-sm">Email</Label>
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="h-10 text-sm"
+                  className="h-9 md:h-10 text-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -319,7 +319,7 @@ const SignUp = () => {
                 <Input
                   type="password"
                   placeholder="Min. 6 characters"
-                  className="h-10 text-sm"
+                  className="h-9 md:h-10 text-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -329,23 +329,23 @@ const SignUp = () => {
                 <Input
                   type="password"
                   placeholder="Re-enter your password"
-                  className="h-10 text-sm"
+                  className="h-9 md:h-10 text-sm"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
-              <Button className="w-full h-10" onClick={handleEmailSignUp} disabled={loading}>
+              <Button className="w-full h-9 md:h-10" onClick={handleEmailSignUp} disabled={loading}>
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Continue
               </Button>
             </div>
 
-            <p className="text-center text-[10px] text-muted-foreground mt-4">
+            <p className="text-center text-[10px] text-muted-foreground mt-3 md:mt-4">
               You'll need to verify your mobile number in the next step
             </p>
 
             {/* Already have account */}
-            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 pt-4 border-t border-border">
+            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
               Already have an account?{" "}
               <button className="text-primary font-medium hover:underline" onClick={() => navigate("/")}>
                 Sign in
