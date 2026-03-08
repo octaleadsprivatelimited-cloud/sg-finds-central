@@ -17,15 +17,15 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
   if (featured.length === 0) return null;
 
   return (
-    <section className={compact ? "" : "mb-10"}>
-      <div className="flex items-center justify-between mb-5">
+    <section className={compact ? "" : "mb-6 md:mb-10"}>
+      <div className="flex items-center justify-between mb-3 md:mb-5">
         <div>
-          <h2 className="text-lg font-bold text-foreground">Featured Businesses</h2>
-          <p className="text-sm text-muted-foreground">Handpicked top-rated businesses</p>
+          <h2 className="text-base md:text-lg font-bold text-foreground">Featured Businesses</h2>
+          <p className="text-xs md:text-sm text-muted-foreground">Handpicked top-rated businesses</p>
         </div>
-        <Badge variant="secondary" className="text-xs">Sponsored</Badge>
+        <Badge variant="secondary" className="text-[10px] md:text-xs">Sponsored</Badge>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
         {featured.slice(0, compact ? 4 : 8).map((listing) => (
           <div
             key={listing.id}
