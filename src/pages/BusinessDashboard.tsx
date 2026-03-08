@@ -268,6 +268,7 @@ const BusinessDashboard = () => {
         customSlug: sanitizedSlug,
         logoUrl: editLogoUrl,
         operatingHours: editHours,
+        specialHours: editSpecialHours,
         status: "pending_approval",
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
