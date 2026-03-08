@@ -148,10 +148,6 @@ const BusinessDetail = () => {
               <span className="shrink-0 hidden sm:inline">›</span>
               <span className="text-foreground font-medium truncate max-w-[120px] sm:max-w-[200px]">{listing.name}</span>
             </div>
-            <Button variant="ghost" size="sm" className="shrink-0" onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              <span className="hidden sm:inline">Back</span>
-            </Button>
           </div>
         </div>
       </div>
