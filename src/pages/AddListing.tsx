@@ -41,24 +41,56 @@ const AddListing = () => {
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
 
-  // Step 3
-  const [files, setFiles] = useState<File[]>([]);
+  // Step 3 - Document links
+  const [docLinks, setDocLinks] = useState<string[]>([""]);
+
+  const ALLOWED_DOMAINS = [
+    "drive.google.com", "docs.google.com", "storage.googleapis.com",
+    "dropbox.com", "www.dropbox.com", "dl.dropboxusercontent.com",
+    "onedrive.live.com", "1drv.ms", "sharepoint.com",
+    "icloud.com", "www.icloud.com",
+  ];
+
+  const isValidCloudLink = (url: string): boolean => {
+    if (!url.trim()) return true; // empty is ok
+    try {
+      const parsed = new URL(url.trim());
+      return ALLOWED_DOMAINS.some(d => parsed.hostname === d || parsed.hostname.endsWith("." + d));
+    } catch {
+      return false;
+    }
+  };
+
+  const getProviderLabel = (url: string): string => {
+    try {
+      const h = new URL(url.trim()).hostname;
+      if (h.includes("google")) return "Google Drive";
+      if (h.includes("dropbox")) return "Dropbox";
+      if (h.includes("onedrive") || h.includes("1drv") || h.includes("sharepoint")) return "OneDrive";
+      if (h.includes("icloud")) return "iCloud";
+    } catch {}
+    return "";
+  };
 
   const handleSubmit = async () => {
     if (!user) {
       toast.error("Please sign in to add a listing");
       return;
     }
+
+    const validLinks = docLinks.filter(l => l.trim() !== "");
+    const invalidLinks = validLinks.filter(l => !isValidCloudLink(l));
+    if (invalidLinks.length > 0) {
+      toast.error("Only Google Drive, Dropbox, OneDrive, or iCloud links are allowed");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Upload documents
-      const documentsUrl: string[] = [];
-      for (const file of files) {
-        const storageRef = ref(storage, `documents/${user.uid}/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        documentsUrl.push(url);
-      }
+      await addDoc(collection(db, "listings"), {
+        name, uen, category, district, address, postalCode, description,
+        phone, whatsapp, website, email,
+        documentsUrl: validLinks,
 
       await addDoc(collection(db, "listings"), {
         name, uen, category, district, address, postalCode, description,
