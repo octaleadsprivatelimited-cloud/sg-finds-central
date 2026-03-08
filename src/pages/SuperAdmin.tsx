@@ -137,16 +137,30 @@ const SuperAdmin = () => {
     toast.success("User deleted");
   };
 
-  const handleListingAction = (listingId: string, status: "approved" | "rejected") => {
-    setListings(prev => prev.map(l =>
-      l.id === listingId ? { ...l, status } : l
-    ));
-    toast.success(`Listing ${status}`);
+  const handleListingAction = async (listingId: string, status: "approved" | "rejected") => {
+    setActionLoading(listingId);
+    try {
+      await updateDoc(doc(db, "listings", listingId), { status });
+      setListings(prev => prev.map(l =>
+        l.id === listingId ? { ...l, status } : l
+      ));
+      toast.success(`Listing ${status}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update listing");
+    }
+    setActionLoading(null);
   };
 
-  const handleDeleteListing = (listingId: string) => {
-    setListings(prev => prev.filter(l => l.id !== listingId));
-    toast.success("Listing deleted");
+  const handleDeleteListing = async (listingId: string) => {
+    setActionLoading(listingId);
+    try {
+      await deleteDoc(doc(db, "listings", listingId));
+      setListings(prev => prev.filter(l => l.id !== listingId));
+      toast.success("Listing deleted from database");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete listing");
+    }
+    setActionLoading(null);
   };
 
   const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
