@@ -106,24 +106,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background bg-noise">
-      {/* Mobile/Tablet: Sticky search bar below header */}
-      <div className="sticky top-14 z-40 md:hidden bg-card/95 backdrop-blur-xl border-b border-border/50 px-3 py-2">
-        <div className="flex items-center gap-1.5">
-          <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} iconOnly />
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Search businesses..."
-              className="h-9 pl-8 pr-3 text-sm bg-secondary/60 border-border/50 rounded-xl"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Button size="sm" variant="outline" className="h-9 px-2.5 border-accent/30 text-accent shrink-0" onClick={handleDetectLocation}>
-            <MapPin className="w-3.5 h-3.5" />
-          </Button>
-        </div>
-      </div>
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/50">
