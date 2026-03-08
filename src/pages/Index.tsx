@@ -144,7 +144,7 @@ const Index = () => {
                 </Select>
 
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
+                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-white/15 border-white/20 text-white backdrop-blur-sm">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
