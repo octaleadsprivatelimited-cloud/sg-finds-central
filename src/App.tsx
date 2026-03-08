@@ -42,6 +42,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/super-admin" element={<SuperAdmin />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/seed" element={<SeedFirestore />} />
             <Route path="/:citySlug" element={<CityCategory />} />
             <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
