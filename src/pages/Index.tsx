@@ -42,7 +42,7 @@ const DEMO_LISTINGS: (Listing)[] = [
 ];
 
 const Index = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchQuery, setSearchQuery } = useSearch();
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
