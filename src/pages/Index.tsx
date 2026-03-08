@@ -174,12 +174,6 @@ const Index = () => {
                 </Button>
               </div>
               
-              {/* Quick stats */}
-              <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-4 md:mt-6 text-[11px] md:text-xs text-muted-foreground">
-                <span><strong className="text-foreground">5,000+</strong> Businesses</span>
-                <span><strong className="text-foreground">15</strong> Categories</span>
-                <span><strong className="text-foreground">50+</strong> Districts</span>
-              </div>
 
               {/* Category Grid — desktop only, inside hero left block */}
               {!hasActiveFilters && (
