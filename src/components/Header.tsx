@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import SearchWithSuggestions from "./SearchWithSuggestions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useSearch } from "@/contexts/SearchContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
