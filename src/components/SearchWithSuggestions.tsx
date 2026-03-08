@@ -87,6 +87,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setFocused(true)}
+          onKeyDown={handleKeyDown}
         />
       )}
 
