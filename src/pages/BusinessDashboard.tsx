@@ -108,6 +108,7 @@ const BusinessDashboard = () => {
     setEditWebsite(listing.website || "");
     setEditEmail(listing.email || "");
     setEditDescription(listing.description || "");
+    setEditCustomSlug(listing.customSlug || toSlug(listing.name));
   };
 
   const saveEdit = () => {
