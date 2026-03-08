@@ -190,10 +190,7 @@ const Index = () => {
           </div>
         )}
 
-        {/* Featured on mobile/tablet (below hero) */}
-        <div className="lg:hidden">
-          <FeaturedListings listings={filtered} />
-        </div>
+        {/* Featured on mobile/tablet — hidden */}
 
         <ExclusiveDeals listings={filtered} />
 
