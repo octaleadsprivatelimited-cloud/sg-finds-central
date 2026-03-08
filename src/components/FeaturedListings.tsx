@@ -34,7 +34,7 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
           >
             {/* Cover image */}
             {listing.coverImage && (
-              <div className="h-36 overflow-hidden">
+              <div className="h-24 md:h-36 overflow-hidden">
                 <img
                   src={listing.coverImage}
                   alt={listing.name}
