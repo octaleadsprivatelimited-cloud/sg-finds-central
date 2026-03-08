@@ -490,10 +490,10 @@ const SuperAdmin = () => {
           <div className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search listings..."
-                  className="pl-10 bg-white border-slate-200"
+                  className="pl-10"
                   value={listingSearch}
                   onChange={(e) => setListingSearch(e.target.value)}
                 />
