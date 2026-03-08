@@ -169,6 +169,7 @@ const SignUp = () => {
       const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
       const result = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
       setConfirmResult(result);
+      setResendTimer(60);
       toast.success(`OTP sent to ${phone}`);
     } catch (err: any) {
       toast.error(err.message || "Failed to send OTP");
