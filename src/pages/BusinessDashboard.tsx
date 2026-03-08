@@ -483,7 +483,10 @@ const BusinessDashboard = () => {
                 <Textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
               <div className="flex gap-2 pt-2">
-                <Button className="flex-1" onClick={saveEdit} disabled={!!slugError}>Save Changes</Button>
+                <Button className="flex-1" onClick={saveEdit} disabled={!!slugError || saving}>
+                  {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
                 <Button variant="outline" onClick={() => setEditingListing(null)}>Cancel</Button>
               </div>
             </div>
