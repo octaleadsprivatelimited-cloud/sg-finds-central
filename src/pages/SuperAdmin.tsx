@@ -155,7 +155,7 @@ const SuperAdmin = () => {
 
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-1">
-          <p className={`text-xs text-slate-400 uppercase tracking-wider px-3 mb-2 ${sidebarCollapsed ? "hidden" : ""}`}>Main Menu</p>
+          <p className={`text-xs text-muted-foreground uppercase tracking-wider px-3 mb-2 ${sidebarCollapsed ? "hidden" : ""}`}>Main Menu</p>
           {navItems.map(item => (
             <button
               key={item.id}
