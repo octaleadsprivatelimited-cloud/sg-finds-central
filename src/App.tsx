@@ -40,6 +40,7 @@ const App = () => (
             <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
