@@ -329,7 +329,7 @@ const SignUp = () => {
                 <Input
                   type="password"
                   placeholder="Re-enter your password"
-                  className="h-10 text-sm"
+                  className="h-9 md:h-10 text-sm"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
