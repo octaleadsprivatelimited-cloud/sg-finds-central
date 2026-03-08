@@ -297,8 +297,8 @@ const SuperAdmin = () => {
 
             {/* Promo Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200">
-                <h3 className="font-semibold text-slate-800 mb-4">Recent Submissions</h3>
+              <div className="lg:col-span-2 bg-card rounded-2xl p-5 border border-border">
+                <h3 className="font-semibold text-foreground mb-4">Recent Submissions</h3>
                 <div className="space-y-3">
                   {listings.slice(0, 4).map((listing, i) => (
                     <div key={listing.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
