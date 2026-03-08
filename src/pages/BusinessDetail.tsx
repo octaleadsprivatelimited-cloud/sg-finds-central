@@ -7,7 +7,7 @@ import ReviewSection from "@/components/ReviewSection";
 import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
-import { DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
+import { DEFAULT_OPERATING_HOURS, type SpecialHours } from "@/components/ListingCard";
 import { toSlug } from "@/lib/url-helpers";
 import PhotoGallery from "@/components/business-detail/PhotoGallery";
 import BusinessHeader from "@/components/business-detail/BusinessHeader";
