@@ -43,7 +43,6 @@ const Header = () => {
       <Link to="/signup" className="group block bg-[hsl(220,60%,15%)] text-white hover:bg-[hsl(220,60%,20%)] transition-all cursor-pointer">
         <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-center text-[11px] sm:text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="text-sm sm:text-base">🚀</span>
             <span className="font-bold hidden sm:inline">List your business for FREE — Reach thousands of customers</span>
             <span className="font-bold sm:hidden">FREE Business Listing →</span>
             <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-[11px] font-bold group-hover:bg-yellow-300 transition-colors">
