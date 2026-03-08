@@ -77,7 +77,7 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
 
   return (
     <div
-      className={`glass-card rounded-xl p-4 hover-lift cursor-pointer animate-fade-in group ${listing.featured ? "gradient-border" : ""}`}
+      className={`glass-card rounded-xl p-3 sm:p-4 hover-lift cursor-pointer animate-fade-in group overflow-hidden ${listing.featured ? "gradient-border" : ""}`}
       onClick={handleClick}
     >
       <div className="flex items-start justify-between gap-3">
