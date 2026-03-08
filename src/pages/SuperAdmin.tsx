@@ -712,13 +712,13 @@ const SuperAdmin = () => {
                 <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={selectedListing.phone || "—"} />
               </div>
               <div className="text-sm">
-                <span className="text-slate-500">Address:</span>
-                <p className="text-slate-800">{selectedListing.address}</p>
+                <span className="text-muted-foreground">Address:</span>
+                <p className="text-foreground">{selectedListing.address}</p>
               </div>
               {selectedListing.description && (
                 <div className="text-sm">
-                  <span className="text-slate-500">Description:</span>
-                  <p className="text-slate-800">{selectedListing.description}</p>
+                  <span className="text-muted-foreground">Description:</span>
+                  <p className="text-foreground">{selectedListing.description}</p>
                 </div>
               )}
               <div className="flex gap-2 pt-4 border-t border-slate-200">
