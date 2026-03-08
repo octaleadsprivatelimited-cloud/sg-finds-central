@@ -75,9 +75,6 @@ const Header = () => {
             <Button variant="outline" size="sm" asChild className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50">
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-1.5" />Add Listing</Link>
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-primary" />}
-            </Button>
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
                 <LogOut className="w-4 h-4 mr-1.5" />Sign Out
