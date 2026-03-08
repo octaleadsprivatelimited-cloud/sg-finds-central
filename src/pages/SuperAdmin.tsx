@@ -233,6 +233,22 @@ const SuperAdmin = () => {
         </div>
       </aside>
 
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-center justify-around py-2 px-1">
+        {navItems.map(item => (
+          <button
+            key={item.id}
+            onClick={() => setActiveNav(item.id)}
+            className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-xs transition-colors ${
+              activeNav === item.id ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            {item.icon}
+            <span className="text-[10px]">{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {/* Top Header */}
