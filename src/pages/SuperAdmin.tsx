@@ -634,8 +634,8 @@ const SuperAdmin = () => {
         {/* Settings Tab */}
         {activeNav === "settings" && (
           <div className="p-6 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h3 className="font-semibold text-slate-800 mb-4">Platform Settings</h3>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-4">Platform Settings</h3>
               <div className="space-y-4">
                 <SettingRow title="Auto-approve listings" description="Skip manual review for verified owners" enabled={false} />
                 <SettingRow title="Email notifications" description="Send alerts for new submissions" enabled={true} />
