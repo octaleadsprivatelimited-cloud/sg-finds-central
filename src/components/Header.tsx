@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,7 +9,7 @@ import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 
 const Header = () => {
-  const { user, isAdmin, isSuperAdmin, isBusinessOwner } = useAuth();
+  const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -21,12 +21,12 @@ const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-50 glass border-b border-border/50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
-              <Search className="w-4 h-4 text-primary-foreground" />
+        <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
+          <Link to="/" className="flex items-center gap-2 shrink-0 group">
+            <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
+              <Search className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg tracking-tight hidden sm:block">
+            <span className="font-bold text-lg tracking-tight hidden lg:block">
               <span className="text-gradient">SG</span>
               <span className="text-foreground">Directory</span>
             </span>
@@ -36,41 +36,28 @@ const Header = () => {
           <nav className="hidden md:flex items-center gap-1.5">
             {isSuperAdmin && (
               <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/super-admin">
-                  <Crown className="w-4 h-4 mr-1.5 text-warning" />
-                  Super Admin
-                </Link>
+                <Link to="/super-admin"><Crown className="w-4 h-4 mr-1.5 text-warning" />Super Admin</Link>
               </Button>
             )}
             {isAdmin && !isSuperAdmin && (
               <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/admin">
-                  <Shield className="w-4 h-4 mr-1.5" />
-                  Admin
-                </Link>
+                <Link to="/admin"><Shield className="w-4 h-4 mr-1.5" />Admin</Link>
               </Button>
             )}
             {user && (
               <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/dashboard">
-                  <LayoutDashboard className="w-4 h-4 mr-1.5" />
-                  Dashboard
-                </Link>
+                <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-1.5" />Dashboard</Link>
               </Button>
             )}
             <Button variant="outline" size="sm" asChild className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50">
-              <Link to="/add-listing">
-                <Plus className="w-4 h-4 mr-1.5" />
-                Add Listing
-              </Link>
+              <Link to="/add-listing"><Plus className="w-4 h-4 mr-1.5" />Add Listing</Link>
             </Button>
             <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10" onClick={toggleTheme}>
               {theme === "dark" ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-primary" />}
             </Button>
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
-                <LogOut className="w-4 h-4 mr-1.5" />
-                Sign Out
+                <LogOut className="w-4 h-4 mr-1.5" />Sign Out
               </Button>
             ) : (
               <Button size="sm" onClick={() => setShowAuth(true)} className="bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary text-primary-foreground border-0">
@@ -80,7 +67,7 @@ const Header = () => {
           </nav>
 
           {/* Mobile toggle */}
-          <button className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
+          <button className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors shrink-0" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>

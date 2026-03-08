@@ -107,6 +107,25 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background bg-noise">
+      {/* Mobile/Tablet: Sticky search bar below header */}
+      <div className="sticky top-14 z-40 md:hidden bg-card/95 backdrop-blur-xl border-b border-border/50 px-3 py-2">
+        <div className="flex items-center gap-1.5">
+          <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} iconOnly />
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Search businesses..."
+              className="h-9 pl-8 pr-3 text-sm bg-secondary/60 border-border/50 rounded-xl"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Button size="sm" variant="outline" className="h-9 px-2.5 border-accent/30 text-accent shrink-0" onClick={handleDetectLocation}>
+            <MapPin className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </div>
+
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/50">
         <div className="bg-hero-gradient absolute inset-0 pointer-events-none" />
@@ -115,25 +134,25 @@ const Index = () => {
         <div className="absolute top-8 right-[10%] w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-2xl animate-float" />
         <div className="absolute bottom-4 left-[15%] w-16 h-16 rounded-full bg-gradient-to-br from-warning/15 to-destructive/15 blur-2xl animate-float" style={{ animationDelay: '1s' }} />
         
-        <div className="container mx-auto px-4 py-10 md:py-16 relative z-10">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="container mx-auto px-4 py-6 md:py-16 relative z-10">
+          <div className="hidden md:flex items-center gap-2 mb-3">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-medium text-primary">
               <Zap className="w-3 h-3" />
               Singapore's #1 Business Directory
             </div>
           </div>
           
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-2 leading-tight">
+          <h1 className="text-xl md:text-5xl font-extrabold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
             Discover <span className="text-gradient">Amazing</span> Local{" "}
             <span className="text-gradient-warm">Businesses</span>
           </h1>
-          <p className="text-muted-foreground text-sm md:text-base mb-8 max-w-xl">
-            Search across <span className="font-semibold text-primary">5,000+</span> verified businesses. Find exactly what you need, right in your neighbourhood.
+          <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-xl">
+            Search across <span className="font-semibold text-primary">5,000+</span> verified businesses in your neighbourhood.
           </p>
 
-          {/* Search bar */}
-          <div className="flex flex-col sm:flex-row items-stretch gap-0 max-w-3xl">
-            <div className="flex items-center gap-2 px-4 py-3 border border-border rounded-t-xl sm:rounded-t-none sm:rounded-l-xl bg-card sm:border-r-0 sm:min-w-[160px]">
+          {/* Desktop search bar */}
+          <div className="hidden md:flex flex-col sm:flex-row items-stretch gap-0 max-w-3xl">
+            <div className="flex items-center gap-2 px-4 py-3 border border-border rounded-l-xl bg-card border-r-0 min-w-[160px]">
               <MapPin className="w-4 h-4 text-accent shrink-0" />
               <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} />
             </div>
@@ -145,16 +164,16 @@ const Index = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button className="h-auto min-h-[48px] rounded-b-xl sm:rounded-b-none sm:rounded-r-xl px-8 bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary border-0 text-primary-foreground font-semibold text-sm">
+            <Button className="h-auto min-h-[48px] rounded-r-xl px-8 bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary border-0 text-primary-foreground font-semibold text-sm">
               <Search className="w-5 h-5 mr-2" />
               Search
             </Button>
           </div>
 
           {/* Filter row */}
-          <div className="flex flex-wrap gap-2 mt-4 max-w-3xl">
+          <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-3xl">
             <Select value={district} onValueChange={setDistrict}>
-              <SelectTrigger className="w-auto min-w-[140px] h-9 text-sm bg-card/80 backdrop-blur-sm border-border/60">
+              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card/80 backdrop-blur-sm border-border/60">
                 <SelectValue placeholder="All Districts" />
               </SelectTrigger>
               <SelectContent>
@@ -165,7 +184,7 @@ const Index = () => {
             </Select>
 
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-auto min-w-[140px] h-9 text-sm bg-card/80 backdrop-blur-sm border-border/60">
+              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card/80 backdrop-blur-sm border-border/60">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -175,24 +194,24 @@ const Index = () => {
               </SelectContent>
             </Select>
 
-            <Button variant="outline" size="sm" className="h-9 border-accent/30 text-accent hover:bg-accent/10 hover:border-accent/50" onClick={handleDetectLocation}>
+            <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm border-accent/30 text-accent hover:bg-accent/10 hover:border-accent/50 hidden md:flex" onClick={handleDetectLocation}>
               <MapPin className="w-3.5 h-3.5 mr-1.5" />
               Near Me
             </Button>
           </div>
           
           {/* Quick stats */}
-          <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-6 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 md:gap-6 mt-4 md:mt-6 text-[10px] md:text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success animate-pulse" />
               <span><span className="font-semibold text-foreground">5,000+</span> Businesses</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
               <span><span className="font-semibold text-foreground">15</span> Categories</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-warning animate-pulse" style={{ animationDelay: '1s' }} />
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-warning animate-pulse" style={{ animationDelay: '1s' }} />
               <span><span className="font-semibold text-foreground">50+</span> Districts</span>
             </div>
           </div>
