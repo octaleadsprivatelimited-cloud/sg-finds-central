@@ -5,8 +5,9 @@ import SearchFilters from "@/components/SearchFilters";
 import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import CitySelector from "@/components/CitySelector";
+import CategoryGrid from "@/components/CategoryGrid";
 import MapView from "@/components/MapView";
-import { Building2, MapPin, List, Map as MapIcon } from "lucide-react";
+import { Building2, MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -110,8 +111,6 @@ const Index = () => {
         const userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setMapCenter(userLoc);
         setShowMap(true);
-
-        // Sort listings by distance and only show ones within 15km
         const withDistance = listings
           .filter((l) => l.lat && l.lng)
           .map((l) => ({
@@ -125,7 +124,6 @@ const Index = () => {
           setListings(withDistance);
           toast.success(`Found ${withDistance.length} businesses near you`);
         } else {
-          // Show all if none within radius
           toast.info("No businesses within 15km — showing all results sorted by distance");
           const allSorted = listings
             .filter((l) => l.lat && l.lng)
@@ -141,6 +139,8 @@ const Index = () => {
     );
   };
 
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
+
   return (
     <div className="min-h-screen bg-background bg-noise">
       {/* Hero */}
@@ -150,12 +150,12 @@ const Index = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary/8 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
-        <div className="relative container mx-auto px-4 py-10 md:py-16">
+        <div className="relative container mx-auto px-4 py-10 md:py-14">
           <div className="max-w-2xl mx-auto text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium backdrop-blur-sm">
-                <Building2 className="w-4 h-4" />
-                Business Directory
+                <Search className="w-4 h-4" />
+                Search across <span className="font-bold">5,000+</span> Businesses
               </div>
               <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} />
             </div>
@@ -182,15 +182,21 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Category Grid */}
+      {!hasActiveFilters && <CategoryGrid />}
+
       {/* Results */}
       <section className="container mx-auto px-4 py-8">
         {/* Featured */}
         <FeaturedListings listings={filtered} />
 
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{filtered.length}</span> businesses found
-          </p>
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{filtered.length}</span> businesses found
+            </p>
+          </div>
           <div className="md:hidden">
             <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
               {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
