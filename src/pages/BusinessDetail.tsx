@@ -186,6 +186,30 @@ const BusinessDetail = () => {
                       });
                     })()}
                   </div>
+                  {/* Special / Holiday Hours */}
+                  {listing.specialHours && listing.specialHours.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
+                        <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
+                        Special Hours
+                      </h4>
+                      <div className="space-y-1.5 text-sm">
+                        {listing.specialHours.map((sh, i) => {
+                          const dateStr = sh.date ? new Date(sh.date + "T00:00:00").toLocaleDateString("en-SG", { day: "numeric", month: "short", year: "numeric" }) : "";
+                          const time = sh.closed ? "Closed" : `${formatTime(sh.open)} – ${formatTime(sh.close)}`;
+                          return (
+                            <div key={i} className="flex items-center justify-between max-w-sm">
+                              <span className="text-muted-foreground">{sh.label || dateStr}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">{dateStr}</span>
+                                <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>{time}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
 
