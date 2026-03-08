@@ -5,18 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSearch } from "@/contexts/SearchContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 
-interface HeaderProps {
-  searchQuery?: string;
-  onSearchChange?: (val: string) => void;
-}
-
-const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
+const Header = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { searchQuery, setSearchQuery } = useSearch();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
