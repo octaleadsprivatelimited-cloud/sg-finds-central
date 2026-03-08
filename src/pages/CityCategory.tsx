@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
 import { BUSINESS_CATEGORIES } from "@/lib/districts";
 import ListingCard, { type Listing } from "@/components/ListingCard";
+import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
 // Demo listings for SEO pages
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
@@ -51,7 +52,7 @@ const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating
   },
 ];
 
-const toSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 
 const CityCategory = () => {
   const { citySlug, categorySlug } = useParams<{ citySlug: string; categorySlug?: string }>();
@@ -157,7 +158,7 @@ const CityCategory = () => {
                   <ListingCard
                     key={listing.id}
                     listing={listing}
-                    onSelect={(l) => navigate(`/business/${toSlug(l.name)}`)}
+                    onSelect={(l) => navigate(getBusinessUrl(l))}
                   />
                 ))}
               </div>
