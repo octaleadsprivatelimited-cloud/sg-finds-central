@@ -65,13 +65,7 @@ const DEMO_LISTINGS: (Listing)[] = [
   { id: "15", name: "BuildRight Contractors", uen: "201800010P", category: "Construction & Renovation", district: "Ang Mo Kio", address: "53 Ang Mo Kio Ave 3, #01-01, Singapore 569933", postalCode: "569933", phone: "+65 6600 1010", description: "HDB & condo renovation specialists with 15 years of experience.", status: "approved", ownerId: "demo", lat: 1.3691, lng: 103.8454, verified: true, rating: 4.5, reviewCount: 121, coverImage: construction1, operatingHours: { ...DEFAULT_OPERATING_HOURS, Saturday: { open: "08:00", close: "16:00" } } },
 ];
 
-// Hero slides
-const HERO_SLIDES = [
-  { image: food1, subtitle: "Local Favourites", title: "Discover Singapore's Best", cta: "Browse All" },
-  { image: tech1, subtitle: "Trusted Experts", title: "Technology & IT Services", cta: "Explore Tech" },
-  { image: beauty1, subtitle: "Wellness & Beauty", title: "Pamper Yourself Today", cta: "Find Salons" },
-  { image: realestate1, subtitle: "Property Experts", title: "Find Your Dream Space", cta: "View Properties" },
-];
+// Hero slides removed
 
 const Index = () => {
   const { searchQuery, setSearchQuery, setListings: setSearchListings } = useSearch();
