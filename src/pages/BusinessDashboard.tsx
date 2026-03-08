@@ -293,6 +293,25 @@ const BusinessDashboard = () => {
     }
   };
 
+  const [resubmitting, setResubmitting] = useState<string | null>(null);
+
+  const resubmitListing = async (id: string) => {
+    setResubmitting(id);
+    try {
+      await updateDoc(doc(db, "listings", id), {
+        status: "pending_approval",
+        rejectionReason: "",
+      });
+      setListings(prev => prev.map(l =>
+        l.id === id ? { ...l, status: "pending_approval" } : l
+      ));
+      toast.success("Listing resubmitted for review!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to resubmit listing");
+    }
+    setResubmitting(null);
+  };
+
   return (
     <div className="min-h-screen bg-secondary/30">
       <div className="container mx-auto px-4 py-6 max-w-6xl">
