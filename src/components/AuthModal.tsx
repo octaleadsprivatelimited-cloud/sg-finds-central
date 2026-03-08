@@ -99,6 +99,24 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     setLoading(false);
   };
 
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email, {
+        url: `${window.location.origin}/reset-password`,
+      });
+      toast.success("Password reset email sent! Check your inbox.");
+      setMode("login");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send reset email");
+    }
+    setLoading(false);
+  };
+
   const handleSocialSignIn = async (providerName: string) => {
     setSocialLoading(providerName);
     try {
