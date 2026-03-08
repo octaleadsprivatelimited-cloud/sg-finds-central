@@ -309,15 +309,17 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           </div>
         ) : null}
 
-        <p className="text-center text-xs sm:text-sm text-muted-foreground">
-          {mode === "login" ? "Don't have an account? " : "Already have an account? "}
-          <button
-            className="text-primary font-medium hover:underline"
-            onClick={() => setMode(mode === "login" ? "signup" : "login")}
-          >
-            {mode === "login" ? "Sign up" : "Sign in"}
-          </button>
-        </p>
+        {mode !== "forgot" && (
+          <p className="text-center text-xs sm:text-sm text-muted-foreground">
+            {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+            <button
+              className="text-primary font-medium hover:underline"
+              onClick={() => setMode(mode === "login" ? "signup" : "login")}
+            >
+              {mode === "login" ? "Sign up" : "Sign in"}
+            </button>
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );
