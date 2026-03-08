@@ -133,7 +133,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
                 <button
                   key={item.id}
                   className="w-full flex items-center gap-3 px-3 py-2 hover:bg-accent/10 transition-colors text-left"
-                  onClick={() => handleSelect(item.name)}
+                  onClick={() => handleBusinessSelect(item)}
                 >
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center shrink-0">
                     <Search className="w-3.5 h-3.5 text-primary" />
