@@ -36,8 +36,8 @@ const Header = () => {
           </Link>
 
           {/* Mobile/Tablet: Compact search bar in header */}
-          <div className="flex items-center gap-1.5 flex-1 max-w-md md:hidden mx-2">
-            <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-9 overflow-hidden">
+          <div className="flex items-center gap-1.5 flex-1 max-w-md md:hidden mx-2 relative">
+            <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-9">
               <div className="flex items-center justify-center w-8 h-9 shrink-0">
                 <MapPin className="w-3.5 h-3.5 text-accent" />
               </div>
@@ -47,8 +47,8 @@ const Header = () => {
 
           {/* Desktop: Search bar in header for non-home pages */}
           {!isHome && (
-            <div className="hidden md:flex items-center flex-1 max-w-lg mx-4">
-              <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-9 overflow-hidden">
+            <div className="hidden md:flex items-center flex-1 max-w-lg mx-4 relative">
+              <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-9">
                 <div className="flex items-center justify-center w-9 h-9 shrink-0">
                   <Search className="w-4 h-4 text-muted-foreground" />
                 </div>
