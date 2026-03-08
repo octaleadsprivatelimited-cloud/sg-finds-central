@@ -101,6 +101,19 @@ const SuperAdmin = () => {
     fetchListings();
   }, []);
 
+  // Fetch featured tickets
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const snap = await getDocs(collection(db, "featured_tickets"));
+        if (!snap.empty) {
+          setFeaturedTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        }
+      } catch {}
+    };
+    fetchTickets();
+  }, []);
+
   // Stats
   const totalUsers = users.length;
   const activeUsers = users.filter(u => u.status === "active").length;
