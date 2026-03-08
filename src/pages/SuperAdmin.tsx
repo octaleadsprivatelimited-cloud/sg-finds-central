@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Users, Building2, BarChart3, Settings, Search, MoreHorizontal,
   Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, 
