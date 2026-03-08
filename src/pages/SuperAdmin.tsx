@@ -339,14 +339,14 @@ const SuperAdmin = () => {
             </div>
 
             {/* Transactions Table */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-              <div className="flex items-center justify-between p-5 border-b border-slate-100">
-                <h3 className="font-semibold text-slate-800">Recent Users</h3>
+            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="flex items-center justify-between p-5 border-b border-border">
+                <h3 className="font-semibold text-foreground">Recent Users</h3>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search..."
-                    className="pl-9 h-9 w-48 bg-slate-50 border-slate-200"
+                    className="pl-9 h-9 w-48"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
                   />
