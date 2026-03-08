@@ -19,7 +19,7 @@ const MAP_STYLES = [
 
 const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "", // User must add their Google Maps API key
+    googleMapsApiKey: "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc",
   });
 
   if (!isLoaded) {
