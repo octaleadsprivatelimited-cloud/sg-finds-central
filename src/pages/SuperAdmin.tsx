@@ -157,18 +157,42 @@ const SuperAdmin = () => {
     toast.success("User deleted");
   };
 
-  const handleListingAction = async (listingId: string, status: "approved" | "rejected") => {
+  const handleListingApprove = async (listingId: string) => {
     setActionLoading(listingId);
     try {
-      await updateDoc(doc(db, "listings", listingId), { status });
+      await updateDoc(doc(db, "listings", listingId), { status: "approved", rejectionReason: "" });
       setListings(prev => prev.map(l =>
-        l.id === listingId ? { ...l, status } : l
+        l.id === listingId ? { ...l, status: "approved" } : l
       ));
-      toast.success(`Listing ${status}`);
+      toast.success("Listing approved");
     } catch (err: any) {
       toast.error(err.message || "Failed to update listing");
     }
     setActionLoading(null);
+  };
+
+  const handleListingReject = async () => {
+    if (!rejectingListingId) return;
+    if (!rejectionReason.trim()) {
+      toast.error("Please provide a reason for rejection");
+      return;
+    }
+    setActionLoading(rejectingListingId);
+    try {
+      await updateDoc(doc(db, "listings", rejectingListingId), {
+        status: "rejected",
+        rejectionReason: rejectionReason.trim(),
+      });
+      setListings(prev => prev.map(l =>
+        l.id === rejectingListingId ? { ...l, status: "rejected" } : l
+      ));
+      toast.success("Listing rejected");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update listing");
+    }
+    setActionLoading(null);
+    setRejectingListingId(null);
+    setRejectionReason("");
   };
 
   const handleDeleteListing = async (listingId: string) => {
