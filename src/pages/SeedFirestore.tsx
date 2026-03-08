@@ -147,10 +147,10 @@ const SeedFirestore = () => {
           )}
 
           {done && (
-            <div className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/20 p-4 mb-6">
-              <CheckCircle2 className="w-5 h-5 text-green-500" />
-              <p className="text-sm text-green-700 dark:text-green-400">
-                Data seeded successfully! Go to the <a href="/" className="underline font-medium">homepage</a> to see it live.
+            <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4 mb-6">
+              <CheckCircle2 className="w-5 h-5 text-primary" />
+              <p className="text-sm text-foreground">
+                Data seeded successfully! Go to the <a href="/" className="underline font-medium text-primary">homepage</a> to see it live.
               </p>
             </div>
           )}
