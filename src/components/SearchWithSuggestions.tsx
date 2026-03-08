@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Search, MapPin, Star, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
+import { getBusinessUrl } from "@/lib/url-helpers";
 import { cn } from "@/lib/utils";
 
 interface SearchWithSuggestionsProps {
@@ -61,6 +62,12 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
     if (location.pathname !== "/") {
       navigate("/");
     }
+  };
+
+  const handleBusinessSelect = (item: { name: string; category: string; district: string }) => {
+    setSearchQuery("");
+    setFocused(false);
+    navigate(getBusinessUrl(item));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -126,7 +133,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
                 <button
                   key={item.id}
                   className="w-full flex items-center gap-3 px-3 py-2 hover:bg-accent/10 transition-colors text-left"
-                  onClick={() => handleSelect(item.name)}
+                  onClick={() => handleBusinessSelect(item)}
                 >
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center shrink-0">
                     <Search className="w-3.5 h-3.5 text-primary" />
