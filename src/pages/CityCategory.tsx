@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
 import { BUSINESS_CATEGORIES } from "@/lib/districts";
 import ListingCard, { type Listing } from "@/components/ListingCard";
+import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
 // Demo listings for SEO pages
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
