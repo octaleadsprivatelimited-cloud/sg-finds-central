@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import AIContentGenerator from "@/components/AIContentGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -194,6 +195,16 @@ const AddListing = () => {
                   <Label>Description</Label>
                   <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Briefly describe your business..." rows={3} />
                 </div>
+                {name && category && district && (
+                  <div className="sm:col-span-2 border border-border rounded-xl p-4">
+                    <AIContentGenerator
+                      businessName={name}
+                      category={category}
+                      district={district}
+                      onGenerated={(content) => setDescription(content)}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}

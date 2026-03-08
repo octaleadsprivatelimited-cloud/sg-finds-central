@@ -10,6 +10,8 @@ import AddListing from "./pages/AddListing";
 import Admin from "./pages/Admin";
 import SuperAdmin from "./pages/SuperAdmin";
 import BusinessDashboard from "./pages/BusinessDashboard";
+import BusinessDetail from "./pages/BusinessDetail";
+import CityCategory from "./pages/CityCategory";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -25,11 +27,14 @@ const App = () => (
           <Header />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/business/:slug" element={<BusinessDetail />} />
             <Route path="/add-listing" element={<AddListing />} />
             <Route path="/dashboard" element={<BusinessDashboard />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/super-admin" element={<SuperAdmin />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/:citySlug" element={<CityCategory />} />
+            <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
