@@ -51,25 +51,25 @@ const CategoryGrid = () => {
   return (
     <section>
       <h2 className="hidden md:block text-lg font-bold text-foreground mb-4">Browse by Category</h2>
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-3">
+      <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-1.5 md:gap-3">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.name}
             onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-            className="group flex flex-col items-center gap-2 p-3 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+            className="group flex flex-col items-center gap-1 md:gap-2 p-1.5 md:p-3 rounded-lg md:rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
           >
-            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
               <img
                 src={cat.image}
                 alt={cat.name}
                 width={32}
                 height={32}
-                className="w-8 h-8 object-contain"
+                className="w-5 h-5 md:w-8 md:h-8 object-contain"
                 loading="eager"
                 decoding="async"
               />
             </div>
-            <span className="text-[10px] md:text-xs font-medium text-foreground text-center leading-tight line-clamp-2">
+            <span className="text-[8px] md:text-xs font-medium text-foreground text-center leading-tight line-clamp-2">
               {cat.name}
             </span>
           </button>
