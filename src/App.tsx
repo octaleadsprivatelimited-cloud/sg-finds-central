@@ -29,6 +29,7 @@ const App = () => (
             <Route path="/dashboard" element={<BusinessDashboard />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/super-admin" element={<SuperAdmin />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
