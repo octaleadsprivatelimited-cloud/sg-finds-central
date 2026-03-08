@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Label } from "@/components/ui/label";
@@ -62,55 +62,8 @@ const roleBadge = (role: string) => {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${r.bg} ${r.text}`}>{r.label}</span>;
 };
 
-// ── Chart data ──
-const listingTrendData = [
-  { month: "Jan", current: 12, previous: 8 },
-  { month: "Feb", current: 19, previous: 14 },
-  { month: "Mar", current: 15, previous: 18 },
-  { month: "Apr", current: 27, previous: 16 },
-  { month: "May", current: 23, previous: 21 },
-  { month: "Jun", current: 34, previous: 22 },
-  { month: "Jul", current: 29, previous: 26 },
-  { month: "Aug", current: 38, previous: 28 },
-  { month: "Sep", current: 32, previous: 24 },
-  { month: "Oct", current: 41, previous: 30 },
-  { month: "Nov", current: 36, previous: 33 },
-  { month: "Dec", current: 48, previous: 35 },
-];
-
-const categoryData = [
-  { name: "F&B", value: 35, color: "#5c6ac4" },
-  { name: "Tech", value: 25, color: "#47c1bf" },
-  { name: "Retail", value: 20, color: "#f49342" },
-  { name: "Services", value: 20, color: "#9c6ade" },
-];
-
-const sparkData = [3, 5, 4, 7, 5, 8, 6, 9, 7, 10, 8, 12];
-
-const breakdownData = [
-  { label: "Total listings", value: "384", change: "↑ 28%", positive: true },
-  { label: "Pending review", value: "12", change: "↑ 4%", positive: false },
-  { label: "Rejected", value: "8", change: "↓ 39%", positive: true },
-  { label: "Active listings", value: "364", change: "↑ 31%", positive: true },
-  { label: "Featured", value: "24", change: "↑ 58%", positive: true },
-  { label: "Expired", value: "0", change: "—", positive: true },
-  { label: "Categories", value: "15", change: "↑ 47%", positive: true },
-  { label: "Total views", value: "10,317", change: "↑ 31%", positive: true },
-];
-
-const avgOrderData = [
-  { month: "Feb", value: 45 }, { month: "Apr", value: 52 },
-  { month: "Jun", value: 68 }, { month: "Aug", value: 55 },
-  { month: "Oct", value: 72 }, { month: "Dec", value: 63 },
-];
-
-const topCategoriesData = [
-  { name: "Food & Beverage", value: 142 },
-  { name: "Technology & IT", value: 89 },
-  { name: "Retail & Shopping", value: 67 },
-  { name: "Healthcare", value: 45 },
-  { name: "Beauty & Wellness", value: 41 },
-];
+const CHART_COLORS = ["#5c6ac4", "#47c1bf", "#f49342", "#9c6ade", "#e06c9f", "#50b83c", "#de3618", "#f4d03f"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type NavItem = "dashboard" | "users" | "listings" | "tickets" | "statistics" | "settings";
 
@@ -142,6 +95,31 @@ const SuperAdmin = () => {
   }, []);
 
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        if (!snap.empty) {
+          setUsers(snap.docs.map(d => {
+            const data = d.data();
+            return {
+              id: d.id,
+              email: data.email || "",
+              displayName: data.displayName || data.name || "Unknown",
+              role: data.role || "user",
+              status: data.status || "active",
+              joinedAt: data.joinedAt || data.createdAt?.toDate?.()?.toISOString?.()?.split("T")[0] || "—",
+              listingsCount: data.listingsCount || 0,
+              lastActive: data.lastActive || "—",
+              phone: data.phone || "",
+            } as PlatformUser;
+          }));
+        }
+      } catch {}
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
     const fetchTickets = async () => {
       try {
         const snap = await getDocs(collection(db, "featured_tickets"));
@@ -156,6 +134,71 @@ const SuperAdmin = () => {
   const totalListings = listings.length;
   const approvedListings = listings.filter(l => l.status === "approved").length;
   const pendingListings = listings.filter(l => l.status === "pending_approval").length;
+  const rejectedListings = listings.filter(l => l.status === "rejected").length;
+  const featuredListings = listings.filter(l => l.featured).length;
+
+  // Compute category distribution from real data
+  const categoryData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    listings.forEach(l => { counts[l.category] = (counts[l.category] || 0) + 1; });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const total = listings.length || 1;
+    return sorted.slice(0, 4).map(([name, count], i) => ({
+      name: name.length > 12 ? name.split(" ")[0] : name,
+      fullName: name,
+      value: Math.round((count / total) * 100),
+      count,
+      color: CHART_COLORS[i % CHART_COLORS.length],
+    }));
+  }, [listings]);
+
+  // Top categories (top 5)
+  const topCategoriesData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    listings.forEach(l => { counts[l.category] = (counts[l.category] || 0) + 1; });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, value]) => ({ name, value }));
+  }, [listings]);
+
+  // Listing trend by month (from createdAt)
+  const listingTrendData = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const monthCounts: Record<string, { current: number; previous: number }> = {};
+    MONTHS.forEach(m => { monthCounts[m] = { current: 0, previous: 0 }; });
+    listings.forEach(l => {
+      if (!l.createdAt) return;
+      const d = l.createdAt.toDate ? l.createdAt.toDate() : new Date(l.createdAt);
+      const year = d.getFullYear();
+      const month = MONTHS[d.getMonth()];
+      if (year === currentYear) monthCounts[month].current++;
+      else if (year === currentYear - 1) monthCounts[month].previous++;
+    });
+    return MONTHS.map(m => ({ month: m, ...monthCounts[m] }));
+  }, [listings]);
+
+  // Sparkline data based on listing trend
+  const sparkData = useMemo(() => listingTrendData.map(d => d.current), [listingTrendData]);
+
+  // Platform breakdown from real data
+  const breakdownData = useMemo(() => {
+    const uniqueCategories = new Set(listings.map(l => l.category)).size;
+    return [
+      { label: "Total listings", value: String(totalListings), change: `${totalListings}`, positive: true },
+      { label: "Pending review", value: String(pendingListings), change: pendingListings > 0 ? `${pendingListings} pending` : "—", positive: pendingListings === 0 },
+      { label: "Rejected", value: String(rejectedListings), change: rejectedListings > 0 ? `${rejectedListings} rejected` : "—", positive: rejectedListings === 0 },
+      { label: "Active listings", value: String(approvedListings), change: `${approvedListings}`, positive: true },
+      { label: "Featured", value: String(featuredListings), change: featuredListings > 0 ? `${featuredListings} featured` : "—", positive: true },
+      { label: "Categories", value: String(uniqueCategories), change: `${uniqueCategories} types`, positive: true },
+    ];
+  }, [totalListings, pendingListings, rejectedListings, approvedListings, featuredListings, listings]);
+
+  // Avg views placeholder (computed from listing count per month)
+  const avgOrderData = useMemo(() => {
+    return listingTrendData.filter((_, i) => i % 2 === 1).map(d => ({ month: d.month, value: d.current }));
+  }, [listingTrendData]);
 
   const filteredUsers = users.filter(u =>
     u.displayName.toLowerCase().includes(userSearch.toLowerCase()) ||
@@ -342,10 +385,10 @@ const SuperAdmin = () => {
 
             {/* Metric cards row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <MetricCard title="Total Listings" value={String(totalListings)} change="↑ 28%" positive sparkColor="#5c6ac4" />
-              <MetricCard title="Active Users" value={String(activeUsers)} change="↑ 45%" positive sparkColor="#47c1bf" />
-              <MetricCard title="Approved" value={String(approvedListings)} change="↑ 31%" positive sparkColor="#5c6ac4" />
-              <MetricCard title="Pending" value={String(pendingListings)} change={pendingListings > 0 ? "↑ 33%" : "—"} positive={pendingListings === 0} sparkColor="#f49342" />
+              <MetricCard title="Total Listings" value={String(totalListings)} change={`${totalListings} total`} positive sparkColor="#5c6ac4" sparkData={sparkData} />
+              <MetricCard title="Active Users" value={String(activeUsers)} change={`${activeUsers} active`} positive sparkColor="#47c1bf" sparkData={sparkData} />
+              <MetricCard title="Approved" value={String(approvedListings)} change={`${approvedListings} approved`} positive sparkColor="#5c6ac4" sparkData={sparkData} />
+              <MetricCard title="Pending" value={String(pendingListings)} change={pendingListings > 0 ? `${pendingListings} pending` : "—"} positive={pendingListings === 0} sparkColor="#f49342" sparkData={sparkData} />
             </div>
 
             {/* Main chart + breakdown */}
@@ -459,7 +502,7 @@ const SuperAdmin = () => {
                         <span className="font-medium" style={{ color: "#202223" }}>{cat.value}</span>
                       </div>
                       <div className="h-1.5 rounded-full" style={{ background: "#f1f2f3" }}>
-                        <div className="h-full rounded-full" style={{ background: "#5c6ac4", width: `${(cat.value / 142) * 100}%` }} />
+                        <div className="h-full rounded-full" style={{ background: "#5c6ac4", width: `${(cat.value / (topCategoriesData[0]?.value || 1)) * 100}%` }} />
                       </div>
                     </div>
                   ))}
@@ -857,7 +900,7 @@ const SuperAdmin = () => {
 };
 
 // ── Sub-components ──
-const MetricCard = ({ title, value, change, positive, sparkColor }: { title: string; value: string; change: string; positive: boolean; sparkColor: string }) => {
+const MetricCard = ({ title, value, change, positive, sparkColor, sparkData }: { title: string; value: string; change: string; positive: boolean; sparkColor: string; sparkData: number[] }) => {
   const data = sparkData.map((v, i) => ({ i, v }));
   return (
     <div className="rounded-xl border p-4" style={{ background: "white", borderColor: "#e1e3e5" }}>
