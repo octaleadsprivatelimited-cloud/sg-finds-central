@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -32,10 +32,8 @@ import financial1 from "@/assets/businesses/financial1.jpg";
 import logistics1 from "@/assets/businesses/logistics1.jpg";
 import events1 from "@/assets/businesses/events1.jpg";
 import construction1 from "@/assets/businesses/construction1.jpg";
-import { MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
+import { MapPin, List, Map as MapIcon, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import SearchWithSuggestions from "@/components/SearchWithSuggestions";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -67,6 +65,14 @@ const DEMO_LISTINGS: (Listing)[] = [
   { id: "15", name: "BuildRight Contractors", uen: "201800010P", category: "Construction & Renovation", district: "Ang Mo Kio", address: "53 Ang Mo Kio Ave 3, #01-01, Singapore 569933", postalCode: "569933", phone: "+65 6600 1010", description: "HDB & condo renovation specialists with 15 years of experience.", status: "approved", ownerId: "demo", lat: 1.3691, lng: 103.8454, verified: true, rating: 4.5, reviewCount: 121, coverImage: construction1, operatingHours: { ...DEFAULT_OPERATING_HOURS, Saturday: { open: "08:00", close: "16:00" } } },
 ];
 
+// Hero slides
+const HERO_SLIDES = [
+  { image: food1, subtitle: "Local Favourites", title: "Discover Singapore's Best", cta: "Browse All" },
+  { image: tech1, subtitle: "Trusted Experts", title: "Technology & IT Services", cta: "Explore Tech" },
+  { image: beauty1, subtitle: "Wellness & Beauty", title: "Pamper Yourself Today", cta: "Find Salons" },
+  { image: realestate1, subtitle: "Property Experts", title: "Find Your Dream Space", cta: "View Properties" },
+];
+
 const Index = () => {
   const { searchQuery, setSearchQuery, setListings: setSearchListings } = useSearch();
   const [district, setDistrict] = useState("All Districts");
@@ -75,8 +81,14 @@ const Index = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
+  const [heroSlide, setHeroSlide] = useState(0);
 
-  // Sync listings to search context for suggestions
+  // Auto-rotate hero
+  useEffect(() => {
+    const timer = setInterval(() => setHeroSlide(p => (p + 1) % HERO_SLIDES.length), 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
   }, [listings, setSearchListings]);
@@ -90,9 +102,7 @@ const Index = () => {
           const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Listing));
           setListings(data);
         }
-      } catch {
-        // Use demo data
-      }
+      } catch { /* demo fallback */ }
     };
     fetchListings();
   }, []);
@@ -134,107 +144,125 @@ const Index = () => {
   };
 
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
+  const slide = HERO_SLIDES[heroSlide];
 
   return (
     <div className="min-h-screen bg-background">
-
-      {/* Hero + Featured side by side on desktop */}
-      <section className="hidden lg:block relative overflow-hidden border-b border-white/10" style={{ background: 'var(--gradient-hero)' }}>
-        {/* Matte noise overlay */}
-        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundSize: '128px 128px' }} />
-        {/* Subtle radial glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10" />
-        <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
-          <div className="flex flex-col lg:flex-row lg:gap-8">
-            {/* Left block — Hero content */}
-            <div className="flex-1 min-w-0 lg:max-w-[55%]">
-              <h1 className="hidden lg:block text-xl md:text-4xl font-bold tracking-tight text-white mb-1 md:mb-2 leading-tight drop-shadow-sm">
-                Find the best businesses{" "}
-                <span className="text-white/80">in Singapore</span>
-              </h1>
-
-
-              {/* Filter row */}
-              <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl lg:hidden">
-                <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-white/15 border-white/20 text-white backdrop-blur-sm">
-                    <SelectValue placeholder="All Districts" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SINGAPORE_DISTRICTS.map((d) => (
-                      <SelectItem key={d} value={d}>{d}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-white/15 border-white/20 text-white backdrop-blur-sm">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BUSINESS_CATEGORIES.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex bg-white/15 border-white/20 text-white hover:bg-white/25" onClick={handleDetectLocation}>
-                  <MapPin className="w-3.5 h-3.5 mr-1.5" />
-                  Near Me
-                </Button>
-              </div>
-              
-
-              {/* Category Grid — desktop only, inside hero left block */}
-              {!hasActiveFilters && (
-                <div className="hidden lg:block mt-6">
-                  <CategoryGrid />
-                </div>
-              )}
-            </div>
-
-            {/* Right block — Featured (desktop only) */}
-            <div className="hidden lg:block lg:w-[42%] mt-0">
-              <FeaturedListings listings={filtered} compact />
-            </div>
+      {/* ═══ HERO BANNER (Hyper-style full-width image slider) ═══ */}
+      <section className="relative w-full h-[320px] md:h-[440px] lg:h-[500px] overflow-hidden bg-foreground">
+        {HERO_SLIDES.map((s, i) => (
+          <div
+            key={i}
+            className={`absolute inset-0 transition-opacity duration-700 ${i === heroSlide ? "opacity-100" : "opacity-0"}`}
+          >
+            <img
+              src={s.image}
+              alt={s.title}
+              className="w-full h-full object-cover"
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           </div>
+        ))}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white z-10 px-4">
+            <p className="text-sm md:text-base font-medium tracking-widest uppercase mb-2 opacity-80">
+              {slide.subtitle}
+            </p>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 drop-shadow-lg">
+              {slide.title}
+            </h1>
+            <Button
+              size="lg"
+              className="bg-card text-foreground hover:bg-card/90 font-semibold px-8 rounded-lg shadow-lg"
+            >
+              {slide.cta}
+            </Button>
+          </div>
+        </div>
+
+        {/* Slider controls */}
+        <button
+          onClick={() => setHeroSlide((heroSlide - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors z-10"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => setHeroSlide((heroSlide + 1) % HERO_SLIDES.length)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors z-10"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+          {HERO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setHeroSlide(i)}
+              className={`rounded-full transition-all duration-300 ${
+                i === heroSlide ? "w-8 h-2.5 bg-white" : "w-2.5 h-2.5 bg-white/50 hover:bg-white/70"
+              }`}
+            />
+          ))}
         </div>
       </section>
 
-      {/* Promo Banner */}
+      {/* ═══ CATEGORY GRID ═══ */}
+      {!hasActiveFilters && (
+        <section className="container mx-auto px-4 py-8">
+          <CategoryGrid />
+        </section>
+      )}
+
+      {/* ═══ PROMO BANNER ═══ */}
       {!hasActiveFilters && <PromoBanner />}
 
-      {/* Results */}
-      <section className="container mx-auto px-4 py-8">
-        {/* Category Grid */}
-        {/* Category Grid — mobile/tablet only */}
-        {!hasActiveFilters && (
-          <div className="lg:hidden">
-            <CategoryGrid />
-          </div>
-        )}
+      {/* ═══ FEATURED BUSINESSES ═══ */}
+      <section className="container mx-auto px-4 py-6">
+        <FeaturedListings listings={filtered} />
+      </section>
 
-        {/* Featured on mobile/tablet — hidden */}
-
+      {/* ═══ EXCLUSIVE DEALS ═══ */}
+      <section className="container mx-auto px-4">
         <ExclusiveDeals listings={filtered} />
+      </section>
 
+      {/* ═══ ALL BUSINESSES ═══ */}
+      <section className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-base font-semibold text-foreground">All Businesses</h2>
-            <p className="text-xs text-muted-foreground">{filtered.length} results found</p>
+            <h2 className="text-lg font-bold text-foreground">All Businesses</h2>
+            <p className="text-sm text-muted-foreground">{filtered.length} results found</p>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
-            {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
-            {showMap ? "List View" : "Map View"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Select value={district} onValueChange={setDistrict}>
+              <SelectTrigger className="w-auto min-w-[140px] h-9 text-sm">
+                <SelectValue placeholder="All Districts" />
+              </SelectTrigger>
+              <SelectContent>
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
+              {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
+              {showMap ? "List" : "Map"}
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleDetectLocation}>
+              <MapPin className="w-4 h-4 mr-1.5" />Near Me
+            </Button>
+          </div>
         </div>
 
         <div className="flex gap-6 overflow-hidden">
           <div className={`flex-1 min-w-0 space-y-3 ${showMap ? "hidden" : ""}`}>
             {filtered.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-muted-foreground/40" />
+                <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground font-medium">No businesses found</p>
                 <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
@@ -254,7 +282,7 @@ const Index = () => {
           </div>
 
           {showMap && (
-            <div className="flex-1 h-[calc(100vh-280px)] rounded-xl overflow-hidden border border-border/50 shadow-lg">
+            <div className="flex-1 h-[calc(100vh-280px)] rounded-xl overflow-hidden border border-border shadow-lg">
               <MapView
                 listings={filtered}
                 selectedId={selectedListing?.id}
