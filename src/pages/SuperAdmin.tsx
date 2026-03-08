@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Users, Building2, BarChart3, Settings, Search, MoreHorizontal,
   Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, 
   TrendingUp, Activity, FileText, ExternalLink, ChevronDown,
   Mail, Phone, Calendar, LayoutDashboard, PieChart, LogOut,
-  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight, Sparkles, Ticket,
+  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight, Sparkles, Ticket, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +25,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Listing } from "@/components/ListingCard";
 import { DEMO_USERS, DEMO_ALL_LISTINGS, PlatformUser } from "@/lib/demo-data";
@@ -85,6 +88,10 @@ const SuperAdmin = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
+
+  // Rejection dialog state
+  const [rejectingListingId, setRejectingListingId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   // Fetch all listings from Firestore
   useEffect(() => {
@@ -153,18 +160,42 @@ const SuperAdmin = () => {
     toast.success("User deleted");
   };
 
-  const handleListingAction = async (listingId: string, status: "approved" | "rejected") => {
+  const handleListingApprove = async (listingId: string) => {
     setActionLoading(listingId);
     try {
-      await updateDoc(doc(db, "listings", listingId), { status });
+      await updateDoc(doc(db, "listings", listingId), { status: "approved", rejectionReason: "" });
       setListings(prev => prev.map(l =>
-        l.id === listingId ? { ...l, status } : l
+        l.id === listingId ? { ...l, status: "approved" } : l
       ));
-      toast.success(`Listing ${status}`);
+      toast.success("Listing approved");
     } catch (err: any) {
       toast.error(err.message || "Failed to update listing");
     }
     setActionLoading(null);
+  };
+
+  const handleListingReject = async () => {
+    if (!rejectingListingId) return;
+    if (!rejectionReason.trim()) {
+      toast.error("Please provide a reason for rejection");
+      return;
+    }
+    setActionLoading(rejectingListingId);
+    try {
+      await updateDoc(doc(db, "listings", rejectingListingId), {
+        status: "rejected",
+        rejectionReason: rejectionReason.trim(),
+      });
+      setListings(prev => prev.map(l =>
+        l.id === rejectingListingId ? { ...l, status: "rejected" } : l
+      ));
+      toast.success("Listing rejected");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update listing");
+    }
+    setActionLoading(null);
+    setRejectingListingId(null);
+    setRejectionReason("");
   };
 
   const handleDeleteListing = async (listingId: string) => {
@@ -619,10 +650,10 @@ const SuperAdmin = () => {
                     <div className="flex gap-2">
                       {listing.status === "pending_approval" && (
                         <>
-                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingAction(listing.id, "approved")} disabled={actionLoading === listing.id}>
+                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingApprove(listing.id)} disabled={actionLoading === listing.id}>
                             <Check className="w-4 h-4 mr-1" />{actionLoading === listing.id ? "..." : "Approve"}
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleListingAction(listing.id, "rejected")} disabled={actionLoading === listing.id}>
+                          <Button size="sm" variant="destructive" onClick={() => { setRejectingListingId(listing.id); setRejectionReason(""); }} disabled={actionLoading === listing.id}>
                             <X className="w-4 h-4 mr-1" />{actionLoading === listing.id ? "..." : "Reject"}
                           </Button>
                         </>
@@ -866,13 +897,13 @@ const SuperAdmin = () => {
               <div className="flex gap-2 pt-4 border-t border-border">
                 {selectedListing.status !== "approved" && (
                   <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600"
-                    onClick={() => { handleListingAction(selectedListing.id, "approved"); setSelectedListing(null); }}>
+                    onClick={() => { handleListingApprove(selectedListing.id); setSelectedListing(null); }}>
                     <Check className="w-4 h-4 mr-1.5" />Approve
                   </Button>
                 )}
                 {selectedListing.status !== "rejected" && (
                   <Button size="sm" variant="destructive"
-                    onClick={() => { handleListingAction(selectedListing.id, "rejected"); setSelectedListing(null); }}>
+                    onClick={() => { setRejectingListingId(selectedListing.id); setRejectionReason(""); setSelectedListing(null); }}>
                     <X className="w-4 h-4 mr-1.5" />Reject
                   </Button>
                 )}
@@ -883,6 +914,48 @@ const SuperAdmin = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+      {/* Rejection Reason Dialog */}
+      <Dialog open={!!rejectingListingId} onOpenChange={(open) => { if (!open) { setRejectingListingId(null); setRejectionReason(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <X className="w-5 h-5 text-destructive" />
+              Reject Listing
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              Please provide a reason for rejection. This will be visible to the business owner.
+            </p>
+            <div className="space-y-2">
+              <Label>Rejection Reason *</Label>
+              <Textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="e.g. Missing ACRA business profile document, invalid UEN number..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setRejectingListingId(null); setRejectionReason(""); }}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleListingReject}
+              disabled={!rejectionReason.trim() || actionLoading === rejectingListingId}
+            >
+              {actionLoading === rejectingListingId ? (
+                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+              ) : (
+                <X className="w-4 h-4 mr-1.5" />
+              )}
+              Confirm Rejection
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
