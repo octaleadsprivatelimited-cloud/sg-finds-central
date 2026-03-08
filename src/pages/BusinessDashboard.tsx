@@ -487,6 +487,17 @@ const BusinessDashboard = () => {
                 <Label>Description</Label>
                 <Textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
+              {/* Logo Upload */}
+              {user && (
+                <div className="pt-2 border-t border-border">
+                  <LogoUpload
+                    currentUrl={editLogoUrl || undefined}
+                    userId={user.uid}
+                    onUploaded={(url) => setEditLogoUrl(url)}
+                    onRemoved={() => setEditLogoUrl("")}
+                  />
+                </div>
+              )}
               <div className="flex gap-2 pt-2">
                 <Button className="flex-1" onClick={saveEdit} disabled={!!slugError || saving}>
                   {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
