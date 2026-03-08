@@ -190,19 +190,12 @@ const Index = () => {
         <FeaturedListings listings={filtered} />
 
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">All Businesses</p>
-              <p className="text-xs text-muted-foreground">
-                <span className="font-medium text-primary">{filtered.length}</span> results found
-              </p>
-            </div>
+          <div>
+            <h2 className="text-base font-semibold text-foreground">All Businesses</h2>
+            <p className="text-xs text-muted-foreground">{filtered.length} results found</p>
           </div>
           <div className="md:hidden">
-            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)} className="border-primary/30">
+            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
               {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
               {showMap ? "List" : "Map"}
             </Button>
