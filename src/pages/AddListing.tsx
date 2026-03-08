@@ -186,13 +186,32 @@ const AddListing = () => {
   // If not logged in, show sign-up gate
   if (!user) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8 max-w-md">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        {/* Floating business emojis background */}
+        <div className="absolute inset-0 pointer-events-none">
+          {["🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦", "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰", "🏗️", "🛍️", "🍜", "💼", "🎨", "🏦", "🌿", "☕", "🎵", "🔬", "🛒", "🏨"].map((emoji, i) => (
+            <span
+              key={i}
+              className="absolute text-3xl md:text-4xl select-none opacity-[0.08] animate-pulse"
+              style={{
+                left: `${(i * 13.7) % 90 + 2}%`,
+                top: `${(i * 17.3) % 85 + 5}%`,
+                transform: `rotate(${(i * 29) % 360}deg)`,
+                animationDelay: `${i * 0.2}s`,
+                animationDuration: `${3 + (i % 4)}s`,
+              }}
+            >
+              {emoji}
+            </span>
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 py-8 max-w-md relative z-10">
           <Button variant="ghost" size="sm" className="mb-6" onClick={() => navigate("/")}>
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Back to Directory
           </Button>
-          <div className="glass-card rounded-2xl p-6 md:p-8 text-center">
+          <div className="glass-card rounded-2xl p-6 md:p-8 text-center backdrop-blur-sm">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-4">
               <Building2 className="w-6 h-6 text-primary" />
             </div>
