@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Search, MapPin, Star, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
+import { getBusinessUrl } from "@/lib/url-helpers";
 import { cn } from "@/lib/utils";
 
 interface SearchWithSuggestionsProps {
