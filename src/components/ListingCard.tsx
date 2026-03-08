@@ -39,11 +39,10 @@ interface ListingCardProps {
 
 const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
   const navigate = useNavigate();
-  const slug = listing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const handleClick = () => {
     if (onSelect) onSelect(listing);
-    navigate(`/business/${slug}`);
+    navigate(getBusinessUrl(listing));
   };
 
   return (
