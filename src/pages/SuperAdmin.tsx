@@ -301,19 +301,19 @@ const SuperAdmin = () => {
                 <h3 className="font-semibold text-foreground mb-4">Recent Submissions</h3>
                 <div className="space-y-3">
                   {listings.slice(0, 4).map((listing, i) => (
-                    <div key={listing.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                    <div key={listing.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                          <span className="text-sm font-semibold text-slate-600">{listing.name.charAt(0)}</span>
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center">
+                          <span className="text-sm font-semibold text-muted-foreground">{listing.name.charAt(0)}</span>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-800">{listing.name}</p>
-                          <p className="text-xs text-slate-400">{listing.category}</p>
+                          <p className="text-sm font-medium text-foreground">{listing.name}</p>
+                          <p className="text-xs text-muted-foreground">{listing.category}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         {statusBadge(listing.status)}
-                        <span className="text-xs text-slate-400">{listing.district}</span>
+                        <span className="text-xs text-muted-foreground">{listing.district}</span>
                       </div>
                     </div>
                   ))}
