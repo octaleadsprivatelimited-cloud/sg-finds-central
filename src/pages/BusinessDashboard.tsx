@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Listing, ListingOffer, OperatingHours, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
+import { Listing, ListingOffer, OperatingHours, SpecialHours, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
