@@ -113,10 +113,6 @@ const Header = () => {
             <Button variant="outline" className="w-full justify-start border-primary/30 text-primary" asChild onClick={() => setMobileOpen(false)}>
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="w-4 h-4 mr-2 text-warning" /> : <Moon className="w-4 h-4 mr-2 text-primary" />}
-              {theme === "dark" ? "Light Mode" : "Dark Mode"}
-            </Button>
             {user ? (
               <Button variant="ghost" className="w-full justify-start hover:bg-destructive/10 hover:text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
