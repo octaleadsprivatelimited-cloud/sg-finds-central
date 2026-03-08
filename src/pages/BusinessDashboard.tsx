@@ -4,7 +4,7 @@ import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
-  MessageSquare, MoreHorizontal, FileText, Loader2,
+  MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,11 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Listing } from "@/components/ListingCard";
+import { Listing, ListingOffer } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
 
@@ -61,6 +61,21 @@ const BusinessDashboard = () => {
   const [viewingListing, setViewingListing] = useState<Listing | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Featured ticket state
+  const [featuredTicketReason, setFeaturedTicketReason] = useState("");
+  const [featuredTicketLoading, setFeaturedTicketLoading] = useState(false);
+  const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
+  const [selectedListingForFeatured, setSelectedListingForFeatured] = useState("");
+
+  // Offers state
+  const [offerListingId, setOfferListingId] = useState("");
+  const [offerTitle, setOfferTitle] = useState("");
+  const [offerDescription, setOfferDescription] = useState("");
+  const [offerDiscount, setOfferDiscount] = useState("");
+  const [offerValidUntil, setOfferValidUntil] = useState("");
+  const [offerCode, setOfferCode] = useState("");
+  const [offerSaving, setOfferSaving] = useState(false);
+
   // Load user's listings from Firestore
   useEffect(() => {
     const fetchMyListings = async () => {
@@ -81,6 +96,100 @@ const BusinessDashboard = () => {
     };
     fetchMyListings();
   }, [user]);
+
+  // Load featured tickets
+  useEffect(() => {
+    const fetchTickets = async () => {
+      if (!user) return;
+      try {
+        const q = query(collection(db, "featured_tickets"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setFeaturedTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        }
+      } catch {}
+    };
+    fetchTickets();
+  }, [user]);
+
+  const submitFeaturedTicket = async () => {
+    if (!user || !selectedListingForFeatured) return;
+    const listing = listings.find(l => l.id === selectedListingForFeatured);
+    if (!listing) return;
+    setFeaturedTicketLoading(true);
+    try {
+      const ticketDoc = await addDoc(collection(db, "featured_tickets"), {
+        listingId: listing.id,
+        listingName: listing.name,
+        ownerId: user.uid,
+        ownerEmail: user.email,
+        reason: featuredTicketReason.trim(),
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+      setFeaturedTickets(prev => [...prev, {
+        id: ticketDoc.id,
+        listingId: listing.id,
+        listingName: listing.name,
+        status: "pending",
+        reason: featuredTicketReason.trim(),
+      }]);
+      setFeaturedTicketReason("");
+      setSelectedListingForFeatured("");
+      toast.success("Featured request submitted! Admin will review shortly.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to submit request");
+    }
+    setFeaturedTicketLoading(false);
+  };
+
+  const addOfferToListing = async () => {
+    if (!offerListingId || !offerTitle || !offerDiscount) {
+      toast.error("Please fill in offer title and discount");
+      return;
+    }
+    setOfferSaving(true);
+    try {
+      const listing = listings.find(l => l.id === offerListingId);
+      const existingOffers: ListingOffer[] = listing?.offers || [];
+      const newOffer: ListingOffer = {
+        id: `offer-${Date.now()}`,
+        title: offerTitle,
+        description: offerDescription,
+        discount: offerDiscount,
+        validUntil: offerValidUntil,
+        ...(offerCode ? { code: offerCode } : {}),
+      };
+      const updatedOffers = [...existingOffers, newOffer];
+      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers });
+      setListings(prev => prev.map(l =>
+        l.id === offerListingId ? { ...l, offers: updatedOffers } : l
+      ));
+      setOfferTitle("");
+      setOfferDescription("");
+      setOfferDiscount("");
+      setOfferValidUntil("");
+      setOfferCode("");
+      toast.success("Offer added! It will appear in Exclusive Deals on the homepage.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to add offer");
+    }
+    setOfferSaving(false);
+  };
+
+  const removeOffer = async (listingId: string, offerId: string) => {
+    try {
+      const listing = listings.find(l => l.id === listingId);
+      const updatedOffers = (listing?.offers || []).filter(o => o.id !== offerId);
+      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers });
+      setListings(prev => prev.map(l =>
+        l.id === listingId ? { ...l, offers: updatedOffers } : l
+      ));
+      toast.success("Offer removed");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove offer");
+    }
+  };
 
   // Edit form state
   const [editName, setEditName] = useState("");
@@ -210,6 +319,14 @@ const BusinessDashboard = () => {
             <TabsTrigger value="analytics" className="gap-1.5">
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
+            </TabsTrigger>
+            <TabsTrigger value="offers" className="gap-1.5">
+              <Gift className="w-4 h-4" />
+              <span className="hidden sm:inline">Offers</span>
+            </TabsTrigger>
+            <TabsTrigger value="featured" className="gap-1.5">
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">Featured</span>
             </TabsTrigger>
           </TabsList>
 
@@ -376,6 +493,159 @@ const BusinessDashboard = () => {
                 ))}
               </div>
             </div>
+          </TabsContent>
+
+          {/* OFFERS TAB */}
+          <TabsContent value="offers" className="space-y-6">
+            <div className="bg-background rounded-2xl border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Gift className="w-4 h-4 text-primary" />
+                Add New Offer
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Create offers for your business. Active offers will appear in the <strong>"Exclusive Deals This Week"</strong> section on the homepage.
+              </p>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Select Listing</Label>
+                  <Select value={offerListingId} onValueChange={setOfferListingId}>
+                    <SelectTrigger><SelectValue placeholder="Choose a listing" /></SelectTrigger>
+                    <SelectContent>
+                      {listings.filter(l => l.status === "approved").map(l => (
+                        <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Offer Title *</Label>
+                    <Input value={offerTitle} onChange={e => setOfferTitle(e.target.value)} placeholder="e.g. Grand Opening Special" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Discount *</Label>
+                    <Input value={offerDiscount} onChange={e => setOfferDiscount(e.target.value)} placeholder="e.g. 20% OFF or $10 Credit" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea value={offerDescription} onChange={e => setOfferDescription(e.target.value)} placeholder="Describe your offer..." rows={2} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Valid Until</Label>
+                    <Input type="date" value={offerValidUntil} onChange={e => setOfferValidUntil(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Promo Code (optional)</Label>
+                    <Input value={offerCode} onChange={e => setOfferCode(e.target.value)} placeholder="e.g. SAVE20" />
+                  </div>
+                </div>
+                <Button onClick={addOfferToListing} disabled={offerSaving || !offerListingId}>
+                  {offerSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  <Gift className="w-4 h-4 mr-1.5" />Add Offer
+                </Button>
+              </div>
+            </div>
+
+            {/* Existing offers */}
+            <div className="bg-background rounded-2xl border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-4">Active Offers</h3>
+              {listings.filter(l => l.offers && l.offers.length > 0).length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No offers yet. Add your first offer above!</p>
+              ) : (
+                <div className="space-y-4">
+                  {listings.filter(l => l.offers && l.offers.length > 0).map(listing => (
+                    <div key={listing.id}>
+                      <p className="text-sm font-medium text-foreground mb-2">{listing.name}</p>
+                      <div className="space-y-2">
+                        {listing.offers!.map(offer => (
+                          <div key={offer.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
+                            <div className="flex items-center gap-3">
+                              <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-transparent">{offer.discount}</Badge>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">{offer.title}</p>
+                                <p className="text-xs text-muted-foreground">{offer.description}</p>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => removeOffer(listing.id, offer.id)}>
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* FEATURED REQUEST TAB */}
+          <TabsContent value="featured" className="space-y-6">
+            <div className="bg-background rounded-2xl border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-warning" />
+                Request Featured Status
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Submit a request to the admin to feature your business. Featured businesses get premium visibility on the homepage.
+              </p>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Select Listing</Label>
+                  <Select value={selectedListingForFeatured} onValueChange={setSelectedListingForFeatured}>
+                    <SelectTrigger><SelectValue placeholder="Choose a listing" /></SelectTrigger>
+                    <SelectContent>
+                      {listings.filter(l => l.status === "approved" && !l.featured).map(l => (
+                        <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Why should your business be featured?</Label>
+                  <Textarea
+                    value={featuredTicketReason}
+                    onChange={e => setFeaturedTicketReason(e.target.value)}
+                    placeholder="Tell us why your business deserves to be featured..."
+                    rows={3}
+                  />
+                </div>
+                <Button onClick={submitFeaturedTicket} disabled={featuredTicketLoading || !selectedListingForFeatured}>
+                  {featuredTicketLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  <Sparkles className="w-4 h-4 mr-1.5" />Submit Request
+                </Button>
+              </div>
+            </div>
+
+            {/* Previous tickets */}
+            {featuredTickets.length > 0 && (
+              <div className="bg-background rounded-2xl border border-border p-6">
+                <h3 className="font-semibold text-foreground mb-4">Your Requests</h3>
+                <div className="space-y-3">
+                  {featuredTickets.map(ticket => (
+                    <div key={ticket.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{ticket.listingName}</p>
+                        {ticket.reason && <p className="text-xs text-muted-foreground">{ticket.reason}</p>}
+                      </div>
+                      <Badge
+                        className={
+                          ticket.status === "approved"
+                            ? "bg-emerald-100 text-emerald-700 border-transparent"
+                            : ticket.status === "rejected"
+                            ? "bg-red-100 text-red-700 border-transparent"
+                            : "bg-amber-100 text-amber-700 border-transparent"
+                        }
+                      >
+                        {ticket.status === "approved" ? "Approved" : ticket.status === "rejected" ? "Rejected" : "Pending"}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

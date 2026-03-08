@@ -6,7 +6,7 @@ import {
   Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, 
   TrendingUp, Activity, FileText, ExternalLink, ChevronDown,
   Mail, Phone, Calendar, LayoutDashboard, PieChart, LogOut,
-  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight,
+  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight, Sparkles, Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,7 +69,7 @@ const categoryData = [
   { name: "Services", value: 20, color: "#ec4899" },
 ];
 
-type NavItem = "dashboard" | "users" | "listings" | "statistics" | "settings";
+type NavItem = "dashboard" | "users" | "listings" | "tickets" | "statistics" | "settings";
 
 const SuperAdmin = () => {
   const { user, isSuperAdmin, loading: authLoading } = useAuth();
@@ -84,6 +84,7 @@ const SuperAdmin = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
 
   // Fetch all listings from Firestore
   useEffect(() => {
@@ -98,6 +99,19 @@ const SuperAdmin = () => {
       }
     };
     fetchListings();
+  }, []);
+
+  // Fetch featured tickets
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const snap = await getDocs(collection(db, "featured_tickets"));
+        if (!snap.empty) {
+          setFeaturedTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        }
+      } catch {}
+    };
+    fetchTickets();
   }, []);
 
   // Stats
@@ -165,10 +179,28 @@ const SuperAdmin = () => {
     setActionLoading(null);
   };
 
+  const handleTicketAction = async (ticketId: string, action: "approved" | "rejected") => {
+    setActionLoading(ticketId);
+    try {
+      const ticket = featuredTickets.find(t => t.id === ticketId);
+      await updateDoc(doc(db, "featured_tickets", ticketId), { status: action });
+      if (action === "approved" && ticket?.listingId) {
+        await updateDoc(doc(db, "listings", ticket.listingId), { featured: true });
+        setListings(prev => prev.map(l => l.id === ticket.listingId ? { ...l, featured: true } : l));
+      }
+      setFeaturedTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: action } : t));
+      toast.success(`Ticket ${action}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update ticket");
+    }
+    setActionLoading(null);
+  };
+
   const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
     { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: "users", label: "Users", icon: <Users className="w-5 h-5" /> },
     { id: "listings", label: "Listings", icon: <Building2 className="w-5 h-5" /> },
+    { id: "tickets", label: "Tickets", icon: <Ticket className="w-5 h-5" /> },
     { id: "statistics", label: "Statistics", icon: <PieChart className="w-5 h-5" /> },
     { id: "settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
   ];
@@ -616,6 +648,68 @@ const SuperAdmin = () => {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Featured Tickets Tab */}
+        {activeNav === "tickets" && (
+          <div className="p-4 md:p-6 pb-20 md:pb-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-foreground flex items-center gap-2">
+                <Ticket className="w-5 h-5 text-primary" />
+                Featured Requests
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {featuredTickets.filter(t => t.status === "pending").length} pending
+              </p>
+            </div>
+
+            {featuredTickets.length === 0 ? (
+              <div className="text-center py-16 bg-card rounded-2xl border border-border">
+                <Ticket className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+                <p className="font-medium text-foreground">No featured requests</p>
+                <p className="text-sm text-muted-foreground">Business owners haven't submitted any requests yet</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {featuredTickets.map(ticket => (
+                  <div key={ticket.id} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h3 className="font-semibold text-foreground">{ticket.listingName}</h3>
+                          <Badge
+                            className={
+                              ticket.status === "approved"
+                                ? "bg-emerald-100 text-emerald-700 border-transparent"
+                                : ticket.status === "rejected"
+                                ? "bg-red-100 text-red-700 border-transparent"
+                                : "bg-amber-100 text-amber-700 border-transparent"
+                            }
+                          >
+                            {ticket.status === "approved" ? "Approved" : ticket.status === "rejected" ? "Rejected" : "Pending"}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{ticket.ownerEmail}</p>
+                        {ticket.reason && (
+                          <p className="text-sm text-muted-foreground mt-2 bg-muted/50 p-3 rounded-lg italic">"{ticket.reason}"</p>
+                        )}
+                      </div>
+                      {ticket.status === "pending" && (
+                        <div className="flex gap-2 shrink-0">
+                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleTicketAction(ticket.id, "approved")} disabled={actionLoading === ticket.id}>
+                            <Check className="w-4 h-4 mr-1" />{actionLoading === ticket.id ? "..." : "Approve"}
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => handleTicketAction(ticket.id, "rejected")} disabled={actionLoading === ticket.id}>
+                            <X className="w-4 h-4 mr-1" />{actionLoading === ticket.id ? "..." : "Reject"}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

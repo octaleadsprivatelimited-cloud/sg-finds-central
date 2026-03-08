@@ -4,6 +4,15 @@ import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl } from "@/lib/url-helpers";
 
+export interface ListingOffer {
+  id: string;
+  title: string;
+  description: string;
+  discount: string;
+  validUntil: string;
+  code?: string;
+}
+
 export interface Listing {
   id: string;
   name: string;
@@ -30,6 +39,7 @@ export interface Listing {
   city?: string;
   customSlug?: string;
   logoUrl?: string;
+  offers?: ListingOffer[];
 }
 
 interface ListingCardProps {
