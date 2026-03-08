@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
-import { ArrowLeft, ArrowRight, Check, Upload, Loader2, Building2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Link2, Loader2, Building2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 const STEPS = ["Business Details", "Contact Info", "Documents"];
