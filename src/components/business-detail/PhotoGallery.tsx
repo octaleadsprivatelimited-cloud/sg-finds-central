@@ -30,7 +30,7 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-4 grid-rows-2 gap-1.5 h-[320px] rounded-xl overflow-hidden">
+      <div className="grid grid-cols-2 sm:grid-cols-4 sm:grid-rows-2 gap-1.5 h-[200px] sm:h-[280px] md:h-[320px] rounded-xl overflow-hidden">
         {/* Large main photo */}
         <div
           className="col-span-2 row-span-2 relative cursor-pointer group"
