@@ -59,6 +59,15 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
   const handleSelect = (name: string) => {
     setSearchQuery(name);
     setFocused(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && searchQuery.length > 0 && location.pathname !== "/") {
+      navigate("/");
+    }
   };
 
   return (
