@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
-import { ArrowLeft, ArrowRight, Check, Upload, Loader2, Building2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Link2, Loader2, Building2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 const STEPS = ["Business Details", "Contact Info", "Documents"];
@@ -42,32 +41,59 @@ const AddListing = () => {
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
 
-  // Step 3
-  const [files, setFiles] = useState<File[]>([]);
+  // Step 3 - Document links
+  const [docLinks, setDocLinks] = useState<string[]>([""]);
+
+  const ALLOWED_DOMAINS = [
+    "drive.google.com", "docs.google.com", "storage.googleapis.com",
+    "dropbox.com", "www.dropbox.com", "dl.dropboxusercontent.com",
+    "onedrive.live.com", "1drv.ms", "sharepoint.com",
+    "icloud.com", "www.icloud.com",
+  ];
+
+  const isValidCloudLink = (url: string): boolean => {
+    if (!url.trim()) return true; // empty is ok
+    try {
+      const parsed = new URL(url.trim());
+      return ALLOWED_DOMAINS.some(d => parsed.hostname === d || parsed.hostname.endsWith("." + d));
+    } catch {
+      return false;
+    }
+  };
+
+  const getProviderLabel = (url: string): string => {
+    try {
+      const h = new URL(url.trim()).hostname;
+      if (h.includes("google")) return "Google Drive";
+      if (h.includes("dropbox")) return "Dropbox";
+      if (h.includes("onedrive") || h.includes("1drv") || h.includes("sharepoint")) return "OneDrive";
+      if (h.includes("icloud")) return "iCloud";
+    } catch {}
+    return "";
+  };
 
   const handleSubmit = async () => {
     if (!user) {
       toast.error("Please sign in to add a listing");
       return;
     }
+
+    const validLinks = docLinks.filter(l => l.trim() !== "");
+    const invalidLinks = validLinks.filter(l => !isValidCloudLink(l));
+    if (invalidLinks.length > 0) {
+      toast.error("Only Google Drive, Dropbox, OneDrive, or iCloud links are allowed");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Upload documents
-      const documentsUrl: string[] = [];
-      for (const file of files) {
-        const storageRef = ref(storage, `documents/${user.uid}/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        documentsUrl.push(url);
-      }
-
       await addDoc(collection(db, "listings"), {
         name, uen, category, district, address, postalCode, description,
         phone, whatsapp, website, email,
-        documentsUrl,
+        documentsUrl: validLinks,
         status: "pending_approval",
         ownerId: user.uid,
-        location: new GeoPoint(1.3521, 103.8198), // Default SG center
+        location: new GeoPoint(1.3521, 103.8198),
         createdAt: serverTimestamp(),
       });
 
@@ -196,29 +222,67 @@ const AddListing = () => {
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-2">
-                <Label>Upload Documents</Label>
-                <p className="text-sm text-muted-foreground">Upload ACRA Business Profile or Proof of Address (PDF, JPG, PNG)</p>
-                <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors">
-                  <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                  <label className="cursor-pointer">
-                    <span className="text-primary font-medium hover:underline">Choose files</span>
-                    <input
-                      type="file"
-                      multiple
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="hidden"
-                      onChange={(e) => setFiles(Array.from(e.target.files || []))}
-                    />
-                  </label>
-                  <p className="text-xs text-muted-foreground mt-1">PDF, JPG, or PNG up to 10MB</p>
-                </div>
-                {files.length > 0 && (
-                  <div className="space-y-1">
-                    {files.map((f, i) => (
-                      <p key={i} className="text-sm text-muted-foreground">📎 {f.name}</p>
-                    ))}
+                <Label>Document Links</Label>
+                <p className="text-sm text-muted-foreground">
+                  Share public URLs from <strong>Google Drive</strong>, <strong>Dropbox</strong>, <strong>OneDrive</strong>, or <strong>iCloud</strong> (ACRA profile, proof of address, etc.)
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {docLinks.map((link, i) => (
+                  <div key={i} className="flex gap-2 items-start">
+                    <div className="flex-1 space-y-1">
+                      <div className="relative">
+                        <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          value={link}
+                          onChange={(e) => {
+                            const updated = [...docLinks];
+                            updated[i] = e.target.value;
+                            setDocLinks(updated);
+                          }}
+                          placeholder="https://drive.google.com/file/d/..."
+                          className={`pl-10 ${link && !isValidCloudLink(link) ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                        />
+                      </div>
+                      {link && !isValidCloudLink(link) && (
+                        <p className="text-xs text-destructive">Only Google Drive, Dropbox, OneDrive, or iCloud links are accepted</p>
+                      )}
+                      {link && isValidCloudLink(link) && getProviderLabel(link) && (
+                        <p className="text-xs text-muted-foreground">✓ {getProviderLabel(link)}</p>
+                      )}
+                    </div>
+                    {docLinks.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 shrink-0 text-muted-foreground hover:text-destructive"
+                        onClick={() => setDocLinks(docLinks.filter((_, j) => j !== i))}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
-                )}
+                ))}
+              </div>
+
+              {docLinks.length < 5 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDocLinks([...docLinks, ""])}
+                >
+                  <Plus className="w-4 h-4 mr-1.5" />
+                  Add another link
+                </Button>
+              )}
+
+              <div className="rounded-xl bg-secondary/50 p-4 text-xs text-muted-foreground space-y-1">
+                <p className="font-medium text-foreground text-sm">Supported cloud providers:</p>
+                <p>• Google Drive — drive.google.com</p>
+                <p>• Dropbox — dropbox.com</p>
+                <p>• Microsoft OneDrive — onedrive.live.com</p>
+                <p>• Apple iCloud — icloud.com</p>
               </div>
             </div>
           )}
