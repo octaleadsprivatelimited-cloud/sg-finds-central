@@ -13,7 +13,7 @@ const Header = () => {
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const isHome = location.pathname === "/";
+  
 
   const handleSignOut = async () => {
     await signOut(auth);
