@@ -117,6 +117,7 @@ const SuperAdmin = () => {
       } catch {}
     };
     fetchUsers();
+  }, []);
 
   useEffect(() => {
     const fetchTickets = async () => {
