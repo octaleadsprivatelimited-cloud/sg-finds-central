@@ -419,8 +419,8 @@ const BusinessDashboard = () => {
                     placeholder={toSlug(editName || "business-name")}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  This is your unique business URL. Use lowercase letters, numbers, and hyphens only.
+                <p className={`text-xs ${slugError ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                  {slugError || "This is your unique business URL. Use lowercase letters, numbers, and hyphens only."}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
