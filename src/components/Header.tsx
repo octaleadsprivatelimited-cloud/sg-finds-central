@@ -1,15 +1,24 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
+import CitySelector from "./CitySelector";
 
-const Header = () => {
-  const { user, isAdmin, isSuperAdmin, isBusinessOwner } = useAuth();
+interface HeaderProps {
+  searchQuery?: string;
+  onSearchChange?: (val: string) => void;
+  selectedCity?: string;
+  onCityChange?: (city: string) => void;
+}
+
+const Header = ({ searchQuery, onSearchChange, selectedCity, onCityChange }: HeaderProps) => {
+  const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -18,19 +27,42 @@ const Header = () => {
     await signOut(auth);
   };
 
+  const showSearch = onSearchChange !== undefined;
+
   return (
     <>
       <header className="sticky top-0 z-50 glass border-b border-border/50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
-              <Search className="w-4 h-4 text-primary-foreground" />
+        <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 shrink-0 group">
+            <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
+              <Search className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg tracking-tight hidden sm:block">
+            <span className="font-bold text-lg tracking-tight hidden lg:block">
               <span className="text-gradient">SG</span>
               <span className="text-foreground">Directory</span>
             </span>
           </Link>
+
+          {/* Mobile/Tablet: Location icon + Search bar */}
+          {showSearch && (
+            <div className="flex items-center gap-1.5 flex-1 md:hidden max-w-md">
+              <CitySelector
+                selectedCity={selectedCity || "singapore"}
+                onCityChange={onCityChange || (() => {})}
+                iconOnly
+              />
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Search businesses..."
+                  className="h-9 pl-8 pr-3 text-sm bg-secondary/60 border-border/50 rounded-xl"
+                  value={searchQuery || ""}
+                  onChange={(e) => onSearchChange?.(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1.5">
@@ -80,7 +112,7 @@ const Header = () => {
           </nav>
 
           {/* Mobile toggle */}
-          <button className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
+          <button className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors shrink-0" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
