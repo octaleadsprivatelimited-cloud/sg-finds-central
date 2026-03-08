@@ -179,10 +179,28 @@ const SuperAdmin = () => {
     setActionLoading(null);
   };
 
+  const handleTicketAction = async (ticketId: string, action: "approved" | "rejected") => {
+    setActionLoading(ticketId);
+    try {
+      const ticket = featuredTickets.find(t => t.id === ticketId);
+      await updateDoc(doc(db, "featured_tickets", ticketId), { status: action });
+      if (action === "approved" && ticket?.listingId) {
+        await updateDoc(doc(db, "listings", ticket.listingId), { featured: true });
+        setListings(prev => prev.map(l => l.id === ticket.listingId ? { ...l, featured: true } : l));
+      }
+      setFeaturedTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: action } : t));
+      toast.success(`Ticket ${action}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update ticket");
+    }
+    setActionLoading(null);
+  };
+
   const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
     { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: "users", label: "Users", icon: <Users className="w-5 h-5" /> },
     { id: "listings", label: "Listings", icon: <Building2 className="w-5 h-5" /> },
+    { id: "tickets", label: "Tickets", icon: <Ticket className="w-5 h-5" /> },
     { id: "statistics", label: "Statistics", icon: <PieChart className="w-5 h-5" /> },
     { id: "settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
   ];
