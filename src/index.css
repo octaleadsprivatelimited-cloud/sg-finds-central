@@ -108,10 +108,10 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/80 backdrop-blur-xl border border-border/50;
+    @apply bg-white/80 dark:bg-[hsl(222,47%,8%)]/80 backdrop-blur-xl border border-border/50;
   }
   .glass-card {
-    @apply bg-white/60 backdrop-blur-lg border border-border/30 shadow-sm;
+    @apply bg-white/60 dark:bg-[hsl(222,47%,10%)]/60 backdrop-blur-lg border border-border/30 shadow-sm;
   }
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500;
