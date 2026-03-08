@@ -117,9 +117,9 @@ const SeedFirestore = () => {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     checkExisting();
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
