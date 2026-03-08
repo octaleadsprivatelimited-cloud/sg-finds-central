@@ -95,6 +95,30 @@ const SuperAdmin = () => {
   }, []);
 
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        if (!snap.empty) {
+          setUsers(snap.docs.map(d => {
+            const data = d.data();
+            return {
+              id: d.id,
+              email: data.email || "",
+              displayName: data.displayName || data.name || "Unknown",
+              role: data.role || "user",
+              status: data.status || "active",
+              joinedAt: data.joinedAt || data.createdAt?.toDate?.()?.toISOString?.()?.split("T")[0] || "—",
+              listingsCount: data.listingsCount || 0,
+              lastActive: data.lastActive || "—",
+              phone: data.phone || "",
+            } as PlatformUser;
+          }));
+        }
+      } catch {}
+    };
+    fetchUsers();
+
+  useEffect(() => {
     const fetchTickets = async () => {
       try {
         const snap = await getDocs(collection(db, "featured_tickets"));
