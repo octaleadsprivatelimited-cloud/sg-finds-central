@@ -46,7 +46,7 @@ const Header = () => {
             <span className="text-sm sm:text-base">🚀</span>
             <span className="font-bold hidden sm:inline">List your business for FREE — Reach thousands of customers</span>
             <span className="font-bold sm:hidden">FREE Business Listing →</span>
-            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-primary-foreground/20 text-[10px] sm:text-[11px] font-semibold group-hover:bg-primary-foreground/30 transition-colors">
+            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-[11px] font-bold group-hover:bg-yellow-300 transition-colors">
               Get Started
             </span>
           </div>
