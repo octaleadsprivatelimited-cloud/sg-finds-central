@@ -2,22 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
-import CitySelector from "./CitySelector";
 
-interface HeaderProps {
-  searchQuery?: string;
-  onSearchChange?: (val: string) => void;
-  selectedCity?: string;
-  onCityChange?: (city: string) => void;
-}
-
-const Header = ({ searchQuery, onSearchChange, selectedCity, onCityChange }: HeaderProps) => {
+const Header = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
@@ -27,13 +18,10 @@ const Header = ({ searchQuery, onSearchChange, selectedCity, onCityChange }: Hea
     await signOut(auth);
   };
 
-  const showSearch = onSearchChange !== undefined;
-
   return (
     <>
       <header className="sticky top-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0 group">
             <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
               <Search className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary-foreground" />
@@ -44,65 +32,32 @@ const Header = ({ searchQuery, onSearchChange, selectedCity, onCityChange }: Hea
             </span>
           </Link>
 
-          {/* Mobile/Tablet: Location icon + Search bar */}
-          {showSearch && (
-            <div className="flex items-center gap-1.5 flex-1 md:hidden max-w-md">
-              <CitySelector
-                selectedCity={selectedCity || "singapore"}
-                onCityChange={onCityChange || (() => {})}
-                iconOnly
-              />
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                <Input
-                  placeholder="Search businesses..."
-                  className="h-9 pl-8 pr-3 text-sm bg-secondary/60 border-border/50 rounded-xl"
-                  value={searchQuery || ""}
-                  onChange={(e) => onSearchChange?.(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
-
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1.5">
             {isSuperAdmin && (
               <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/super-admin">
-                  <Crown className="w-4 h-4 mr-1.5 text-warning" />
-                  Super Admin
-                </Link>
+                <Link to="/super-admin"><Crown className="w-4 h-4 mr-1.5 text-warning" />Super Admin</Link>
               </Button>
             )}
             {isAdmin && !isSuperAdmin && (
               <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/admin">
-                  <Shield className="w-4 h-4 mr-1.5" />
-                  Admin
-                </Link>
+                <Link to="/admin"><Shield className="w-4 h-4 mr-1.5" />Admin</Link>
               </Button>
             )}
             {user && (
               <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/dashboard">
-                  <LayoutDashboard className="w-4 h-4 mr-1.5" />
-                  Dashboard
-                </Link>
+                <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-1.5" />Dashboard</Link>
               </Button>
             )}
             <Button variant="outline" size="sm" asChild className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50">
-              <Link to="/add-listing">
-                <Plus className="w-4 h-4 mr-1.5" />
-                Add Listing
-              </Link>
+              <Link to="/add-listing"><Plus className="w-4 h-4 mr-1.5" />Add Listing</Link>
             </Button>
             <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10" onClick={toggleTheme}>
               {theme === "dark" ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-primary" />}
             </Button>
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
-                <LogOut className="w-4 h-4 mr-1.5" />
-                Sign Out
+                <LogOut className="w-4 h-4 mr-1.5" />Sign Out
               </Button>
             ) : (
               <Button size="sm" onClick={() => setShowAuth(true)} className="bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary text-primary-foreground border-0">
