@@ -266,14 +266,14 @@ const SignUp = () => {
 
         {/* ═══ STEP 1: CREDENTIALS ═══ */}
         {step === "credentials" && (
-          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 shadow-lg animate-fade-in">
+          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-4 md:p-8 shadow-lg animate-fade-in">
             {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
-                <UserPlus className="w-7 h-7 text-primary" />
+            <div className="text-center mb-4 md:mb-6">
+              <div className="inline-flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-primary/10 mb-2 md:mb-3">
+                <UserPlus className="w-5 h-5 md:w-7 md:h-7 text-primary" />
               </div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground">Create Your Account</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <h1 className="text-lg md:text-2xl font-bold text-foreground">Create Your Account</h1>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
                 Sign up to list your business for free
               </p>
             </div>
