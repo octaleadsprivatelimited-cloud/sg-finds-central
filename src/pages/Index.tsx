@@ -5,7 +5,6 @@ import { db } from "@/lib/firebase";
 import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import CategoryGrid from "@/components/CategoryGrid";
-import HeroScene from "@/components/3d/HeroScene";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import { MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
@@ -116,21 +115,14 @@ const Index = () => {
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-primary/5 to-background border-b border-border/40">
-        <div className="container mx-auto px-4 py-6 md:py-10">
-          <div className="flex items-center gap-4 md:gap-8">
-            <div className="flex-1">
-              <h1 className="text-xl md:text-4xl font-bold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
-                Find the best businesses{" "}
-                <span className="text-primary">in Singapore</span>
-              </h1>
-              <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-6 max-w-lg">
-                Search across 5,000+ verified businesses — restaurants, clinics, services and more.
-              </p>
-            </div>
-            <div className="hidden md:block flex-shrink-0">
-              <HeroScene />
-            </div>
-          </div>
+        <div className="container mx-auto px-4 py-6 md:py-14">
+          <h1 className="text-xl md:text-4xl font-bold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
+            Find the best businesses{" "}
+            <span className="text-primary">in Singapore</span>
+          </h1>
+          <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-lg">
+            Search across 5,000+ verified businesses — restaurants, clinics, services and more.
+          </p>
 
           {/* Desktop search bar */}
           <div className="hidden md:flex items-stretch gap-0 max-w-2xl bg-card rounded-xl border border-border shadow-sm">
