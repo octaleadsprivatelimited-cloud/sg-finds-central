@@ -75,13 +75,6 @@ const Index = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
-  const [heroSlide, setHeroSlide] = useState(0);
-
-  // Auto-rotate hero
-  useEffect(() => {
-    const timer = setInterval(() => setHeroSlide(p => (p + 1) % HERO_SLIDES.length), 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
