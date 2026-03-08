@@ -59,11 +59,6 @@ const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
   }
 };
 
-const BUSINESS_EMOJIS = [
-  "🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦",
-  "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰", "🏗️", "🛍️",
-  "🍜", "💼", "🎨", "🏦", "🌿", "☕", "🎵", "🔬", "🛒", "🏨",
-];
 
 // Step 1 = collect credentials, Step 2 = verify phone OTP
 type SignUpStep = "credentials" | "phone-verify";
@@ -229,19 +224,11 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Emoji grid background */}
+      {/* Professional gradient background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="grid grid-cols-6 md:grid-cols-8 gap-10 md:gap-14 p-6 md:p-10 opacity-[0.08]">
-          {BUSINESS_EMOJIS.concat(BUSINESS_EMOJIS.slice(0, 18)).map((emoji, i) => (
-            <span
-              key={i}
-              className="text-5xl md:text-6xl select-none text-center"
-              style={{ transform: `rotate(${(i * 23) % 40 - 20}deg)` }}
-            >
-              {emoji}
-            </span>
-          ))}
-        </div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/5 blur-3xl translate-y-1/2 -translate-x-1/4" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(hsl(var(--primary)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
       </div>
 
       <div className="container mx-auto px-3 py-3 md:py-10 max-w-md relative z-10">
