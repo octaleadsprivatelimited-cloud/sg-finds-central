@@ -149,8 +149,11 @@ const SignUp = () => {
 
   // ── Step 2: Send phone OTP ──
   const handleSendOTP = async () => {
-    if (!phone.trim() || phone.trim().length < 5) {
-      toast.error("Please enter a valid phone number");
+    // Validate Singapore number: must start with +65 and have 8 digits after
+    const cleaned = phone.replace(/\s/g, "");
+    const sgRegex = /^\+65[689]\d{7}$/;
+    if (!sgRegex.test(cleaned)) {
+      toast.error("Please enter a valid Singapore mobile number (+65 8/9xxx xxxx)");
       return;
     }
     setLoading(true);
@@ -364,15 +367,24 @@ const SignUp = () => {
               <div className="space-y-4 animate-fade-in">
                 <div className="space-y-1.5">
                   <Label className="text-xs sm:text-sm">Singapore Mobile Number</Label>
-                  <Input
-                    type="tel"
-                    placeholder="+65 9123 4567"
-                    className="h-10 text-sm"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center h-10 px-3 rounded-md border border-border bg-secondary/50 text-sm font-medium text-muted-foreground shrink-0">
+                      🇸🇬 +65
+                    </span>
+                    <Input
+                      type="tel"
+                      placeholder="9123 4567"
+                      className="h-10 text-sm"
+                      value={phone.replace(/^\+65\s?/, "")}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 8);
+                        setPhone(`+65${digits}`);
+                      }}
+                      maxLength={9}
+                    />
+                  </div>
                   <p className="text-[11px] text-muted-foreground">
-                    We'll send a 6-digit OTP to verify your number
+                    Only Singapore numbers (+65) are accepted
                   </p>
                 </div>
                 <Button className="w-full h-10" onClick={handleSendOTP} disabled={loading}>
