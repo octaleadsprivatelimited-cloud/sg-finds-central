@@ -749,9 +749,9 @@ const SuperAdmin = () => {
 
 // Sub-components
 const StatCard = ({ icon, label, value, change, positive }: { icon: React.ReactNode; label: string; value: number; change: string; positive: boolean }) => (
-  <div className="bg-white rounded-2xl border border-slate-200 p-5">
+  <div className="bg-card rounded-2xl border border-border p-5">
     <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
         {icon}
       </div>
       <div className={`flex items-center gap-1 text-sm ${positive ? "text-emerald-600" : "text-red-600"}`}>
@@ -759,8 +759,8 @@ const StatCard = ({ icon, label, value, change, positive }: { icon: React.ReactN
         {change}
       </div>
     </div>
-    <p className="text-3xl font-bold text-slate-800">{value}</p>
-    <p className="text-sm text-slate-500 mt-1">{label}</p>
+    <p className="text-3xl font-bold text-foreground">{value}</p>
+    <p className="text-sm text-muted-foreground mt-1">{label}</p>
   </div>
 );
 
