@@ -215,6 +215,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Promo Banner */}
+      {!hasActiveFilters && <PromoBanner />}
+
       {/* Category Grid */}
       {!hasActiveFilters && <CategoryGrid />}
 
