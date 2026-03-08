@@ -17,13 +17,17 @@ const CATEGORIES = [
   { name: "Logistics & Transport", subtitle: "Delivery & Moving", emoji: "🚚", bg: "bg-stone-50", border: "border-stone-200", text: "text-stone-700" },
   { name: "Events & Entertainment", subtitle: "Parties & Shows", emoji: "🎉", bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-700" },
   { name: "Construction & Renovation", subtitle: "Build & Renovate", emoji: "🔨", bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700" },
+  { name: "Travel & Tourism", subtitle: "Hotels & Tours", emoji: "✈️", bg: "bg-sky-50", border: "border-sky-200", text: "text-sky-700" },
+  { name: "Pet Services", subtitle: "Grooming & Vets", emoji: "🐾", bg: "bg-teal-50", border: "border-teal-200", text: "text-teal-700" },
+  { name: "Fitness & Sports", subtitle: "Gyms & Coaches", emoji: "🏋️", bg: "bg-red-50", border: "border-red-200", text: "text-red-700" },
+  { name: "Photography", subtitle: "Studios & Shoots", emoji: "📸", bg: "bg-fuchsia-50", border: "border-fuchsia-200", text: "text-fuchsia-700" },
+  { name: "Cleaning Services", subtitle: "Home & Office", emoji: "🧹", bg: "bg-lime-50", border: "border-lime-200", text: "text-lime-700" },
 ];
 
 const CategoryGrid = () => {
   const navigate = useNavigate();
 
   const topCategories = CATEGORIES.slice(0, 5);
-  const bottomCategories = CATEGORIES.slice(5);
 
   return (
     <section className="py-8 md:py-12">
@@ -35,7 +39,7 @@ const CategoryGrid = () => {
           </div>
         </div>
 
-        {/* Top row — large cards */}
+        {/* Top row — large cards (desktop only) */}
         <div className="hidden lg:grid grid-cols-5 gap-4 mb-6">
           {topCategories.map((cat) => (
             <button
@@ -56,9 +60,9 @@ const CategoryGrid = () => {
           ))}
         </div>
 
-        {/* Bottom rows — compact tiles */}
-        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10 gap-2 md:gap-3">
-          {bottomCategories.map((cat) => (
+        {/* All categories — 4 per row */}
+        <div className="grid grid-cols-4 gap-2 md:gap-3">
+          {CATEGORIES.map((cat) => (
             <button
               key={cat.name}
               onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
