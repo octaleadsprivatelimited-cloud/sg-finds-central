@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import AddListing from "./pages/AddListing";
 import Admin from "./pages/Admin";
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
