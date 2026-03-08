@@ -142,7 +142,7 @@ const AddListing = () => {
     try {
       await addDoc(collection(db, "listings"), {
         name, uen, category, district, address, postalCode, description,
-        phone, whatsapp, website, email,
+        phone, whatsapp, website, email, logoUrl,
         documentsUrl: validLinks,
         status: "pending_approval",
         ownerId: user.uid,
