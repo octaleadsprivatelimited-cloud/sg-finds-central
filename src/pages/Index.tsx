@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import ListingCard, { Listing } from "@/components/ListingCard";
