@@ -894,13 +894,13 @@ const SuperAdmin = () => {
               <div className="flex gap-2 pt-4 border-t border-border">
                 {selectedListing.status !== "approved" && (
                   <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600"
-                    onClick={() => { handleListingAction(selectedListing.id, "approved"); setSelectedListing(null); }}>
+                    onClick={() => { handleListingApprove(selectedListing.id); setSelectedListing(null); }}>
                     <Check className="w-4 h-4 mr-1.5" />Approve
                   </Button>
                 )}
                 {selectedListing.status !== "rejected" && (
                   <Button size="sm" variant="destructive"
-                    onClick={() => { handleListingAction(selectedListing.id, "rejected"); setSelectedListing(null); }}>
+                    onClick={() => { setRejectingListingId(selectedListing.id); setRejectionReason(""); setSelectedListing(null); }}>
                     <X className="w-4 h-4 mr-1.5" />Reject
                   </Button>
                 )}
