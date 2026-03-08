@@ -115,21 +115,25 @@ const Index = () => {
     <div className="min-h-screen bg-background">
 
       {/* Hero + Featured side by side on desktop */}
-      <section className="bg-gradient-to-b from-primary/5 to-background border-b border-border/40">
-        <div className="container mx-auto px-4 py-6 md:py-10">
+      <section className="relative overflow-hidden border-b border-white/10" style={{ background: 'var(--gradient-hero)' }}>
+        {/* Matte noise overlay */}
+        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundSize: '128px 128px' }} />
+        {/* Subtle radial glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10" />
+        <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
           <div className="flex flex-col lg:flex-row lg:gap-8">
             {/* Left block — Hero content */}
             <div className="flex-1 min-w-0 lg:max-w-[55%]">
-              <h1 className="text-xl md:text-4xl font-bold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
+              <h1 className="text-xl md:text-4xl font-bold tracking-tight text-white mb-1 md:mb-2 leading-tight drop-shadow-sm">
                 Find the best businesses{" "}
-                <span className="text-primary">in Singapore</span>
+                <span className="text-white/80">in Singapore</span>
               </h1>
 
 
               {/* Filter row */}
               <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl lg:hidden">
                 <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
+                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-white/15 border-white/20 text-white backdrop-blur-sm">
                     <SelectValue placeholder="All Districts" />
                   </SelectTrigger>
                   <SelectContent>
@@ -140,7 +144,7 @@ const Index = () => {
                 </Select>
 
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
+                  <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-white/15 border-white/20 text-white backdrop-blur-sm">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
@@ -150,7 +154,7 @@ const Index = () => {
                   </SelectContent>
                 </Select>
 
-                <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex" onClick={handleDetectLocation}>
+                <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex bg-white/15 border-white/20 text-white hover:bg-white/25" onClick={handleDetectLocation}>
                   <MapPin className="w-3.5 h-3.5 mr-1.5" />
                   Near Me
                 </Button>
