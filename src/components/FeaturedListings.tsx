@@ -35,14 +35,14 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
   return (
     <section className={compact ? "" : "mb-10"}>
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-warning/20 to-orange-500/20 flex items-center justify-center">
-          <Sparkles className="w-3.5 h-3.5 text-warning" />
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${compact ? "bg-white/15" : "bg-gradient-to-br from-warning/20 to-orange-500/20"}`}>
+          <Sparkles className={`w-3.5 h-3.5 ${compact ? "text-white" : "text-warning"}`} />
         </div>
         <div>
-          <h2 className={`${compact ? "text-base" : "text-lg"} font-bold text-foreground`}>Featured Businesses</h2>
-          <p className="text-xs text-muted-foreground">Handpicked top-rated businesses</p>
+          <h2 className={`${compact ? "text-base text-white" : "text-lg text-foreground"} font-bold`}>Featured Businesses</h2>
+          <p className={`text-xs ${compact ? "text-white/70" : "text-muted-foreground"}`}>Handpicked top-rated businesses</p>
         </div>
-        <Badge variant="secondary" className="text-xs ml-auto">Sponsored</Badge>
+        <Badge variant="secondary" className={`text-xs ml-auto ${compact ? "bg-white/15 text-white border-white/20" : ""}`}>Sponsored</Badge>
       </div>
       <div className={`grid gap-3 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"}`}>
         {(compact ? featured.slice(0, 4) : featured).map((listing, i) => {
