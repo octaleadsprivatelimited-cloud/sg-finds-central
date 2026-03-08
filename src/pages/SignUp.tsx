@@ -303,7 +303,7 @@ const SignUp = () => {
             </div>
 
             {/* Email Sign Up */}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs sm:text-sm">Email</Label>
                 <Input
