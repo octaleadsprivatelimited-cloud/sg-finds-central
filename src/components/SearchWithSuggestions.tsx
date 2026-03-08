@@ -4,7 +4,6 @@ import { Search, MapPin, Star, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
 import { cn } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 
 interface SearchWithSuggestionsProps {
   compact?: boolean;
