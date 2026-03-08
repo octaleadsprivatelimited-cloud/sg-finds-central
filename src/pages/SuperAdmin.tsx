@@ -588,6 +588,7 @@ const SuperAdmin = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => setSelectedUser(u)}><Eye className="w-4 h-4 mr-2" />View</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setActiveNav("listings"); setListingSearch(u.email); }}><Package className="w-4 h-4 mr-2" />View Listings</DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {u.status !== "active" && <DropdownMenuItem onClick={() => handleUserAction(u.id, "activate")}><UserCheck className="w-4 h-4 mr-2" />Activate</DropdownMenuItem>}
                             {u.status === "active" && u.role !== "superadmin" && <DropdownMenuItem onClick={() => handleUserAction(u.id, "suspend")}><Ban className="w-4 h-4 mr-2" />Suspend</DropdownMenuItem>}
