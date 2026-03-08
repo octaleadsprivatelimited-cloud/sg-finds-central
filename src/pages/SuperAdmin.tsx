@@ -174,7 +174,7 @@ const SuperAdmin = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Sidebar */}
       <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-card border-r border-border flex flex-col transition-all duration-300 hidden md:flex`}>
         {/* Logo */}
