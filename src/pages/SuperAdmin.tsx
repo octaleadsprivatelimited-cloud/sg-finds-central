@@ -778,10 +778,10 @@ const SettingRow = ({ title, description, enabled }: { title: string; descriptio
 
 const InfoRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
   <div className="flex items-start gap-2">
-    <div className="text-slate-400 mt-0.5 shrink-0">{icon}</div>
+    <div className="text-muted-foreground mt-0.5 shrink-0">{icon}</div>
     <div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="text-sm font-medium text-slate-800 break-all">{value}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-sm font-medium text-foreground break-all">{value}</p>
     </div>
   </div>
 );
