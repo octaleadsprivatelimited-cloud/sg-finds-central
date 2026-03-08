@@ -209,7 +209,7 @@ const Index = () => {
         </div>
 
         <div className="flex gap-6 overflow-hidden">
-          <div className={`flex-1 min-w-0 space-y-3 ${showMap ? "hidden md:block" : ""}`}>
+          <div className={`flex-1 min-w-0 space-y-3 ${showMap ? "hidden" : ""}`}>
             {filtered.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mx-auto mb-4">
@@ -232,14 +232,16 @@ const Index = () => {
             )}
           </div>
 
-          <div className={`md:w-[480px] lg:w-[560px] h-[calc(100vh-280px)] sticky top-24 rounded-xl overflow-hidden border border-border/50 shadow-lg ${showMap ? "" : "hidden md:block"}`}>
-            <MapView
-              listings={filtered}
-              selectedId={selectedListing?.id}
-              onSelectListing={setSelectedListing}
-              center={mapCenter}
-            />
-          </div>
+          {showMap && (
+            <div className="flex-1 h-[calc(100vh-280px)] rounded-xl overflow-hidden border border-border/50 shadow-lg">
+              <MapView
+                listings={filtered}
+                selectedId={selectedListing?.id}
+                onSelectListing={setSelectedListing}
+                center={mapCenter}
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>
