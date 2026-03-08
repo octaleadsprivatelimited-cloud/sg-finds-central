@@ -98,12 +98,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-noise">
       {/* Hero */}
-      <section className="border-b border-border/50 bg-gradient-to-b from-secondary/50 to-background">
-        <div className="container mx-auto px-4 py-10 md:py-16">
+      <section className="relative border-b border-border/50 overflow-hidden">
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-gradient-mesh" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-50" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary/8 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        
+        <div className="relative container mx-auto px-4 py-10 md:py-16">
           <div className="max-w-2xl mx-auto text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 backdrop-blur-sm">
               <Building2 className="w-4 h-4" />
               Singapore Business Directory
             </div>
