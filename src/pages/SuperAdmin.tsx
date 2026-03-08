@@ -365,22 +365,22 @@ const SuperAdmin = () => {
                   </thead>
                   <tbody>
                     {filteredUsers.slice(0, 5).map((u) => (
-                      <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer" onClick={() => setSelectedUser(u)}>
+                      <tr key={u.id} className="border-b border-border/50 hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedUser(u)}>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-                              <span className="text-xs font-semibold text-indigo-600">{u.displayName.charAt(0)}</span>
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                              <span className="text-xs font-semibold text-primary">{u.displayName.charAt(0)}</span>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-slate-800">{u.displayName}</p>
-                              <p className="text-xs text-slate-400">{u.email}</p>
+                              <p className="text-sm font-medium text-foreground">{u.displayName}</p>
+                              <p className="text-xs text-muted-foreground">{u.email}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-4">{roleBadge(u.role)}</td>
                         <td className="px-5 py-4">{statusBadge(u.status)}</td>
-                        <td className="px-5 py-4 text-sm text-slate-500">{u.joinedAt}</td>
-                        <td className="px-5 py-4 text-sm text-slate-800 font-medium">{u.listingsCount}</td>
+                        <td className="px-5 py-4 text-sm text-muted-foreground">{u.joinedAt}</td>
+                        <td className="px-5 py-4 text-sm text-foreground font-medium">{u.listingsCount}</td>
                       </tr>
                     ))}
                   </tbody>
