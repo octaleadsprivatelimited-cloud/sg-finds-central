@@ -334,7 +334,7 @@ const SignUp = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
-              <Button className="w-full h-10" onClick={handleEmailSignUp} disabled={loading}>
+              <Button className="w-full h-9 md:h-10" onClick={handleEmailSignUp} disabled={loading}>
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Continue
               </Button>
