@@ -515,19 +515,19 @@ const SuperAdmin = () => {
 
             <div className="space-y-3">
               {filteredListings.map((listing) => (
-                <div key={listing.id} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+                <div key={listing.id} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                        <span className="text-lg font-bold text-slate-500">{listing.name.charAt(0)}</span>
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center">
+                        <span className="text-lg font-bold text-muted-foreground">{listing.name.charAt(0)}</span>
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800">{listing.name}</h3>
+                          <h3 className="font-semibold text-foreground">{listing.name}</h3>
                           {statusBadge(listing.status)}
                         </div>
-                        <p className="text-sm text-slate-500">{listing.address}</p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                        <p className="text-sm text-muted-foreground">{listing.address}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                           <span>UEN: {listing.uen}</span>
                           <span>·</span>
                           <span>{listing.category}</span>
