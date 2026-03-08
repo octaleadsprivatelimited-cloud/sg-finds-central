@@ -40,21 +40,14 @@ const Header = () => {
   return (
     <>
       {/* ═══ ANNOUNCEMENT BAR ═══ */}
-      <div className="bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 h-9 flex items-center justify-between text-xs">
-          <div className="hidden sm:flex items-center gap-4">
-            <Link to="#" className="opacity-80 hover:opacity-100 transition-opacity">Help Center</Link>
-            <Link to="#" className="opacity-80 hover:opacity-100 transition-opacity">Find a Store</Link>
-          </div>
-          <div className="flex items-center gap-1.5 mx-auto sm:mx-0">
-            <Truck className="w-3.5 h-3.5" />
-            <span className="font-medium">List your business for FREE — Reach thousands of customers</span>
-          </div>
-          <div className="hidden sm:flex items-center gap-3">
-            <span className="opacity-70">🇸🇬 Singapore</span>
+      <Link to="/add-listing" className="block bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer">
+        <div className="container mx-auto px-4 h-9 flex items-center justify-center text-xs">
+          <div className="flex items-center gap-1.5">
+            <Truck className="w-3.5 h-3.5 shrink-0" />
+            <span className="font-medium whitespace-nowrap">List your business for FREE — Reach thousands of customers</span>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* ═══ MAIN HEADER ═══ */}
       <header className="sticky top-0 z-50 bg-card border-b border-border">
