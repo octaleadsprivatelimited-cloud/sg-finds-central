@@ -226,14 +226,35 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           </Button>
         </div>
 
-        {method === "email" ? (
+        {method === "email" && mode === "forgot" ? (
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Email</Label>
+              <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleForgotPassword} disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Send Reset Link
+            </Button>
+            <button className="w-full text-xs sm:text-sm text-primary font-medium hover:underline" onClick={() => setMode("login")}>
+              ← Back to sign in
+            </button>
+          </div>
+        ) : method === "email" ? (
           <div className="space-y-3">
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm">Email</Label>
               <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs sm:text-sm">Password</Label>
+                {mode === "login" && (
+                  <button className="text-[11px] sm:text-xs text-primary font-medium hover:underline" onClick={() => setMode("forgot")}>
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <Input type="password" placeholder="••••••••" className="h-9 sm:h-10 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleEmailAuth} disabled={loading}>
