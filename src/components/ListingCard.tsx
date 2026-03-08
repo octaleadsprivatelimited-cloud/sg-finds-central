@@ -2,6 +2,7 @@ import { MapPin, Phone, Globe, Star, Clock, ExternalLink, MessageCircle, Mail } 
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
+import { getBusinessUrl } from "@/lib/url-helpers";
 
 export interface Listing {
   id: string;
@@ -27,6 +28,7 @@ export interface Listing {
   rating?: number;
   reviewCount?: number;
   city?: string;
+  customSlug?: string;
 }
 
 interface ListingCardProps {
