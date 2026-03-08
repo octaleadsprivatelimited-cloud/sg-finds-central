@@ -111,8 +111,30 @@ const BusinessDashboard = () => {
     setEditCustomSlug(listing.customSlug || toSlug(listing.name));
   };
 
+  const slugError = useMemo(() => {
+    if (!editingListing) return "";
+    const slug = toSlug(editCustomSlug || editName);
+    if (!slug) return "URL slug cannot be empty";
+    if (slug.length < 3) return "URL slug must be at least 3 characters";
+    if (slug.length > 80) return "URL slug must be less than 80 characters";
+    const areaSlug = toSlug(editDistrict);
+    const catSlug = toSlug(editCategory);
+    const duplicate = listings.find(
+      l => l.id !== editingListing.id &&
+        toSlug(l.district) === areaSlug &&
+        toSlug(l.category) === catSlug &&
+        (l.customSlug || toSlug(l.name)) === slug
+    );
+    if (duplicate) return `This URL is already taken by "${duplicate.name}"`;
+    return "";
+  }, [editCustomSlug, editName, editDistrict, editCategory, editingListing, listings]);
+
   const saveEdit = () => {
     if (!editingListing) return;
+    if (slugError) {
+      toast.error(slugError);
+      return;
+    }
     const sanitizedSlug = toSlug(editCustomSlug || editName);
     setListings(prev => prev.map(l =>
       l.id === editingListing.id ? {
@@ -397,8 +419,8 @@ const BusinessDashboard = () => {
                     placeholder={toSlug(editName || "business-name")}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  This is your unique business URL. Use lowercase letters, numbers, and hyphens only.
+                <p className={`text-xs ${slugError ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                  {slugError || "This is your unique business URL. Use lowercase letters, numbers, and hyphens only."}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -448,7 +470,7 @@ const BusinessDashboard = () => {
                 <Textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
               <div className="flex gap-2 pt-2">
-                <Button className="flex-1" onClick={saveEdit}>Save Changes</Button>
+                <Button className="flex-1" onClick={saveEdit} disabled={!!slugError}>Save Changes</Button>
                 <Button variant="outline" onClick={() => setEditingListing(null)}>Cancel</Button>
               </div>
             </div>
