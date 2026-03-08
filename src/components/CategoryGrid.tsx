@@ -30,25 +30,24 @@ const CategoryGrid = () => {
   const topCategories = CATEGORIES.slice(0, 5);
 
   return (
-    <section className="py-6 md:py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-4">
+    <section className="py-4 lg:py-0">
+      <div>
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-base md:text-lg font-bold text-foreground">Browse by Category</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Find what you need in Singapore</p>
+            <h2 className="text-sm md:text-base font-bold text-foreground">Browse by Category</h2>
+            <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Find what you need in Singapore</p>
           </div>
         </div>
 
-        {/* All categories grid — 4 on mobile, 5 on md, 10 on lg */}
-        <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-1.5 md:gap-2">
+        <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-1.5 md:gap-2">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.name}
               onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-              className="group flex flex-col items-center gap-1 p-2 md:p-2.5 rounded-lg border border-border hover:shadow-sm hover:border-primary/30 transition-all duration-200 hover:-translate-y-0.5"
+              className="group flex flex-col items-center gap-1 p-1.5 md:p-2 rounded-lg border border-border hover:shadow-sm hover:border-primary/30 transition-all duration-200 hover:-translate-y-0.5"
             >
-              <span className="text-xl md:text-2xl">{cat.emoji}</span>
-              <span className="text-[9px] md:text-[10px] font-medium text-foreground text-center leading-tight line-clamp-2">
+              <span className="text-lg md:text-xl">{cat.emoji}</span>
+              <span className="text-[8px] md:text-[9px] font-medium text-foreground text-center leading-tight line-clamp-2">
                 {cat.name}
               </span>
             </button>
