@@ -29,6 +29,7 @@ export interface Listing {
   reviewCount?: number;
   city?: string;
   customSlug?: string;
+  logoUrl?: string;
 }
 
 interface ListingCardProps {
