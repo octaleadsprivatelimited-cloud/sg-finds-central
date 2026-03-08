@@ -8,6 +8,8 @@ import Header from "@/components/Header";
 import Index from "./pages/Index";
 import AddListing from "./pages/AddListing";
 import Admin from "./pages/Admin";
+import SuperAdmin from "./pages/SuperAdmin";
+import BusinessDashboard from "./pages/BusinessDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,7 +25,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/add-listing" element={<AddListing />} />
+            <Route path="/dashboard" element={<BusinessDashboard />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/super-admin" element={<SuperAdmin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
