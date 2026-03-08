@@ -39,7 +39,6 @@ import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
-import { db } from "@/lib/firebase";
 
 // Demo data fallback
 const MY_DEMO_LISTINGS: Listing[] = [
