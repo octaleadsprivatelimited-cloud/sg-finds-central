@@ -7,7 +7,7 @@ import FeaturedListings from "@/components/FeaturedListings";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
-import { Building2, MapPin, List, Map as MapIcon, Search, TrendingUp, Sparkles, Zap } from "lucide-react";
+import { MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SearchWithSuggestions from "@/components/SearchWithSuggestions";
