@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import SearchFilters from "@/components/SearchFilters";
 import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import CitySelector from "@/components/CitySelector";
@@ -9,6 +8,11 @@ import CategoryGrid from "@/components/CategoryGrid";
 import MapView from "@/components/MapView";
 import { Building2, MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { toast } from "sonner";
 
 const DEMO_LISTINGS: (Listing)[] = [
