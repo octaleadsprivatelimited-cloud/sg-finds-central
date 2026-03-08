@@ -15,6 +15,32 @@ import CatalogueSection from "@/components/business-detail/CatalogueSection";
 import QuickInfo from "@/components/business-detail/QuickInfo";
 import ContactSidebar from "@/components/business-detail/ContactSidebar";
 
+// Gallery images
+import food1 from "@/assets/businesses/food1.jpg";
+import food1b from "@/assets/businesses/food1-b.jpg";
+import food1c from "@/assets/businesses/food1-c.jpg";
+import tech1 from "@/assets/businesses/tech1.jpg";
+import tech1b from "@/assets/businesses/tech1-b.jpg";
+import tech1c from "@/assets/businesses/tech1-c.jpg";
+import beauty1 from "@/assets/businesses/beauty1.jpg";
+import beauty1b from "@/assets/businesses/beauty1-b.jpg";
+import beauty1c from "@/assets/businesses/beauty1-c.jpg";
+import education1 from "@/assets/businesses/education1.jpg";
+import education1b from "@/assets/businesses/education1-b.jpg";
+import education1c from "@/assets/businesses/education1-c.jpg";
+import home1 from "@/assets/businesses/home1.jpg";
+import home1b from "@/assets/businesses/home1-b.jpg";
+import home1c from "@/assets/businesses/home1-c.jpg";
+
+// Photo gallery map per listing ID
+const GALLERY_MAP: Record<string, string[]> = {
+  "1": [food1, food1b, food1c],
+  "2": [tech1, tech1b, tech1c],
+  "3": [beauty1, beauty1b, beauty1c],
+  "4": [education1, education1b, education1c],
+  "5": [home1, home1b, home1c],
+};
+
 // Demo listings
 const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
@@ -24,7 +50,7 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
     email: "info@sgdelights.com", whatsapp: "+6592345678",
     description: "Award-winning local cuisine serving traditional Peranakan dishes with a modern twist. Our chefs bring decades of experience crafting authentic flavours with contemporary presentation. From signature laksa to handmade kuehs, every dish tells a story of Singapore's rich culinary heritage.",
     status: "approved", ownerId: "demo", lat: 1.3048, lng: 103.8318,
-    verified: true, featured: true, rating: 4.8, reviewCount: 127,
+    verified: true, featured: true, rating: 4.8, reviewCount: 127, coverImage: food1,
   },
   {
     id: "2", name: "TechHub Solutions", uen: "202301234B",
@@ -33,7 +59,7 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
     email: "hello@techhub.sg", whatsapp: "+6597890123",
     description: "Full-service IT consultancy specializing in cloud infrastructure and cybersecurity. We help businesses of all sizes transform their digital operations with enterprise-grade solutions, 24/7 support, and proactive security monitoring.",
     status: "approved", ownerId: "demo", lat: 1.2840, lng: 103.8510,
-    verified: true, featured: true, rating: 4.9, reviewCount: 89,
+    verified: true, featured: true, rating: 4.9, reviewCount: 89, coverImage: tech1,
   },
   {
     id: "3", name: "Glow Aesthetics Clinic", uen: "202212345C",
@@ -42,7 +68,7 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
     email: "appointments@glowaesthetics.sg",
     description: "Premium aesthetic treatments using FDA-approved technology. Our clinic offers a comprehensive range of non-invasive procedures including laser treatments, dermal fillers, and skin rejuvenation therapies performed by certified medical professionals.",
     status: "approved", ownerId: "demo", lat: 1.3204, lng: 103.8447,
-    verified: true, rating: 4.7, reviewCount: 64,
+    verified: true, rating: 4.7, reviewCount: 64, coverImage: beauty1,
   },
   {
     id: "4", name: "LearnSG Academy", uen: "201854321D",
@@ -51,7 +77,7 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
     email: "enrol@learnsg.com",
     description: "Enrichment centre offering coding, robotics, and STEM courses for ages 5–16. Our curriculum is designed by experienced educators and tech professionals to nurture the next generation of innovators.",
     status: "approved", ownerId: "demo", lat: 1.3530, lng: 103.9453,
-    rating: 4.6, reviewCount: 42,
+    rating: 4.6, reviewCount: 42, coverImage: education1,
   },
   {
     id: "5", name: "HomeFixSG Services", uen: "202098765E",
@@ -60,7 +86,7 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
     whatsapp: "+6595678901",
     description: "Reliable plumbing, electrical, and aircon servicing across Singapore. Our certified technicians respond within 2 hours for emergency jobs. Transparent pricing with no hidden charges.",
     status: "approved", ownerId: "demo", lat: 1.3329, lng: 103.7436,
-    verified: true, featured: true, rating: 4.5, reviewCount: 156,
+    verified: true, featured: true, rating: 4.5, reviewCount: 156, coverImage: home1,
   },
 ];
 
@@ -105,6 +131,7 @@ const BusinessDetail = () => {
   }
 
   const shareUrl = `${window.location.origin}/${areaSlug}/${categorySlug}/${businessSlug}`;
+  const galleryPhotos = GALLERY_MAP[listing.id] || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -131,7 +158,7 @@ const BusinessDetail = () => {
 
       {/* Photo Gallery */}
       <div className="container mx-auto px-4 pt-4">
-        <PhotoGallery photos={[]} businessName={listing.name} />
+        <PhotoGallery photos={galleryPhotos} businessName={listing.name} />
       </div>
 
       {/* Main Content */}
@@ -222,7 +249,7 @@ const BusinessDetail = () => {
               </TabsContent>
 
               <TabsContent value="photos" className="mt-6">
-                <PhotoGallery photos={[]} businessName={listing.name} />
+                <PhotoGallery photos={galleryPhotos} businessName={listing.name} />
               </TabsContent>
 
               <TabsContent value="reviews" className="mt-6">
