@@ -206,6 +206,7 @@ const AddListing = () => {
                   </div>
                 )}
               </div>
+            </div>
           )}
 
           {step === 1 && (
