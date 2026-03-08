@@ -40,7 +40,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
                 <span className="text-xl font-bold text-primary">{listing.name.charAt(0)}</span>
               </div>
             )}
-            <h1 className="text-2xl font-bold text-foreground">{listing.name}</h1>
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground">{listing.name}</h1>
             {listing.verified && <VerifiedBadge size="md" />}
             {listing.featured && (
               <Badge className="bg-warning/10 text-warning border-warning/20 text-xs">⭐ Featured</Badge>
