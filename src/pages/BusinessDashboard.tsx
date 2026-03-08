@@ -160,7 +160,7 @@ const BusinessDashboard = () => {
         l.id === editingListing.id ? { ...l, ...updates } : l
       ));
       setEditingListing(null);
-      toast.success("Listing updated in database");
+      toast.success("Listing updated — pending admin re-approval before going public");
     } catch (err: any) {
       toast.error(err.message || "Failed to update listing");
     }
