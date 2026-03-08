@@ -145,7 +145,7 @@ const Index = () => {
               </div>
 
               {/* Filter row */}
-              <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl">
+              <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl lg:hidden">
                 <Select value={district} onValueChange={setDistrict}>
                   <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
                     <SelectValue placeholder="All Districts" />
