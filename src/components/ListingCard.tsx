@@ -77,29 +77,29 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
 
   return (
     <div
-      className={`glass-card rounded-xl p-4 hover-lift cursor-pointer animate-fade-in group ${listing.featured ? "gradient-border" : ""}`}
+      className={`glass-card rounded-xl p-3 sm:p-4 hover-lift cursor-pointer animate-fade-in group overflow-hidden ${listing.featured ? "gradient-border" : ""}`}
       onClick={handleClick}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">{listing.name}</h3>
+      <div className="flex items-start justify-between gap-2 sm:gap-3">
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 flex-wrap">
+            <h3 className="font-semibold text-foreground truncate text-sm sm:text-base group-hover:text-primary transition-colors">{listing.name}</h3>
             {listing.verified && <VerifiedBadge size="sm" />}
-            <Badge variant="secondary" className="shrink-0 text-xs font-medium">{listing.category}</Badge>
+            <Badge variant="secondary" className="shrink-0 text-[10px] sm:text-xs font-medium">{listing.category}</Badge>
             {listing.featured && (
-              <Badge className="bg-gradient-to-r from-warning/20 to-orange-500/20 text-warning border-warning/30 text-xs shrink-0 font-medium">
+              <Badge className="bg-gradient-to-r from-warning/20 to-orange-500/20 text-warning border-warning/30 text-[10px] sm:text-xs shrink-0 font-medium">
                 ⭐ Featured
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-            <MapPin className="w-3.5 h-3.5 shrink-0 text-accent" />
+          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mb-2">
+            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-accent" />
             <span className="truncate">{listing.address}</span>
           </div>
           {!compact && listing.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{listing.description}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mb-3">{listing.description}</p>
           )}
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {listing.phone && (
               <a href={`tel:${listing.phone}`} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>
                 <Phone className="w-3 h-3" />{listing.phone}
@@ -130,11 +130,11 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
             )}
           </div>
         </div>
-        <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shrink-0 overflow-hidden shadow-md`}>
+        <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shrink-0 overflow-hidden shadow-md`}>
           {listing.logoUrl ? (
             <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
           ) : (
-            <span className="text-2xl font-bold text-white/90">{listing.name.charAt(0)}</span>
+            <span className="text-xl sm:text-2xl font-bold text-white/90">{listing.name.charAt(0)}</span>
           )}
         </div>
       </div>

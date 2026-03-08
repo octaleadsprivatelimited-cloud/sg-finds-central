@@ -205,8 +205,8 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="flex gap-6">
-          <div className={`flex-1 space-y-3 ${showMap ? "hidden md:block" : ""}`}>
+        <div className="flex gap-6 overflow-hidden">
+          <div className={`flex-1 min-w-0 space-y-3 ${showMap ? "hidden md:block" : ""}`}>
             {filtered.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mx-auto mb-4">
