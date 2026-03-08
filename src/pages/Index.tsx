@@ -135,7 +135,7 @@ const Index = () => {
           <div className="hidden md:flex flex-col sm:flex-row items-stretch gap-0 max-w-3xl">
             <div className="flex items-center gap-2 px-4 py-3 border border-border rounded-l-xl bg-card border-r-0 min-w-[160px]">
               <MapPin className="w-4 h-4 text-accent shrink-0" />
-              <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} />
+              <span className="text-sm font-medium text-foreground">Singapore</span>
             </div>
             <div className="relative flex-1">
               <Input

@@ -40,6 +40,23 @@ const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
             </span>
           </Link>
 
+          {/* Mobile/Tablet: Compact search bar in header */}
+          {isHome && onSearchChange && (
+            <div className="flex items-center gap-1.5 flex-1 max-w-md md:hidden mx-2">
+              <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-9 overflow-hidden">
+                <div className="flex items-center justify-center w-8 h-9 shrink-0">
+                  <MapPin className="w-3.5 h-3.5 text-accent" />
+                </div>
+                <Input
+                  placeholder="Search businesses..."
+                  className="h-9 border-0 bg-transparent pl-0 pr-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1.5">
             {isSuperAdmin && (
