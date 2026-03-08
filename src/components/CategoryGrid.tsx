@@ -36,7 +36,7 @@ const CategoryGrid = () => {
         </div>
 
         {/* Top row — large cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 mb-6">
+        <div className="hidden lg:grid grid-cols-5 gap-4 mb-6">
           {topCategories.map((cat) => (
             <button
               key={cat.name}
