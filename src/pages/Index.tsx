@@ -10,6 +10,7 @@ import MapView from "@/components/MapView";
 import { Building2, MapPin, List, Map as MapIcon, Search, TrendingUp, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import SearchWithSuggestions from "@/components/SearchWithSuggestions";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
