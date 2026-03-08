@@ -87,14 +87,14 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 text-warning fill-warning" />
-                    <span className="text-xs font-semibold text-foreground">
+                    <span className={`text-xs font-semibold ${compact ? "text-white" : "text-foreground"}`}>
                       {listing.rating?.toFixed(1) || "4.8"}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className={`text-xs ${compact ? "text-white/60" : "text-muted-foreground"}`}>
                       ({listing.reviewCount || 24})
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className={`flex items-center gap-1 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity ${compact ? "text-white" : "text-primary"}`}>
                     View <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
