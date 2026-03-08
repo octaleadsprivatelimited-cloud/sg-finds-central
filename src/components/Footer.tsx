@@ -5,8 +5,8 @@ const Footer = () => {
   return (
     <footer className="border-t border-border bg-card">
       {/* Main footer */}
-      <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-3 md:px-4 py-6 md:py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block mb-4">

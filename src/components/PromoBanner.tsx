@@ -67,8 +67,8 @@ const PromoBanner = () => {
   const banner = BANNERS[current];
 
   return (
-    <section className="py-4">
-      <div className="container mx-auto px-4">
+    <section className="py-2 md:py-4">
+      <div className="container mx-auto px-3 md:px-4">
         <div
           className="relative overflow-hidden rounded-2xl"
           onMouseEnter={() => setIsHovered(true)}
@@ -76,7 +76,7 @@ const PromoBanner = () => {
         >
           {/* Banner */}
           <div
-            className={`relative bg-gradient-to-r ${banner.gradient} p-6 md:p-10 min-h-[160px] md:min-h-[200px] flex items-center transition-all duration-500`}
+            className={`relative bg-gradient-to-r ${banner.gradient} p-4 md:p-10 min-h-[120px] md:min-h-[200px] flex items-center transition-all duration-500`}
           >
             {/* Decorative shapes */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
@@ -90,13 +90,13 @@ const PromoBanner = () => {
                   Featured
                 </span>
               </div>
-              <h3 className="text-white font-bold text-xl md:text-3xl leading-tight mb-2 max-w-lg">
+              <h3 className="text-white font-bold text-base md:text-3xl leading-tight mb-1 md:mb-2 max-w-lg">
                 {banner.title}
               </h3>
-              <p className="text-white/80 text-sm md:text-base mb-4 max-w-md">
+              <p className="text-white/80 text-xs md:text-base mb-2.5 md:mb-4 max-w-md line-clamp-2">
                 {banner.subtitle}
               </p>
-              <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-foreground font-semibold text-sm hover:bg-white/90 transition-colors shadow-lg">
+              <button className="inline-flex items-center gap-1.5 px-3.5 md:px-5 py-1.5 md:py-2.5 rounded-full bg-white text-foreground font-semibold text-xs md:text-sm hover:bg-white/90 transition-colors shadow-lg">
                 {banner.cta}
               </button>
             </div>

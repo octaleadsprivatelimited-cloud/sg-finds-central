@@ -137,7 +137,7 @@ const Index = () => {
 
       {/* ═══ CATEGORY GRID ═══ */}
       {!hasActiveFilters && (
-        <section className="container mx-auto px-4 py-8">
+        <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
           <CategoryGrid />
         </section>
       )}
@@ -146,25 +146,25 @@ const Index = () => {
       {!hasActiveFilters && <PromoBanner />}
 
       {/* ═══ FEATURED BUSINESSES ═══ */}
-      <section className="container mx-auto px-4 py-6">
+      <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
         <FeaturedListings listings={filtered} />
       </section>
 
       {/* ═══ EXCLUSIVE DEALS ═══ */}
-      <section className="container mx-auto px-4">
+      <section className="container mx-auto px-3 md:px-4">
         <ExclusiveDeals listings={filtered} />
       </section>
 
       {/* ═══ ALL BUSINESSES ═══ */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
+      <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-2">
           <div>
-            <h2 className="text-lg font-bold text-foreground">All Businesses</h2>
-            <p className="text-sm text-muted-foreground">{filtered.length} results found</p>
+            <h2 className="text-base md:text-lg font-bold text-foreground">All Businesses</h2>
+            <p className="text-xs md:text-sm text-muted-foreground">{filtered.length} results found</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2 w-full sm:w-auto overflow-x-auto">
             <Select value={district} onValueChange={setDistrict}>
-              <SelectTrigger className="w-auto min-w-[140px] h-9 text-sm">
+              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm">
                 <SelectValue placeholder="All Districts" />
               </SelectTrigger>
               <SelectContent>
@@ -173,18 +173,18 @@ const Index = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
-              {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
+            <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm px-2 md:px-3 shrink-0" onClick={() => setShowMap(!showMap)}>
+              {showMap ? <List className="w-3.5 h-3.5 mr-1" /> : <MapIcon className="w-3.5 h-3.5 mr-1" />}
               {showMap ? "List" : "Map"}
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDetectLocation}>
-              <MapPin className="w-4 h-4 mr-1.5" />Near Me
+            <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm px-2 md:px-3 shrink-0" onClick={handleDetectLocation}>
+              <MapPin className="w-3.5 h-3.5 mr-1" />Near Me
             </Button>
           </div>
         </div>
 
-        <div className="flex gap-6 overflow-hidden">
-          <div className={`flex-1 min-w-0 space-y-3 ${showMap ? "hidden" : ""}`}>
+        <div className="flex gap-4 md:gap-6 overflow-hidden">
+          <div className={`flex-1 min-w-0 space-y-2 md:space-y-3 ${showMap ? "hidden" : ""}`}>
             {filtered.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
