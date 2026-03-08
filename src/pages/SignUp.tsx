@@ -319,7 +319,7 @@ const SignUp = () => {
                 <Input
                   type="password"
                   placeholder="Min. 6 characters"
-                  className="h-10 text-sm"
+                  className="h-9 md:h-10 text-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
