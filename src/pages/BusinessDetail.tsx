@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Building2, Star, Camera, Clock } from "lucide-react";
+import { ArrowLeft, Building2, Star, Camera, Clock, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReviewSection from "@/components/ReviewSection";
