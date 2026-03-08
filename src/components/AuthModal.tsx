@@ -169,9 +169,11 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       <DialogContent className="sm:max-w-md gap-3">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            {mode === "login" ? "Welcome back" : "Create account"}
+            {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
           </DialogTitle>
-          <p className="text-xs sm:text-sm text-muted-foreground">Sign in to manage your business listings</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your business listings"}
+          </p>
         </DialogHeader>
 
         {/* Social Sign-In — icon-only row */}
