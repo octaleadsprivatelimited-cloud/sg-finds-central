@@ -174,7 +174,7 @@ const SuperAdmin = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Sidebar */}
       <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-card border-r border-border flex flex-col transition-all duration-300 hidden md:flex`}>
         {/* Logo */}
@@ -233,15 +233,31 @@ const SuperAdmin = () => {
         </div>
       </aside>
 
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-center justify-around py-2 px-1">
+        {navItems.map(item => (
+          <button
+            key={item.id}
+            onClick={() => setActiveNav(item.id)}
+            className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg text-xs transition-colors ${
+              activeNav === item.id ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            {item.icon}
+            <span className="text-[10px]">{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {/* Top Header */}
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
+        <header className="h-14 md:h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Analytics</h1>
+            <h1 className="text-lg md:text-xl font-semibold text-foreground">Analytics</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex bg-muted rounded-lg p-1">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden sm:flex bg-muted rounded-lg p-1">
               <button className="px-3 py-1.5 text-sm font-medium bg-card rounded-md shadow-sm text-foreground">Full Statistics</button>
               <button className="px-3 py-1.5 text-sm font-medium text-muted-foreground">Sender Summary</button>
             </div>
@@ -255,9 +271,9 @@ const SuperAdmin = () => {
 
         {/* Dashboard Content */}
         {activeNav === "dashboard" && (
-          <div className="p-6 space-y-6">
+          <div className="p-4 md:p-6 pb-20 md:pb-6 space-y-6">
             {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {/* Listing Trend Card */}
               <div className="bg-card rounded-2xl p-5 border border-border col-span-1 lg:col-span-2">
                 <div className="flex items-center justify-between mb-4">

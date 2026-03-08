@@ -40,7 +40,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
                 <span className="text-xl font-bold text-primary">{listing.name.charAt(0)}</span>
               </div>
             )}
-            <h1 className="text-2xl font-bold text-foreground">{listing.name}</h1>
+            <h1 className="text-lg sm:text-2xl font-bold text-foreground">{listing.name}</h1>
             {listing.verified && <VerifiedBadge size="md" />}
             {listing.featured && (
               <Badge className="bg-warning/10 text-warning border-warning/20 text-xs">⭐ Featured</Badge>
@@ -94,7 +94,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
       </div>
 
       {/* Prominent CTA buttons */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
         {listing.phone && (
           <a href={`tel:${listing.phone}`}>
             <Button className="bg-success hover:bg-success/90 text-success-foreground gap-2 font-semibold">

@@ -83,7 +83,7 @@ const CategoryGrid = () => {
         </div>
 
         {/* Bottom rows — icon-based category tiles */}
-        <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-3 md:gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10 gap-3 md:gap-4">
           {bottomCategories.map((cat) => (
             <button
               key={cat.name}

@@ -30,7 +30,7 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-4 grid-rows-2 gap-1.5 h-[320px] rounded-xl overflow-hidden">
+      <div className="grid grid-cols-2 sm:grid-cols-4 sm:grid-rows-2 gap-1.5 h-[200px] sm:h-[280px] md:h-[320px] rounded-xl overflow-hidden">
         {/* Large main photo */}
         <div
           className="col-span-2 row-span-2 relative cursor-pointer group"
@@ -86,7 +86,7 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
 
       {/* Lightbox */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-4xl p-0 bg-black border-none">
+        <DialogContent className="max-w-[95vw] sm:max-w-4xl p-0 bg-black border-none">
           <div className="relative">
             <img
               src={allPhotos[activeIndex]}

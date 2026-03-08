@@ -102,19 +102,19 @@ const BusinessDetail = () => {
       {/* Breadcrumb */}
       <div className="border-b border-border/50 bg-secondary/30">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Link to="/" className="hover:text-primary transition-colors">Directory</Link>
-              <span>›</span>
-              <Link to={`/${areaSlug}`} className="hover:text-primary transition-colors">{listing.district}</Link>
-              <span>›</span>
-              <Link to={`/${areaSlug}/${categorySlug}`} className="hover:text-primary transition-colors">{listing.category}</Link>
-              <span>›</span>
-              <span className="text-foreground font-medium truncate max-w-[200px]">{listing.name}</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground overflow-x-auto scrollbar-hide whitespace-nowrap">
+              <Link to="/" className="hover:text-primary transition-colors shrink-0">Directory</Link>
+              <span className="shrink-0">›</span>
+              <Link to={`/${areaSlug}`} className="hover:text-primary transition-colors shrink-0">{listing.district}</Link>
+              <span className="shrink-0">›</span>
+              <Link to={`/${areaSlug}/${categorySlug}`} className="hover:text-primary transition-colors shrink-0 hidden sm:inline">{listing.category}</Link>
+              <span className="shrink-0 hidden sm:inline">›</span>
+              <span className="text-foreground font-medium truncate max-w-[120px] sm:max-w-[200px]">{listing.name}</span>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+            <Button variant="ghost" size="sm" className="shrink-0" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4 mr-1" />
-              Back
+              <span className="hidden sm:inline">Back</span>
             </Button>
           </div>
         </div>
@@ -134,7 +134,7 @@ const BusinessDetail = () => {
 
             {/* Tabs */}
             <Tabs defaultValue="overview">
-              <TabsList className="bg-secondary border border-border w-full justify-start overflow-x-auto">
+              <TabsList className="bg-secondary border border-border w-full justify-start overflow-x-auto scrollbar-hide flex-nowrap">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="catalogue" className="relative">
                   Catalogue
