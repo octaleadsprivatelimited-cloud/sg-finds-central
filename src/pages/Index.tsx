@@ -202,12 +202,10 @@ const Index = () => {
             <h2 className="text-base font-semibold text-foreground">All Businesses</h2>
             <p className="text-xs text-muted-foreground">{filtered.length} results found</p>
           </div>
-          <div className="md:hidden">
-            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
-              {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
-              {showMap ? "List" : "Map"}
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
+            {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
+            {showMap ? "List View" : "Map View"}
+          </Button>
         </div>
 
         <div className="flex gap-6 overflow-hidden">
