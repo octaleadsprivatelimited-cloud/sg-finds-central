@@ -340,7 +340,7 @@ const SignUp = () => {
               </Button>
             </div>
 
-            <p className="text-center text-[10px] text-muted-foreground mt-4">
+            <p className="text-center text-[10px] text-muted-foreground mt-3 md:mt-4">
               You'll need to verify your mobile number in the next step
             </p>
 
