@@ -69,7 +69,7 @@ const categoryData = [
   { name: "Services", value: 20, color: "#ec4899" },
 ];
 
-type NavItem = "dashboard" | "users" | "listings" | "statistics" | "settings";
+type NavItem = "dashboard" | "users" | "listings" | "tickets" | "statistics" | "settings";
 
 const SuperAdmin = () => {
   const { user, isSuperAdmin, loading: authLoading } = useAuth();
