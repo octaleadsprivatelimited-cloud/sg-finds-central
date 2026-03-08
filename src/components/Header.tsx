@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, MapPin } from "lucide-react";
+import Logo3D from "./3d/Logo3D";
 import { Button } from "@/components/ui/button";
 import SearchWithSuggestions from "./SearchWithSuggestions";
 import { useAuth } from "@/contexts/AuthContext";
