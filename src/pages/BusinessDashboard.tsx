@@ -54,9 +54,32 @@ const BusinessDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("listings");
-  const [listings, setListings] = useState<Listing[]>(MY_LISTINGS);
+  const [listings, setListings] = useState<Listing[]>(MY_DEMO_LISTINGS);
+  const [loadingListings, setLoadingListings] = useState(true);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [viewingListing, setViewingListing] = useState<Listing | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  // Load user's listings from Firestore
+  useEffect(() => {
+    const fetchMyListings = async () => {
+      if (!user) {
+        setLoadingListings(false);
+        return;
+      }
+      try {
+        const q = query(collection(db, "listings"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+        }
+      } catch {
+        // Use demo data
+      }
+      setLoadingListings(false);
+    };
+    fetchMyListings();
+  }, [user]);
 
   // Edit form state
   const [editName, setEditName] = useState("");
