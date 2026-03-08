@@ -14,6 +14,8 @@ interface SearchWithSuggestionsProps {
 
 const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", className }: SearchWithSuggestionsProps) => {
   const { searchQuery, setSearchQuery, listings } = useSearch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [focused, setFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
