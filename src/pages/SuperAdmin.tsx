@@ -1,14 +1,14 @@
 import { useState } from "react";
 import {
   Users, Building2, BarChart3, Settings, Search, MoreHorizontal,
-  Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, ArrowUpDown,
-  TrendingUp, Activity, Clock, FileText, ExternalLink, ChevronDown,
-  Mail, Phone, Calendar, AlertTriangle, Download,
+  Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, 
+  TrendingUp, Activity, FileText, ExternalLink, ChevronDown,
+  Mail, Phone, Calendar, LayoutDashboard, PieChart, LogOut,
+  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,32 +27,52 @@ import { DEMO_USERS, DEMO_ALL_LISTINGS, PlatformUser } from "@/lib/demo-data";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, PieChart as RechartsPie, Pie, Cell } from "recharts";
 
 const statusBadge = (status: string) => {
   switch (status) {
-    case "active": return <Badge variant="approved">Active</Badge>;
-    case "suspended": return <Badge variant="warning">Suspended</Badge>;
-    case "banned": return <Badge variant="rejected">Banned</Badge>;
-    case "approved": return <Badge variant="approved">Approved</Badge>;
-    case "pending_approval": return <Badge variant="pending">Pending</Badge>;
-    case "rejected": return <Badge variant="rejected">Rejected</Badge>;
+    case "active": return <Badge className="bg-emerald-100 text-emerald-700 border-transparent">Active</Badge>;
+    case "suspended": return <Badge className="bg-amber-100 text-amber-700 border-transparent">Suspended</Badge>;
+    case "banned": return <Badge className="bg-red-100 text-red-700 border-transparent">Banned</Badge>;
+    case "approved": return <Badge className="bg-emerald-100 text-emerald-700 border-transparent">Approved</Badge>;
+    case "pending_approval": return <Badge className="bg-amber-100 text-amber-700 border-transparent">Pending</Badge>;
+    case "rejected": return <Badge className="bg-red-100 text-red-700 border-transparent">Rejected</Badge>;
     default: return <Badge variant="outline">{status}</Badge>;
   }
 };
 
 const roleBadge = (role: string) => {
   switch (role) {
-    case "superadmin": return <Badge className="bg-indigo-600 text-primary-foreground border-transparent">Super Admin</Badge>;
-    case "admin": return <Badge variant="default">Admin</Badge>;
-    case "business_owner": return <Badge variant="secondary">Business Owner</Badge>;
+    case "superadmin": return <Badge className="bg-indigo-100 text-indigo-700 border-transparent">Super Admin</Badge>;
+    case "admin": return <Badge className="bg-primary/10 text-primary border-transparent">Admin</Badge>;
+    case "business_owner": return <Badge className="bg-cyan-100 text-cyan-700 border-transparent">Business</Badge>;
     default: return <Badge variant="outline">User</Badge>;
   }
 };
 
+// Chart data
+const listingTrendData = [
+  { month: "Jan", value: 12 },
+  { month: "Feb", value: 19 },
+  { month: "Mar", value: 15 },
+  { month: "Apr", value: 27 },
+  { month: "May", value: 23 },
+  { month: "Jun", value: 34 },
+];
+
+const categoryData = [
+  { name: "F&B", value: 35, color: "#6366f1" },
+  { name: "Tech", value: 25, color: "#22c55e" },
+  { name: "Retail", value: 20, color: "#f59e0b" },
+  { name: "Services", value: 20, color: "#ec4899" },
+];
+
+type NavItem = "dashboard" | "users" | "listings" | "statistics" | "settings";
+
 const SuperAdmin = () => {
   const { user, isSuperAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeNav, setActiveNav] = useState<NavItem>("dashboard");
   const [users, setUsers] = useState<PlatformUser[]>(DEMO_USERS);
   const [listings, setListings] = useState<Listing[]>(DEMO_ALL_LISTINGS);
   const [userSearch, setUserSearch] = useState("");
@@ -60,6 +80,7 @@ const SuperAdmin = () => {
   const [listingFilter, setListingFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<PlatformUser | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Stats
   const totalUsers = users.length;
@@ -67,7 +88,6 @@ const SuperAdmin = () => {
   const totalListings = listings.length;
   const approvedListings = listings.filter(l => l.status === "approved").length;
   const pendingListings = listings.filter(l => l.status === "pending_approval").length;
-  const rejectedListings = listings.filter(l => l.status === "rejected").length;
 
   const filteredUsers = users.filter(u =>
     u.displayName.toLowerCase().includes(userSearch.toLowerCase()) ||
@@ -113,219 +133,367 @@ const SuperAdmin = () => {
     toast.success("Listing deleted");
   };
 
+  const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
+    { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
+    { id: "users", label: "Users", icon: <Users className="w-5 h-5" /> },
+    { id: "listings", label: "Listings", icon: <Building2 className="w-5 h-5" /> },
+    { id: "statistics", label: "Statistics", icon: <PieChart className="w-5 h-5" /> },
+    { id: "settings", label: "Settings", icon: <Settings className="w-5 h-5" /> },
+  ];
+
   return (
-    <div className="min-h-screen bg-secondary/30">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-lg">
-              <Crown className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Super Admin Console</h1>
-              <p className="text-sm text-muted-foreground">Full platform management</p>
-            </div>
+    <div className="min-h-screen bg-slate-50 flex">
+      {/* Sidebar */}
+      <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 hidden md:flex`}>
+        {/* Logo */}
+        <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-100">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-sm">
+            <Crown className="w-5 h-5 text-white" />
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigate("/")}>
-            ← Back to Directory
-          </Button>
+          {!sidebarCollapsed && <span className="font-semibold text-slate-800">Veritas</span>}
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6 bg-background border border-border">
-            <TabsTrigger value="overview" className="gap-1.5">
-              <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">Overview</span>
-            </TabsTrigger>
-            <TabsTrigger value="users" className="gap-1.5">
-              <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">Users</span>
-            </TabsTrigger>
-            <TabsTrigger value="listings" className="gap-1.5">
-              <Building2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Listings</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-1.5">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
+        {/* Nav */}
+        <nav className="flex-1 py-4 px-3 space-y-1">
+          <p className={`text-xs text-slate-400 uppercase tracking-wider px-3 mb-2 ${sidebarCollapsed ? "hidden" : ""}`}>Main Menu</p>
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveNav(item.id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                activeNav === item.id
+                  ? "bg-indigo-50 text-indigo-600"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              {item.icon}
+              {!sidebarCollapsed && <span>{item.label}</span>}
+            </button>
+          ))}
+        </nav>
 
-          {/* OVERVIEW TAB */}
-          <TabsContent value="overview" className="space-y-6">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard icon={<Users className="w-5 h-5" />} label="Total Users" value={totalUsers} sub={`${activeUsers} active`} color="text-primary" />
-              <StatCard icon={<Building2 className="w-5 h-5" />} label="Total Listings" value={totalListings} sub={`${approvedListings} approved`} color="text-primary" />
-              <StatCard icon={<Clock className="w-5 h-5" />} label="Pending Review" value={pendingListings} sub="Awaiting action" color="text-amber-600" />
-              <StatCard icon={<AlertTriangle className="w-5 h-5" />} label="Rejected" value={rejectedListings} sub="This period" color="text-destructive" />
+        {/* Teams section */}
+        {!sidebarCollapsed && (
+          <div className="px-3 py-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 uppercase tracking-wider px-3 mb-2">Teams</p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>Marketing</span>
+              </div>
+              <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600">
+                <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                <span>Development</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="p-3 border-t border-slate-100">
+          <button
+            onClick={() => navigate("/")}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            {!sidebarCollapsed && <span>Back to Site</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
+        {/* Top Header */}
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6">
+          <div>
+            <h1 className="text-xl font-semibold text-slate-800">Analytics</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex bg-slate-100 rounded-lg p-1">
+              <button className="px-3 py-1.5 text-sm font-medium bg-white rounded-md shadow-sm text-slate-800">Full Statistics</button>
+              <button className="px-3 py-1.5 text-sm font-medium text-slate-500">Sender Summary</button>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                <span className="text-sm font-semibold text-indigo-600">A</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        {activeNav === "dashboard" && (
+          <div className="p-6 space-y-6">
+            {/* Stats Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Listing Trend Card */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 col-span-1 lg:col-span-2">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm text-slate-500">Listings Growth</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">07 Day progress</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-emerald-600 text-sm">
+                    <ArrowUpRight className="w-4 h-4" />
+                    <span>2%</span>
+                  </div>
+                </div>
+                <div className="h-24">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={listingTrendData}>
+                      <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Total Listings */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Building2 className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm text-slate-500">Total Listings</span>
+                </div>
+                <p className="text-3xl font-bold text-slate-800">{totalListings}</p>
+                <p className="text-xs text-slate-400 mt-1">{approvedListings} approved</p>
+              </div>
+
+              {/* Category Breakdown */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200">
+                <p className="text-sm text-slate-500 mb-3">Categories</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPie>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={18}
+                          outerRadius={28}
+                          dataKey="value"
+                          strokeWidth={0}
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                      </RechartsPie>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    {categoryData.map((cat, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
+                        <span className="text-slate-600">{cat.name}</span>
+                        <span className="text-slate-400">{cat.value}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Activity & Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-background rounded-2xl border border-border p-6">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-primary" />
-                  Recent Activity
-                </h3>
+            {/* Promo Card */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200">
+                <h3 className="font-semibold text-slate-800 mb-4">Recent Submissions</h3>
                 <div className="space-y-3">
-                  {[
-                    { action: "New listing submitted", detail: "New Café SG", time: "2 hours ago", icon: <Building2 className="w-4 h-4" /> },
-                    { action: "User registered", detail: "lisa.ng@gmail.com", time: "5 hours ago", icon: <UserCheck className="w-4 h-4" /> },
-                    { action: "Listing approved", detail: "HomeFixSG Services", time: "1 day ago", icon: <Check className="w-4 h-4" /> },
-                    { action: "User suspended", detail: "mei.chen@yahoo.com", time: "2 days ago", icon: <Ban className="w-4 h-4" /> },
-                    { action: "New listing submitted", detail: "FastTrack Logistics", time: "3 days ago", icon: <Building2 className="w-4 h-4" /> },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
-                      <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground shrink-0">
-                        {item.icon}
+                  {listings.slice(0, 4).map((listing, i) => (
+                    <div key={listing.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                          <span className="text-sm font-semibold text-slate-600">{listing.name.charAt(0)}</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-800">{listing.name}</p>
+                          <p className="text-xs text-slate-400">{listing.category}</p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground">{item.action}</p>
-                        <p className="text-xs text-muted-foreground truncate">{item.detail}</p>
+                      <div className="flex items-center gap-3">
+                        {statusBadge(listing.status)}
+                        <span className="text-xs text-slate-400">{listing.district}</span>
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0">{item.time}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-background rounded-2xl border border-border p-6">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                  Platform Summary
-                </h3>
-                <div className="space-y-4">
-                  <SummaryRow label="Business Owners" value={users.filter(u => u.role === "business_owner").length} total={totalUsers} />
-                  <SummaryRow label="Admins" value={users.filter(u => u.role === "admin" || u.role === "superadmin").length} total={totalUsers} />
-                  <SummaryRow label="Approved Listings" value={approvedListings} total={totalListings} />
-                  <SummaryRow label="Pending Listings" value={pendingListings} total={totalListings} />
-                  <SummaryRow label="Active Users" value={activeUsers} total={totalUsers} />
+              {/* Highlight Card */}
+              <div className="bg-gradient-to-br from-teal-400 to-cyan-500 rounded-2xl p-6 text-white relative overflow-hidden">
+                <div className="absolute top-4 right-4 text-white/20">
+                  <Crown className="w-20 h-20" />
                 </div>
-                <div className="mt-6 pt-4 border-t border-border">
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">{DEMO_ALL_LISTINGS.filter(l => l.category === "Food & Beverage").length}</p>
-                      <p className="text-xs text-muted-foreground">F&B</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">{DEMO_ALL_LISTINGS.filter(l => l.category === "Technology & IT").length}</p>
-                      <p className="text-xs text-muted-foreground">Tech</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">{DEMO_ALL_LISTINGS.filter(l => l.category !== "Food & Beverage" && l.category !== "Technology & IT").length}</p>
-                      <p className="text-xs text-muted-foreground">Others</p>
-                    </div>
+                <div className="relative z-10">
+                  <p className="text-4xl font-bold">{pendingListings}</p>
+                  <p className="text-white/80 mt-1">Pending Reviews</p>
+                  <p className="text-sm text-white/60 mt-4">Action required for approval</p>
+                  <div className="flex gap-2 mt-4">
+                    <Button size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30 text-white border-0" onClick={() => setActiveNav("listings")}>
+                      View All
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
-          </TabsContent>
 
-          {/* USERS TAB */}
-          <TabsContent value="users" className="space-y-4">
+            {/* Transactions Table */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+              <div className="flex items-center justify-between p-5 border-b border-slate-100">
+                <h3 className="font-semibold text-slate-800">Recent Users</h3>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    placeholder="Search..."
+                    className="pl-9 h-9 w-48 bg-slate-50 border-slate-200"
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-slate-100 bg-slate-50/50">
+                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">User</th>
+                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Role</th>
+                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Status</th>
+                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Date</th>
+                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Listings</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUsers.slice(0, 5).map((u) => (
+                      <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer" onClick={() => setSelectedUser(u)}>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
+                              <span className="text-xs font-semibold text-indigo-600">{u.displayName.charAt(0)}</span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-slate-800">{u.displayName}</p>
+                              <p className="text-xs text-slate-400">{u.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4">{roleBadge(u.role)}</td>
+                        <td className="px-5 py-4">{statusBadge(u.status)}</td>
+                        <td className="px-5 py-4 text-sm text-slate-500">{u.joinedAt}</td>
+                        <td className="px-5 py-4 text-sm text-slate-800 font-medium">{u.listingsCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Users Tab */}
+        {activeNav === "users" && (
+          <div className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   placeholder="Search users by name or email..."
-                  className="pl-10 bg-background"
+                  className="pl-10 bg-white border-slate-200"
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
                 />
               </div>
-              <p className="text-sm text-muted-foreground">{filteredUsers.length} users</p>
+              <p className="text-sm text-slate-500">{filteredUsers.length} users</p>
             </div>
 
-            <div className="bg-background rounded-2xl border border-border overflow-hidden">
-              {/* Table Header */}
-              <div className="hidden lg:grid grid-cols-[2fr_1fr_1fr_1fr_1fr_60px] gap-4 px-6 py-3 border-b border-border bg-secondary/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                <span>User</span>
-                <span>Role</span>
-                <span>Status</span>
-                <span>Listings</span>
-                <span>Last Active</span>
-                <span></span>
-              </div>
-
-              {/* User Rows */}
-              {filteredUsers.map((u) => (
-                <div
-                  key={u.id}
-                  className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr_60px] gap-2 lg:gap-4 px-6 py-4 border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors cursor-pointer"
-                  onClick={() => setSelectedUser(u)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <span className="text-sm font-semibold text-primary">{u.displayName.charAt(0)}</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{u.displayName}</p>
-                      <p className="text-xs text-muted-foreground truncate">{u.email}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center">{roleBadge(u.role)}</div>
-                  <div className="flex items-center">{statusBadge(u.status)}</div>
-                  <div className="flex items-center text-sm text-muted-foreground">{u.listingsCount}</div>
-                  <div className="flex items-center text-sm text-muted-foreground">{u.lastActive}</div>
-                  <div className="flex items-center justify-end">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedUser(u); }}>
-                          <Eye className="w-4 h-4 mr-2" />View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        {u.status !== "active" && (
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleUserAction(u.id, "activate"); }}>
-                            <UserCheck className="w-4 h-4 mr-2" />Activate
-                          </DropdownMenuItem>
-                        )}
-                        {u.status === "active" && u.role !== "superadmin" && (
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleUserAction(u.id, "suspend"); }}>
-                            <Ban className="w-4 h-4 mr-2" />Suspend
-                          </DropdownMenuItem>
-                        )}
-                        {u.role !== "admin" && u.role !== "superadmin" && (
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleUserAction(u.id, "promote_admin"); }}>
-                            <Shield className="w-4 h-4 mr-2" />Promote to Admin
-                          </DropdownMenuItem>
-                        )}
-                        {u.role === "admin" && (
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleUserAction(u.id, "demote"); }}>
-                            <ChevronDown className="w-4 h-4 mr-2" />Demote to User
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        {u.role !== "superadmin" && (
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
-                            onClick={(e) => { e.stopPropagation(); handleDeleteUser(u.id); }}
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />Delete User
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              ))}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50/50">
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">User</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Role</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Status</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Listings</th>
+                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Last Active</th>
+                    <th className="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((u) => (
+                    <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
+                            <span className="text-sm font-semibold text-indigo-600">{u.displayName.charAt(0)}</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-800">{u.displayName}</p>
+                            <p className="text-xs text-slate-400">{u.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">{roleBadge(u.role)}</td>
+                      <td className="px-5 py-4">{statusBadge(u.status)}</td>
+                      <td className="px-5 py-4 text-sm text-slate-600">{u.listingsCount}</td>
+                      <td className="px-5 py-4 text-sm text-slate-500">{u.lastActive}</td>
+                      <td className="px-5 py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setSelectedUser(u)}>
+                              <Eye className="w-4 h-4 mr-2" />View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            {u.status !== "active" && (
+                              <DropdownMenuItem onClick={() => handleUserAction(u.id, "activate")}>
+                                <UserCheck className="w-4 h-4 mr-2" />Activate
+                              </DropdownMenuItem>
+                            )}
+                            {u.status === "active" && u.role !== "superadmin" && (
+                              <DropdownMenuItem onClick={() => handleUserAction(u.id, "suspend")}>
+                                <Ban className="w-4 h-4 mr-2" />Suspend
+                              </DropdownMenuItem>
+                            )}
+                            {u.role !== "admin" && u.role !== "superadmin" && (
+                              <DropdownMenuItem onClick={() => handleUserAction(u.id, "promote_admin")}>
+                                <Shield className="w-4 h-4 mr-2" />Promote to Admin
+                              </DropdownMenuItem>
+                            )}
+                            {u.role === "admin" && (
+                              <DropdownMenuItem onClick={() => handleUserAction(u.id, "demote")}>
+                                <ChevronDown className="w-4 h-4 mr-2" />Demote to User
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuSeparator />
+                            {u.role !== "superadmin" && (
+                              <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteUser(u.id)}>
+                                <Trash2 className="w-4 h-4 mr-2" />Delete User
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* LISTINGS TAB */}
-          <TabsContent value="listings" className="space-y-4">
+        {/* Listings Tab */}
+        {activeNav === "listings" && (
+          <div className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
-                  placeholder="Search listings by name or UEN..."
-                  className="pl-10 bg-background"
+                  placeholder="Search listings..."
+                  className="pl-10 bg-white border-slate-200"
                   value={listingSearch}
                   onChange={(e) => setListingSearch(e.target.value)}
                 />
@@ -337,11 +505,9 @@ const SuperAdmin = () => {
                     variant={listingFilter === f ? "default" : "outline"}
                     size="sm"
                     onClick={() => setListingFilter(f)}
+                    className={listingFilter === f ? "" : "bg-white"}
                   >
                     {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
-                    <span className="ml-1 text-xs opacity-70">
-                      ({f === "all" ? listings.length : listings.filter(l => l.status === f).length})
-                    </span>
                   </Button>
                 ))}
               </div>
@@ -349,21 +515,31 @@ const SuperAdmin = () => {
 
             <div className="space-y-3">
               {filteredListings.map((listing) => (
-                <div key={listing.id} className="bg-background rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-semibold text-foreground">{listing.name}</h3>
-                        {statusBadge(listing.status)}
-                        <Badge variant="secondary" className="text-xs">{listing.category}</Badge>
+                <div key={listing.id} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                        <span className="text-lg font-bold text-slate-500">{listing.name.charAt(0)}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{listing.address}</p>
-                      <p className="text-xs text-muted-foreground mt-1">UEN: {listing.uen} · District: {listing.district}</p>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-slate-800">{listing.name}</h3>
+                          {statusBadge(listing.status)}
+                        </div>
+                        <p className="text-sm text-slate-500">{listing.address}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                          <span>UEN: {listing.uen}</span>
+                          <span>·</span>
+                          <span>{listing.category}</span>
+                          <span>·</span>
+                          <span>{listing.district}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex gap-2">
                       {listing.status === "pending_approval" && (
                         <>
-                          <Button size="sm" onClick={() => handleListingAction(listing.id, "approved")} className="bg-success hover:bg-success/90 text-success-foreground">
+                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingAction(listing.id, "approved")}>
                             <Check className="w-4 h-4 mr-1" />Approve
                           </Button>
                           <Button size="sm" variant="destructive" onClick={() => handleListingAction(listing.id, "rejected")}>
@@ -381,73 +557,95 @@ const SuperAdmin = () => {
                           <DropdownMenuItem onClick={() => setSelectedListing(listing)}>
                             <Eye className="w-4 h-4 mr-2" />View Details
                           </DropdownMenuItem>
-                          {listing.status !== "approved" && (
-                            <DropdownMenuItem onClick={() => handleListingAction(listing.id, "approved")}>
-                              <Check className="w-4 h-4 mr-2" />Approve
-                            </DropdownMenuItem>
-                          )}
-                          {listing.status !== "rejected" && (
-                            <DropdownMenuItem onClick={() => handleListingAction(listing.id, "rejected")}>
-                              <X className="w-4 h-4 mr-2" />Reject
-                            </DropdownMenuItem>
-                          )}
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
-                            onClick={() => handleDeleteListing(listing.id)}
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />Delete Listing
+                          <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteListing(listing.id)}>
+                            <Trash2 className="w-4 h-4 mr-2" />Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
                   </div>
-
-                  {/* Documents */}
-                  {listing.documentsUrl && listing.documentsUrl.length > 0 && (
-                    <div className="flex gap-2 mt-2">
-                      {listing.documentsUrl.map((url, i) => (
-                        <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline bg-primary/5 rounded-md px-2 py-1">
-                          <FileText className="w-3 h-3" />Doc {i + 1}<ExternalLink className="w-2.5 h-2.5" />
-                        </a>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* SETTINGS TAB */}
-          <TabsContent value="settings" className="space-y-6">
-            <div className="bg-background rounded-2xl border border-border p-6">
-              <h3 className="font-semibold text-foreground mb-4">Platform Settings</h3>
-              <div className="space-y-4">
-                <SettingRow title="Auto-approve listings" description="Skip manual review for verified business owners" enabled={false} />
-                <SettingRow title="Email notifications" description="Send email alerts for new submissions" enabled={true} />
-                <SettingRow title="SMS OTP verification" description="Require phone verification for registration" enabled={true} />
-                <SettingRow title="Document upload required" description="Require ACRA profile for all submissions" enabled={true} />
-              </div>
+        {/* Statistics Tab */}
+        {activeNav === "statistics" && (
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <StatCard icon={<Users className="w-5 h-5" />} label="Total Users" value={totalUsers} change="+12%" positive />
+              <StatCard icon={<Building2 className="w-5 h-5" />} label="Total Listings" value={totalListings} change="+8%" positive />
+              <StatCard icon={<Activity className="w-5 h-5" />} label="Active Users" value={activeUsers} change="+5%" positive />
             </div>
 
-            <div className="bg-background rounded-2xl border border-border p-6">
-              <h3 className="font-semibold text-foreground mb-4">Danger Zone</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 rounded-xl border border-destructive/20 bg-destructive/5">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Export all data</p>
-                    <p className="text-xs text-muted-foreground">Download all users and listings as CSV</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6">
+                <h3 className="font-semibold text-slate-800 mb-4">Listings Trend</h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={listingTrendData}>
+                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+                      <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', strokeWidth: 2 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 p-6">
+                <h3 className="font-semibold text-slate-800 mb-4">Category Distribution</h3>
+                <div className="flex items-center justify-center gap-8">
+                  <div className="w-40 h-40">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPie>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={45}
+                          outerRadius={70}
+                          dataKey="value"
+                          strokeWidth={0}
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                      </RechartsPie>
+                    </ResponsiveContainer>
                   </div>
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-1.5" />Export
-                  </Button>
+                  <div className="space-y-3">
+                    {categoryData.map((cat, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
+                        <span className="text-sm text-slate-600">{cat.name}</span>
+                        <span className="text-sm font-medium text-slate-800">{cat.value}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+          </div>
+        )}
+
+        {/* Settings Tab */}
+        {activeNav === "settings" && (
+          <div className="p-6 space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6">
+              <h3 className="font-semibold text-slate-800 mb-4">Platform Settings</h3>
+              <div className="space-y-4">
+                <SettingRow title="Auto-approve listings" description="Skip manual review for verified owners" enabled={false} />
+                <SettingRow title="Email notifications" description="Send alerts for new submissions" enabled={true} />
+                <SettingRow title="SMS verification" description="Require phone verification" enabled={true} />
+                <SettingRow title="Document upload required" description="Require ACRA profile" enabled={true} />
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
 
       {/* User Detail Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
@@ -458,11 +656,11 @@ const SuperAdmin = () => {
           {selectedUser && (
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-xl font-bold text-primary">{selectedUser.displayName.charAt(0)}</span>
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
+                  <span className="text-xl font-bold text-indigo-600">{selectedUser.displayName.charAt(0)}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg text-foreground">{selectedUser.displayName}</h3>
+                  <h3 className="font-semibold text-lg text-slate-800">{selectedUser.displayName}</h3>
                   <div className="flex gap-2 mt-1">{roleBadge(selectedUser.role)}{statusBadge(selectedUser.status)}</div>
                 </div>
               </div>
@@ -473,7 +671,7 @@ const SuperAdmin = () => {
                 <InfoRow icon={<Activity className="w-4 h-4" />} label="Last Active" value={selectedUser.lastActive} />
                 <InfoRow icon={<Building2 className="w-4 h-4" />} label="Listings" value={String(selectedUser.listingsCount)} />
               </div>
-              <div className="flex gap-2 pt-4 border-t border-border">
+              <div className="flex gap-2 pt-4 border-t border-slate-200">
                 {selectedUser.status === "active" && selectedUser.role !== "superadmin" && (
                   <Button variant="outline" size="sm" onClick={() => { handleUserAction(selectedUser.id, "suspend"); setSelectedUser(null); }}>
                     <Ban className="w-4 h-4 mr-1.5" />Suspend
@@ -504,7 +702,7 @@ const SuperAdmin = () => {
           {selectedListing && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-semibold text-lg text-foreground">{selectedListing.name}</h3>
+                <h3 className="font-semibold text-lg text-slate-800">{selectedListing.name}</h3>
                 {statusBadge(selectedListing.status)}
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
@@ -514,31 +712,18 @@ const SuperAdmin = () => {
                 <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={selectedListing.phone || "—"} />
               </div>
               <div className="text-sm">
-                <span className="text-muted-foreground">Address:</span>
-                <p className="text-foreground">{selectedListing.address}</p>
+                <span className="text-slate-500">Address:</span>
+                <p className="text-slate-800">{selectedListing.address}</p>
               </div>
               {selectedListing.description && (
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Description:</span>
-                  <p className="text-foreground">{selectedListing.description}</p>
+                  <span className="text-slate-500">Description:</span>
+                  <p className="text-slate-800">{selectedListing.description}</p>
                 </div>
               )}
-              {selectedListing.documentsUrl && selectedListing.documentsUrl.length > 0 && (
-                <div>
-                  <span className="text-sm text-muted-foreground">Documents:</span>
-                  <div className="flex gap-2 mt-1">
-                    {selectedListing.documentsUrl.map((url, i) => (
-                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
-                        <FileText className="w-3.5 h-3.5" />Document {i + 1}<ExternalLink className="w-3 h-3" />
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div className="flex gap-2 pt-4 border-t border-border">
+              <div className="flex gap-2 pt-4 border-t border-slate-200">
                 {selectedListing.status !== "approved" && (
-                  <Button size="sm" className="bg-success hover:bg-success/90 text-success-foreground"
+                  <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600"
                     onClick={() => { handleListingAction(selectedListing.id, "approved"); setSelectedListing(null); }}>
                     <Check className="w-4 h-4 mr-1.5" />Approve
                   </Button>
@@ -563,45 +748,40 @@ const SuperAdmin = () => {
 };
 
 // Sub-components
-const StatCard = ({ icon, label, value, sub, color }: { icon: React.ReactNode; label: string; value: number; sub: string; color: string }) => (
-  <div className="bg-background rounded-2xl border border-border p-5">
-    <div className={`${color} mb-3`}>{icon}</div>
-    <p className="text-3xl font-bold text-foreground">{value}</p>
-    <p className="text-sm font-medium text-foreground mt-1">{label}</p>
-    <p className="text-xs text-muted-foreground">{sub}</p>
-  </div>
-);
-
-const SummaryRow = ({ label, value, total }: { label: string; value: number; total: number }) => (
-  <div className="space-y-1.5">
-    <div className="flex justify-between text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium text-foreground">{value}</span>
+const StatCard = ({ icon, label, value, change, positive }: { icon: React.ReactNode; label: string; value: number; change: string; positive: boolean }) => (
+  <div className="bg-white rounded-2xl border border-slate-200 p-5">
+    <div className="flex items-center justify-between mb-3">
+      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+        {icon}
+      </div>
+      <div className={`flex items-center gap-1 text-sm ${positive ? "text-emerald-600" : "text-red-600"}`}>
+        {positive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+        {change}
+      </div>
     </div>
-    <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-      <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${total > 0 ? (value / total) * 100 : 0}%` }} />
-    </div>
+    <p className="text-3xl font-bold text-slate-800">{value}</p>
+    <p className="text-sm text-slate-500 mt-1">{label}</p>
   </div>
 );
 
 const SettingRow = ({ title, description, enabled }: { title: string; description: string; enabled: boolean }) => (
-  <div className="flex items-center justify-between py-3 border-b border-border/50 last:border-0">
+  <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
     <div>
-      <p className="text-sm font-medium text-foreground">{title}</p>
-      <p className="text-xs text-muted-foreground">{description}</p>
+      <p className="text-sm font-medium text-slate-800">{title}</p>
+      <p className="text-xs text-slate-500">{description}</p>
     </div>
-    <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors cursor-pointer ${enabled ? "bg-primary" : "bg-secondary"}`}>
-      <div className={`w-4 h-4 rounded-full bg-background shadow transition-transform ${enabled ? "translate-x-4" : ""}`} />
+    <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors cursor-pointer ${enabled ? "bg-indigo-600" : "bg-slate-200"}`}>
+      <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${enabled ? "translate-x-4" : ""}`} />
     </div>
   </div>
 );
 
 const InfoRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
   <div className="flex items-start gap-2">
-    <div className="text-muted-foreground mt-0.5 shrink-0">{icon}</div>
+    <div className="text-slate-400 mt-0.5 shrink-0">{icon}</div>
     <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-sm font-medium text-foreground break-all">{value}</p>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-800 break-all">{value}</p>
     </div>
   </div>
 );
