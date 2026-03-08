@@ -12,7 +12,6 @@ import AuthModal from "./AuthModal";
 const Header = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { searchQuery, setSearchQuery } = useSearch();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
