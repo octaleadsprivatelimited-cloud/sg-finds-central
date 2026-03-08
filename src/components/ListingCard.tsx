@@ -91,9 +91,42 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Construction & Renovation": "from-orange-600 to-amber-700",
 };
 
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function getIsOpenNow(listing: Listing): boolean | null {
+  const hours = listing.operatingHours;
+  if (!hours) return null; // no data → don't show badge
+
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+
+  // Check special hours first
+  if (listing.specialHours) {
+    const special = listing.specialHours.find((sh) => sh.date === todayStr);
+    if (special) {
+      if (special.closed) return false;
+      return isWithinTime(now, special.open, special.close);
+    }
+  }
+
+  const dayName = DAYS[now.getDay()];
+  const todayHours = hours[dayName];
+  if (!todayHours || todayHours.closed) return false;
+  return isWithinTime(now, todayHours.open, todayHours.close);
+}
+
+function isWithinTime(now: Date, open: string, close: string): boolean {
+  if (!open || !close) return false;
+  const [oh, om] = open.split(":").map(Number);
+  const [ch, cm] = close.split(":").map(Number);
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
+}
+
 const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
+  const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
 
   const handleClick = () => {
     if (onSelect) onSelect(listing);
