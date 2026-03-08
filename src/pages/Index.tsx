@@ -42,14 +42,18 @@ const DEMO_LISTINGS: (Listing)[] = [
 ];
 
 const Index = () => {
-  const { searchQuery, setSearchQuery } = useSearch();
+  const { searchQuery, setSearchQuery, setListings: setSearchListings } = useSearch();
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
-  
+
+  // Sync listings to search context for suggestions
+  useEffect(() => {
+    setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
+  }, [listings, setSearchListings]);
 
   useEffect(() => {
     const fetchListings = async () => {
