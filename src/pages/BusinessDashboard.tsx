@@ -97,6 +97,100 @@ const BusinessDashboard = () => {
     fetchMyListings();
   }, [user]);
 
+  // Load featured tickets
+  useEffect(() => {
+    const fetchTickets = async () => {
+      if (!user) return;
+      try {
+        const q = query(collection(db, "featured_tickets"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setFeaturedTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        }
+      } catch {}
+    };
+    fetchTickets();
+  }, [user]);
+
+  const submitFeaturedTicket = async () => {
+    if (!user || !selectedListingForFeatured) return;
+    const listing = listings.find(l => l.id === selectedListingForFeatured);
+    if (!listing) return;
+    setFeaturedTicketLoading(true);
+    try {
+      const ticketDoc = await addDoc(collection(db, "featured_tickets"), {
+        listingId: listing.id,
+        listingName: listing.name,
+        ownerId: user.uid,
+        ownerEmail: user.email,
+        reason: featuredTicketReason.trim(),
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+      setFeaturedTickets(prev => [...prev, {
+        id: ticketDoc.id,
+        listingId: listing.id,
+        listingName: listing.name,
+        status: "pending",
+        reason: featuredTicketReason.trim(),
+      }]);
+      setFeaturedTicketReason("");
+      setSelectedListingForFeatured("");
+      toast.success("Featured request submitted! Admin will review shortly.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to submit request");
+    }
+    setFeaturedTicketLoading(false);
+  };
+
+  const addOfferToListing = async () => {
+    if (!offerListingId || !offerTitle || !offerDiscount) {
+      toast.error("Please fill in offer title and discount");
+      return;
+    }
+    setOfferSaving(true);
+    try {
+      const listing = listings.find(l => l.id === offerListingId);
+      const existingOffers: ListingOffer[] = listing?.offers || [];
+      const newOffer: ListingOffer = {
+        id: `offer-${Date.now()}`,
+        title: offerTitle,
+        description: offerDescription,
+        discount: offerDiscount,
+        validUntil: offerValidUntil,
+        ...(offerCode ? { code: offerCode } : {}),
+      };
+      const updatedOffers = [...existingOffers, newOffer];
+      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers });
+      setListings(prev => prev.map(l =>
+        l.id === offerListingId ? { ...l, offers: updatedOffers } : l
+      ));
+      setOfferTitle("");
+      setOfferDescription("");
+      setOfferDiscount("");
+      setOfferValidUntil("");
+      setOfferCode("");
+      toast.success("Offer added! It will appear in Exclusive Deals on the homepage.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to add offer");
+    }
+    setOfferSaving(false);
+  };
+
+  const removeOffer = async (listingId: string, offerId: string) => {
+    try {
+      const listing = listings.find(l => l.id === listingId);
+      const updatedOffers = (listing?.offers || []).filter(o => o.id !== offerId);
+      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers });
+      setListings(prev => prev.map(l =>
+        l.id === listingId ? { ...l, offers: updatedOffers } : l
+      ));
+      toast.success("Offer removed");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove offer");
+    }
+  };
+
   // Edit form state
   const [editName, setEditName] = useState("");
   const [editCategory, setEditCategory] = useState("");
