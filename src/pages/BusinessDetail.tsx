@@ -161,18 +161,22 @@ const BusinessDetail = () => {
                     Operating Hours
                   </h3>
                   <div className="space-y-2 text-sm">
-                    {[
-                      { day: "Mon – Fri", time: "9:00 AM – 6:00 PM" },
-                      { day: "Saturday", time: "10:00 AM – 4:00 PM" },
-                      { day: "Sunday", time: "Closed" },
-                    ].map(({ day, time }) => (
-                      <div key={day} className="flex items-center justify-between max-w-xs">
-                        <span className="text-muted-foreground">{day}</span>
-                        <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>
-                          {time}
-                        </span>
-                      </div>
-                    ))}
+                    {(() => {
+                      const hours = listing.operatingHours || DEFAULT_OPERATING_HOURS;
+                      return Object.entries(hours).map(([day, info]) => {
+                        const time = info.closed
+                          ? "Closed"
+                          : `${formatTime(info.open)} – ${formatTime(info.close)}`;
+                        return (
+                          <div key={day} className="flex items-center justify-between max-w-xs">
+                            <span className="text-muted-foreground">{day}</span>
+                            <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>
+                              {time}
+                            </span>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
               </TabsContent>
