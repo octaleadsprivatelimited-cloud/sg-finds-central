@@ -384,6 +384,23 @@ const BusinessDashboard = () => {
                 <Label>Business Name</Label>
                 <Input value={editName} onChange={e => setEditName(e.target.value)} />
               </div>
+              <div className="space-y-2">
+                <Label>Custom URL Slug</Label>
+                <div className="flex items-center gap-0 rounded-md border border-input overflow-hidden bg-background">
+                  <span className="px-3 py-2 text-xs text-muted-foreground bg-muted border-r border-input whitespace-nowrap">
+                    {window.location.origin}/{toSlug(editDistrict || "area")}/{toSlug(editCategory || "category")}/
+                  </span>
+                  <Input
+                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
+                    value={editCustomSlug}
+                    onChange={e => setEditCustomSlug(toSlug(e.target.value.replace(/[^a-z0-9-\s]/gi, "")))}
+                    placeholder={toSlug(editName || "business-name")}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  This is your unique business URL. Use lowercase letters, numbers, and hyphens only.
+                </p>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Category</Label>
