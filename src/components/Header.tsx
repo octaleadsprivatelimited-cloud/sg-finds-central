@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { auth } from "@/lib/firebase";
