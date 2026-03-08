@@ -48,7 +48,7 @@ const Index = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
-  const [selectedCity, setSelectedCity] = useState("singapore");
+  
 
   useEffect(() => {
     const fetchListings = async () => {
