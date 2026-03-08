@@ -68,6 +68,12 @@ const AddListing = () => {
   // Step 3 - Document links
   const [docLinks, setDocLinks] = useState<string[]>([""]);
 
+  // Optional offer
+  const [offerTitle, setOfferTitle] = useState("");
+  const [offerDiscount, setOfferDiscount] = useState("");
+  const [offerDescription, setOfferDescription] = useState("");
+  const [offerValidUntil, setOfferValidUntil] = useState("");
+  const [offerCode, setOfferCode] = useState("");
   const ALLOWED_DOMAINS = [
     "drive.google.com", "docs.google.com", "storage.googleapis.com",
     "dropbox.com", "www.dropbox.com", "dl.dropboxusercontent.com",
