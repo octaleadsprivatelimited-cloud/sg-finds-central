@@ -372,6 +372,12 @@ const BusinessDashboard = () => {
                           <MapPin className="w-3.5 h-3.5 shrink-0" />
                           <span className="truncate">{listing.address}</span>
                         </div>
+                        {listing.status === "rejected" && (listing as any).rejectionReason && (
+                          <div className="mb-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                            <p className="text-xs font-medium text-destructive mb-0.5">Rejection Reason:</p>
+                            <p className="text-sm text-destructive/80">{(listing as any).rejectionReason}</p>
+                          </div>
+                        )}
                         {listing.description && (
                           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{listing.description}</p>
                         )}
