@@ -187,23 +187,19 @@ const AddListing = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-background relative overflow-hidden">
-        {/* Floating business emojis background */}
-        <div className="absolute inset-0 pointer-events-none">
-          {["🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦", "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰", "🏗️", "🛍️", "🍜", "💼", "🎨", "🏦", "🌿", "☕", "🎵", "🔬", "🛒", "🏨"].map((emoji, i) => (
-            <span
-              key={i}
-              className="absolute text-3xl md:text-4xl select-none opacity-[0.08] animate-pulse"
-              style={{
-                left: `${(i * 13.7) % 90 + 2}%`,
-                top: `${(i * 17.3) % 85 + 5}%`,
-                transform: `rotate(${(i * 29) % 360}deg)`,
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: `${3 + (i % 4)}s`,
-              }}
-            >
-              {emoji}
-            </span>
-          ))}
+        {/* Business emoji grid background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="grid grid-cols-6 md:grid-cols-8 gap-10 md:gap-14 p-6 md:p-10 opacity-[0.06]">
+            {["🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦", "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰", "🏗️", "🛍️", "🍜", "💼", "🎨", "🏦", "🌿", "☕", "🎵", "🔬", "🛒", "🏨", "🏪", "🍕", "💈", "🏥", "🎓", "💻", "🏠", "🚗", "⚖️", "📦", "🎉", "🔧", "📸", "🐾", "🏋️", "✈️", "🧹", "💰"].map((emoji, i) => (
+              <span
+                key={i}
+                className="text-3xl md:text-4xl select-none text-center"
+                style={{ transform: `rotate(${(i * 23) % 40 - 20}deg)` }}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="container mx-auto px-4 py-8 max-w-md relative z-10">
@@ -211,15 +207,15 @@ const AddListing = () => {
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Back to Directory
           </Button>
-          <div className="glass-card rounded-2xl p-6 md:p-8 text-center backdrop-blur-sm">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-4">
-              <Building2 className="w-6 h-6 text-primary" />
+          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 text-center shadow-lg">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-4">
+              <Building2 className="w-7 h-7 text-primary" />
             </div>
             <h1 className="text-xl font-bold text-foreground mb-2">Register Your Business</h1>
             <p className="text-sm text-muted-foreground mb-6">
               Sign up or sign in to list your business in the Singapore Directory for free.
             </p>
-            <Button className="w-full" onClick={() => setShowAuth(true)}>
+            <Button className="w-full" size="lg" onClick={() => setShowAuth(true)}>
               Sign Up / Sign In to Continue
             </Button>
           </div>
