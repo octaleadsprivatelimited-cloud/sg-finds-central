@@ -30,46 +30,25 @@ const CategoryGrid = () => {
   const topCategories = CATEGORIES.slice(0, 5);
 
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-6 md:py-8">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg md:text-2xl font-bold text-foreground">Browse by Category</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">Find what you need in Singapore</p>
+            <h2 className="text-base md:text-lg font-bold text-foreground">Browse by Category</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Find what you need in Singapore</p>
           </div>
         </div>
 
-        {/* Top row — large cards (desktop only) */}
-        <div className="hidden lg:grid grid-cols-5 gap-4 mb-6">
-          {topCategories.map((cat) => (
-            <button
-              key={cat.name}
-              onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-              className={`group relative rounded-2xl ${cat.bg} border ${cat.border} p-4 md:p-5 min-h-[140px] md:min-h-[170px] flex flex-col justify-between text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg`}
-            >
-              <span className="text-3xl md:text-4xl">{cat.emoji}</span>
-              <div>
-                <h3 className={`font-semibold text-sm md:text-base ${cat.text} leading-tight`}>
-                  {cat.name}
-                </h3>
-                <p className="text-muted-foreground text-[11px] md:text-xs mt-0.5">
-                  {cat.subtitle}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* All categories — 4 per row */}
-        <div className="grid grid-cols-4 gap-2 md:gap-3">
+        {/* All categories grid — 4 on mobile, 5 on md, 10 on lg */}
+        <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-1.5 md:gap-2">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.name}
               onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-              className={`group flex flex-col items-center gap-1.5 p-3 rounded-xl border border-border hover:shadow-sm transition-all duration-200 hover:-translate-y-0.5`}
+              className="group flex flex-col items-center gap-1 p-2 md:p-2.5 rounded-lg border border-border hover:shadow-sm hover:border-primary/30 transition-all duration-200 hover:-translate-y-0.5"
             >
-              <span className="text-2xl md:text-3xl">{cat.emoji}</span>
-              <span className="text-[10px] md:text-xs font-medium text-foreground text-center leading-tight">
+              <span className="text-xl md:text-2xl">{cat.emoji}</span>
+              <span className="text-[9px] md:text-[10px] font-medium text-foreground text-center leading-tight line-clamp-2">
                 {cat.name}
               </span>
             </button>
