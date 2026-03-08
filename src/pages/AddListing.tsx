@@ -230,6 +230,17 @@ const AddListing = () => {
         <div className="glass-card rounded-2xl p-6 md:p-8">
           {step === 0 && (
             <div className="space-y-4 animate-fade-in">
+              {/* Logo Upload */}
+              {user && (
+                <div className="pb-4 border-b border-border">
+                  <LogoUpload
+                    currentUrl={logoUrl || undefined}
+                    userId={user.uid}
+                    onUploaded={(url) => setLogoUrl(url)}
+                    onRemoved={() => setLogoUrl("")}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2 sm:col-span-2">
                   <Label>Business Name *</Label>
