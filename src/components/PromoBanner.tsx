@@ -67,8 +67,8 @@ const PromoBanner = () => {
   const banner = BANNERS[current];
 
   return (
-    <section className="py-4">
-      <div className="container mx-auto px-4">
+    <section className="py-2 md:py-4">
+      <div className="container mx-auto px-3 md:px-4">
         <div
           className="relative overflow-hidden rounded-2xl"
           onMouseEnter={() => setIsHovered(true)}
