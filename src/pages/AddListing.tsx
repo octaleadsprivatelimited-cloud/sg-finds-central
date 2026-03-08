@@ -332,6 +332,37 @@ const AddListing = () => {
                 <Label>Email</Label>
                 <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="hello@yourbusiness.com" />
               </div>
+
+              {/* Optional Launch Offer */}
+              <div className="pt-4 border-t border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Gift className="w-4 h-4 text-primary" />
+                  <Label className="text-base font-semibold">Launch Offer (optional)</Label>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">Add a special offer that will appear in "Exclusive Deals" on the homepage.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Offer Title</Label>
+                    <Input value={offerTitle} onChange={(e) => setOfferTitle(e.target.value)} placeholder="e.g. Grand Opening Special" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Discount</Label>
+                    <Input value={offerDiscount} onChange={(e) => setOfferDiscount(e.target.value)} placeholder="e.g. 20% OFF" />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Description</Label>
+                    <Input value={offerDescription} onChange={(e) => setOfferDescription(e.target.value)} placeholder="Brief description of offer" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Valid Until</Label>
+                    <Input type="date" value={offerValidUntil} onChange={(e) => setOfferValidUntil(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Promo Code</Label>
+                    <Input value={offerCode} onChange={(e) => setOfferCode(e.target.value)} placeholder="e.g. SAVE20" />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
