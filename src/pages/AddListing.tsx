@@ -146,10 +146,20 @@ const AddListing = () => {
 
     setLoading(true);
     try {
+      const offers = offerTitle && offerDiscount ? [{
+        id: `offer-${Date.now()}`,
+        title: offerTitle,
+        description: offerDescription,
+        discount: offerDiscount,
+        validUntil: offerValidUntil,
+        ...(offerCode ? { code: offerCode } : {}),
+      }] : [];
+
       await addDoc(collection(db, "listings"), {
         name, uen, category, district, address, postalCode, description,
         phone, whatsapp, website, email, logoUrl,
         documentsUrl: validLinks,
+        offers,
         status: "pending_approval",
         ownerId: user.uid,
         location: new GeoPoint(1.3521, 103.8198),
