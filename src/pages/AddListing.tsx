@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } 
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import AIContentGenerator from "@/components/AIContentGenerator";
+import LogoUpload from "@/components/LogoUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
