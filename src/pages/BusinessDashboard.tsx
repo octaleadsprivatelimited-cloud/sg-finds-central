@@ -320,6 +320,14 @@ const BusinessDashboard = () => {
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
             </TabsTrigger>
+            <TabsTrigger value="offers" className="gap-1.5">
+              <Gift className="w-4 h-4" />
+              <span className="hidden sm:inline">Offers</span>
+            </TabsTrigger>
+            <TabsTrigger value="featured" className="gap-1.5">
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">Featured</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* LISTINGS TAB */}
