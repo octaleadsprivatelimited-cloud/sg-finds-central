@@ -137,7 +137,7 @@ const Index = () => {
 
       {/* ═══ CATEGORY GRID ═══ */}
       {!hasActiveFilters && (
-        <section className="container mx-auto px-4 py-8">
+        <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
           <CategoryGrid />
         </section>
       )}
@@ -146,17 +146,17 @@ const Index = () => {
       {!hasActiveFilters && <PromoBanner />}
 
       {/* ═══ FEATURED BUSINESSES ═══ */}
-      <section className="container mx-auto px-4 py-6">
+      <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
         <FeaturedListings listings={filtered} />
       </section>
 
       {/* ═══ EXCLUSIVE DEALS ═══ */}
-      <section className="container mx-auto px-4">
+      <section className="container mx-auto px-3 md:px-4">
         <ExclusiveDeals listings={filtered} />
       </section>
 
       {/* ═══ ALL BUSINESSES ═══ */}
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-bold text-foreground">All Businesses</h2>
