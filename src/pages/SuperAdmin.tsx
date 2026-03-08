@@ -660,7 +660,7 @@ const SuperAdmin = () => {
                   <span className="text-xl font-bold text-indigo-600">{selectedUser.displayName.charAt(0)}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg text-slate-800">{selectedUser.displayName}</h3>
+                  <h3 className="font-semibold text-lg text-foreground">{selectedUser.displayName}</h3>
                   <div className="flex gap-2 mt-1">{roleBadge(selectedUser.role)}{statusBadge(selectedUser.status)}</div>
                 </div>
               </div>
