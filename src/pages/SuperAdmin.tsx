@@ -85,6 +85,32 @@ const SuperAdmin = () => {
   const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
   const [rejectingListingId, setRejectingListingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [showAddBusiness, setShowAddBusiness] = useState(false);
+  const [platformSettings, setPlatformSettings] = useState({
+    autoApprove: false,
+    emailNotifications: true,
+    smsVerification: true,
+    documentRequired: true,
+  });
+
+  const toggleSetting = async (key: keyof typeof platformSettings) => {
+    const newVal = !platformSettings[key];
+    setPlatformSettings(prev => ({ ...prev, [key]: newVal }));
+    try {
+      await setDoc(doc(db, "platform_settings", "general"), { ...platformSettings, [key]: newVal }, { merge: true });
+      toast.success("Setting updated");
+    } catch { toast.error("Failed to save setting"); }
+  };
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const snap = await getDocs(collection(db, "platform_settings"));
+        snap.docs.forEach(d => { if (d.id === "general") setPlatformSettings(prev => ({ ...prev, ...d.data() })); });
+      } catch {}
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const fetchListings = async () => {
