@@ -80,7 +80,7 @@ const Header = () => {
                 <LogOut className="w-4 h-4 mr-1.5" />Sign Out
               </Button>
             ) : (
-              <Button size="sm" onClick={() => setShowAuth(true)} className="bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary text-primary-foreground border-0">
+              <Button size="sm" onClick={() => setShowAuth(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground border-0">
                 Sign In
               </Button>
             )}
