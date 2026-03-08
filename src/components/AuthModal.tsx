@@ -175,8 +175,6 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </Button>
           ))}
         </div>
-          ))}
-        </div>
 
         <div className="relative my-1">
           <Separator />
