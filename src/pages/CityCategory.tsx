@@ -52,7 +52,7 @@ const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating
   },
 ];
 
-const toSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 
 const CityCategory = () => {
   const { citySlug, categorySlug } = useParams<{ citySlug: string; categorySlug?: string }>();
