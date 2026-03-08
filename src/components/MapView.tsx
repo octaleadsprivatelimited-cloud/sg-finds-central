@@ -1,6 +1,7 @@
 import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface MapViewProps {
   listings: Listing[];
@@ -9,6 +10,7 @@ interface MapViewProps {
   center?: { lat: number; lng: number };
 }
 
+const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 }; // Singapore
 const MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
@@ -18,9 +20,28 @@ const MAP_STYLES = [
 ];
 
 const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps) => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc",
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const { isLoaded, loadError: apiLoadError } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
+
+  useEffect(() => {
+    if (apiLoadError) {
+      setLoadError(apiLoadError.message);
+    }
+  }, [apiLoadError]);
+
+  if (loadError) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-secondary rounded-xl">
+        <div className="text-center text-muted-foreground p-4">
+          <p className="text-sm">Map temporarily unavailable</p>
+          <p className="text-xs mt-1">Please refresh the page</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isLoaded) {
     return (
@@ -28,7 +49,6 @@ const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps
         <div className="text-center text-muted-foreground">
           <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
           <p className="text-sm">Loading map...</p>
-          <p className="text-xs mt-1">Add your Google Maps API key to enable</p>
         </div>
       </div>
     );
