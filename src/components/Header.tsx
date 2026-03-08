@@ -25,9 +25,7 @@ const Header = () => {
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-primary flex items-center justify-center">
-              <Search className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary-foreground" />
-            </div>
+            <Logo3D size={36} />
             <span className="font-bold text-lg tracking-tight hidden lg:block">
               <span className="text-primary">SG</span>
               <span className="text-foreground">Directory</span>
