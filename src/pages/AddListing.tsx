@@ -194,7 +194,16 @@ const AddListing = () => {
                   <Label>Description</Label>
                   <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Briefly describe your business..." rows={3} />
                 </div>
-              </div>
+                {name && category && district && (
+                  <div className="sm:col-span-2 border border-border rounded-xl p-4">
+                    <AIContentGenerator
+                      businessName={name}
+                      category={category}
+                      district={district}
+                      onGenerated={(content) => setDescription(content)}
+                    />
+                  </div>
+                )}
             </div>
           )}
 
