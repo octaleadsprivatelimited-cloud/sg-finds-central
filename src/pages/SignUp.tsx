@@ -235,7 +235,7 @@ const SignUp = () => {
           {BUSINESS_EMOJIS.concat(BUSINESS_EMOJIS.slice(0, 18)).map((emoji, i) => (
             <span
               key={i}
-              className="text-3xl md:text-4xl select-none text-center"
+              className="text-5xl md:text-6xl select-none text-center"
               style={{ transform: `rotate(${(i * 23) % 40 - 20}deg)` }}
             >
               {emoji}
