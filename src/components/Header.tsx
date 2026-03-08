@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown } from "lucide-react";
+import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 
 const Header = () => {
   const { user, isAdmin, isSuperAdmin, isBusinessOwner } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -59,6 +61,9 @@ const Header = () => {
                 Add Listing
               </Link>
             </Button>
+            <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="w-4 h-4 mr-1.5" />
@@ -97,6 +102,10 @@ const Header = () => {
             )}
             <Button variant="outline" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
+            </Button>
+            <Button variant="ghost" className="w-full justify-start" onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </Button>
             {user ? (
               <Button variant="ghost" className="w-full justify-start" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
