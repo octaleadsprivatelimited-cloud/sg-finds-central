@@ -11,7 +11,7 @@ import {
   TrendingUp, Activity, FileText, ExternalLink, ChevronDown,
   Mail, Phone, Calendar, LayoutDashboard, PieChart, LogOut,
   ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight, Sparkles, Ticket, Loader2,
-  Home, Package, Store, Bell, MessageSquare, Globe,
+  Home, Package, Store, Bell, MessageSquare, Globe, Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
