@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Search, MapPin, Star, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
@@ -12,6 +13,8 @@ interface SearchWithSuggestionsProps {
 
 const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", className }: SearchWithSuggestionsProps) => {
   const { searchQuery, setSearchQuery, listings } = useSearch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [focused, setFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +58,15 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
   const handleSelect = (name: string) => {
     setSearchQuery(name);
     setFocused(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && searchQuery.length > 0 && location.pathname !== "/") {
+      navigate("/");
+    }
   };
 
   return (
@@ -66,6 +78,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setFocused(true)}
+          onKeyDown={handleKeyDown}
         />
       ) : (
         <Input
@@ -74,6 +87,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setFocused(true)}
+          onKeyDown={handleKeyDown}
         />
       )}
 
