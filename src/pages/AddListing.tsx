@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import AuthModal from "@/components/AuthModal";
 import AIContentGenerator from "@/components/AIContentGenerator";
 import LogoUpload from "@/components/LogoUpload";
 import { Button } from "@/components/ui/button";
@@ -179,6 +180,35 @@ const AddListing = () => {
     if (step === 1) return phone;
     return true;
   };
+
+  const [showAuth, setShowAuth] = useState(false);
+
+  // If not logged in, show sign-up gate
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-md">
+          <Button variant="ghost" size="sm" className="mb-6" onClick={() => navigate("/")}>
+            <ArrowLeft className="w-4 h-4 mr-1.5" />
+            Back to Directory
+          </Button>
+          <div className="glass-card rounded-2xl p-6 md:p-8 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-4">
+              <Building2 className="w-6 h-6 text-primary" />
+            </div>
+            <h1 className="text-xl font-bold text-foreground mb-2">Register Your Business</h1>
+            <p className="text-sm text-muted-foreground mb-6">
+              Sign up or sign in to list your business in the Singapore Directory for free.
+            </p>
+            <Button className="w-full" onClick={() => setShowAuth(true)}>
+              Sign Up / Sign In to Continue
+            </Button>
+          </div>
+          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
