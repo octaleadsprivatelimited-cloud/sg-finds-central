@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import CategoryGrid from "@/components/CategoryGrid";
+import HeroScene from "@/components/3d/HeroScene";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import { MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
