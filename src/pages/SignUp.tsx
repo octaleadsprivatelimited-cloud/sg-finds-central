@@ -279,7 +279,7 @@ const SignUp = () => {
             </div>
 
             {/* Social Sign-Up */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4">
               {(["google", "apple", "microsoft"] as const).map((provider) => (
                 <Button
                   key={provider}
