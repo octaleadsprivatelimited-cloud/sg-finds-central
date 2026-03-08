@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { MapPin, Phone, Globe, Star, Clock, ExternalLink, MessageCircle, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
@@ -90,9 +91,42 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Construction & Renovation": "from-orange-600 to-amber-700",
 };
 
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function getIsOpenNow(listing: Listing): boolean | null {
+  const hours = listing.operatingHours;
+  if (!hours) return null; // no data → don't show badge
+
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+
+  // Check special hours first
+  if (listing.specialHours) {
+    const special = listing.specialHours.find((sh) => sh.date === todayStr);
+    if (special) {
+      if (special.closed) return false;
+      return isWithinTime(now, special.open, special.close);
+    }
+  }
+
+  const dayName = DAYS[now.getDay()];
+  const todayHours = hours[dayName];
+  if (!todayHours || todayHours.closed) return false;
+  return isWithinTime(now, todayHours.open, todayHours.close);
+}
+
+function isWithinTime(now: Date, open: string, close: string): boolean {
+  if (!open || !close) return false;
+  const [oh, om] = open.split(":").map(Number);
+  const [ch, cm] = close.split(":").map(Number);
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
+}
+
 const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
+  const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
 
   const handleClick = () => {
     if (onSelect) onSelect(listing);
@@ -114,6 +148,17 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
               <Badge className="bg-gradient-to-r from-warning/20 to-orange-500/20 text-warning border-warning/30 text-[10px] sm:text-xs shrink-0 font-medium">
                 ⭐ Featured
               </Badge>
+            )}
+            {isOpen !== null && (
+              isOpen ? (
+                <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-transparent text-[10px] sm:text-xs shrink-0 font-medium">
+                  <Clock className="w-2.5 h-2.5 mr-0.5" />Open
+                </Badge>
+              ) : (
+                <Badge className="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 border-transparent text-[10px] sm:text-xs shrink-0 font-medium">
+                  <Clock className="w-2.5 h-2.5 mr-0.5" />Closed
+                </Badge>
+              )
             )}
           </div>
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mb-2">
