@@ -226,6 +226,7 @@ const BusinessDashboard = () => {
     setEditCustomSlug(listing.customSlug || toSlug(listing.name));
     setEditLogoUrl(listing.logoUrl || "");
     setEditHours(listing.operatingHours || { ...DEFAULT_OPERATING_HOURS });
+    setEditSpecialHours(listing.specialHours || []);
   };
 
   const slugError = useMemo(() => {
