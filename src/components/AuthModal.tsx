@@ -8,6 +8,7 @@ import { auth } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithPopup,
   GoogleAuthProvider,
   OAuthProvider,
@@ -23,7 +24,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type AuthMode = "login" | "signup";
+type AuthMode = "login" | "signup" | "forgot";
 type AuthMethod = "email" | "phone" | "whatsapp";
 
 const googleProvider = new GoogleAuthProvider();
@@ -98,6 +99,24 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     setLoading(false);
   };
 
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email, {
+        url: `${window.location.origin}/reset-password`,
+      });
+      toast.success("Password reset email sent! Check your inbox.");
+      setMode("login");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send reset email");
+    }
+    setLoading(false);
+  };
+
   const handleSocialSignIn = async (providerName: string) => {
     setSocialLoading(providerName);
     try {
@@ -150,9 +169,11 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       <DialogContent className="sm:max-w-md gap-3">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            {mode === "login" ? "Welcome back" : "Create account"}
+            {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
           </DialogTitle>
-          <p className="text-xs sm:text-sm text-muted-foreground">Sign in to manage your business listings</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your business listings"}
+          </p>
         </DialogHeader>
 
         {/* Social Sign-In — icon-only row */}
@@ -205,14 +226,35 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           </Button>
         </div>
 
-        {method === "email" ? (
+        {method === "email" && mode === "forgot" ? (
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Email</Label>
+              <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleForgotPassword} disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Send Reset Link
+            </Button>
+            <button className="w-full text-xs sm:text-sm text-primary font-medium hover:underline" onClick={() => setMode("login")}>
+              ← Back to sign in
+            </button>
+          </div>
+        ) : method === "email" ? (
           <div className="space-y-3">
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm">Email</Label>
               <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs sm:text-sm">Password</Label>
+                {mode === "login" && (
+                  <button className="text-[11px] sm:text-xs text-primary font-medium hover:underline" onClick={() => setMode("forgot")}>
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <Input type="password" placeholder="••••••••" className="h-9 sm:h-10 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleEmailAuth} disabled={loading}>
@@ -267,15 +309,17 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           </div>
         ) : null}
 
-        <p className="text-center text-xs sm:text-sm text-muted-foreground">
-          {mode === "login" ? "Don't have an account? " : "Already have an account? "}
-          <button
-            className="text-primary font-medium hover:underline"
-            onClick={() => setMode(mode === "login" ? "signup" : "login")}
-          >
-            {mode === "login" ? "Sign up" : "Sign in"}
-          </button>
-        </p>
+        {mode !== "forgot" && (
+          <p className="text-center text-xs sm:text-sm text-muted-foreground">
+            {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+            <button
+              className="text-primary font-medium hover:underline"
+              onClick={() => setMode(mode === "login" ? "signup" : "login")}
+            >
+              {mode === "login" ? "Sign up" : "Sign in"}
+            </button>
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );
