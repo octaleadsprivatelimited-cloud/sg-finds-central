@@ -10,6 +10,7 @@ import AuthModal from "./AuthModal";
 
 const Header = () => {
   const { user, isAdmin, isSuperAdmin, isBusinessOwner } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
