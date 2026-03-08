@@ -143,7 +143,7 @@ const BusinessDashboard = () => {
     const sanitizedSlug = toSlug(editCustomSlug || editName);
     setSaving(true);
     try {
-      const updates = {
+      const updates: Record<string, any> = {
         name: editName,
         category: editCategory,
         district: editDistrict,
@@ -153,6 +153,7 @@ const BusinessDashboard = () => {
         email: editEmail,
         description: editDescription,
         customSlug: sanitizedSlug,
+        logoUrl: editLogoUrl,
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l =>
