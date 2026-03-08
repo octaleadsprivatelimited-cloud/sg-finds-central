@@ -141,7 +141,7 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
     >
       <div className="flex">
         {/* Image thumbnail */}
-        <div className="w-28 h-28 sm:w-36 sm:h-36 shrink-0 bg-muted overflow-hidden">
+        <div className="w-24 h-24 sm:w-36 sm:h-36 shrink-0 bg-muted overflow-hidden">
           {listing.coverImage ? (
             <img
               src={listing.coverImage}
