@@ -397,6 +397,7 @@ const AddListing = () => {
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );
