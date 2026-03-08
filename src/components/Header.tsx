@@ -94,7 +94,7 @@ const Header = () => {
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-border/50 bg-card/95 backdrop-blur-xl p-4 space-y-1.5 animate-fade-in">
+          <div className="md:hidden absolute top-full left-0 right-0 border-t border-border/50 bg-card/95 backdrop-blur-xl p-4 space-y-1.5 animate-fade-in shadow-lg z-50">
             {isSuperAdmin && (
               <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/super-admin"><Crown className="w-4 h-4 mr-2 text-warning" />Super Admin</Link>
