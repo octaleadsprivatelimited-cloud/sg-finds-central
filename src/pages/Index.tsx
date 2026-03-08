@@ -32,7 +32,7 @@ import financial1 from "@/assets/businesses/financial1.jpg";
 import logistics1 from "@/assets/businesses/logistics1.jpg";
 import events1 from "@/assets/businesses/events1.jpg";
 import construction1 from "@/assets/businesses/construction1.jpg";
-import { MapPin, List, Map as MapIcon, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { MapPin, List, Map as MapIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -65,13 +65,7 @@ const DEMO_LISTINGS: (Listing)[] = [
   { id: "15", name: "BuildRight Contractors", uen: "201800010P", category: "Construction & Renovation", district: "Ang Mo Kio", address: "53 Ang Mo Kio Ave 3, #01-01, Singapore 569933", postalCode: "569933", phone: "+65 6600 1010", description: "HDB & condo renovation specialists with 15 years of experience.", status: "approved", ownerId: "demo", lat: 1.3691, lng: 103.8454, verified: true, rating: 4.5, reviewCount: 121, coverImage: construction1, operatingHours: { ...DEFAULT_OPERATING_HOURS, Saturday: { open: "08:00", close: "16:00" } } },
 ];
 
-// Hero slides
-const HERO_SLIDES = [
-  { image: food1, subtitle: "Local Favourites", title: "Discover Singapore's Best", cta: "Browse All" },
-  { image: tech1, subtitle: "Trusted Experts", title: "Technology & IT Services", cta: "Explore Tech" },
-  { image: beauty1, subtitle: "Wellness & Beauty", title: "Pamper Yourself Today", cta: "Find Salons" },
-  { image: realestate1, subtitle: "Property Experts", title: "Find Your Dream Space", cta: "View Properties" },
-];
+// Hero slides removed
 
 const Index = () => {
   const { searchQuery, setSearchQuery, setListings: setSearchListings } = useSearch();
@@ -81,13 +75,6 @@ const Index = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
-  const [heroSlide, setHeroSlide] = useState(0);
-
-  // Auto-rotate hero
-  useEffect(() => {
-    const timer = setInterval(() => setHeroSlide(p => (p + 1) % HERO_SLIDES.length), 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
@@ -144,68 +131,27 @@ const Index = () => {
   };
 
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
-  const slide = HERO_SLIDES[heroSlide];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ═══ HERO BANNER (Hyper-style full-width image slider) ═══ */}
-      <section className="relative w-full h-[320px] md:h-[440px] lg:h-[500px] overflow-hidden bg-foreground">
-        {HERO_SLIDES.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute inset-0 transition-opacity duration-700 ${i === heroSlide ? "opacity-100" : "opacity-0"}`}
+      {/* ═══ HERO SECTION (clean, no slider) ═══ */}
+      <section className="bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 text-center">
+          <p className="text-sm font-medium tracking-widest uppercase mb-3 opacity-80">
+            Singapore's Trusted Directory
+          </p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
+            Find the Best Local Businesses
+          </h1>
+          <p className="text-base md:text-lg opacity-80 max-w-2xl mx-auto mb-6">
+            Discover, connect, and grow with verified businesses across Singapore
+          </p>
+          <Button
+            size="lg"
+            className="bg-card text-foreground hover:bg-card/90 font-semibold px-8 rounded-lg shadow-lg"
           >
-            <img
-              src={s.image}
-              alt={s.title}
-              className="w-full h-full object-cover"
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          </div>
-        ))}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white z-10 px-4">
-            <p className="text-sm md:text-base font-medium tracking-widest uppercase mb-2 opacity-80">
-              {slide.subtitle}
-            </p>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 drop-shadow-lg">
-              {slide.title}
-            </h1>
-            <Button
-              size="lg"
-              className="bg-card text-foreground hover:bg-card/90 font-semibold px-8 rounded-lg shadow-lg"
-            >
-              {slide.cta}
-            </Button>
-          </div>
-        </div>
-
-        {/* Slider controls */}
-        <button
-          onClick={() => setHeroSlide((heroSlide - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors z-10"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => setHeroSlide((heroSlide + 1) % HERO_SLIDES.length)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors z-10"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setHeroSlide(i)}
-              className={`rounded-full transition-all duration-300 ${
-                i === heroSlide ? "w-8 h-2.5 bg-white" : "w-2.5 h-2.5 bg-white/50 hover:bg-white/70"
-              }`}
-            />
-          ))}
+            Browse All
+          </Button>
         </div>
       </section>
 
