@@ -130,16 +130,16 @@ const BusinessDashboard = () => {
     return "";
   }, [editCustomSlug, editName, editDistrict, editCategory, editingListing, listings]);
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!editingListing) return;
     if (slugError) {
       toast.error(slugError);
       return;
     }
     const sanitizedSlug = toSlug(editCustomSlug || editName);
-    setListings(prev => prev.map(l =>
-      l.id === editingListing.id ? {
-        ...l,
+    setSaving(true);
+    try {
+      const updates = {
         name: editName,
         category: editCategory,
         district: editDistrict,
@@ -149,15 +149,27 @@ const BusinessDashboard = () => {
         email: editEmail,
         description: editDescription,
         customSlug: sanitizedSlug,
-      } : l
-    ));
-    setEditingListing(null);
-    toast.success("Listing updated");
+      };
+      await updateDoc(doc(db, "listings", editingListing.id), updates);
+      setListings(prev => prev.map(l =>
+        l.id === editingListing.id ? { ...l, ...updates } : l
+      ));
+      setEditingListing(null);
+      toast.success("Listing updated in database");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update listing");
+    }
+    setSaving(false);
   };
 
-  const deleteListing = (id: string) => {
-    setListings(prev => prev.filter(l => l.id !== id));
-    toast.success("Listing deleted");
+  const deleteListing = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "listings", id));
+      setListings(prev => prev.filter(l => l.id !== id));
+      toast.success("Listing deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete listing");
+    }
   };
 
   return (
