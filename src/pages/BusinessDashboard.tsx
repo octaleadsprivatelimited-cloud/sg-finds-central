@@ -442,9 +442,35 @@ const BusinessDashboard = () => {
                       </div>
                     )}
                     {listing.status === "rejected" && (
-                      <div className="mt-3 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-destructive">
-                        <X className="w-3.5 h-3.5" />
-                        Your listing was rejected. Please update and resubmit.
+                      <div className="mt-3 pt-3 border-t border-border/50">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-xs text-destructive flex items-center gap-1.5">
+                            <X className="w-3.5 h-3.5" />
+                            Your listing was rejected. Fix the issues and resubmit.
+                          </p>
+                          <div className="flex gap-2 shrink-0">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openEdit(listing)}
+                            >
+                              <Edit3 className="w-3.5 h-3.5 mr-1.5" />
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => resubmitListing(listing.id)}
+                              disabled={resubmitting === listing.id}
+                            >
+                              {resubmitting === listing.id ? (
+                                <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                              ) : (
+                                <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                              )}
+                              Resubmit
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
