@@ -815,6 +815,7 @@ const BusinessDashboard = () => {
                     </div>
                   );
                 })}
+              </div>
               {/* Logo Upload */}
               {user && (
                 <div className="pt-2 border-t border-border">

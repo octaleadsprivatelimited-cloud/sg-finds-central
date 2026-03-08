@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReviewSection from "@/components/ReviewSection";
 import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
-import type { Listing, OperatingHours, DEFAULT_OPERATING_HOURS as _unused } from "@/components/ListingCard";
+import type { Listing } from "@/components/ListingCard";
 import { DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { toSlug } from "@/lib/url-helpers";
 import PhotoGallery from "@/components/business-detail/PhotoGallery";
