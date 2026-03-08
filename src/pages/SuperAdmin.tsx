@@ -62,55 +62,8 @@ const roleBadge = (role: string) => {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${r.bg} ${r.text}`}>{r.label}</span>;
 };
 
-// ── Chart data ──
-const listingTrendData = [
-  { month: "Jan", current: 12, previous: 8 },
-  { month: "Feb", current: 19, previous: 14 },
-  { month: "Mar", current: 15, previous: 18 },
-  { month: "Apr", current: 27, previous: 16 },
-  { month: "May", current: 23, previous: 21 },
-  { month: "Jun", current: 34, previous: 22 },
-  { month: "Jul", current: 29, previous: 26 },
-  { month: "Aug", current: 38, previous: 28 },
-  { month: "Sep", current: 32, previous: 24 },
-  { month: "Oct", current: 41, previous: 30 },
-  { month: "Nov", current: 36, previous: 33 },
-  { month: "Dec", current: 48, previous: 35 },
-];
-
-const categoryData = [
-  { name: "F&B", value: 35, color: "#5c6ac4" },
-  { name: "Tech", value: 25, color: "#47c1bf" },
-  { name: "Retail", value: 20, color: "#f49342" },
-  { name: "Services", value: 20, color: "#9c6ade" },
-];
-
-const sparkData = [3, 5, 4, 7, 5, 8, 6, 9, 7, 10, 8, 12];
-
-const breakdownData = [
-  { label: "Total listings", value: "384", change: "↑ 28%", positive: true },
-  { label: "Pending review", value: "12", change: "↑ 4%", positive: false },
-  { label: "Rejected", value: "8", change: "↓ 39%", positive: true },
-  { label: "Active listings", value: "364", change: "↑ 31%", positive: true },
-  { label: "Featured", value: "24", change: "↑ 58%", positive: true },
-  { label: "Expired", value: "0", change: "—", positive: true },
-  { label: "Categories", value: "15", change: "↑ 47%", positive: true },
-  { label: "Total views", value: "10,317", change: "↑ 31%", positive: true },
-];
-
-const avgOrderData = [
-  { month: "Feb", value: 45 }, { month: "Apr", value: 52 },
-  { month: "Jun", value: 68 }, { month: "Aug", value: 55 },
-  { month: "Oct", value: 72 }, { month: "Dec", value: 63 },
-];
-
-const topCategoriesData = [
-  { name: "Food & Beverage", value: 142 },
-  { name: "Technology & IT", value: 89 },
-  { name: "Retail & Shopping", value: 67 },
-  { name: "Healthcare", value: 45 },
-  { name: "Beauty & Wellness", value: 41 },
-];
+const CHART_COLORS = ["#5c6ac4", "#47c1bf", "#f49342", "#9c6ade", "#e06c9f", "#50b83c", "#de3618", "#f4d03f"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type NavItem = "dashboard" | "users" | "listings" | "tickets" | "statistics" | "settings";
 
