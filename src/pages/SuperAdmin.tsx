@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import {
   Users, Building2, BarChart3, Settings, Search, MoreHorizontal,
   Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, 
@@ -81,6 +83,22 @@ const SuperAdmin = () => {
   const [selectedUser, setSelectedUser] = useState<PlatformUser | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Fetch all listings from Firestore
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const snap = await getDocs(collection(db, "listings"));
+        if (!snap.empty) {
+          setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+        }
+      } catch {
+        // Fall back to demo data
+      }
+    };
+    fetchListings();
+  }, []);
 
   // Stats
   const totalUsers = users.length;
@@ -121,16 +139,30 @@ const SuperAdmin = () => {
     toast.success("User deleted");
   };
 
-  const handleListingAction = (listingId: string, status: "approved" | "rejected") => {
-    setListings(prev => prev.map(l =>
-      l.id === listingId ? { ...l, status } : l
-    ));
-    toast.success(`Listing ${status}`);
+  const handleListingAction = async (listingId: string, status: "approved" | "rejected") => {
+    setActionLoading(listingId);
+    try {
+      await updateDoc(doc(db, "listings", listingId), { status });
+      setListings(prev => prev.map(l =>
+        l.id === listingId ? { ...l, status } : l
+      ));
+      toast.success(`Listing ${status}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update listing");
+    }
+    setActionLoading(null);
   };
 
-  const handleDeleteListing = (listingId: string) => {
-    setListings(prev => prev.filter(l => l.id !== listingId));
-    toast.success("Listing deleted");
+  const handleDeleteListing = async (listingId: string) => {
+    setActionLoading(listingId);
+    try {
+      await deleteDoc(doc(db, "listings", listingId));
+      setListings(prev => prev.filter(l => l.id !== listingId));
+      toast.success("Listing deleted from database");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete listing");
+    }
+    setActionLoading(null);
   };
 
   const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
@@ -539,11 +571,11 @@ const SuperAdmin = () => {
                     <div className="flex gap-2">
                       {listing.status === "pending_approval" && (
                         <>
-                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingAction(listing.id, "approved")}>
-                            <Check className="w-4 h-4 mr-1" />Approve
+                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingAction(listing.id, "approved")} disabled={actionLoading === listing.id}>
+                            <Check className="w-4 h-4 mr-1" />{actionLoading === listing.id ? "..." : "Approve"}
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleListingAction(listing.id, "rejected")}>
-                            <X className="w-4 h-4 mr-1" />Reject
+                          <Button size="sm" variant="destructive" onClick={() => handleListingAction(listing.id, "rejected")} disabled={actionLoading === listing.id}>
+                            <X className="w-4 h-4 mr-1" />{actionLoading === listing.id ? "..." : "Reject"}
                           </Button>
                         </>
                       )}

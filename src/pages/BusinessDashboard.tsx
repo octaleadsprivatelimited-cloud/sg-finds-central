@@ -153,13 +153,14 @@ const BusinessDashboard = () => {
         description: editDescription,
         customSlug: sanitizedSlug,
         logoUrl: editLogoUrl,
+        status: "pending_approval", // Re-approval required after edit
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l =>
         l.id === editingListing.id ? { ...l, ...updates } : l
       ));
       setEditingListing(null);
-      toast.success("Listing updated in database");
+      toast.success("Listing updated — pending admin re-approval before going public");
     } catch (err: any) {
       toast.error(err.message || "Failed to update listing");
     }
