@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import AIContentGenerator from "@/components/AIContentGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
