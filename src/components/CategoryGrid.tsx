@@ -66,7 +66,7 @@ const CategoryGrid = () => {
             <button
               key={cat.name}
               onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-              className={`group flex flex-col items-center gap-1.5 p-3 rounded-xl border border-transparent hover:border-border hover:shadow-sm transition-all duration-200 hover:-translate-y-0.5`}
+              className={`group flex flex-col items-center gap-1.5 p-3 rounded-xl border border-border hover:shadow-sm transition-all duration-200 hover:-translate-y-0.5`}
             >
               <span className="text-2xl md:text-3xl">{cat.emoji}</span>
               <span className="text-[10px] md:text-xs font-medium text-foreground text-center leading-tight">
