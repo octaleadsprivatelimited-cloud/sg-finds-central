@@ -6,7 +6,7 @@ import {
   Check, X, Eye, Trash2, Ban, UserCheck, Shield, Crown, 
   TrendingUp, Activity, FileText, ExternalLink, ChevronDown,
   Mail, Phone, Calendar, LayoutDashboard, PieChart, LogOut,
-  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight,
+  ChevronRight, DollarSign, ArrowUpRight, ArrowDownRight, Sparkles, Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
