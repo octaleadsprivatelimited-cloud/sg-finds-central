@@ -134,7 +134,7 @@ const BusinessDetail = () => {
   const galleryPhotos = GALLERY_MAP[listing.id] || [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 sm:pb-0">
       {/* Breadcrumb */}
       <div className="border-b border-border/50 bg-secondary/30">
         <div className="container mx-auto px-4 py-3">
