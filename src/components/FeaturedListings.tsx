@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import VerifiedBadge from "./VerifiedBadge";
 import type { Listing } from "./ListingCard";
 import { useNavigate } from "react-router-dom";
+import { getBusinessUrl } from "@/lib/url-helpers";
 
 interface FeaturedListingsProps {
   listings: Listing[];
