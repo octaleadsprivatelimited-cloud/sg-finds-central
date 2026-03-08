@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon, MapPin } from "lucide-react";
+import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchWithSuggestions from "./SearchWithSuggestions";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 
 const Header = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -77,9 +75,6 @@ const Header = () => {
             <Button variant="outline" size="sm" asChild className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50">
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-1.5" />Add Listing</Link>
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-primary" />}
-            </Button>
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
                 <LogOut className="w-4 h-4 mr-1.5" />Sign Out
@@ -117,10 +112,6 @@ const Header = () => {
             )}
             <Button variant="outline" className="w-full justify-start border-primary/30 text-primary" asChild onClick={() => setMobileOpen(false)}>
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
-            </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="w-4 h-4 mr-2 text-warning" /> : <Moon className="w-4 h-4 mr-2 text-primary" />}
-              {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </Button>
             {user ? (
               <Button variant="ghost" className="w-full justify-start hover:bg-destructive/10 hover:text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
