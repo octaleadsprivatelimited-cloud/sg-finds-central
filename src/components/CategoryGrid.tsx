@@ -32,12 +32,6 @@ const CategoryGrid = () => {
   return (
     <section className="py-4 lg:py-0">
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h2 className="text-sm md:text-base font-bold text-foreground">Browse by Category</h2>
-            <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Find what you need in Singapore</p>
-          </div>
-        </div>
 
         <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-1.5 md:gap-2">
           {CATEGORIES.map((cat) => (
