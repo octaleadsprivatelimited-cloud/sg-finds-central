@@ -309,7 +309,7 @@ const SignUp = () => {
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="h-10 text-sm"
+                  className="h-9 md:h-10 text-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
