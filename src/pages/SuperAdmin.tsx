@@ -227,12 +227,12 @@ const SuperAdmin = () => {
             {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Listing Trend Card */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 col-span-1 lg:col-span-2">
+              <div className="bg-card rounded-2xl p-5 border border-border col-span-1 lg:col-span-2">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <p className="text-sm text-slate-500">Listings Growth</p>
+                    <p className="text-sm text-muted-foreground">Listings Growth</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">07 Day progress</span>
+                      <span className="text-xs text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">07 Day progress</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-emerald-600 text-sm">
