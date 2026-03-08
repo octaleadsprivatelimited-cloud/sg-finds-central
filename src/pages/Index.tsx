@@ -5,6 +5,7 @@ import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import CitySelector from "@/components/CitySelector";
 import CategoryGrid from "@/components/CategoryGrid";
+import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import { Building2, MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -213,6 +214,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Promo Banner */}
+      {!hasActiveFilters && <PromoBanner />}
 
       {/* Category Grid */}
       {!hasActiveFilters && <CategoryGrid />}
