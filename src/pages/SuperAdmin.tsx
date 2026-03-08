@@ -250,13 +250,13 @@ const SuperAdmin = () => {
               </div>
 
               {/* Total Listings */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200">
+              <div className="bg-card rounded-2xl p-5 border border-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <Building2 className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm text-slate-500">Total Listings</span>
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Total Listings</span>
                 </div>
-                <p className="text-3xl font-bold text-slate-800">{totalListings}</p>
-                <p className="text-xs text-slate-400 mt-1">{approvedListings} approved</p>
+                <p className="text-3xl font-bold text-foreground">{totalListings}</p>
+                <p className="text-xs text-muted-foreground mt-1">{approvedListings} approved</p>
               </div>
 
               {/* Category Breakdown */}
