@@ -63,6 +63,7 @@ export interface Listing {
   logoUrl?: string;
   offers?: ListingOffer[];
   operatingHours?: OperatingHours;
+  specialHours?: SpecialHours[];
 }
 
 interface ListingCardProps {
