@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import VerifiedBadge from "./VerifiedBadge";
 import type { Listing } from "./ListingCard";
 import { useNavigate } from "react-router-dom";
+import { getBusinessUrl } from "@/lib/url-helpers";
 
 interface FeaturedListingsProps {
   listings: Listing[];
@@ -24,12 +25,11 @@ const FeaturedListings = ({ listings }: FeaturedListingsProps) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {featured.map((listing) => {
-          const slug = listing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
           return (
             <div
               key={listing.id}
               className="group relative overflow-hidden rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-background p-5 cursor-pointer hover-lift"
-              onClick={() => navigate(`/business/${slug}`)}
+              onClick={() => navigate(getBusinessUrl(listing))}
             >
               <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
