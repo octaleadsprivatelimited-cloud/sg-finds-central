@@ -721,7 +721,7 @@ const SuperAdmin = () => {
                   <p className="text-foreground">{selectedListing.description}</p>
                 </div>
               )}
-              <div className="flex gap-2 pt-4 border-t border-slate-200">
+              <div className="flex gap-2 pt-4 border-t border-border">
                 {selectedListing.status !== "approved" && (
                   <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600"
                     onClick={() => { handleListingAction(selectedListing.id, "approved"); setSelectedListing(null); }}>
