@@ -76,7 +76,7 @@ const PromoBanner = () => {
         >
           {/* Banner */}
           <div
-            className={`relative bg-gradient-to-r ${banner.gradient} p-6 md:p-10 min-h-[160px] md:min-h-[200px] flex items-center transition-all duration-500`}
+            className={`relative bg-gradient-to-r ${banner.gradient} p-4 md:p-10 min-h-[120px] md:min-h-[200px] flex items-center transition-all duration-500`}
           >
             {/* Decorative shapes */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
