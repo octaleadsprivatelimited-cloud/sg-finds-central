@@ -477,7 +477,7 @@ const SuperAdmin = () => {
                         <span className="font-medium" style={{ color: "#202223" }}>{cat.value}</span>
                       </div>
                       <div className="h-1.5 rounded-full" style={{ background: "#f1f2f3" }}>
-                        <div className="h-full rounded-full" style={{ background: "#5c6ac4", width: `${(cat.value / 142) * 100}%` }} />
+                        <div className="h-full rounded-full" style={{ background: "#5c6ac4", width: `${(cat.value / (topCategoriesData[0]?.value || 1)) * 100}%` }} />
                       </div>
                     </div>
                   ))}
