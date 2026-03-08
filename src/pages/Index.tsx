@@ -3,7 +3,6 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import ListingCard, { Listing } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
-import CitySelector from "@/components/CitySelector";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
