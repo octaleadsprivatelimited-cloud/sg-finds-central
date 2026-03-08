@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'SF Pro Display', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -99,18 +99,6 @@ export default {
           from: { transform: "scale(0.95)", opacity: "0" },
           to: { transform: "scale(1)", opacity: "1" },
         },
-        "shimmer": {
-          from: { backgroundPosition: "-200% 0" },
-          to: { backgroundPosition: "200% 0" },
-        },
-        "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-6px)" },
-        },
-        "pulse-glow": {
-          "0%, 100%": { opacity: "0.6" },
-          "50%": { opacity: "1" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -118,9 +106,6 @@ export default {
         "fade-in": "fade-in 0.4s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
-        "shimmer": "shimmer 2.5s linear infinite",
-        "float": "float 3s ease-in-out infinite",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
     },
   },
