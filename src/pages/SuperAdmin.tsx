@@ -174,14 +174,14 @@ const SuperAdmin = () => {
 
         {/* Teams section */}
         {!sidebarCollapsed && (
-          <div className="px-3 py-4 border-t border-slate-100">
-            <p className="text-xs text-slate-400 uppercase tracking-wider px-3 mb-2">Teams</p>
+          <div className="px-3 py-4 border-t border-border">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider px-3 mb-2">Teams</p>
             <div className="space-y-1">
-              <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600">
+              <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span>Marketing</span>
               </div>
-              <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600">
+              <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
                 <span>Development</span>
               </div>
