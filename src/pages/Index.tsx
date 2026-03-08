@@ -32,7 +32,7 @@ import financial1 from "@/assets/businesses/financial1.jpg";
 import logistics1 from "@/assets/businesses/logistics1.jpg";
 import events1 from "@/assets/businesses/events1.jpg";
 import construction1 from "@/assets/businesses/construction1.jpg";
-import { MapPin, List, Map as MapIcon, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { MapPin, List, Map as MapIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
