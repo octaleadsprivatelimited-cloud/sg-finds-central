@@ -17,9 +17,15 @@ interface CitySelectorProps {
 const CitySelector = ({ selectedCity, onCityChange, iconOnly }: CitySelectorProps) => {
   return (
     <Select value={selectedCity} onValueChange={onCityChange}>
-      <SelectTrigger className={iconOnly ? "w-9 h-9 p-0 justify-center border-0 bg-transparent hover:bg-primary/10 rounded-xl [&>svg.lucide-chevron-down]:hidden [&>span]:hidden" : "w-[180px] h-9 text-sm"}>
-        <MapPin className={`shrink-0 ${iconOnly ? "w-5 h-5 text-accent" : "w-3.5 h-3.5 mr-1.5 text-primary"}`} />
-        {!iconOnly && <SelectValue placeholder="Select City" />}
+      <SelectTrigger className={iconOnly ? "w-9 h-9 p-0 justify-center border-0 bg-transparent hover:bg-primary/10 rounded-xl [&>svg:last-child]:hidden" : "w-[180px] h-9 text-sm"}>
+        {iconOnly ? (
+          <MapPin className="w-5 h-5 text-accent shrink-0" />
+        ) : (
+          <>
+            <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary shrink-0" />
+            <SelectValue placeholder="Select City" />
+          </>
+        )}
       </SelectTrigger>
       <SelectContent>
         {CITIES.map((city) => (
