@@ -16,6 +16,7 @@ import BusinessDetail from "./pages/BusinessDetail";
 import CityCategory from "./pages/CityCategory";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import SeedFirestore from "./pages/SeedFirestore";
 
 const queryClient = new QueryClient();
 
