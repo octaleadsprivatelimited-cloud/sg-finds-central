@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
-  MessageSquare, MoreHorizontal, FileText,
+  MessageSquare, MoreHorizontal, FileText, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,34 +36,12 @@ import { Listing } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-// Demo data for the business owner
-const MY_LISTINGS: Listing[] = [
-  {
-    id: "my-1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
-    category: "Food & Beverage", district: "Orchard",
-    address: "391 Orchard Road, #B2-01, Singapore 238872", postalCode: "238872",
-    phone: "+65 6234 5678", website: "https://sgdelights.com", email: "info@sgdelights.com",
-    description: "Award-winning local cuisine serving traditional Peranakan dishes with a modern twist.",
-    status: "approved", ownerId: "me", lat: 1.3048, lng: 103.8318,
-  },
-  {
-    id: "my-2", name: "TechHub Solutions", uen: "202301234B",
-    category: "Technology & IT", district: "CBD / Raffles Place",
-    address: "1 Raffles Place, #30-01, Singapore 048616", postalCode: "048616",
-    phone: "+65 6789 0123", website: "https://techhub.sg", email: "hello@techhub.sg",
-    description: "Full-service IT consultancy specializing in cloud infrastructure and cybersecurity.",
-    status: "approved", ownerId: "me", lat: 1.2840, lng: 103.8510,
-  },
-  {
-    id: "my-3", name: "Quick Bites Express", uen: "202499999C",
-    category: "Food & Beverage", district: "Tampines",
-    address: "1 Tampines Central 5, Singapore 529508", postalCode: "529508",
-    phone: "+65 6345 9999",
-    description: "Fast casual dining with local favourites.",
-    status: "pending_approval", ownerId: "me",
-    documentsUrl: ["https://example.com/doc.pdf"],
-  },
+// Demo data fallback
+const MY_DEMO_LISTINGS: Listing[] = [
+  { id: "my-1", name: "Singapore Delights Pte Ltd", uen: "201912345A", category: "Food & Beverage", district: "Orchard", address: "391 Orchard Road, #B2-01, Singapore 238872", postalCode: "238872", phone: "+65 6234 5678", website: "https://sgdelights.com", email: "info@sgdelights.com", description: "Award-winning local cuisine.", status: "approved", ownerId: "me", lat: 1.3048, lng: 103.8318 },
 ];
 
 const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected"; label: string }> = {
@@ -76,9 +54,32 @@ const BusinessDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("listings");
-  const [listings, setListings] = useState<Listing[]>(MY_LISTINGS);
+  const [listings, setListings] = useState<Listing[]>(MY_DEMO_LISTINGS);
+  const [loadingListings, setLoadingListings] = useState(true);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [viewingListing, setViewingListing] = useState<Listing | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  // Load user's listings from Firestore
+  useEffect(() => {
+    const fetchMyListings = async () => {
+      if (!user) {
+        setLoadingListings(false);
+        return;
+      }
+      try {
+        const q = query(collection(db, "listings"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+        }
+      } catch {
+        // Use demo data
+      }
+      setLoadingListings(false);
+    };
+    fetchMyListings();
+  }, [user]);
 
   // Edit form state
   const [editName, setEditName] = useState("");
@@ -129,16 +130,16 @@ const BusinessDashboard = () => {
     return "";
   }, [editCustomSlug, editName, editDistrict, editCategory, editingListing, listings]);
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!editingListing) return;
     if (slugError) {
       toast.error(slugError);
       return;
     }
     const sanitizedSlug = toSlug(editCustomSlug || editName);
-    setListings(prev => prev.map(l =>
-      l.id === editingListing.id ? {
-        ...l,
+    setSaving(true);
+    try {
+      const updates = {
         name: editName,
         category: editCategory,
         district: editDistrict,
@@ -148,15 +149,27 @@ const BusinessDashboard = () => {
         email: editEmail,
         description: editDescription,
         customSlug: sanitizedSlug,
-      } : l
-    ));
-    setEditingListing(null);
-    toast.success("Listing updated");
+      };
+      await updateDoc(doc(db, "listings", editingListing.id), updates);
+      setListings(prev => prev.map(l =>
+        l.id === editingListing.id ? { ...l, ...updates } : l
+      ));
+      setEditingListing(null);
+      toast.success("Listing updated in database");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update listing");
+    }
+    setSaving(false);
   };
 
-  const deleteListing = (id: string) => {
-    setListings(prev => prev.filter(l => l.id !== id));
-    toast.success("Listing deleted");
+  const deleteListing = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "listings", id));
+      setListings(prev => prev.filter(l => l.id !== id));
+      toast.success("Listing deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete listing");
+    }
   };
 
   return (
@@ -470,7 +483,10 @@ const BusinessDashboard = () => {
                 <Textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
               <div className="flex gap-2 pt-2">
-                <Button className="flex-1" onClick={saveEdit} disabled={!!slugError}>Save Changes</Button>
+                <Button className="flex-1" onClick={saveEdit} disabled={!!slugError || saving}>
+                  {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
                 <Button variant="outline" onClick={() => setEditingListing(null)}>Cancel</Button>
               </div>
             </div>
