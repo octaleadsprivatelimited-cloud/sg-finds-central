@@ -139,11 +139,12 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
             )}
           </div>
         </div>
-        <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shrink-0 overflow-hidden shadow-md`}>
+        <div className={`w-14 h-14 md:w-16 md:h-16 rounded-xl ${colorClass} flex items-center justify-center shrink-0 shadow-sm`}
+          style={{ perspective: "200px" }}>
           {listing.logoUrl ? (
-            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover rounded-xl" />
           ) : (
-            <span className="text-2xl font-bold text-white/90">{listing.name.charAt(0)}</span>
+            <span className="text-2xl md:text-3xl" style={{ transform: "rotateY(-8deg) rotateX(5deg)" }}>{emoji}</span>
           )}
         </div>
       </div>
