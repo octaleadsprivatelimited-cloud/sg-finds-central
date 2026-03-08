@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, addDoc, serverTimestamp, GeoPoint } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import AIContentGenerator from "@/components/AIContentGenerator";
@@ -26,6 +26,27 @@ const AddListing = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [hasExistingListing, setHasExistingListing] = useState(false);
+  const [checkingExisting, setCheckingExisting] = useState(true);
+
+  // Check if user already has a listing
+  useEffect(() => {
+    const checkExisting = async () => {
+      if (!user) {
+        setCheckingExisting(false);
+        return;
+      }
+      try {
+        const q = query(collection(db, "listings"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        setHasExistingListing(!snap.empty);
+      } catch {
+        // Allow submission if check fails
+      }
+      setCheckingExisting(false);
+    };
+    checkExisting();
+  }, [user]);
 
   // Step 1
   const [name, setName] = useState("");
@@ -79,11 +100,40 @@ const AddListing = () => {
       return;
     }
 
+    if (hasExistingListing) {
+      toast.error("You can only register one business per account");
+      return;
+    }
+
     const validLinks = docLinks.filter(l => l.trim() !== "");
     const invalidLinks = validLinks.filter(l => !isValidCloudLink(l));
     if (invalidLinks.length > 0) {
       toast.error("Only Google Drive, Dropbox, OneDrive, or iCloud links are allowed");
       return;
+    }
+
+    // Check for duplicate email
+    if (email.trim()) {
+      try {
+        const emailQ = query(collection(db, "listings"), where("email", "==", email.trim()));
+        const emailSnap = await getDocs(emailQ);
+        if (!emailSnap.empty) {
+          toast.error("A business with this email is already registered");
+          return;
+        }
+      } catch {}
+    }
+
+    // Check for duplicate phone
+    if (phone.trim() && phone.trim() !== "+65") {
+      try {
+        const phoneQ = query(collection(db, "listings"), where("phone", "==", phone.trim()));
+        const phoneSnap = await getDocs(phoneQ);
+        if (!phoneSnap.empty) {
+          toast.error("A business with this phone number is already registered");
+          return;
+        }
+      } catch {}
     }
 
     setLoading(true);
@@ -128,6 +178,32 @@ const AddListing = () => {
           <h1 className="text-2xl font-bold text-foreground">Add Your Business</h1>
           <p className="text-muted-foreground mt-1">List your business in the Singapore Directory</p>
         </div>
+
+        {checkingExisting ? (
+          <div className="text-center py-16">
+            <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary mb-3" />
+            <p className="text-sm text-muted-foreground">Checking account status...</p>
+          </div>
+        ) : hasExistingListing ? (
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+              <X className="w-6 h-6 text-destructive" />
+            </div>
+            <h2 className="text-lg font-semibold text-foreground mb-2">One Business Per Account</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              Each account can only register one business. You already have a listing registered with this account.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                Go to Dashboard
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Back to Directory
+              </Button>
+            </div>
+          </div>
+        ) : (
+        <>
 
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-2 mb-8">
@@ -321,6 +397,8 @@ const AddListing = () => {
             )}
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   );
