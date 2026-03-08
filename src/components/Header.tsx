@@ -22,25 +22,28 @@ const Header = () => {
     <>
       <header className="sticky top-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
               <Search className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg tracking-tight hidden sm:block">SGDirectory</span>
+            <span className="font-bold text-lg tracking-tight hidden sm:block">
+              <span className="text-gradient">SG</span>
+              <span className="text-foreground">Directory</span>
+            </span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-1.5">
             {isSuperAdmin && (
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
                 <Link to="/super-admin">
-                  <Crown className="w-4 h-4 mr-1.5" />
+                  <Crown className="w-4 h-4 mr-1.5 text-warning" />
                   Super Admin
                 </Link>
               </Button>
             )}
             {isAdmin && !isSuperAdmin && (
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
                 <Link to="/admin">
                   <Shield className="w-4 h-4 mr-1.5" />
                   Admin
@@ -48,71 +51,71 @@ const Header = () => {
               </Button>
             )}
             {user && (
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
                 <Link to="/dashboard">
                   <LayoutDashboard className="w-4 h-4 mr-1.5" />
                   Dashboard
                 </Link>
               </Button>
             )}
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" asChild className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50">
               <Link to="/add-listing">
                 <Plus className="w-4 h-4 mr-1.5" />
                 Add Listing
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10" onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-primary" />}
             </Button>
             {user ? (
-              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
                 <LogOut className="w-4 h-4 mr-1.5" />
                 Sign Out
               </Button>
             ) : (
-              <Button size="sm" onClick={() => setShowAuth(true)}>
+              <Button size="sm" onClick={() => setShowAuth(true)} className="bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary text-primary-foreground border-0">
                 Sign In
               </Button>
             )}
           </nav>
 
           {/* Mobile toggle */}
-          <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
+          <button className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-border/50 bg-background p-4 space-y-2 animate-fade-in">
+          <div className="md:hidden border-t border-border/50 bg-card/95 backdrop-blur-xl p-4 space-y-1.5 animate-fade-in">
             {isSuperAdmin && (
-              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
-                <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
+              <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
+                <Link to="/super-admin"><Crown className="w-4 h-4 mr-2 text-warning" />Super Admin</Link>
               </Button>
             )}
             {isAdmin && !isSuperAdmin && (
-              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin</Link>
               </Button>
             )}
             {user && (
-              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
               </Button>
             )}
-            <Button variant="outline" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
+            <Button variant="outline" className="w-full justify-start border-primary/30 text-primary" asChild onClick={() => setMobileOpen(false)}>
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
             </Button>
             <Button variant="ghost" className="w-full justify-start" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === "dark" ? <Sun className="w-4 h-4 mr-2 text-warning" /> : <Moon className="w-4 h-4 mr-2 text-primary" />}
               {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </Button>
             {user ? (
-              <Button variant="ghost" className="w-full justify-start" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+              <Button variant="ghost" className="w-full justify-start hover:bg-destructive/10 hover:text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
               </Button>
             ) : (
-              <Button className="w-full" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
+              <Button className="w-full bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] text-primary-foreground border-0" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
                 Sign In
               </Button>
             )}
