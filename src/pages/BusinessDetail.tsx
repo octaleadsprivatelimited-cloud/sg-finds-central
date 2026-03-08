@@ -1,20 +1,18 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import {
-  ArrowLeft, MapPin, Phone, Globe, Mail, MessageCircle, Star, Clock,
-  ExternalLink, Share2, Bookmark, BadgeCheck, Building2, Copy, Check,
-} from "lucide-react";
+import { ArrowLeft, Building2, Star, Camera, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import VerifiedBadge from "@/components/VerifiedBadge";
-import ReviewSection, { type Review } from "@/components/ReviewSection";
-import OffersSection, { type Offer } from "@/components/OffersSection";
+import ReviewSection from "@/components/ReviewSection";
+import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
-import { toast } from "sonner";
 import { toSlug } from "@/lib/url-helpers";
+import PhotoGallery from "@/components/business-detail/PhotoGallery";
+import BusinessHeader from "@/components/business-detail/BusinessHeader";
+import CatalogueSection from "@/components/business-detail/CatalogueSection";
+import QuickInfo from "@/components/business-detail/QuickInfo";
+import ContactSidebar from "@/components/business-detail/ContactSidebar";
 
 // Demo listings
 const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
@@ -72,7 +70,6 @@ const BusinessDetail = () => {
     businessSlug: string;
   }>();
   const navigate = useNavigate();
-  const [copied, setCopied] = useState(false);
 
   const listing = useMemo(
     () =>
@@ -100,36 +97,19 @@ const BusinessDetail = () => {
 
   const shareUrl = `${window.location.origin}/${areaSlug}/${categorySlug}/${businessSlug}`;
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: listing.name, url: shareUrl });
-      } catch {}
-    } else {
-      navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      toast.success("Link copied!");
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Breadcrumb + Back */}
+      {/* Breadcrumb */}
       <div className="border-b border-border/50 bg-secondary/30">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-primary transition-colors">Directory</Link>
-              <span>/</span>
-              <Link to={`/${areaSlug}`} className="hover:text-primary transition-colors">
-                {listing.district}
-              </Link>
-              <span>/</span>
-              <Link to={`/${areaSlug}/${categorySlug}`} className="hover:text-primary transition-colors">
-                {listing.category}
-              </Link>
-              <span>/</span>
+              <span>›</span>
+              <Link to={`/${areaSlug}`} className="hover:text-primary transition-colors">{listing.district}</Link>
+              <span>›</span>
+              <Link to={`/${areaSlug}/${categorySlug}`} className="hover:text-primary transition-colors">{listing.category}</Link>
+              <span>›</span>
               <span className="text-foreground font-medium truncate max-w-[200px]">{listing.name}</span>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
@@ -140,112 +120,85 @@ const BusinessDetail = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      {/* Photo Gallery */}
+      <div className="container mx-auto px-4 pt-4">
+        <PhotoGallery photos={[]} businessName={listing.name} />
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Header */}
-            <div>
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="text-2xl font-bold text-primary">{listing.name.charAt(0)}</span>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h1 className="text-2xl font-bold text-foreground">{listing.name}</h1>
-                      {listing.verified && <VerifiedBadge size="md" />}
-                      {listing.featured && (
-                        <Badge className="bg-warning/10 text-warning border-warning/20 text-xs">
-                          ⭐ Featured
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 mt-1 flex-wrap">
-                      <Badge variant="secondary">{listing.category}</Badge>
-                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <MapPin className="w-3.5 h-3.5" />
-                        {listing.district}
-                      </span>
-                      {listing.rating && (
-                        <span className="flex items-center gap-1 text-sm">
-                          <Star className="w-3.5 h-3.5 text-warning fill-warning" />
-                          <span className="font-medium text-foreground">{listing.rating}</span>
-                          <span className="text-muted-foreground">({listing.reviewCount})</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <Button variant="outline" size="icon" className="h-9 w-9" onClick={handleShare}>
-                    {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                  </Button>
-                  <Button variant="outline" size="icon" className="h-9 w-9">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
+          {/* Left: Header + Tabs */}
+          <div className="lg:col-span-2 space-y-6">
+            <BusinessHeader listing={listing} shareUrl={shareUrl} />
 
-              <p className="text-muted-foreground leading-relaxed">{listing.description}</p>
-            </div>
-
-            <Separator />
-
-            {/* Contact buttons */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {listing.phone && (
-                <a href={`tel:${listing.phone}`} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors">
-                  <Phone className="w-5 h-5 text-primary" />
-                  <span className="text-xs font-medium text-foreground">Call</span>
-                </a>
-              )}
-              {listing.whatsapp && (
-                <a
-                  href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 transition-colors"
-                >
-                  <MessageCircle className="w-5 h-5 text-emerald-600" />
-                  <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">WhatsApp</span>
-                </a>
-              )}
-              {listing.email && (
-                <a href={`mailto:${listing.email}`} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors">
-                  <Mail className="w-5 h-5 text-primary" />
-                  <span className="text-xs font-medium text-foreground">Email</span>
-                </a>
-              )}
-              {listing.website && (
-                <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors">
-                  <Globe className="w-5 h-5 text-primary" />
-                  <span className="text-xs font-medium text-foreground">Website</span>
-                </a>
-              )}
-            </div>
-
-            {/* Tabs: Reviews, Offers */}
-            <Tabs defaultValue="reviews">
-              <TabsList className="bg-secondary border border-border">
-                <TabsTrigger value="reviews" className="gap-1.5">
-                  <Star className="w-4 h-4" />Reviews
+            {/* Tabs */}
+            <Tabs defaultValue="overview">
+              <TabsList className="bg-secondary border border-border w-full justify-start overflow-x-auto">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="catalogue" className="relative">
+                  Catalogue
+                  <span className="ml-1 w-1.5 h-1.5 rounded-full bg-primary inline-block" />
                 </TabsTrigger>
-                <TabsTrigger value="offers" className="gap-1.5">
-                  <Badge className="w-4 h-4 p-0 bg-transparent border-0 text-inherit">%</Badge>
-                  Offers
-                </TabsTrigger>
+                <TabsTrigger value="quick-info">Quick Info</TabsTrigger>
+                <TabsTrigger value="photos">Photos</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                <TabsTrigger value="offers">Offers</TabsTrigger>
               </TabsList>
+
+              <TabsContent value="overview" className="mt-6 space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-3">About</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{listing.description}</p>
+                </div>
+                <CatalogueSection />
+
+                {/* Operating Hours */}
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    Operating Hours
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    {[
+                      { day: "Mon – Fri", time: "9:00 AM – 6:00 PM" },
+                      { day: "Saturday", time: "10:00 AM – 4:00 PM" },
+                      { day: "Sunday", time: "Closed" },
+                    ].map(({ day, time }) => (
+                      <div key={day} className="flex items-center justify-between max-w-xs">
+                        <span className="text-muted-foreground">{day}</span>
+                        <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>
+                          {time}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="catalogue" className="mt-6">
+                <CatalogueSection />
+              </TabsContent>
+
+              <TabsContent value="quick-info" className="mt-6">
+                <QuickInfo listing={listing} />
+              </TabsContent>
+
+              <TabsContent value="photos" className="mt-6">
+                <PhotoGallery photos={[]} businessName={listing.name} />
+              </TabsContent>
+
               <TabsContent value="reviews" className="mt-6">
                 <ReviewSection businessId={listing.id} reviews={[]} />
               </TabsContent>
+
               <TabsContent value="offers" className="mt-6">
                 <OffersSection offers={[]} />
               </TabsContent>
             </Tabs>
           </div>
 
-          {/* Sidebar */}
+          {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Map */}
             {listing.lat && listing.lng && (
@@ -258,63 +211,7 @@ const BusinessDetail = () => {
               </div>
             )}
 
-            {/* Business Info Card */}
-            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-              <h3 className="font-semibold text-foreground text-sm">Business Information</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                  <span className="text-muted-foreground">{listing.address}</span>
-                </div>
-                {listing.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <a href={`tel:${listing.phone}`} className="text-primary hover:underline">{listing.phone}</a>
-                  </div>
-                )}
-                {listing.email && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <a href={`mailto:${listing.email}`} className="text-primary hover:underline">{listing.email}</a>
-                  </div>
-                )}
-                {listing.website && (
-                  <div className="flex items-center gap-3">
-                    <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <a href={listing.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1">
-                      {listing.website.replace(/https?:\/\//, "")}
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                )}
-                <div className="flex items-center gap-3">
-                  <Building2 className="w-4 h-4 text-muted-foreground shrink-0" />
-                  <span className="text-muted-foreground">UEN: {listing.uen}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Operating Hours (demo) */}
-            <div className="rounded-xl border border-border bg-card p-5 space-y-3">
-              <h3 className="font-semibold text-foreground text-sm flex items-center gap-2">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                Operating Hours
-              </h3>
-              <div className="space-y-2 text-sm">
-                {[
-                  { day: "Mon – Fri", time: "9:00 AM – 6:00 PM" },
-                  { day: "Saturday", time: "10:00 AM – 4:00 PM" },
-                  { day: "Sunday", time: "Closed" },
-                ].map(({ day, time }) => (
-                  <div key={day} className="flex items-center justify-between">
-                    <span className="text-muted-foreground">{day}</span>
-                    <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>
-                      {time}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ContactSidebar listing={listing} />
           </div>
         </div>
       </div>
