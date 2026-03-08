@@ -180,6 +180,13 @@ const Index = () => {
                 <span><strong className="text-foreground">15</strong> Categories</span>
                 <span><strong className="text-foreground">50+</strong> Districts</span>
               </div>
+
+              {/* Category Grid — desktop only, inside hero left block */}
+              {!hasActiveFilters && (
+                <div className="hidden lg:block mt-6">
+                  <CategoryGrid />
+                </div>
+              )}
             </div>
 
             {/* Right block — Featured (desktop only) */}
