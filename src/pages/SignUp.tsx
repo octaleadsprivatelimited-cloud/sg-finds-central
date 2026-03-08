@@ -426,10 +426,13 @@ const SignUp = () => {
                   Verify & Create Account
                 </Button>
                 <button
-                  className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
-                  onClick={() => { setConfirmResult(null); setOtp(""); }}
+                  className={`w-full text-xs transition-colors ${resendTimer > 0 ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-primary"}`}
+                  onClick={() => { if (resendTimer <= 0) { setConfirmResult(null); setOtp(""); } }}
+                  disabled={resendTimer > 0}
                 >
-                  Didn't receive OTP? Try again
+                  {resendTimer > 0
+                    ? `Resend OTP in ${resendTimer}s`
+                    : "Didn't receive OTP? Resend"}
                 </button>
               </div>
             )}
