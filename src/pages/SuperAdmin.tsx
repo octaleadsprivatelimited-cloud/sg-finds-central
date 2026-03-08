@@ -915,6 +915,48 @@ const SuperAdmin = () => {
           )}
         </DialogContent>
       </Dialog>
+      {/* Rejection Reason Dialog */}
+      <Dialog open={!!rejectingListingId} onOpenChange={(open) => { if (!open) { setRejectingListingId(null); setRejectionReason(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <X className="w-5 h-5 text-destructive" />
+              Reject Listing
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-muted-foreground">
+              Please provide a reason for rejection. This will be visible to the business owner.
+            </p>
+            <div className="space-y-2">
+              <Label>Rejection Reason *</Label>
+              <Textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="e.g. Missing ACRA business profile document, invalid UEN number..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setRejectingListingId(null); setRejectionReason(""); }}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleListingReject}
+              disabled={!rejectionReason.trim() || actionLoading === rejectingListingId}
+            >
+              {actionLoading === rejectingListingId ? (
+                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+              ) : (
+                <X className="w-4 h-4 mr-1.5" />
+              )}
+              Confirm Rejection
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
