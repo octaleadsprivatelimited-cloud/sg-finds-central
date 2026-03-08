@@ -144,40 +144,68 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background bg-noise">
       {/* Hero */}
-      <section className="relative border-b border-border/50 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-mesh" />
-        <div className="absolute inset-0 bg-dot-pattern opacity-50" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary/8 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      <section className="relative bg-background border-b border-border/50">
+        <div className="container mx-auto px-4 py-8 md:py-12">
+          <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground mb-6">
+            Search across <span className="text-primary">5,000+</span>{" "}
+            <span className="text-primary">Businesses</span>
+          </h1>
 
-        <div className="relative container mx-auto px-4 py-10 md:py-14">
-          <div className="max-w-2xl mx-auto text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium backdrop-blur-sm">
-                <Search className="w-4 h-4" />
-                Search across <span className="font-bold">5,000+</span> Businesses
-              </div>
+          {/* JustDial-style search bar */}
+          <div className="flex flex-col sm:flex-row items-stretch gap-0 max-w-3xl">
+            {/* City selector */}
+            <div className="flex items-center gap-2 px-4 py-3 border border-border rounded-t-xl sm:rounded-t-none sm:rounded-l-xl bg-card sm:border-r-0 sm:min-w-[160px]">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
               <CitySelector selectedCity={selectedCity} onCityChange={setSelectedCity} />
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground mb-3">
-              Find trusted businesses
-              <br />
-              <span className="text-gradient">across Singapore</span>
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Discover verified local businesses from Orchard to Jurong and everywhere in between.
-            </p>
+
+            {/* Search input */}
+            <div className="relative flex-1">
+              <Input
+                placeholder="Search for Restaurants, Services, Businesses..."
+                className="h-full min-h-[48px] rounded-none border-border bg-card pl-4 pr-12 focus-visible:ring-0 focus-visible:ring-offset-0 border"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* Search button */}
+            <Button
+              className="h-auto min-h-[48px] rounded-b-xl sm:rounded-b-none sm:rounded-r-xl px-6 bg-primary hover:bg-primary/90"
+              onClick={() => {}}
+            >
+              <Search className="w-5 h-5" />
+            </Button>
           </div>
-          <div className="max-w-3xl mx-auto">
-            <SearchFilters
-              query={searchQuery}
-              onQueryChange={setSearchQuery}
-              district={district}
-              onDistrictChange={setDistrict}
-              category={category}
-              onCategoryChange={setCategory}
-              onDetectLocation={handleDetectLocation}
-            />
+
+          {/* Filter row */}
+          <div className="flex flex-wrap gap-2 mt-4 max-w-3xl">
+            <Select value={district} onValueChange={setDistrict}>
+              <SelectTrigger className="w-auto min-w-[140px] h-9 text-sm bg-card">
+                <SelectValue placeholder="All Districts" />
+              </SelectTrigger>
+              <SelectContent>
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-auto min-w-[140px] h-9 text-sm bg-card">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                {BUSINESS_CATEGORIES.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button variant="outline" size="sm" className="h-9" onClick={handleDetectLocation}>
+              <MapPin className="w-3.5 h-3.5 mr-1.5" />
+              Near Me
+            </Button>
           </div>
         </div>
       </section>
