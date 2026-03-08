@@ -671,7 +671,7 @@ const SuperAdmin = () => {
                 <InfoRow icon={<Activity className="w-4 h-4" />} label="Last Active" value={selectedUser.lastActive} />
                 <InfoRow icon={<Building2 className="w-4 h-4" />} label="Listings" value={String(selectedUser.listingsCount)} />
               </div>
-              <div className="flex gap-2 pt-4 border-t border-slate-200">
+              <div className="flex gap-2 pt-4 border-t border-border">
                 {selectedUser.status === "active" && selectedUser.role !== "superadmin" && (
                   <Button variant="outline" size="sm" onClick={() => { handleUserAction(selectedUser.id, "suspend"); setSelectedUser(null); }}>
                     <Ban className="w-4 h-4 mr-1.5" />Suspend
