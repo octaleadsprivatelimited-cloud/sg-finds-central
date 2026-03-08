@@ -90,6 +90,16 @@ const Index = () => {
     });
   }, [listings, searchQuery, district, category]);
 
+  const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported");
@@ -97,11 +107,37 @@ const Index = () => {
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setMapCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        const userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setMapCenter(userLoc);
         setShowMap(true);
-        toast.success("Location detected");
+
+        // Sort listings by distance and only show ones within 15km
+        const withDistance = listings
+          .filter((l) => l.lat && l.lng)
+          .map((l) => ({
+            ...l,
+            _distance: getDistance(userLoc.lat, userLoc.lng, l.lat!, l.lng!),
+          }))
+          .filter((l) => l._distance <= 15)
+          .sort((a, b) => a._distance - b._distance);
+
+        if (withDistance.length > 0) {
+          setListings(withDistance);
+          toast.success(`Found ${withDistance.length} businesses near you`);
+        } else {
+          // Show all if none within radius
+          toast.info("No businesses within 15km — showing all results sorted by distance");
+          const allSorted = listings
+            .filter((l) => l.lat && l.lng)
+            .map((l) => ({
+              ...l,
+              _distance: getDistance(userLoc.lat, userLoc.lng, l.lat!, l.lng!),
+            }))
+            .sort((a, b) => a._distance - b._distance);
+          setListings(allSorted.length > 0 ? allSorted : DEMO_LISTINGS);
+        }
       },
-      () => toast.error("Unable to detect location")
+      () => toast.error("Unable to detect location — please enable location access")
     );
   };
 
