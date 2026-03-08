@@ -153,6 +153,7 @@ const BusinessDashboard = () => {
         description: editDescription,
         customSlug: sanitizedSlug,
         logoUrl: editLogoUrl,
+        status: "pending_approval", // Re-approval required after edit
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l =>
