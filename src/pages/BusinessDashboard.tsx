@@ -36,6 +36,8 @@ import { Listing } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 // Demo data for the business owner
 const MY_LISTINGS: Listing[] = [
