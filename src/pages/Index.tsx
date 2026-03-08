@@ -182,15 +182,11 @@ const Index = () => {
       {/* Promo Banner */}
       {!hasActiveFilters && <PromoBanner />}
 
-      {/* Category Grid */}
-      {!hasActiveFilters && (
-        <div className="hidden lg:block">
-          <CategoryGrid />
-        </div>
-      )}
-
       {/* Results */}
       <section className="container mx-auto px-4 py-8">
+        {/* Category Grid */}
+        {!hasActiveFilters && <CategoryGrid />}
+
         <FeaturedListings listings={filtered} />
 
         <div className="flex items-center justify-between mb-6">
