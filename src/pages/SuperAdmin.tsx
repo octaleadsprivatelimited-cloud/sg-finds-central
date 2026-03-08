@@ -614,18 +614,23 @@ const SuperAdmin = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#6d7175" }} />
                 <Input placeholder="Search listings..." className="pl-10 border-[#c9cccf] bg-white" value={listingSearch} onChange={(e) => setListingSearch(e.target.value)} />
               </div>
-              <div className="flex gap-1.5">
-                {["all", "pending_approval", "approved", "rejected"].map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setListingFilter(f)}
-                    className={`px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-colors ${
-                      listingFilter === f ? "bg-white border-[#c9cccf] text-[#202223] shadow-sm" : "border-transparent text-[#6d7175] hover:bg-white/60"
-                    }`}
-                  >
-                    {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <Button size="sm" className="h-8 text-xs" onClick={() => setShowAddBusiness(true)}>
+                  <Plus className="w-3.5 h-3.5 mr-1" />Add Business
+                </Button>
+                <div className="flex gap-1.5">
+                  {["all", "pending_approval", "approved", "rejected"].map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setListingFilter(f)}
+                      className={`px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-colors ${
+                        listingFilter === f ? "bg-white border-[#c9cccf] text-[#202223] shadow-sm" : "border-transparent text-[#6d7175] hover:bg-white/60"
+                      }`}
+                    >
+                      {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
