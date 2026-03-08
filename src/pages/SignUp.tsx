@@ -90,6 +90,14 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [phoneVerified, setPhoneVerified] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  // Countdown timer for resend
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const interval = setInterval(() => setResendTimer((t) => t - 1), 1000);
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
   // If user is fully verified, redirect
   useEffect(() => {
@@ -161,6 +169,7 @@ const SignUp = () => {
       const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
       const result = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
       setConfirmResult(result);
+      setResendTimer(60);
       toast.success(`OTP sent to ${phone}`);
     } catch (err: any) {
       toast.error(err.message || "Failed to send OTP");
@@ -417,10 +426,13 @@ const SignUp = () => {
                   Verify & Create Account
                 </Button>
                 <button
-                  className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
-                  onClick={() => { setConfirmResult(null); setOtp(""); }}
+                  className={`w-full text-xs transition-colors ${resendTimer > 0 ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-primary"}`}
+                  onClick={() => { if (resendTimer <= 0) { setConfirmResult(null); setOtp(""); } }}
+                  disabled={resendTimer > 0}
                 >
-                  Didn't receive OTP? Try again
+                  {resendTimer > 0
+                    ? `Resend OTP in ${resendTimer}s`
+                    : "Didn't receive OTP? Resend"}
                 </button>
               </div>
             )}
