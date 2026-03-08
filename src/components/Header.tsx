@@ -40,7 +40,7 @@ const Header = () => {
   return (
     <>
       {/* ═══ ANNOUNCEMENT BAR ═══ */}
-      <Link to="/add-listing" className="block bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer">
+      <Link to="/signup" className="block bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer">
         <div className="container mx-auto px-4 h-9 flex items-center justify-center text-xs">
           <div className="flex items-center gap-1.5">
             <Truck className="w-3.5 h-3.5 shrink-0" />
