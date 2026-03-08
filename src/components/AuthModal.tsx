@@ -24,7 +24,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type AuthMode = "login" | "signup";
+type AuthMode = "login" | "signup" | "forgot";
 type AuthMethod = "email" | "phone" | "whatsapp";
 
 const googleProvider = new GoogleAuthProvider();
