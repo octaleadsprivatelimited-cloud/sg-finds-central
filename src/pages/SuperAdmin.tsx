@@ -260,8 +260,8 @@ const SuperAdmin = () => {
               </div>
 
               {/* Category Breakdown */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200">
-                <p className="text-sm text-slate-500 mb-3">Categories</p>
+              <div className="bg-card rounded-2xl p-5 border border-border">
+                <p className="text-sm text-muted-foreground mb-3">Categories</p>
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16">
                     <ResponsiveContainer width="100%" height="100%">
