@@ -1,19 +1,37 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, MapPin } from "lucide-react";
+import {
+  Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown,
+  MapPin, User, ChevronDown, Truck, Heart, ShoppingBag,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchWithSuggestions from "./SearchWithSuggestions";
 import { useAuth } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { BUSINESS_CATEGORIES } from "@/lib/districts";
 
 const Header = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  
+  const [searchCategory, setSearchCategory] = useState("all");
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -21,102 +39,198 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
+      {/* ═══ ANNOUNCEMENT BAR ═══ */}
+      <div className="bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 h-9 flex items-center justify-between text-xs">
+          <div className="hidden sm:flex items-center gap-4">
+            <Link to="#" className="opacity-80 hover:opacity-100 transition-opacity">Help Center</Link>
+            <Link to="#" className="opacity-80 hover:opacity-100 transition-opacity">Find a Store</Link>
+          </div>
+          <div className="flex items-center gap-1.5 mx-auto sm:mx-0">
+            <Truck className="w-3.5 h-3.5" />
+            <span className="font-medium">List your business for FREE — Reach thousands of customers</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-3">
+            <span className="opacity-70">🇸🇬 Singapore</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ MAIN HEADER ═══ */}
+      <header className="sticky top-0 z-50 bg-card border-b border-border">
+        <div className="container mx-auto px-4 h-16 flex items-center gap-4">
+          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-primary flex items-center justify-center">
-              <Search className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-lg tracking-tight hidden lg:block">
-              <span className="text-primary">SG</span>
-              <span className="text-foreground">Directory</span>
+            <span className="text-xl font-extrabold tracking-tight text-foreground uppercase">
+              FIND<span className="text-primary">LOCAL</span>
             </span>
           </Link>
 
-          {/* Mobile/Tablet: Compact search bar in header */}
-          <div className="flex items-center gap-1.5 flex-1 max-w-md md:hidden mx-2 relative">
-            <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-9">
-              <div className="flex items-center justify-center w-8 h-9 shrink-0">
-                <MapPin className="w-3.5 h-3.5 text-accent" />
+          {/* Search bar — desktop */}
+          <div className="hidden md:flex items-center flex-1 max-w-2xl mx-4">
+            <div className="flex items-center w-full border border-border rounded-lg overflow-hidden bg-background shadow-sm">
+              {/* Category dropdown */}
+              <Select value={searchCategory} onValueChange={setSearchCategory}>
+                <SelectTrigger className="w-[160px] border-0 border-r border-border rounded-none h-10 text-sm bg-secondary/40 focus:ring-0 focus:ring-offset-0 [&>svg]:ml-0">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {BUSINESS_CATEGORIES.filter(c => c !== "All Categories").map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* Search input */}
+              <div className="flex-1 relative">
+                <SearchWithSuggestions compact placeholder="What are you looking for?" />
               </div>
-              <SearchWithSuggestions compact placeholder="Search businesses..." />
+              {/* Search button */}
+              <button className="h-10 w-11 flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground transition-colors shrink-0">
+                <Search className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
-          {/* Desktop: Search bar always in header */}
-          <div className="hidden md:flex items-center flex-1 max-w-lg mx-4 relative">
-            <div className="flex items-center gap-0 bg-secondary/60 border border-border/50 rounded-xl flex-1 h-10">
-              <div className="flex items-center justify-center w-9 h-10 shrink-0">
-                <Search className="w-4 h-4 text-muted-foreground" />
-              </div>
-              <SearchWithSuggestions compact placeholder="Search businesses..." />
-            </div>
+          {/* Right actions */}
+          <div className="hidden md:flex items-center gap-1 ml-auto">
+            <Link to="#" className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg hover:bg-secondary/60 transition-colors text-foreground">
+              <MapPin className="w-4.5 h-4.5 text-muted-foreground" />
+              <span className="text-[10px] font-medium text-muted-foreground">Find a Store</span>
+            </Link>
+
+            {/* User menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg hover:bg-secondary/60 transition-colors text-foreground">
+                  <User className="w-4.5 h-4.5 text-muted-foreground" />
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {user ? "Account" : "Sign in"}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                {user ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
+                    </DropdownMenuItem>
+                    {isAdmin && !isSuperAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
+                      </DropdownMenuItem>
+                    )}
+                    {isSuperAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                      <LogOut className="w-4 h-4 mr-2" />Sign Out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={() => setShowAuth(true)}>
+                      <User className="w-4 h-4 mr-2" />Sign In / Register
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1.5">
-            {isSuperAdmin && (
-              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/super-admin"><Crown className="w-4 h-4 mr-1.5 text-warning" />Super Admin</Link>
-              </Button>
-            )}
-            {isAdmin && !isSuperAdmin && (
-              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/admin"><Shield className="w-4 h-4 mr-1.5" />Admin</Link>
-              </Button>
-            )}
-            {user && (
-              <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-1.5" />Dashboard</Link>
-              </Button>
-            )}
-            <Button variant="outline" size="sm" asChild className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50">
-              <Link to="/add-listing"><Plus className="w-4 h-4 mr-1.5" />Add Listing</Link>
-            </Button>
-            {user ? (
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
-                <LogOut className="w-4 h-4 mr-1.5" />Sign Out
-              </Button>
-            ) : (
-              <Button size="sm" onClick={() => setShowAuth(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground border-0">
-                Sign In
-              </Button>
-            )}
-          </nav>
-
-          {/* Mobile toggle */}
-          <button className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors shrink-0" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile: compact search + hamburger */}
+          <div className="flex items-center gap-2 flex-1 md:hidden">
+            <div className="flex-1 relative">
+              <div className="flex items-center border border-border rounded-lg overflow-hidden bg-background h-9">
+                <div className="flex items-center justify-center w-8 h-9 shrink-0">
+                  <Search className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <SearchWithSuggestions compact placeholder="Search businesses..." />
+              </div>
+            </div>
+            <button
+              className="p-2 rounded-lg hover:bg-secondary transition-colors shrink-0"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Nav */}
+        {/* ═══ CATEGORY NAVIGATION BAR ═══ */}
+        <div className="hidden md:block border-t border-border">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center gap-0 h-10 overflow-x-auto scrollbar-hide">
+              {BUSINESS_CATEGORIES.filter(c => c !== "All Categories").slice(0, 8).map(cat => (
+                <Link
+                  key={cat}
+                  to={`/singapore/${cat.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}
+                  className="flex items-center gap-1 px-3 h-full text-[13px] font-medium text-muted-foreground hover:text-primary whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-primary"
+                >
+                  {cat}
+                </Link>
+              ))}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1 px-3 h-full text-[13px] font-medium text-muted-foreground hover:text-primary whitespace-nowrap transition-colors">
+                    More <ChevronDown className="w-3.5 h-3.5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  {BUSINESS_CATEGORIES.filter(c => c !== "All Categories").slice(8).map(cat => (
+                    <DropdownMenuItem key={cat} asChild>
+                      <Link to={`/singapore/${cat.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}>{cat}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Link
+                to="/add-listing"
+                className="flex items-center gap-1 px-3 h-full text-[13px] font-semibold text-destructive hover:text-destructive/80 whitespace-nowrap transition-colors ml-auto"
+              >
+                List Free
+              </Link>
+            </nav>
+          </div>
+        </div>
+
+        {/* ═══ MOBILE NAV DROPDOWN ═══ */}
         {mobileOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 border-t border-border/50 bg-card/95 backdrop-blur-xl p-4 space-y-1.5 animate-fade-in shadow-lg z-50">
+          <div className="md:hidden absolute top-full left-0 right-0 border-t border-border bg-card p-4 space-y-1.5 animate-fade-in shadow-lg z-50">
             {isSuperAdmin && (
-              <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/super-admin"><Crown className="w-4 h-4 mr-2 text-warning" />Super Admin</Link>
               </Button>
             )}
             {isAdmin && !isSuperAdmin && (
-              <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin</Link>
               </Button>
             )}
             {user && (
-              <Button variant="ghost" className="w-full justify-start hover:bg-primary/10 hover:text-primary" asChild onClick={() => setMobileOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
               </Button>
             )}
-            <Button variant="outline" className="w-full justify-start border-primary/30 text-primary" asChild onClick={() => setMobileOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
             </Button>
             {user ? (
-              <Button variant="ghost" className="w-full justify-start hover:bg-destructive/10 hover:text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+              <Button variant="ghost" className="w-full justify-start text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
               </Button>
             ) : (
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-0" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
+              <Button className="w-full bg-primary text-primary-foreground" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
                 Sign In
               </Button>
             )}
