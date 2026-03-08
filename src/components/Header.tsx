@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Plus, Menu, X, LogOut, Shield } from "lucide-react";
+import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
@@ -8,10 +8,9 @@ import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 
 const Header = () => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isSuperAdmin, isBusinessOwner } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -30,11 +29,27 @@ const Header = () => {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-2">
-            {isAdmin && (
+            {isSuperAdmin && (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/super-admin">
+                  <Crown className="w-4 h-4 mr-1.5" />
+                  Super Admin
+                </Link>
+              </Button>
+            )}
+            {isAdmin && !isSuperAdmin && (
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/admin">
                   <Shield className="w-4 h-4 mr-1.5" />
                   Admin
+                </Link>
+              </Button>
+            )}
+            {user && (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/dashboard">
+                  <LayoutDashboard className="w-4 h-4 mr-1.5" />
+                  Dashboard
                 </Link>
               </Button>
             )}
@@ -65,9 +80,19 @@ const Header = () => {
         {/* Mobile Nav */}
         {mobileOpen && (
           <div className="md:hidden border-t border-border/50 bg-background p-4 space-y-2 animate-fade-in">
-            {isAdmin && (
+            {isSuperAdmin && (
+              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
+                <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
+              </Button>
+            )}
+            {isAdmin && !isSuperAdmin && (
               <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
                 <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin</Link>
+              </Button>
+            )}
+            {user && (
+              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
+                <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
               </Button>
             )}
             <Button variant="outline" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
