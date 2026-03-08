@@ -134,26 +134,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ═══ HERO SECTION (clean, no slider) ═══ */}
-      <section className="bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 text-center">
-          <p className="text-sm font-medium tracking-widest uppercase mb-3 opacity-80">
-            Singapore's Trusted Directory
-          </p>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-            Find the Best Local Businesses
-          </h1>
-          <p className="text-base md:text-lg opacity-80 max-w-2xl mx-auto mb-6">
-            Discover, connect, and grow with verified businesses across Singapore
-          </p>
-          <Button
-            size="lg"
-            className="bg-card text-foreground hover:bg-card/90 font-semibold px-8 rounded-lg shadow-lg"
-          >
-            Browse All
-          </Button>
-        </div>
-      </section>
 
       {/* ═══ CATEGORY GRID ═══ */}
       {!hasActiveFilters && (
