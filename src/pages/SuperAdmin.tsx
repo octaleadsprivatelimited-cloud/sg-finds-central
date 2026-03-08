@@ -142,28 +142,28 @@ const SuperAdmin = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 hidden md:flex`}>
+      <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-card border-r border-border flex flex-col transition-all duration-300 hidden md:flex`}>
         {/* Logo */}
-        <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-100">
+        <div className="h-16 flex items-center gap-3 px-5 border-b border-border">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-sm">
             <Crown className="w-5 h-5 text-white" />
           </div>
-          {!sidebarCollapsed && <span className="font-semibold text-slate-800">Veritas</span>}
+          {!sidebarCollapsed && <span className="font-semibold text-foreground">Veritas</span>}
         </div>
 
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-1">
-          <p className={`text-xs text-slate-400 uppercase tracking-wider px-3 mb-2 ${sidebarCollapsed ? "hidden" : ""}`}>Main Menu</p>
+          <p className={`text-xs text-muted-foreground uppercase tracking-wider px-3 mb-2 ${sidebarCollapsed ? "hidden" : ""}`}>Main Menu</p>
           {navItems.map(item => (
             <button
               key={item.id}
               onClick={() => setActiveNav(item.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 activeNav === item.id
-                  ? "bg-indigo-50 text-indigo-600"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               {item.icon}
@@ -174,14 +174,14 @@ const SuperAdmin = () => {
 
         {/* Teams section */}
         {!sidebarCollapsed && (
-          <div className="px-3 py-4 border-t border-slate-100">
-            <p className="text-xs text-slate-400 uppercase tracking-wider px-3 mb-2">Teams</p>
+          <div className="px-3 py-4 border-t border-border">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider px-3 mb-2">Teams</p>
             <div className="space-y-1">
-              <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600">
+              <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span>Marketing</span>
               </div>
-              <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600">
+              <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
                 <span>Development</span>
               </div>
@@ -190,10 +190,10 @@ const SuperAdmin = () => {
         )}
 
         {/* Footer */}
-        <div className="p-3 border-t border-slate-100">
+        <div className="p-3 border-t border-border">
           <button
             onClick={() => navigate("/")}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:bg-muted transition-colors"
           >
             <LogOut className="w-5 h-5" />
             {!sidebarCollapsed && <span>Back to Site</span>}
@@ -204,14 +204,14 @@ const SuperAdmin = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6">
+        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
           <div>
-            <h1 className="text-xl font-semibold text-slate-800">Analytics</h1>
+            <h1 className="text-xl font-semibold text-foreground">Analytics</h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex bg-slate-100 rounded-lg p-1">
-              <button className="px-3 py-1.5 text-sm font-medium bg-white rounded-md shadow-sm text-slate-800">Full Statistics</button>
-              <button className="px-3 py-1.5 text-sm font-medium text-slate-500">Sender Summary</button>
+            <div className="flex bg-muted rounded-lg p-1">
+              <button className="px-3 py-1.5 text-sm font-medium bg-card rounded-md shadow-sm text-foreground">Full Statistics</button>
+              <button className="px-3 py-1.5 text-sm font-medium text-muted-foreground">Sender Summary</button>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
@@ -227,12 +227,12 @@ const SuperAdmin = () => {
             {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Listing Trend Card */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200 col-span-1 lg:col-span-2">
+              <div className="bg-card rounded-2xl p-5 border border-border col-span-1 lg:col-span-2">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <p className="text-sm text-slate-500">Listings Growth</p>
+                    <p className="text-sm text-muted-foreground">Listings Growth</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">07 Day progress</span>
+                      <span className="text-xs text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">07 Day progress</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-emerald-600 text-sm">
@@ -250,18 +250,18 @@ const SuperAdmin = () => {
               </div>
 
               {/* Total Listings */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200">
+              <div className="bg-card rounded-2xl p-5 border border-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <Building2 className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm text-slate-500">Total Listings</span>
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Total Listings</span>
                 </div>
-                <p className="text-3xl font-bold text-slate-800">{totalListings}</p>
-                <p className="text-xs text-slate-400 mt-1">{approvedListings} approved</p>
+                <p className="text-3xl font-bold text-foreground">{totalListings}</p>
+                <p className="text-xs text-muted-foreground mt-1">{approvedListings} approved</p>
               </div>
 
               {/* Category Breakdown */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200">
-                <p className="text-sm text-slate-500 mb-3">Categories</p>
+              <div className="bg-card rounded-2xl p-5 border border-border">
+                <p className="text-sm text-muted-foreground mb-3">Categories</p>
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16">
                     <ResponsiveContainer width="100%" height="100%">
@@ -286,8 +286,8 @@ const SuperAdmin = () => {
                     {categoryData.map((cat, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
-                        <span className="text-slate-600">{cat.name}</span>
-                        <span className="text-slate-400">{cat.value}%</span>
+                        <span className="text-muted-foreground">{cat.name}</span>
+                        <span className="text-muted-foreground/70">{cat.value}%</span>
                       </div>
                     ))}
                   </div>
@@ -297,23 +297,23 @@ const SuperAdmin = () => {
 
             {/* Promo Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200">
-                <h3 className="font-semibold text-slate-800 mb-4">Recent Submissions</h3>
+              <div className="lg:col-span-2 bg-card rounded-2xl p-5 border border-border">
+                <h3 className="font-semibold text-foreground mb-4">Recent Submissions</h3>
                 <div className="space-y-3">
                   {listings.slice(0, 4).map((listing, i) => (
-                    <div key={listing.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                    <div key={listing.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                          <span className="text-sm font-semibold text-slate-600">{listing.name.charAt(0)}</span>
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center">
+                          <span className="text-sm font-semibold text-muted-foreground">{listing.name.charAt(0)}</span>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-800">{listing.name}</p>
-                          <p className="text-xs text-slate-400">{listing.category}</p>
+                          <p className="text-sm font-medium text-foreground">{listing.name}</p>
+                          <p className="text-xs text-muted-foreground">{listing.category}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         {statusBadge(listing.status)}
-                        <span className="text-xs text-slate-400">{listing.district}</span>
+                        <span className="text-xs text-muted-foreground">{listing.district}</span>
                       </div>
                     </div>
                   ))}
@@ -339,14 +339,14 @@ const SuperAdmin = () => {
             </div>
 
             {/* Transactions Table */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-              <div className="flex items-center justify-between p-5 border-b border-slate-100">
-                <h3 className="font-semibold text-slate-800">Recent Users</h3>
+            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="flex items-center justify-between p-5 border-b border-border">
+                <h3 className="font-semibold text-foreground">Recent Users</h3>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search..."
-                    className="pl-9 h-9 w-48 bg-slate-50 border-slate-200"
+                    className="pl-9 h-9 w-48"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
                   />
@@ -355,32 +355,32 @@ const SuperAdmin = () => {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">User</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Role</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Status</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Date</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Listings</th>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">User</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Role</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Status</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Date</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Listings</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredUsers.slice(0, 5).map((u) => (
-                      <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer" onClick={() => setSelectedUser(u)}>
+                      <tr key={u.id} className="border-b border-border/50 hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedUser(u)}>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-                              <span className="text-xs font-semibold text-indigo-600">{u.displayName.charAt(0)}</span>
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                              <span className="text-xs font-semibold text-primary">{u.displayName.charAt(0)}</span>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-slate-800">{u.displayName}</p>
-                              <p className="text-xs text-slate-400">{u.email}</p>
+                              <p className="text-sm font-medium text-foreground">{u.displayName}</p>
+                              <p className="text-xs text-muted-foreground">{u.email}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-4">{roleBadge(u.role)}</td>
                         <td className="px-5 py-4">{statusBadge(u.status)}</td>
-                        <td className="px-5 py-4 text-sm text-slate-500">{u.joinedAt}</td>
-                        <td className="px-5 py-4 text-sm text-slate-800 font-medium">{u.listingsCount}</td>
+                        <td className="px-5 py-4 text-sm text-muted-foreground">{u.joinedAt}</td>
+                        <td className="px-5 py-4 text-sm text-foreground font-medium">{u.listingsCount}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -395,47 +395,47 @@ const SuperAdmin = () => {
           <div className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search users by name or email..."
-                  className="pl-10 bg-white border-slate-200"
+                  className="pl-10"
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
                 />
               </div>
-              <p className="text-sm text-slate-500">{filteredUsers.length} users</p>
+              <p className="text-sm text-muted-foreground">{filteredUsers.length} users</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">User</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Role</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Status</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Listings</th>
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Last Active</th>
-                    <th className="text-right text-xs font-medium text-slate-500 uppercase px-5 py-3">Actions</th>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">User</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Role</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Status</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Listings</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Last Active</th>
+                    <th className="text-right text-xs font-medium text-muted-foreground uppercase px-5 py-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((u) => (
-                    <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                    <tr key={u.id} className="border-b border-border/50 hover:bg-muted/50">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-                            <span className="text-sm font-semibold text-indigo-600">{u.displayName.charAt(0)}</span>
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                            <span className="text-sm font-semibold text-primary">{u.displayName.charAt(0)}</span>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-slate-800">{u.displayName}</p>
-                            <p className="text-xs text-slate-400">{u.email}</p>
+                            <p className="text-sm font-medium text-foreground">{u.displayName}</p>
+                            <p className="text-xs text-muted-foreground">{u.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-5 py-4">{roleBadge(u.role)}</td>
                       <td className="px-5 py-4">{statusBadge(u.status)}</td>
-                      <td className="px-5 py-4 text-sm text-slate-600">{u.listingsCount}</td>
-                      <td className="px-5 py-4 text-sm text-slate-500">{u.lastActive}</td>
+                      <td className="px-5 py-4 text-sm text-muted-foreground">{u.listingsCount}</td>
+                      <td className="px-5 py-4 text-sm text-muted-foreground">{u.lastActive}</td>
                       <td className="px-5 py-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -490,10 +490,10 @@ const SuperAdmin = () => {
           <div className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search listings..."
-                  className="pl-10 bg-white border-slate-200"
+                  className="pl-10"
                   value={listingSearch}
                   onChange={(e) => setListingSearch(e.target.value)}
                 />
@@ -505,7 +505,7 @@ const SuperAdmin = () => {
                     variant={listingFilter === f ? "default" : "outline"}
                     size="sm"
                     onClick={() => setListingFilter(f)}
-                    className={listingFilter === f ? "" : "bg-white"}
+                    className={listingFilter === f ? "" : ""}
                   >
                     {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
                   </Button>
@@ -515,19 +515,19 @@ const SuperAdmin = () => {
 
             <div className="space-y-3">
               {filteredListings.map((listing) => (
-                <div key={listing.id} className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+                <div key={listing.id} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                        <span className="text-lg font-bold text-slate-500">{listing.name.charAt(0)}</span>
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center">
+                        <span className="text-lg font-bold text-muted-foreground">{listing.name.charAt(0)}</span>
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800">{listing.name}</h3>
+                          <h3 className="font-semibold text-foreground">{listing.name}</h3>
                           {statusBadge(listing.status)}
                         </div>
-                        <p className="text-sm text-slate-500">{listing.address}</p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                        <p className="text-sm text-muted-foreground">{listing.address}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                           <span>UEN: {listing.uen}</span>
                           <span>·</span>
                           <span>{listing.category}</span>
@@ -581,21 +581,21 @@ const SuperAdmin = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <h3 className="font-semibold text-slate-800 mb-4">Listings Trend</h3>
+              <div className="bg-card rounded-2xl border border-border p-6">
+                <h3 className="font-semibold text-foreground mb-4">Listings Trend</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={listingTrendData}>
-                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                      <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', strokeWidth: 2 }} />
+                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
+                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <h3 className="font-semibold text-slate-800 mb-4">Category Distribution</h3>
+              <div className="bg-card rounded-2xl border border-border p-6">
+                <h3 className="font-semibold text-foreground mb-4">Category Distribution</h3>
                 <div className="flex items-center justify-center gap-8">
                   <div className="w-40 h-40">
                     <ResponsiveContainer width="100%" height="100%">
@@ -620,8 +620,8 @@ const SuperAdmin = () => {
                     {categoryData.map((cat, i) => (
                       <div key={i} className="flex items-center gap-3">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                        <span className="text-sm text-slate-600">{cat.name}</span>
-                        <span className="text-sm font-medium text-slate-800">{cat.value}%</span>
+                        <span className="text-sm text-muted-foreground">{cat.name}</span>
+                        <span className="text-sm font-medium text-foreground">{cat.value}%</span>
                       </div>
                     ))}
                   </div>
@@ -634,8 +634,8 @@ const SuperAdmin = () => {
         {/* Settings Tab */}
         {activeNav === "settings" && (
           <div className="p-6 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h3 className="font-semibold text-slate-800 mb-4">Platform Settings</h3>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h3 className="font-semibold text-foreground mb-4">Platform Settings</h3>
               <div className="space-y-4">
                 <SettingRow title="Auto-approve listings" description="Skip manual review for verified owners" enabled={false} />
                 <SettingRow title="Email notifications" description="Send alerts for new submissions" enabled={true} />
@@ -660,7 +660,7 @@ const SuperAdmin = () => {
                   <span className="text-xl font-bold text-indigo-600">{selectedUser.displayName.charAt(0)}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg text-slate-800">{selectedUser.displayName}</h3>
+                  <h3 className="font-semibold text-lg text-foreground">{selectedUser.displayName}</h3>
                   <div className="flex gap-2 mt-1">{roleBadge(selectedUser.role)}{statusBadge(selectedUser.status)}</div>
                 </div>
               </div>
@@ -671,7 +671,7 @@ const SuperAdmin = () => {
                 <InfoRow icon={<Activity className="w-4 h-4" />} label="Last Active" value={selectedUser.lastActive} />
                 <InfoRow icon={<Building2 className="w-4 h-4" />} label="Listings" value={String(selectedUser.listingsCount)} />
               </div>
-              <div className="flex gap-2 pt-4 border-t border-slate-200">
+              <div className="flex gap-2 pt-4 border-t border-border">
                 {selectedUser.status === "active" && selectedUser.role !== "superadmin" && (
                   <Button variant="outline" size="sm" onClick={() => { handleUserAction(selectedUser.id, "suspend"); setSelectedUser(null); }}>
                     <Ban className="w-4 h-4 mr-1.5" />Suspend
@@ -702,7 +702,7 @@ const SuperAdmin = () => {
           {selectedListing && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-semibold text-lg text-slate-800">{selectedListing.name}</h3>
+                <h3 className="font-semibold text-lg text-foreground">{selectedListing.name}</h3>
                 {statusBadge(selectedListing.status)}
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
@@ -712,16 +712,16 @@ const SuperAdmin = () => {
                 <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={selectedListing.phone || "—"} />
               </div>
               <div className="text-sm">
-                <span className="text-slate-500">Address:</span>
-                <p className="text-slate-800">{selectedListing.address}</p>
+                <span className="text-muted-foreground">Address:</span>
+                <p className="text-foreground">{selectedListing.address}</p>
               </div>
               {selectedListing.description && (
                 <div className="text-sm">
-                  <span className="text-slate-500">Description:</span>
-                  <p className="text-slate-800">{selectedListing.description}</p>
+                  <span className="text-muted-foreground">Description:</span>
+                  <p className="text-foreground">{selectedListing.description}</p>
                 </div>
               )}
-              <div className="flex gap-2 pt-4 border-t border-slate-200">
+              <div className="flex gap-2 pt-4 border-t border-border">
                 {selectedListing.status !== "approved" && (
                   <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600"
                     onClick={() => { handleListingAction(selectedListing.id, "approved"); setSelectedListing(null); }}>
@@ -749,9 +749,9 @@ const SuperAdmin = () => {
 
 // Sub-components
 const StatCard = ({ icon, label, value, change, positive }: { icon: React.ReactNode; label: string; value: number; change: string; positive: boolean }) => (
-  <div className="bg-white rounded-2xl border border-slate-200 p-5">
+  <div className="bg-card rounded-2xl border border-border p-5">
     <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
         {icon}
       </div>
       <div className={`flex items-center gap-1 text-sm ${positive ? "text-emerald-600" : "text-red-600"}`}>
@@ -759,29 +759,29 @@ const StatCard = ({ icon, label, value, change, positive }: { icon: React.ReactN
         {change}
       </div>
     </div>
-    <p className="text-3xl font-bold text-slate-800">{value}</p>
-    <p className="text-sm text-slate-500 mt-1">{label}</p>
+    <p className="text-3xl font-bold text-foreground">{value}</p>
+    <p className="text-sm text-muted-foreground mt-1">{label}</p>
   </div>
 );
 
 const SettingRow = ({ title, description, enabled }: { title: string; description: string; enabled: boolean }) => (
-  <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
+  <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
     <div>
-      <p className="text-sm font-medium text-slate-800">{title}</p>
-      <p className="text-xs text-slate-500">{description}</p>
+      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className="text-xs text-muted-foreground">{description}</p>
     </div>
-    <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors cursor-pointer ${enabled ? "bg-indigo-600" : "bg-slate-200"}`}>
-      <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${enabled ? "translate-x-4" : ""}`} />
+    <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-colors cursor-pointer ${enabled ? "bg-primary" : "bg-muted"}`}>
+      <div className={`w-4 h-4 rounded-full bg-primary-foreground shadow transition-transform ${enabled ? "translate-x-4" : ""}`} />
     </div>
   </div>
 );
 
 const InfoRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
   <div className="flex items-start gap-2">
-    <div className="text-slate-400 mt-0.5 shrink-0">{icon}</div>
+    <div className="text-muted-foreground mt-0.5 shrink-0">{icon}</div>
     <div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="text-sm font-medium text-slate-800 break-all">{value}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-sm font-medium text-foreground break-all">{value}</p>
     </div>
   </div>
 );
