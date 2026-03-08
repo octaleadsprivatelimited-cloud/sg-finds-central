@@ -93,37 +93,62 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
         </div>
       </div>
 
-      {/* Prominent CTA buttons */}
-      <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 sm:gap-3">
+      {/* CTA buttons - inline on desktop */}
+      <div className="hidden sm:flex items-center gap-3">
         {listing.phone && (
-          <a href={`tel:${listing.phone}`} className="min-w-0">
-            <Button className="w-full bg-success hover:bg-success/90 text-success-foreground gap-1.5 sm:gap-2 font-semibold text-xs sm:text-sm px-2 sm:px-4">
+          <a href={`tel:${listing.phone}`}>
+            <Button className="bg-success hover:bg-success/90 text-success-foreground gap-2 font-semibold">
               <Phone className="w-4 h-4 shrink-0" />
-              <span className="truncate">{listing.phone}</span>
+              {listing.phone}
             </Button>
           </a>
         )}
         {listing.email && (
-          <a href={`mailto:${listing.email}`} className="min-w-0">
-            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 sm:gap-2 font-semibold text-xs sm:text-sm px-2 sm:px-4">
+          <a href={`mailto:${listing.email}`}>
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold">
               <Mail className="w-4 h-4 shrink-0" />
-              Enquire
+              Enquire Now
             </Button>
           </a>
         )}
         {listing.whatsapp && (
-          <a
-            href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="min-w-0"
-          >
-            <Button variant="outline" className="w-full gap-1.5 sm:gap-2 font-semibold border-success/30 text-success hover:bg-success/10 text-xs sm:text-sm px-2 sm:px-4">
+          <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" className="gap-2 font-semibold border-success/30 text-success hover:bg-success/10">
               <MessageCircle className="w-4 h-4 shrink-0" />
               WhatsApp
             </Button>
           </a>
         )}
+      </div>
+
+      {/* CTA buttons - sticky bottom bar on mobile */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border p-3 safe-bottom">
+        <div className="grid grid-cols-3 gap-2">
+          {listing.phone && (
+            <a href={`tel:${listing.phone}`} className="min-w-0">
+              <Button className="w-full bg-success hover:bg-success/90 text-success-foreground gap-1.5 font-semibold text-xs px-2 h-10">
+                <Phone className="w-4 h-4 shrink-0" />
+                Call
+              </Button>
+            </a>
+          )}
+          {listing.email && (
+            <a href={`mailto:${listing.email}`} className="min-w-0">
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-semibold text-xs px-2 h-10">
+                <Mail className="w-4 h-4 shrink-0" />
+                Enquire
+              </Button>
+            </a>
+          )}
+          {listing.whatsapp && (
+            <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
+              <Button variant="outline" className="w-full gap-1.5 font-semibold border-success/30 text-success hover:bg-success/10 text-xs px-2 h-10">
+                <MessageCircle className="w-4 h-4 shrink-0" />
+                WhatsApp
+              </Button>
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
