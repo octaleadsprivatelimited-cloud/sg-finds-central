@@ -144,9 +144,9 @@ const SuperAdmin = () => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 hidden md:flex`}>
+      <aside className={`${sidebarCollapsed ? "w-20" : "w-64"} bg-card border-r border-border flex flex-col transition-all duration-300 hidden md:flex`}>
         {/* Logo */}
-        <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-100">
+        <div className="h-16 flex items-center gap-3 px-5 border-b border-border">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-sm">
             <Crown className="w-5 h-5 text-white" />
           </div>
