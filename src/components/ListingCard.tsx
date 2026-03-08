@@ -76,7 +76,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
   const navigate = useNavigate();
-  const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
+  const colorClass = CATEGORY_COLORS[listing.category] || "bg-primary/10 text-primary";
+  const emoji = CATEGORY_EMOJIS[listing.category] || "📍";
 
   const handleClick = () => {
     if (onSelect) onSelect(listing);
