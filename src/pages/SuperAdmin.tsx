@@ -286,8 +286,8 @@ const SuperAdmin = () => {
                     {categoryData.map((cat, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
-                        <span className="text-slate-600">{cat.name}</span>
-                        <span className="text-slate-400">{cat.value}%</span>
+                        <span className="text-muted-foreground">{cat.name}</span>
+                        <span className="text-muted-foreground/70">{cat.value}%</span>
                       </div>
                     ))}
                   </div>
