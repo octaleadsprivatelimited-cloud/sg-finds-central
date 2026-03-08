@@ -84,6 +84,7 @@ const SuperAdmin = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
 
   // Fetch all listings from Firestore
   useEffect(() => {
