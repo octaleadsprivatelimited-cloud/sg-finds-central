@@ -52,7 +52,7 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
           return (
             <div
               key={listing.id}
-              className={`group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br ${gradientBg} ${compact ? "p-3.5" : "p-5"} cursor-pointer hover-lift`}
+              className={`group relative overflow-hidden rounded-xl border ${compact ? "border-white/20 bg-white/10 backdrop-blur-sm" : `border-border/50 bg-gradient-to-br ${gradientBg}`} ${compact ? "p-3.5" : "p-5"} cursor-pointer hover-lift`}
               onClick={() => navigate(getBusinessUrl(listing))}
             >
               {/* Decorative accent */}
