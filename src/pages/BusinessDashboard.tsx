@@ -204,6 +204,7 @@ const BusinessDashboard = () => {
   const [editCustomSlug, setEditCustomSlug] = useState("");
   const [editLogoUrl, setEditLogoUrl] = useState("");
   const [editHours, setEditHours] = useState<OperatingHours>(DEFAULT_OPERATING_HOURS);
+  const [editSpecialHours, setEditSpecialHours] = useState<SpecialHours[]>([]);
 
   const stats = useMemo(() => ({
     total: listings.length,
