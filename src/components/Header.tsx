@@ -9,11 +9,18 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 
-const Header = () => {
+interface HeaderProps {
+  searchQuery?: string;
+  onSearchChange?: (val: string) => void;
+}
+
+const Header = ({ searchQuery = "", onSearchChange }: HeaderProps) => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isHome = location.pathname === "/";
 
   const handleSignOut = async () => {
     await signOut(auth);
