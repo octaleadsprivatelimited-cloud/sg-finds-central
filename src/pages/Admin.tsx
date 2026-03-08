@@ -5,7 +5,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Listing } from "@/components/ListingCard";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Shield, Check, X, ExternalLink, FileText, ArrowLeft,
   Building2, Clock, Loader2, AlertTriangle,
@@ -18,6 +27,10 @@ const Admin = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Rejection dialog state
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -33,7 +46,6 @@ const Admin = () => {
       const snap = await getDocs(q);
       setListings(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Listing)));
     } catch {
-      // Demo pending listings
       setListings([
         {
           id: "pending-1", name: "New Café SG", uen: "202399999F",
@@ -47,16 +59,38 @@ const Admin = () => {
     setLoading(false);
   };
 
-  const handleAction = async (id: string, status: "approved" | "rejected") => {
+  const handleApprove = async (id: string) => {
     setActionLoading(id);
     try {
-      await updateDoc(doc(db, "listings", id), { status });
+      await updateDoc(doc(db, "listings", id), { status: "approved", rejectionReason: "" });
       setListings((prev) => prev.filter((l) => l.id !== id));
-      toast.success(`Listing ${status}`);
+      toast.success("Listing approved");
     } catch {
       toast.error("Failed to update listing");
     }
     setActionLoading(null);
+  };
+
+  const handleReject = async () => {
+    if (!rejectingId) return;
+    if (!rejectionReason.trim()) {
+      toast.error("Please provide a reason for rejection");
+      return;
+    }
+    setActionLoading(rejectingId);
+    try {
+      await updateDoc(doc(db, "listings", rejectingId), {
+        status: "rejected",
+        rejectionReason: rejectionReason.trim(),
+      });
+      setListings((prev) => prev.filter((l) => l.id !== rejectingId));
+      toast.success("Listing rejected");
+    } catch {
+      toast.error("Failed to update listing");
+    }
+    setActionLoading(null);
+    setRejectingId(null);
+    setRejectionReason("");
   };
 
   if (authLoading) {
@@ -155,6 +189,13 @@ const Admin = () => {
                   </div>
                 </div>
 
+                {listing.description && (
+                  <div className="mb-4">
+                    <span className="text-sm text-muted-foreground">Description</span>
+                    <p className="text-sm mt-1">{listing.description}</p>
+                  </div>
+                )}
+
                 {/* Documents */}
                 {listing.documentsUrl && listing.documentsUrl.length > 0 && (
                   <div className="mb-4">
@@ -181,7 +222,7 @@ const Admin = () => {
                 <div className="flex gap-2 pt-3 border-t border-border">
                   <Button
                     size="sm"
-                    onClick={() => handleAction(listing.id, "approved")}
+                    onClick={() => handleApprove(listing.id)}
                     disabled={actionLoading === listing.id}
                     className="bg-success hover:bg-success/90 text-success-foreground"
                   >
@@ -195,7 +236,10 @@ const Admin = () => {
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => handleAction(listing.id, "rejected")}
+                    onClick={() => {
+                      setRejectingId(listing.id);
+                      setRejectionReason("");
+                    }}
                     disabled={actionLoading === listing.id}
                   >
                     <X className="w-4 h-4 mr-1.5" />
@@ -206,6 +250,49 @@ const Admin = () => {
             ))}
           </div>
         )}
+
+        {/* Rejection Reason Dialog */}
+        <Dialog open={!!rejectingId} onOpenChange={(open) => { if (!open) { setRejectingId(null); setRejectionReason(""); } }}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <X className="w-5 h-5 text-destructive" />
+                Reject Listing
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 py-2">
+              <p className="text-sm text-muted-foreground">
+                Please provide a reason for rejection. This will be visible to the business owner.
+              </p>
+              <div className="space-y-2">
+                <Label>Rejection Reason *</Label>
+                <Textarea
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  placeholder="e.g. Missing ACRA business profile document, invalid UEN number..."
+                  rows={3}
+                />
+              </div>
+            </div>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => { setRejectingId(null); setRejectionReason(""); }}>
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleReject}
+                disabled={!rejectionReason.trim() || actionLoading === rejectingId}
+              >
+                {actionLoading === rejectingId ? (
+                  <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                ) : (
+                  <X className="w-4 h-4 mr-1.5" />
+                )}
+                Confirm Rejection
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
