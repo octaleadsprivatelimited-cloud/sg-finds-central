@@ -355,12 +355,12 @@ const SuperAdmin = () => {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">User</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Role</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Status</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Date</th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase px-5 py-3">Listings</th>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">User</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Role</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Status</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Date</th>
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase px-5 py-3">Listings</th>
                     </tr>
                   </thead>
                   <tbody>
