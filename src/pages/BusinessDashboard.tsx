@@ -91,6 +91,7 @@ const BusinessDashboard = () => {
   const [editEmail, setEditEmail] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editCustomSlug, setEditCustomSlug] = useState("");
+  const [editLogoUrl, setEditLogoUrl] = useState("");
 
   const stats = useMemo(() => ({
     total: listings.length,
