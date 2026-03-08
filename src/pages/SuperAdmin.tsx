@@ -109,6 +109,71 @@ const SuperAdmin = () => {
   const totalListings = listings.length;
   const approvedListings = listings.filter(l => l.status === "approved").length;
   const pendingListings = listings.filter(l => l.status === "pending_approval").length;
+  const rejectedListings = listings.filter(l => l.status === "rejected").length;
+  const featuredListings = listings.filter(l => l.featured).length;
+
+  // Compute category distribution from real data
+  const categoryData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    listings.forEach(l => { counts[l.category] = (counts[l.category] || 0) + 1; });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const total = listings.length || 1;
+    return sorted.slice(0, 4).map(([name, count], i) => ({
+      name: name.length > 12 ? name.split(" ")[0] : name,
+      fullName: name,
+      value: Math.round((count / total) * 100),
+      count,
+      color: CHART_COLORS[i % CHART_COLORS.length],
+    }));
+  }, [listings]);
+
+  // Top categories (top 5)
+  const topCategoriesData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    listings.forEach(l => { counts[l.category] = (counts[l.category] || 0) + 1; });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, value]) => ({ name, value }));
+  }, [listings]);
+
+  // Listing trend by month (from createdAt)
+  const listingTrendData = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const monthCounts: Record<string, { current: number; previous: number }> = {};
+    MONTHS.forEach(m => { monthCounts[m] = { current: 0, previous: 0 }; });
+    listings.forEach(l => {
+      if (!l.createdAt) return;
+      const d = l.createdAt.toDate ? l.createdAt.toDate() : new Date(l.createdAt);
+      const year = d.getFullYear();
+      const month = MONTHS[d.getMonth()];
+      if (year === currentYear) monthCounts[month].current++;
+      else if (year === currentYear - 1) monthCounts[month].previous++;
+    });
+    return MONTHS.map(m => ({ month: m, ...monthCounts[m] }));
+  }, [listings]);
+
+  // Sparkline data based on listing trend
+  const sparkData = useMemo(() => listingTrendData.map(d => d.current), [listingTrendData]);
+
+  // Platform breakdown from real data
+  const breakdownData = useMemo(() => {
+    const uniqueCategories = new Set(listings.map(l => l.category)).size;
+    return [
+      { label: "Total listings", value: String(totalListings), change: `${totalListings}`, positive: true },
+      { label: "Pending review", value: String(pendingListings), change: pendingListings > 0 ? `${pendingListings} pending` : "—", positive: pendingListings === 0 },
+      { label: "Rejected", value: String(rejectedListings), change: rejectedListings > 0 ? `${rejectedListings} rejected` : "—", positive: rejectedListings === 0 },
+      { label: "Active listings", value: String(approvedListings), change: `${approvedListings}`, positive: true },
+      { label: "Featured", value: String(featuredListings), change: featuredListings > 0 ? `${featuredListings} featured` : "—", positive: true },
+      { label: "Categories", value: String(uniqueCategories), change: `${uniqueCategories} types`, positive: true },
+    ];
+  }, [totalListings, pendingListings, rejectedListings, approvedListings, featuredListings, listings]);
+
+  // Avg views placeholder (computed from listing count per month)
+  const avgOrderData = useMemo(() => {
+    return listingTrendData.filter((_, i) => i % 2 === 1).map(d => ({ month: d.month, value: d.current }));
+  }, [listingTrendData]);
 
   const filteredUsers = users.filter(u =>
     u.displayName.toLowerCase().includes(userSearch.toLowerCase()) ||
