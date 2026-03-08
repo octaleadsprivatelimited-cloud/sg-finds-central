@@ -1,4 +1,4 @@
-import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
+import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ interface MapViewProps {
 }
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
+const GOOGLE_MAPS_SCRIPT_ID = "google-maps-script";
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 }; // Singapore
 const MAP_STYLES = [
   { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
@@ -19,25 +20,70 @@ const MAP_STYLES = [
   { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
 ];
 
+const getMapsScriptSrc = (apiKey: string) =>
+  `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=maps&v=weekly`;
+
 const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps) => {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const { isLoaded, loadError: apiLoadError } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  });
-
   useEffect(() => {
-    if (apiLoadError) {
-      setLoadError(apiLoadError.message);
+    if (!GOOGLE_MAPS_API_KEY) {
+      setLoadError("Missing Google Maps API key");
+      return;
     }
-  }, [apiLoadError]);
+
+    if ((window as any).google?.maps) {
+      setIsLoaded(true);
+      return;
+    }
+
+    const desiredSrc = getMapsScriptSrc(GOOGLE_MAPS_API_KEY);
+    const existingScript = document.getElementById(GOOGLE_MAPS_SCRIPT_ID) as HTMLScriptElement | null;
+
+    if (existingScript) {
+      const existingSrc = existingScript.getAttribute("src") ?? "";
+      if (existingSrc !== desiredSrc) {
+        existingScript.remove();
+      } else {
+        const handleLoad = () => setIsLoaded(true);
+        const handleError = () => setLoadError("Failed to load Google Maps");
+
+        existingScript.addEventListener("load", handleLoad);
+        existingScript.addEventListener("error", handleError);
+
+        return () => {
+          existingScript.removeEventListener("load", handleLoad);
+          existingScript.removeEventListener("error", handleError);
+        };
+      }
+    }
+
+    const script = document.createElement("script");
+    script.id = GOOGLE_MAPS_SCRIPT_ID;
+    script.src = desiredSrc;
+    script.async = true;
+    script.defer = true;
+
+    const handleLoad = () => setIsLoaded(true);
+    const handleError = () => setLoadError("Failed to load Google Maps");
+
+    script.addEventListener("load", handleLoad);
+    script.addEventListener("error", handleError);
+    document.head.appendChild(script);
+
+    return () => {
+      script.removeEventListener("load", handleLoad);
+      script.removeEventListener("error", handleError);
+    };
+  }, []);
 
   if (loadError) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-secondary rounded-xl">
         <div className="text-center text-muted-foreground p-4">
           <p className="text-sm">Map temporarily unavailable</p>
-          <p className="text-xs mt-1">Please refresh the page</p>
+          <p className="text-xs mt-1">{loadError}</p>
         </div>
       </div>
     );
@@ -72,6 +118,7 @@ const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps
             key={listing.id}
             position={{ lat: listing.lat, lng: listing.lng }}
             onClick={() => onSelectListing?.(listing)}
+            opacity={selectedId === listing.id ? 1 : 0.9}
           />
         );
       })}
