@@ -247,22 +247,6 @@ const SignUp = () => {
       <div className="container mx-auto px-3 py-3 md:py-10 max-w-md relative z-10">
         {/* Back button */}
 
-        {/* Step indicator */}
-        <div className="flex items-center justify-center gap-3 mb-3 md:mb-5">
-          <div className={`flex items-center gap-1.5 text-xs font-medium ${step === "credentials" ? "text-primary" : "text-muted-foreground"}`}>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === "phone-verify" ? "bg-primary text-primary-foreground" : step === "credentials" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
-              {step === "phone-verify" ? <CheckCircle2 className="w-4 h-4" /> : "1"}
-            </div>
-            <span className="hidden sm:inline">Account</span>
-          </div>
-          <div className="w-8 h-px bg-border" />
-          <div className={`flex items-center gap-1.5 text-xs font-medium ${step === "phone-verify" ? "text-primary" : "text-muted-foreground"}`}>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === "phone-verify" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
-              2
-            </div>
-            <span className="hidden sm:inline">Verify Phone</span>
-          </div>
-        </div>
 
         {/* ═══ STEP 1: CREDENTIALS ═══ */}
         {step === "credentials" && (
