@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Listing } from "@/components/ListingCard";
 import { DEMO_USERS, DEMO_ALL_LISTINGS, PlatformUser } from "@/lib/demo-data";
