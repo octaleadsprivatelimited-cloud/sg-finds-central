@@ -875,7 +875,7 @@ const SuperAdmin = () => {
 };
 
 // ── Sub-components ──
-const MetricCard = ({ title, value, change, positive, sparkColor }: { title: string; value: string; change: string; positive: boolean; sparkColor: string }) => {
+const MetricCard = ({ title, value, change, positive, sparkColor, sparkData }: { title: string; value: string; change: string; positive: boolean; sparkColor: string; sparkData: number[] }) => {
   const data = sparkData.map((v, i) => ({ i, v }));
   return (
     <div className="rounded-xl border p-4" style={{ background: "white", borderColor: "#e1e3e5" }}>
