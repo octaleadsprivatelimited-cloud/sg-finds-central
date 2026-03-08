@@ -197,7 +197,7 @@ const CityCategory = () => {
                     >
                       <p className="text-sm font-medium text-foreground">{cat}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {DEMO_LISTINGS.filter((l) => l.category === cat).length} listings
+                        {listings.filter((l) => l.category === cat).length} listings
                       </p>
                     </Link>
                   ))}
