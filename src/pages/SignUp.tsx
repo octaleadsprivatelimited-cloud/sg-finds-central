@@ -248,7 +248,7 @@ const SignUp = () => {
         {/* Back button */}
 
         {/* Step indicator */}
-        <div className="flex items-center justify-center gap-3 mb-5">
+        <div className="flex items-center justify-center gap-3 mb-3 md:mb-5">
           <div className={`flex items-center gap-1.5 text-xs font-medium ${step === "credentials" ? "text-primary" : "text-muted-foreground"}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === "phone-verify" ? "bg-primary text-primary-foreground" : step === "credentials" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
               {step === "phone-verify" ? <CheckCircle2 className="w-4 h-4" /> : "1"}
