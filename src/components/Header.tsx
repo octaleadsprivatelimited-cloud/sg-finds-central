@@ -40,7 +40,7 @@ const Header = () => {
   return (
     <>
       {/* ═══ ANNOUNCEMENT BAR ═══ */}
-      <Link to="/signup" className="group block bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:brightness-110 transition-all cursor-pointer">
+      <Link to="/signup" className="group block bg-[hsl(220,60%,15%)] text-white hover:bg-[hsl(220,60%,20%)] transition-all cursor-pointer">
         <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-center text-[11px] sm:text-xs">
           <div className="flex items-center gap-1.5">
             <span className="text-sm sm:text-base">🚀</span>
