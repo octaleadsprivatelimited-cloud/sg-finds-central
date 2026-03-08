@@ -38,22 +38,40 @@ interface ListingCardProps {
   onSelect?: (listing: Listing) => void;
 }
 
+const CATEGORY_EMOJIS: Record<string, string> = {
+  "Food & Beverage": "🍜",
+  "Retail & Shopping": "🛍️",
+  "Healthcare & Medical": "🏥",
+  "Education & Training": "📚",
+  "Professional Services": "💼",
+  "Beauty & Wellness": "💅",
+  "Home Services": "🏠",
+  "Automotive": "🚗",
+  "Technology & IT": "💻",
+  "Real Estate": "🏢",
+  "Legal Services": "⚖️",
+  "Financial Services": "💰",
+  "Logistics & Transport": "🚚",
+  "Events & Entertainment": "🎉",
+  "Construction & Renovation": "🔨",
+};
+
 const CATEGORY_COLORS: Record<string, string> = {
-  "Food & Beverage": "from-orange-500 to-red-500",
-  "Retail & Shopping": "from-sky-500 to-blue-600",
-  "Healthcare & Medical": "from-emerald-500 to-teal-600",
-  "Education & Training": "from-indigo-500 to-blue-700",
-  "Professional Services": "from-slate-500 to-slate-700",
-  "Beauty & Wellness": "from-pink-500 to-rose-600",
-  "Home Services": "from-amber-500 to-orange-600",
-  "Automotive": "from-zinc-500 to-zinc-700",
-  "Technology & IT": "from-violet-500 to-purple-700",
-  "Real Estate": "from-cyan-500 to-blue-600",
-  "Legal Services": "from-yellow-600 to-amber-700",
-  "Financial Services": "from-green-500 to-emerald-700",
-  "Logistics & Transport": "from-stone-500 to-stone-700",
-  "Events & Entertainment": "from-rose-500 to-pink-700",
-  "Construction & Renovation": "from-orange-600 to-amber-700",
+  "Food & Beverage": "bg-orange-100 text-orange-700",
+  "Retail & Shopping": "bg-blue-100 text-blue-700",
+  "Healthcare & Medical": "bg-emerald-100 text-emerald-700",
+  "Education & Training": "bg-indigo-100 text-indigo-700",
+  "Professional Services": "bg-slate-100 text-slate-700",
+  "Beauty & Wellness": "bg-pink-100 text-pink-700",
+  "Home Services": "bg-amber-100 text-amber-700",
+  "Automotive": "bg-zinc-100 text-zinc-700",
+  "Technology & IT": "bg-violet-100 text-violet-700",
+  "Real Estate": "bg-cyan-100 text-cyan-700",
+  "Legal Services": "bg-yellow-100 text-yellow-700",
+  "Financial Services": "bg-green-100 text-green-700",
+  "Logistics & Transport": "bg-stone-100 text-stone-700",
+  "Events & Entertainment": "bg-rose-100 text-rose-700",
+  "Construction & Renovation": "bg-orange-100 text-orange-700",
 };
 
 const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
