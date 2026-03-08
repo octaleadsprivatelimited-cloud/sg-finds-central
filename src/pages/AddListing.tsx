@@ -179,6 +179,32 @@ const AddListing = () => {
           <p className="text-muted-foreground mt-1">List your business in the Singapore Directory</p>
         </div>
 
+        {checkingExisting ? (
+          <div className="text-center py-16">
+            <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary mb-3" />
+            <p className="text-sm text-muted-foreground">Checking account status...</p>
+          </div>
+        ) : hasExistingListing ? (
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+              <X className="w-6 h-6 text-destructive" />
+            </div>
+            <h2 className="text-lg font-semibold text-foreground mb-2">One Business Per Account</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              Each account can only register one business. You already have a listing registered with this account.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                Go to Dashboard
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Back to Directory
+              </Button>
+            </div>
+          </div>
+        ) : (
+        <>
+
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-2 mb-8">
           {STEPS.map((s, i) => (
