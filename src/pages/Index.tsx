@@ -7,7 +7,7 @@ import FeaturedListings from "@/components/FeaturedListings";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
-import { Building2, MapPin, List, Map as MapIcon, Search, TrendingUp, Sparkles, Zap } from "lucide-react";
+import { MapPin, List, Map as MapIcon, Search, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SearchWithSuggestions from "@/components/SearchWithSuggestions";
@@ -111,52 +111,39 @@ const Index = () => {
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
 
   return (
-    <div className="min-h-screen bg-background bg-noise">
+    <div className="min-h-screen bg-background">
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/50">
-        <div className="bg-hero-gradient absolute inset-0 pointer-events-none" />
-        
-        {/* Floating decorative elements */}
-        <div className="absolute top-8 right-[10%] w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-2xl animate-float" />
-        <div className="absolute bottom-4 left-[15%] w-16 h-16 rounded-full bg-gradient-to-br from-warning/15 to-destructive/15 blur-2xl animate-float" style={{ animationDelay: '1s' }} />
-        
-        <div className="container mx-auto px-4 py-6 md:py-16 relative z-10">
-          <div className="hidden md:flex items-center gap-2 mb-3">
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-medium text-primary">
-              <Zap className="w-3 h-3" />
-              Singapore's #1 Business Directory
-            </div>
-          </div>
-          
-          <h1 className="text-xl md:text-5xl font-extrabold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
-            Discover <span className="text-gradient">Amazing</span> Local{" "}
-            <span className="text-gradient-warm">Businesses</span>
+      <section className="bg-gradient-to-b from-primary/5 to-background border-b border-border/40">
+        <div className="container mx-auto px-4 py-6 md:py-14">
+          <h1 className="text-xl md:text-4xl font-bold tracking-tight text-foreground mb-1 md:mb-2 leading-tight">
+            Find the best businesses{" "}
+            <span className="text-primary">in Singapore</span>
           </h1>
-          <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-xl">
-            Search across <span className="font-semibold text-primary">5,000+</span> verified businesses in your neighbourhood.
+          <p className="text-muted-foreground text-xs md:text-base mb-4 md:mb-8 max-w-lg">
+            Search across 5,000+ verified businesses — restaurants, clinics, services and more.
           </p>
 
           {/* Desktop search bar */}
-          <div className="hidden md:flex flex-col sm:flex-row items-stretch gap-0 max-w-3xl">
-            <div className="flex items-center gap-2 px-4 py-3 border border-border rounded-l-xl bg-card border-r-0 min-w-[160px]">
-              <MapPin className="w-4 h-4 text-accent shrink-0" />
+          <div className="hidden md:flex items-stretch gap-0 max-w-2xl bg-card rounded-xl border border-border shadow-sm">
+            <div className="flex items-center gap-2 px-4 py-3 border-r border-border min-w-[150px]">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
               <span className="text-sm font-medium text-foreground">Singapore</span>
             </div>
             <SearchWithSuggestions
-              placeholder="Search for Restaurants, Services, Businesses..."
+              placeholder="Search for restaurants, services, businesses..."
               className="flex-1"
             />
-            <Button className="h-auto min-h-[48px] rounded-r-xl px-8 bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary border-0 text-primary-foreground font-semibold text-sm">
-              <Search className="w-5 h-5 mr-2" />
+            <Button className="h-auto min-h-[48px] rounded-l-none rounded-r-xl px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm border-0">
+              <Search className="w-4 h-4 mr-2" />
               Search
             </Button>
           </div>
 
           {/* Filter row */}
-          <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-3xl">
+          <div className="flex flex-wrap gap-2 mt-3 md:mt-4 max-w-2xl">
             <Select value={district} onValueChange={setDistrict}>
-              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card/80 backdrop-blur-sm border-border/60">
+              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
                 <SelectValue placeholder="All Districts" />
               </SelectTrigger>
               <SelectContent>
@@ -167,7 +154,7 @@ const Index = () => {
             </Select>
 
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card/80 backdrop-blur-sm border-border/60">
+              <SelectTrigger className="w-auto min-w-[120px] md:min-w-[140px] h-8 md:h-9 text-xs md:text-sm bg-card border-border">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -177,26 +164,17 @@ const Index = () => {
               </SelectContent>
             </Select>
 
-            <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm border-accent/30 text-accent hover:bg-accent/10 hover:border-accent/50 hidden md:flex" onClick={handleDetectLocation}>
+            <Button variant="outline" size="sm" className="h-8 md:h-9 text-xs md:text-sm hidden md:flex" onClick={handleDetectLocation}>
               <MapPin className="w-3.5 h-3.5 mr-1.5" />
               Near Me
             </Button>
           </div>
           
           {/* Quick stats */}
-          <div className="flex flex-wrap items-center gap-3 md:gap-6 mt-4 md:mt-6 text-[10px] md:text-xs text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success animate-pulse" />
-              <span><span className="font-semibold text-foreground">5,000+</span> Businesses</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
-              <span><span className="font-semibold text-foreground">15</span> Categories</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-warning animate-pulse" style={{ animationDelay: '1s' }} />
-              <span><span className="font-semibold text-foreground">50+</span> Districts</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-4 md:mt-6 text-[11px] md:text-xs text-muted-foreground">
+            <span><strong className="text-foreground">5,000+</strong> Businesses</span>
+            <span><strong className="text-foreground">15</strong> Categories</span>
+            <span><strong className="text-foreground">50+</strong> Districts</span>
           </div>
         </div>
       </section>
@@ -212,19 +190,12 @@ const Index = () => {
         <FeaturedListings listings={filtered} />
 
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">All Businesses</p>
-              <p className="text-xs text-muted-foreground">
-                <span className="font-medium text-primary">{filtered.length}</span> results found
-              </p>
-            </div>
+          <div>
+            <h2 className="text-base font-semibold text-foreground">All Businesses</h2>
+            <p className="text-xs text-muted-foreground">{filtered.length} results found</p>
           </div>
           <div className="md:hidden">
-            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)} className="border-primary/30">
+            <Button variant="outline" size="sm" onClick={() => setShowMap(!showMap)}>
               {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
               {showMap ? "List" : "Map"}
             </Button>

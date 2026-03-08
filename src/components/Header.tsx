@@ -21,14 +21,14 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 glass border-b border-border/50">
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-4">
-          <Link to="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(280,85%,55%)] flex items-center justify-center shadow-lg glow-primary transition-transform group-hover:scale-105">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-primary flex items-center justify-center">
               <Search className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary-foreground" />
             </div>
             <span className="font-bold text-lg tracking-tight hidden lg:block">
-              <span className="text-gradient">SG</span>
+              <span className="text-primary">SG</span>
               <span className="text-foreground">Directory</span>
             </span>
           </Link>
@@ -80,7 +80,7 @@ const Header = () => {
                 <LogOut className="w-4 h-4 mr-1.5" />Sign Out
               </Button>
             ) : (
-              <Button size="sm" onClick={() => setShowAuth(true)} className="bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary text-primary-foreground border-0">
+              <Button size="sm" onClick={() => setShowAuth(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground border-0">
                 Sign In
               </Button>
             )}
@@ -118,7 +118,7 @@ const Header = () => {
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
               </Button>
             ) : (
-              <Button className="w-full bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] text-primary-foreground border-0" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-0" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
                 Sign In
               </Button>
             )}
