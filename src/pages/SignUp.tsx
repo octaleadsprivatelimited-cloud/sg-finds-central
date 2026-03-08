@@ -284,7 +284,7 @@ const SignUp = () => {
                 <Button
                   key={provider}
                   variant="outline"
-                  className="h-11 rounded-xl"
+                  className="h-9 md:h-11 rounded-xl"
                   onClick={() => handleSocialSignUp(provider)}
                   disabled={!!socialLoading}
                   title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
