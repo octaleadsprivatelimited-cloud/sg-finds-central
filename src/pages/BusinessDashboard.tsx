@@ -5,6 +5,7 @@ import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
+  CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Listing, ListingOffer, OperatingHours, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
+import { Listing, ListingOffer, OperatingHours, SpecialHours, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -203,6 +204,7 @@ const BusinessDashboard = () => {
   const [editCustomSlug, setEditCustomSlug] = useState("");
   const [editLogoUrl, setEditLogoUrl] = useState("");
   const [editHours, setEditHours] = useState<OperatingHours>(DEFAULT_OPERATING_HOURS);
+  const [editSpecialHours, setEditSpecialHours] = useState<SpecialHours[]>([]);
 
   const stats = useMemo(() => ({
     total: listings.length,
@@ -224,6 +226,7 @@ const BusinessDashboard = () => {
     setEditCustomSlug(listing.customSlug || toSlug(listing.name));
     setEditLogoUrl(listing.logoUrl || "");
     setEditHours(listing.operatingHours || { ...DEFAULT_OPERATING_HOURS });
+    setEditSpecialHours(listing.specialHours || []);
   };
 
   const slugError = useMemo(() => {
@@ -265,6 +268,7 @@ const BusinessDashboard = () => {
         customSlug: sanitizedSlug,
         logoUrl: editLogoUrl,
         operatingHours: editHours,
+        specialHours: editSpecialHours,
         status: "pending_approval",
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
@@ -816,7 +820,92 @@ const BusinessDashboard = () => {
                   );
                 })}
               </div>
-              {/* Logo Upload */}
+              {/* Special / Holiday Hours */}
+              <div className="space-y-3 pt-2 border-t border-border">
+                <Label className="flex items-center gap-2">
+                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                  Holiday / Special Hours
+                </Label>
+                <p className="text-xs text-muted-foreground">Override hours for specific dates (e.g. public holidays, special events).</p>
+                {editSpecialHours.map((sh, idx) => (
+                  <div key={idx} className="flex items-center gap-2 flex-wrap">
+                    <Input
+                      type="date"
+                      className="w-[140px] text-xs"
+                      value={sh.date}
+                      onChange={(e) => {
+                        const updated = [...editSpecialHours];
+                        updated[idx] = { ...updated[idx], date: e.target.value };
+                        setEditSpecialHours(updated);
+                      }}
+                    />
+                    <Input
+                      className="w-[110px] text-xs"
+                      placeholder="Label"
+                      value={sh.label}
+                      onChange={(e) => {
+                        const updated = [...editSpecialHours];
+                        updated[idx] = { ...updated[idx], label: e.target.value };
+                        setEditSpecialHours(updated);
+                      }}
+                    />
+                    <label className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={!!sh.closed}
+                        onChange={(e) => {
+                          const updated = [...editSpecialHours];
+                          updated[idx] = { ...updated[idx], closed: e.target.checked };
+                          setEditSpecialHours(updated);
+                        }}
+                        className="rounded border-border"
+                      />
+                      Closed
+                    </label>
+                    {!sh.closed && (
+                      <>
+                        <Input
+                          type="time"
+                          className="w-[100px] text-xs"
+                          value={sh.open}
+                          onChange={(e) => {
+                            const updated = [...editSpecialHours];
+                            updated[idx] = { ...updated[idx], open: e.target.value };
+                            setEditSpecialHours(updated);
+                          }}
+                        />
+                        <span className="text-xs text-muted-foreground">to</span>
+                        <Input
+                          type="time"
+                          className="w-[100px] text-xs"
+                          value={sh.close}
+                          onChange={(e) => {
+                            const updated = [...editSpecialHours];
+                            updated[idx] = { ...updated[idx], close: e.target.value };
+                            setEditSpecialHours(updated);
+                          }}
+                        />
+                      </>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-destructive shrink-0"
+                      onClick={() => setEditSpecialHours(prev => prev.filter((_, i) => i !== idx))}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                  onClick={() => setEditSpecialHours(prev => [...prev, { date: "", label: "", open: "09:00", close: "18:00", closed: false }])}
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" />Add Special Date
+                </Button>
+              </div>
               {user && (
                 <div className="pt-2 border-t border-border">
                   <LogoUpload
