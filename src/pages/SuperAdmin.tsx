@@ -581,21 +581,21 @@ const SuperAdmin = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <h3 className="font-semibold text-slate-800 mb-4">Listings Trend</h3>
+              <div className="bg-card rounded-2xl border border-border p-6">
+                <h3 className="font-semibold text-foreground mb-4">Listings Trend</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={listingTrendData}>
-                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                      <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', strokeWidth: 2 }} />
+                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
+                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <h3 className="font-semibold text-slate-800 mb-4">Category Distribution</h3>
+              <div className="bg-card rounded-2xl border border-border p-6">
+                <h3 className="font-semibold text-foreground mb-4">Category Distribution</h3>
                 <div className="flex items-center justify-center gap-8">
                   <div className="w-40 h-40">
                     <ResponsiveContainer width="100%" height="100%">
