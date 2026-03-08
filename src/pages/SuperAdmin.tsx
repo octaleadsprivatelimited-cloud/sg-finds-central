@@ -647,10 +647,10 @@ const SuperAdmin = () => {
                     <div className="flex gap-2">
                       {listing.status === "pending_approval" && (
                         <>
-                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingAction(listing.id, "approved")} disabled={actionLoading === listing.id}>
+                          <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600" onClick={() => handleListingApprove(listing.id)} disabled={actionLoading === listing.id}>
                             <Check className="w-4 h-4 mr-1" />{actionLoading === listing.id ? "..." : "Approve"}
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleListingAction(listing.id, "rejected")} disabled={actionLoading === listing.id}>
+                          <Button size="sm" variant="destructive" onClick={() => { setRejectingListingId(listing.id); setRejectionReason(""); }} disabled={actionLoading === listing.id}>
                             <X className="w-4 h-4 mr-1" />{actionLoading === listing.id ? "..." : "Reject"}
                           </Button>
                         </>
