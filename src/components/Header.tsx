@@ -103,6 +103,10 @@ const Header = () => {
             <Button variant="outline" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
               <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
             </Button>
+            <Button variant="ghost" className="w-full justify-start" onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            </Button>
             {user ? (
               <Button variant="ghost" className="w-full justify-start" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
