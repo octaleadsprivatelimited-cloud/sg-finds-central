@@ -143,14 +143,10 @@ const Index = () => {
               <MapPin className="w-4 h-4 text-accent shrink-0" />
               <span className="text-sm font-medium text-foreground">Singapore</span>
             </div>
-            <div className="relative flex-1">
-              <Input
-                placeholder="Search for Restaurants, Services, Businesses..."
-                className="h-full min-h-[48px] rounded-none border-border bg-card pl-4 pr-12 focus-visible:ring-0 focus-visible:ring-offset-0 border text-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+            <SearchWithSuggestions
+              placeholder="Search for Restaurants, Services, Businesses..."
+              className="flex-1"
+            />
             <Button className="h-auto min-h-[48px] rounded-r-xl px-8 bg-gradient-to-r from-primary to-[hsl(280,85%,55%)] hover:opacity-90 glow-primary border-0 text-primary-foreground font-semibold text-sm">
               <Search className="w-5 h-5 mr-2" />
               Search
