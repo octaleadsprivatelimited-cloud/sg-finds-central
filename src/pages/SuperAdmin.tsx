@@ -86,6 +86,10 @@ const SuperAdmin = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
 
+  // Rejection dialog state
+  const [rejectingListingId, setRejectingListingId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+
   // Fetch all listings from Firestore
   useEffect(() => {
     const fetchListings = async () => {
