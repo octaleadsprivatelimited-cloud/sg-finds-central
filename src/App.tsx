@@ -19,6 +19,7 @@ import CityCategory from "./pages/CityCategory";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import SeedFirestore from "./pages/SeedFirestore";
+import SignUp from "./pages/SignUp";
 
 const queryClient = new QueryClient();
 
