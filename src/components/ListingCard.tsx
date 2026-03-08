@@ -99,8 +99,12 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
             )}
           </div>
         </div>
-        <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-          <span className="text-2xl font-bold text-primary/30">{listing.name.charAt(0)}</span>
+        <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center shrink-0 overflow-hidden">
+          {listing.logoUrl ? (
+            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-2xl font-bold text-primary/30">{listing.name.charAt(0)}</span>
+          )}
         </div>
       </div>
     </div>

@@ -34,8 +34,12 @@ const FeaturedListings = ({ listings }: FeaturedListingsProps) => {
               <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2" />
               <div className="relative">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <span className="text-lg font-bold text-primary">{listing.name.charAt(0)}</span>
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
+                    {listing.logoUrl ? (
+                      <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-lg font-bold text-primary">{listing.name.charAt(0)}</span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
