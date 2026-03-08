@@ -231,11 +231,11 @@ const SignUp = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Emoji grid background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="grid grid-cols-6 md:grid-cols-8 gap-10 md:gap-14 p-6 md:p-10 opacity-[0.05]">
+        <div className="grid grid-cols-6 md:grid-cols-8 gap-10 md:gap-14 p-6 md:p-10 opacity-[0.08]">
           {BUSINESS_EMOJIS.concat(BUSINESS_EMOJIS.slice(0, 18)).map((emoji, i) => (
             <span
               key={i}
-              className="text-3xl md:text-4xl select-none text-center"
+              className="text-5xl md:text-6xl select-none text-center"
               style={{ transform: `rotate(${(i * 23) % 40 - 20}deg)` }}
             >
               {emoji}
