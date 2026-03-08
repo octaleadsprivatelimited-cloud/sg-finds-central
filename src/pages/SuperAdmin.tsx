@@ -970,6 +970,14 @@ const SuperAdmin = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add Business Dialog */}
+      <AdminAddBusiness
+        open={showAddBusiness}
+        onOpenChange={setShowAddBusiness}
+        onCreated={(listing) => setListings(prev => [listing, ...prev])}
+        adminUserId={user?.uid || "admin"}
+      />
     </div>
   );
 };
