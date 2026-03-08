@@ -100,11 +100,40 @@ const AddListing = () => {
       return;
     }
 
+    if (hasExistingListing) {
+      toast.error("You can only register one business per account");
+      return;
+    }
+
     const validLinks = docLinks.filter(l => l.trim() !== "");
     const invalidLinks = validLinks.filter(l => !isValidCloudLink(l));
     if (invalidLinks.length > 0) {
       toast.error("Only Google Drive, Dropbox, OneDrive, or iCloud links are allowed");
       return;
+    }
+
+    // Check for duplicate email
+    if (email.trim()) {
+      try {
+        const emailQ = query(collection(db, "listings"), where("email", "==", email.trim()));
+        const emailSnap = await getDocs(emailQ);
+        if (!emailSnap.empty) {
+          toast.error("A business with this email is already registered");
+          return;
+        }
+      } catch {}
+    }
+
+    // Check for duplicate phone
+    if (phone.trim() && phone.trim() !== "+65") {
+      try {
+        const phoneQ = query(collection(db, "listings"), where("phone", "==", phone.trim()));
+        const phoneSnap = await getDocs(phoneQ);
+        if (!phoneSnap.empty) {
+          toast.error("A business with this phone number is already registered");
+          return;
+        }
+      } catch {}
     }
 
     setLoading(true);
