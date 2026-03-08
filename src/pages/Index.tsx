@@ -131,68 +131,27 @@ const Index = () => {
   };
 
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
-  const slide = HERO_SLIDES[heroSlide];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ═══ HERO BANNER (Hyper-style full-width image slider) ═══ */}
-      <section className="relative w-full h-[320px] md:h-[440px] lg:h-[500px] overflow-hidden bg-foreground">
-        {HERO_SLIDES.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute inset-0 transition-opacity duration-700 ${i === heroSlide ? "opacity-100" : "opacity-0"}`}
+      {/* ═══ HERO SECTION (clean, no slider) ═══ */}
+      <section className="bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 text-center">
+          <p className="text-sm font-medium tracking-widest uppercase mb-3 opacity-80">
+            Singapore's Trusted Directory
+          </p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
+            Find the Best Local Businesses
+          </h1>
+          <p className="text-base md:text-lg opacity-80 max-w-2xl mx-auto mb-6">
+            Discover, connect, and grow with verified businesses across Singapore
+          </p>
+          <Button
+            size="lg"
+            className="bg-card text-foreground hover:bg-card/90 font-semibold px-8 rounded-lg shadow-lg"
           >
-            <img
-              src={s.image}
-              alt={s.title}
-              className="w-full h-full object-cover"
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          </div>
-        ))}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white z-10 px-4">
-            <p className="text-sm md:text-base font-medium tracking-widest uppercase mb-2 opacity-80">
-              {slide.subtitle}
-            </p>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 drop-shadow-lg">
-              {slide.title}
-            </h1>
-            <Button
-              size="lg"
-              className="bg-card text-foreground hover:bg-card/90 font-semibold px-8 rounded-lg shadow-lg"
-            >
-              {slide.cta}
-            </Button>
-          </div>
-        </div>
-
-        {/* Slider controls */}
-        <button
-          onClick={() => setHeroSlide((heroSlide - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors z-10"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => setHeroSlide((heroSlide + 1) % HERO_SLIDES.length)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors z-10"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setHeroSlide(i)}
-              className={`rounded-full transition-all duration-300 ${
-                i === heroSlide ? "w-8 h-2.5 bg-white" : "w-2.5 h-2.5 bg-white/50 hover:bg-white/70"
-              }`}
-            />
-          ))}
+            Browse All
+          </Button>
         </div>
       </section>
 
