@@ -155,24 +155,23 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           <p className="text-xs sm:text-sm text-muted-foreground">Sign in to manage your business listings</p>
         </DialogHeader>
 
-        {/* Social Sign-In — 2x2 grid on mobile, stacked on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+        {/* Social Sign-In — icon-only row */}
+        <div className="flex gap-3 justify-center">
           {(["google", "apple", "microsoft", "whatsapp"] as const).map((provider) => (
             <Button
               key={provider}
               variant="outline"
-              className="h-10 sm:h-11 justify-center sm:justify-start gap-2 sm:gap-3 text-xs sm:text-sm font-medium"
+              size="icon"
+              className="h-11 w-11 rounded-xl"
               onClick={() =>
                 provider === "whatsapp"
                   ? (() => { setMethod("whatsapp"); setConfirmResult(null); })()
                   : handleSocialSignIn(provider)
               }
               disabled={!!socialLoading}
+              title={`Continue with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
             >
               <SocialIcon name={provider} loading={socialLoading === provider} />
-              <span className="hidden sm:inline">Continue with </span>
-              <span className="sm:hidden">{provider === "microsoft" ? "MS" : provider.charAt(0).toUpperCase() + provider.slice(1)}</span>
-              <span className="hidden sm:inline">{provider.charAt(0).toUpperCase() + provider.slice(1)}</span>
             </Button>
           ))}
         </div>
