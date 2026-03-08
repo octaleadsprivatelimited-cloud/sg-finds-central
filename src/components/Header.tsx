@@ -40,11 +40,15 @@ const Header = () => {
   return (
     <>
       {/* ═══ ANNOUNCEMENT BAR ═══ */}
-      <Link to="/signup" className="block bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer">
-        <div className="container mx-auto px-4 h-9 flex items-center justify-center text-xs">
+      <Link to="/signup" className="group block bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:brightness-110 transition-all cursor-pointer">
+        <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-center text-[11px] sm:text-xs">
           <div className="flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5 shrink-0" />
-            <span className="font-medium whitespace-nowrap">List your business for FREE — Reach thousands of customers</span>
+            <span className="text-sm sm:text-base">🚀</span>
+            <span className="font-bold hidden sm:inline">List your business for FREE — Reach thousands of customers</span>
+            <span className="font-bold sm:hidden">FREE Business Listing →</span>
+            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-primary-foreground/20 text-[10px] sm:text-[11px] font-semibold group-hover:bg-primary-foreground/30 transition-colors">
+              Get Started
+            </span>
           </div>
         </div>
       </Link>
