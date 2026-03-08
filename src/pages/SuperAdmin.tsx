@@ -271,9 +271,9 @@ const SuperAdmin = () => {
 
         {/* Dashboard Content */}
         {activeNav === "dashboard" && (
-          <div className="p-6 space-y-6">
+          <div className="p-4 md:p-6 pb-20 md:pb-6 space-y-6">
             {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {/* Listing Trend Card */}
               <div className="bg-card rounded-2xl p-5 border border-border col-span-1 lg:col-span-2">
                 <div className="flex items-center justify-between mb-4">
