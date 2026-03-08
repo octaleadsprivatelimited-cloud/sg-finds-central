@@ -20,6 +20,11 @@ export interface Listing {
   lat?: number;
   lng?: number;
   createdAt?: any;
+  verified?: boolean;
+  featured?: boolean;
+  rating?: number;
+  reviewCount?: number;
+  city?: string;
 }
 
 interface ListingCardProps {
