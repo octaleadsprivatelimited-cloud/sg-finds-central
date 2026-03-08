@@ -26,6 +26,27 @@ const AddListing = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [hasExistingListing, setHasExistingListing] = useState(false);
+  const [checkingExisting, setCheckingExisting] = useState(true);
+
+  // Check if user already has a listing
+  useEffect(() => {
+    const checkExisting = async () => {
+      if (!user) {
+        setCheckingExisting(false);
+        return;
+      }
+      try {
+        const q = query(collection(db, "listings"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        setHasExistingListing(!snap.empty);
+      } catch {
+        // Allow submission if check fails
+      }
+      setCheckingExisting(false);
+    };
+    checkExisting();
+  }, [user]);
 
   // Step 1
   const [name, setName] = useState("");
