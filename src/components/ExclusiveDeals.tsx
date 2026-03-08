@@ -23,18 +23,18 @@ const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
   if (dealsListings.length === 0) return null;
 
   return (
-    <section className="mb-10">
-      <div className="flex items-center gap-2.5 mb-5">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
-          <Percent className="w-4 h-4 text-emerald-600" />
+    <section className="mb-6 md:mb-10">
+      <div className="flex items-center gap-2 md:gap-2.5 mb-3 md:mb-5">
+        <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
+          <Percent className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-foreground">Exclusive Deals This Week</h2>
-          <p className="text-xs text-muted-foreground">Special offers from top businesses</p>
+          <h2 className="text-base md:text-lg font-bold text-foreground">Exclusive Deals This Week</h2>
+          <p className="text-[10px] md:text-xs text-muted-foreground">Special offers from top businesses</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 md:gap-4">
         {dealsListings.slice(0, 6).map((listing) => {
           const activeOffers = listing.offers!.filter(
             (o) => !o.validUntil || o.validUntil >= now
