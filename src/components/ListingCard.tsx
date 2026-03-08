@@ -17,6 +17,14 @@ export interface OperatingHours {
   [key: string]: { open: string; close: string; closed?: boolean };
 }
 
+export interface SpecialHours {
+  date: string; // YYYY-MM-DD
+  label: string; // e.g. "Christmas", "CNY Day 1"
+  open: string;
+  close: string;
+  closed?: boolean;
+}
+
 export const DEFAULT_OPERATING_HOURS: OperatingHours = {
   Monday: { open: "09:00", close: "18:00" },
   Tuesday: { open: "09:00", close: "18:00" },
