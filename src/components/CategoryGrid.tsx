@@ -58,13 +58,13 @@ const CategoryGrid = () => {
             onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
             className="group flex flex-col items-center gap-1 md:gap-2 p-1.5 md:p-3 rounded-lg md:rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
           >
-            <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+            <div className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center">
               <img
                 src={cat.image}
                 alt={cat.name}
-                width={32}
-                height={32}
-                className="w-5 h-5 md:w-8 md:h-8 object-contain"
+                width={40}
+                height={40}
+                className="w-8 h-8 md:w-11 md:h-11 object-contain"
                 loading="eager"
                 decoding="async"
               />
