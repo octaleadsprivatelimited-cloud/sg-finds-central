@@ -81,6 +81,22 @@ const SuperAdmin = () => {
   const [selectedUser, setSelectedUser] = useState<PlatformUser | null>(null);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Fetch all listings from Firestore
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const snap = await getDocs(collection(db, "listings"));
+        if (!snap.empty) {
+          setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+        }
+      } catch {
+        // Fall back to demo data
+      }
+    };
+    fetchListings();
+  }, []);
 
   // Stats
   const totalUsers = users.length;
