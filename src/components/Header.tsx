@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown, Sun, Moon, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import SearchWithSuggestions from "./SearchWithSuggestions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useSearch } from "@/contexts/SearchContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
@@ -13,7 +12,6 @@ import AuthModal from "./AuthModal";
 const Header = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { searchQuery, setSearchQuery } = useSearch();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -44,12 +42,7 @@ const Header = () => {
                 <div className="flex items-center justify-center w-8 h-9 shrink-0">
                   <MapPin className="w-3.5 h-3.5 text-accent" />
                 </div>
-                <Input
-                  placeholder="Search businesses..."
-                  className="h-9 border-0 bg-transparent pl-0 pr-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <SearchWithSuggestions compact placeholder="Search businesses..." />
               </div>
             </div>
           )}
