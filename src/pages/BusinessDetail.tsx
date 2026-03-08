@@ -7,6 +7,7 @@ import ReviewSection from "@/components/ReviewSection";
 import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
+import { DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { toSlug } from "@/lib/url-helpers";
 import PhotoGallery from "@/components/business-detail/PhotoGallery";
 import BusinessHeader from "@/components/business-detail/BusinessHeader";
@@ -62,6 +63,14 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
     verified: true, featured: true, rating: 4.5, reviewCount: 156,
   },
 ];
+
+const formatTime = (time: string) => {
+  if (!time) return "";
+  const [h, m] = time.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
+};
 
 const BusinessDetail = () => {
   const { areaSlug, categorySlug, businessSlug } = useParams<{
@@ -160,18 +169,22 @@ const BusinessDetail = () => {
                     Operating Hours
                   </h3>
                   <div className="space-y-2 text-sm">
-                    {[
-                      { day: "Mon – Fri", time: "9:00 AM – 6:00 PM" },
-                      { day: "Saturday", time: "10:00 AM – 4:00 PM" },
-                      { day: "Sunday", time: "Closed" },
-                    ].map(({ day, time }) => (
-                      <div key={day} className="flex items-center justify-between max-w-xs">
-                        <span className="text-muted-foreground">{day}</span>
-                        <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>
-                          {time}
-                        </span>
-                      </div>
-                    ))}
+                    {(() => {
+                      const hours = listing.operatingHours || DEFAULT_OPERATING_HOURS;
+                      return Object.entries(hours).map(([day, info]) => {
+                        const time = info.closed
+                          ? "Closed"
+                          : `${formatTime(info.open)} – ${formatTime(info.close)}`;
+                        return (
+                          <div key={day} className="flex items-center justify-between max-w-xs">
+                            <span className="text-muted-foreground">{day}</span>
+                            <span className={`font-medium ${time === "Closed" ? "text-destructive" : "text-foreground"}`}>
+                              {time}
+                            </span>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
               </TabsContent>

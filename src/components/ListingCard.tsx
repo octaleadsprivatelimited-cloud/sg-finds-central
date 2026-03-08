@@ -13,6 +13,20 @@ export interface ListingOffer {
   code?: string;
 }
 
+export interface OperatingHours {
+  [key: string]: { open: string; close: string; closed?: boolean };
+}
+
+export const DEFAULT_OPERATING_HOURS: OperatingHours = {
+  Monday: { open: "09:00", close: "18:00" },
+  Tuesday: { open: "09:00", close: "18:00" },
+  Wednesday: { open: "09:00", close: "18:00" },
+  Thursday: { open: "09:00", close: "18:00" },
+  Friday: { open: "09:00", close: "18:00" },
+  Saturday: { open: "10:00", close: "16:00" },
+  Sunday: { open: "", close: "", closed: true },
+};
+
 export interface Listing {
   id: string;
   name: string;
@@ -40,6 +54,7 @@ export interface Listing {
   customSlug?: string;
   logoUrl?: string;
   offers?: ListingOffer[];
+  operatingHours?: OperatingHours;
 }
 
 interface ListingCardProps {
