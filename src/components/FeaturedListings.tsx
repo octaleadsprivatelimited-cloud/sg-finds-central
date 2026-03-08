@@ -60,19 +60,19 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
               
               <div className="relative">
                 <div className="flex items-center gap-2.5 mb-2">
-                  <div className={`${compact ? "w-9 h-9" : "w-11 h-11"} rounded-xl bg-gradient-to-br ${accentColor.replace('bg-', 'from-')}/20 to-transparent flex items-center justify-center overflow-hidden border border-border/30`}>
+                  <div className={`${compact ? "w-9 h-9 border-white/20" : "w-11 h-11 border-border/30"} rounded-xl bg-gradient-to-br ${accentColor.replace('bg-', 'from-')}/20 to-transparent flex items-center justify-center overflow-hidden border`}>
                     {listing.logoUrl ? (
                       <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
                     ) : (
-                      <span className={`${compact ? "text-base" : "text-lg"} font-bold text-primary`}>{listing.name.charAt(0)}</span>
+                      <span className={`${compact ? "text-base font-bold text-white" : "text-lg font-bold text-primary"}`}>{listing.name.charAt(0)}</span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="font-semibold text-foreground truncate text-sm group-hover:text-primary transition-colors">{listing.name}</h3>
+                      <h3 className={`font-semibold truncate text-sm transition-colors ${compact ? "text-white group-hover:text-white/80" : "text-foreground group-hover:text-primary"}`}>{listing.name}</h3>
                       {listing.verified && <VerifiedBadge size="sm" />}
                     </div>
-                    <Badge variant="secondary" className="text-[10px] mt-0.5">{listing.category}</Badge>
+                    <Badge variant="secondary" className={`text-[10px] mt-0.5 ${compact ? "bg-white/15 text-white/80 border-white/10" : ""}`}>{listing.category}</Badge>
                   </div>
                 </div>
                 {!compact && (
