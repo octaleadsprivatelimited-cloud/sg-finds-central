@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   ArrowLeft, MapPin, Phone, Globe, Mail, MessageCircle, Star, Clock,
@@ -14,8 +14,9 @@ import OffersSection, { type Offer } from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
 import { toast } from "sonner";
+import { toSlug } from "@/lib/url-helpers";
 
-// Demo listings (same as Index.tsx for now — in production Firestore lookup)
+// Demo listings
 const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
     id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
@@ -64,17 +65,24 @@ const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?
   },
 ];
 
-const toSlug = (name: string) =>
-  name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
 const BusinessDetail = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { areaSlug, categorySlug, businessSlug } = useParams<{
+    areaSlug: string;
+    categorySlug: string;
+    businessSlug: string;
+  }>();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const listing = useMemo(
-    () => ALL_LISTINGS.find((l) => toSlug(l.name) === slug),
-    [slug]
+    () =>
+      ALL_LISTINGS.find((l) => {
+        const matchArea = toSlug(l.district) === areaSlug;
+        const matchCategory = toSlug(l.category) === categorySlug;
+        const matchBusiness = (l.customSlug || toSlug(l.name)) === businessSlug;
+        return matchArea && matchCategory && matchBusiness;
+      }),
+    [areaSlug, categorySlug, businessSlug]
   );
 
   if (!listing) {
@@ -90,7 +98,7 @@ const BusinessDetail = () => {
     );
   }
 
-  const shareUrl = `${window.location.origin}/business/${slug}`;
+  const shareUrl = `${window.location.origin}/${areaSlug}/${categorySlug}/${businessSlug}`;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -114,7 +122,11 @@ const BusinessDetail = () => {
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-primary transition-colors">Directory</Link>
               <span>/</span>
-              <Link to={`/singapore/${listing.category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="hover:text-primary transition-colors">
+              <Link to={`/${areaSlug}`} className="hover:text-primary transition-colors">
+                {listing.district}
+              </Link>
+              <span>/</span>
+              <Link to={`/${areaSlug}/${categorySlug}`} className="hover:text-primary transition-colors">
                 {listing.category}
               </Link>
               <span>/</span>
@@ -193,10 +205,10 @@ const BusinessDetail = () => {
                   href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 transition-colors"
                 >
                   <MessageCircle className="w-5 h-5 text-emerald-600" />
-                  <span className="text-xs font-medium text-emerald-700">WhatsApp</span>
+                  <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">WhatsApp</span>
                 </a>
               )}
               {listing.email && (

@@ -158,7 +158,7 @@ const CityCategory = () => {
                   <ListingCard
                     key={listing.id}
                     listing={listing}
-                    onSelect={(l) => navigate(`/business/${toSlug(l.name)}`)}
+                    onSelect={(l) => navigate(getBusinessUrl(l))}
                   />
                 ))}
               </div>
