@@ -124,7 +124,7 @@ const Index = () => {
           <div className="flex flex-col lg:flex-row lg:gap-8">
             {/* Left block — Hero content */}
             <div className="flex-1 min-w-0 lg:max-w-[55%]">
-              <h1 className="text-xl md:text-4xl font-bold tracking-tight text-white mb-1 md:mb-2 leading-tight drop-shadow-sm">
+              <h1 className="hidden lg:block text-xl md:text-4xl font-bold tracking-tight text-white mb-1 md:mb-2 leading-tight drop-shadow-sm">
                 Find the best businesses{" "}
                 <span className="text-white/80">in Singapore</span>
               </h1>
@@ -190,10 +190,7 @@ const Index = () => {
           </div>
         )}
 
-        {/* Featured on mobile/tablet (below hero) */}
-        <div className="lg:hidden">
-          <FeaturedListings listings={filtered} />
-        </div>
+        {/* Featured on mobile/tablet — hidden */}
 
         <ExclusiveDeals listings={filtered} />
 
