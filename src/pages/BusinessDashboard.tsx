@@ -61,6 +61,21 @@ const BusinessDashboard = () => {
   const [viewingListing, setViewingListing] = useState<Listing | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Featured ticket state
+  const [featuredTicketReason, setFeaturedTicketReason] = useState("");
+  const [featuredTicketLoading, setFeaturedTicketLoading] = useState(false);
+  const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
+  const [selectedListingForFeatured, setSelectedListingForFeatured] = useState("");
+
+  // Offers state
+  const [offerListingId, setOfferListingId] = useState("");
+  const [offerTitle, setOfferTitle] = useState("");
+  const [offerDescription, setOfferDescription] = useState("");
+  const [offerDiscount, setOfferDiscount] = useState("");
+  const [offerValidUntil, setOfferValidUntil] = useState("");
+  const [offerCode, setOfferCode] = useState("");
+  const [offerSaving, setOfferSaving] = useState(false);
+
   // Load user's listings from Firestore
   useEffect(() => {
     const fetchMyListings = async () => {
