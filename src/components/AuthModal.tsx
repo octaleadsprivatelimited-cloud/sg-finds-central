@@ -320,7 +320,6 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </button>
           </p>
         )}
-        </div>
       </DialogContent>
     </Dialog>
   );
