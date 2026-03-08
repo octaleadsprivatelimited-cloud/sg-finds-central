@@ -44,7 +44,7 @@ const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
           return (
             <div
               key={listing.id}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+              className="group relative overflow-hidden rounded-xl md:rounded-2xl border border-border bg-card p-3.5 md:p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
               onClick={() => navigate(getBusinessUrl(listing))}
             >
               {/* Decorative */}

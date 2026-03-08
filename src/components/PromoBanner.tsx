@@ -90,13 +90,13 @@ const PromoBanner = () => {
                   Featured
                 </span>
               </div>
-              <h3 className="text-white font-bold text-xl md:text-3xl leading-tight mb-2 max-w-lg">
+              <h3 className="text-white font-bold text-base md:text-3xl leading-tight mb-1 md:mb-2 max-w-lg">
                 {banner.title}
               </h3>
-              <p className="text-white/80 text-sm md:text-base mb-4 max-w-md">
+              <p className="text-white/80 text-xs md:text-base mb-2.5 md:mb-4 max-w-md line-clamp-2">
                 {banner.subtitle}
               </p>
-              <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-foreground font-semibold text-sm hover:bg-white/90 transition-colors shadow-lg">
+              <button className="inline-flex items-center gap-1.5 px-3.5 md:px-5 py-1.5 md:py-2.5 rounded-full bg-white text-foreground font-semibold text-xs md:text-sm hover:bg-white/90 transition-colors shadow-lg">
                 {banner.cta}
               </button>
             </div>

@@ -42,16 +42,16 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
                 />
               </div>
             )}
-            <div className="p-4">
-              <div className="flex items-center gap-2 mb-1.5">
-                <h3 className="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">
+            <div className="p-2.5 md:p-4">
+              <div className="flex items-center gap-1.5 mb-1">
+                <h3 className="font-semibold text-xs md:text-sm text-foreground truncate group-hover:text-primary transition-colors">
                   {listing.name}
                 </h3>
                 {listing.verified && <VerifiedBadge size="sm" />}
               </div>
-              <Badge variant="secondary" className="text-[10px] mb-2">{listing.category}</Badge>
+              <Badge variant="secondary" className="text-[9px] md:text-[10px] mb-1.5 md:mb-2">{listing.category}</Badge>
               {listing.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{listing.description}</p>
+                <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-1 md:line-clamp-2 mb-2 md:mb-3">{listing.description}</p>
               )}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
