@@ -395,15 +395,15 @@ const SuperAdmin = () => {
           <div className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search users by name or email..."
-                  className="pl-10 bg-white border-slate-200"
+                  className="pl-10"
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
                 />
               </div>
-              <p className="text-sm text-slate-500">{filteredUsers.length} users</p>
+              <p className="text-sm text-muted-foreground">{filteredUsers.length} users</p>
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
