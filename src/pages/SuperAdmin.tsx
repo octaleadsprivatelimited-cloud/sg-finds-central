@@ -505,7 +505,7 @@ const SuperAdmin = () => {
                     variant={listingFilter === f ? "default" : "outline"}
                     size="sm"
                     onClick={() => setListingFilter(f)}
-                    className={listingFilter === f ? "" : "bg-white"}
+                    className={listingFilter === f ? "" : ""}
                   >
                     {f === "all" ? "All" : f === "pending_approval" ? "Pending" : f.charAt(0).toUpperCase() + f.slice(1)}
                   </Button>
