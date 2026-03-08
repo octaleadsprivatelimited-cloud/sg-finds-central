@@ -183,7 +183,11 @@ const Index = () => {
       {!hasActiveFilters && <PromoBanner />}
 
       {/* Category Grid */}
-      {!hasActiveFilters && <CategoryGrid />}
+      {!hasActiveFilters && (
+        <div className="hidden lg:block">
+          <CategoryGrid />
+        </div>
+      )}
 
       {/* Results */}
       <section className="container mx-auto px-4 py-8">
