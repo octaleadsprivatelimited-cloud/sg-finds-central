@@ -204,14 +204,14 @@ const SuperAdmin = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6">
+        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
           <div>
-            <h1 className="text-xl font-semibold text-slate-800">Analytics</h1>
+            <h1 className="text-xl font-semibold text-foreground">Analytics</h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex bg-slate-100 rounded-lg p-1">
-              <button className="px-3 py-1.5 text-sm font-medium bg-white rounded-md shadow-sm text-slate-800">Full Statistics</button>
-              <button className="px-3 py-1.5 text-sm font-medium text-slate-500">Sender Summary</button>
+            <div className="flex bg-muted rounded-lg p-1">
+              <button className="px-3 py-1.5 text-sm font-medium bg-card rounded-md shadow-sm text-foreground">Full Statistics</button>
+              <button className="px-3 py-1.5 text-sm font-medium text-muted-foreground">Sender Summary</button>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
