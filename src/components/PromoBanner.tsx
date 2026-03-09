@@ -1,14 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import banner1 from "@/assets/banners/banner1.jpg";
+import banner2 from "@/assets/banners/banner2.jpg";
+import banner3 from "@/assets/banners/banner3.jpg";
+import banner4 from "@/assets/banners/banner4.jpg";
 
 interface Banner {
   id: string;
   title: string;
   subtitle: string;
   cta: string;
-  gradient: string;
-  accent: string;
+  image: string;
 }
 
 const BANNERS: Banner[] = [
@@ -17,32 +20,28 @@ const BANNERS: Banner[] = [
     title: "Find Curated Offerings For You",
     subtitle: "Discover top-rated businesses handpicked by our editors",
     cta: "Explore Now",
-    gradient: "from-indigo-600 via-blue-600 to-violet-700",
-    accent: "bg-white/20",
+    image: banner1,
   },
   {
     id: "2",
     title: "List Your Business for Free",
     subtitle: "Reach thousands of customers across Singapore — zero cost to get started",
     cta: "Add Listing",
-    gradient: "from-emerald-600 via-teal-600 to-cyan-700",
-    accent: "bg-white/20",
+    image: banner2,
   },
   {
     id: "3",
     title: "Verified & Trusted Businesses",
     subtitle: "All our featured businesses are UEN-verified for your peace of mind",
     cta: "Browse Verified",
-    gradient: "from-orange-500 via-red-500 to-pink-600",
-    accent: "bg-white/20",
+    image: banner3,
   },
   {
     id: "4",
     title: "Exclusive Deals This Week",
     subtitle: "Save up to 50% with partner businesses — limited time offers",
     cta: "View Deals",
-    gradient: "from-fuchsia-600 via-purple-600 to-indigo-700",
-    accent: "bg-white/20",
+    image: banner4,
   },
 ];
 
@@ -74,26 +73,28 @@ const PromoBanner = () => {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Banner */}
-          <div
-            className={`relative bg-gradient-to-r ${banner.gradient} p-4 md:p-10 min-h-[120px] md:min-h-[200px] flex items-center transition-all duration-500`}
-          >
-            {/* Decorative shapes */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
-            <div className="absolute bottom-0 left-1/3 w-40 h-40 bg-white/5 rounded-full translate-y-1/2" />
-            <div className="absolute top-1/2 right-1/4 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2" />
+          {/* Banner with background image */}
+          <div className="relative h-[140px] md:h-[220px] flex items-center transition-all duration-500">
+            {/* Background image */}
+            <img
+              src={banner.image}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+            />
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0 bg-black/30" />
 
-            <div className="relative z-10 flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-white/80" />
-                <span className="text-white/70 text-xs font-medium uppercase tracking-wider">
+            <div className="relative z-10 flex-1 px-5 md:px-10">
+              <div className="flex items-center gap-2 mb-1.5 md:mb-2">
+                <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/80" />
+                <span className="text-white/70 text-[10px] md:text-xs font-medium uppercase tracking-wider">
                   Featured
                 </span>
               </div>
-              <h3 className="text-white font-bold text-base md:text-3xl leading-tight mb-1 md:mb-2 max-w-lg">
+              <h3 className="text-white font-bold text-lg md:text-3xl leading-tight mb-1 md:mb-2 max-w-lg drop-shadow-lg">
                 {banner.title}
               </h3>
-              <p className="text-white/80 text-xs md:text-base mb-2.5 md:mb-4 max-w-md line-clamp-2">
+              <p className="text-white/85 text-xs md:text-base mb-2.5 md:mb-4 max-w-md line-clamp-2 drop-shadow">
                 {banner.subtitle}
               </p>
               <button className="inline-flex items-center gap-1.5 px-3.5 md:px-5 py-1.5 md:py-2.5 rounded-full bg-white text-foreground font-semibold text-xs md:text-sm hover:bg-white/90 transition-colors shadow-lg">
@@ -106,7 +107,7 @@ const PromoBanner = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm"
+            className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 md:h-8 md:w-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm border-0"
             onClick={prev}
           >
             <ChevronLeft className="w-4 h-4" />
@@ -114,22 +115,22 @@ const PromoBanner = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm"
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 md:h-8 md:w-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm border-0"
             onClick={next}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
 
           {/* Dots */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+          <div className="absolute bottom-2.5 md:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
             {BANNERS.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
                 className={`rounded-full transition-all duration-300 ${
                   i === current
-                    ? "w-6 h-2 bg-white"
-                    : "w-2 h-2 bg-white/40 hover:bg-white/60"
+                    ? "w-5 md:w-6 h-1.5 md:h-2 bg-white"
+                    : "w-1.5 md:w-2 h-1.5 md:h-2 bg-white/40 hover:bg-white/60"
                 }`}
               />
             ))}
