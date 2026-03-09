@@ -13,6 +13,8 @@ interface FeaturedListingsProps {
 const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) => {
   const navigate = useNavigate();
   const featured = listings.filter((l) => l.featured);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const displayCount = compact ? 4 : isMobile ? 4 : 8;
 
   if (featured.length === 0) return null;
 
@@ -26,7 +28,7 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
         <Badge variant="secondary" className="text-[10px] md:text-xs">Sponsored</Badge>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-        {featured.slice(0, compact ? 4 : 8).map((listing) => (
+        {featured.slice(0, displayCount).map((listing) => (
           <div
             key={listing.id}
             className="group relative overflow-hidden rounded-xl border border-border bg-card cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
