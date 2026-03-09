@@ -127,7 +127,13 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
               setActiveMarker(listing.id);
               onSelectListing?.(listing);
             }}
-            opacity={selectedId === listing.id ? 1 : 0.9}
+            onMouseOver={() => onHoverListing?.(listing.id)}
+            onMouseOut={() => onHoverListing?.(null)}
+            opacity={hoveredId === listing.id || selectedId === listing.id ? 1 : 0.7}
+            icon={hoveredId === listing.id ? {
+              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              scaledSize: (window as any).google?.maps ? new (window as any).google.maps.Size(44, 44) : undefined,
+            } : undefined}
           >
             {activeMarker === listing.id && activeListing && (
               <InfoWindowF
