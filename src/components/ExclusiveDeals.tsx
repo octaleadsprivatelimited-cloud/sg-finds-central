@@ -107,64 +107,72 @@ const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
           return (
             <div
               key={listing.id}
-              className={`group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br ${color.bg} p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-200`}
+              className="group relative overflow-hidden rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-200 min-h-[260px] flex flex-col justify-between"
               onClick={() => navigate(getBusinessUrl(listing))}
             >
-              <div className={`absolute top-0 right-0 w-24 h-24 ${color.glow} rounded-full -translate-y-1/2 translate-x-1/3 blur-xl`} />
+              {/* Cover image background */}
+              {listing.coverImage && (
+                <img
+                  src={listing.coverImage}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              )}
+              {/* Color overlay */}
+              <div className={`absolute inset-0 ${color.solid} ${listing.coverImage ? "opacity-65" : "opacity-100"}`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-              <div className="relative">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-background/80 flex items-center justify-center overflow-hidden border border-border/30 shadow-sm">
-                    {listing.logoUrl ? (
-                      <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className={`text-base font-bold ${color.accent}`}>{listing.name.charAt(0)}</span>
-                    )}
+              {/* Top content */}
+              <div className="relative z-10 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden border border-white/20">
+                      {listing.logoUrl ? (
+                        <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-base font-bold text-white">{listing.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-white truncate text-sm group-hover:text-white/90 transition-colors">
+                        {listing.name}
+                      </h3>
+                      <p className="text-xs text-white/70">{listing.category}</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground truncate text-sm group-hover:text-primary transition-colors">
-                      {listing.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">{listing.category}</p>
-                  </div>
-                  <Badge className={`${color.badge} border-transparent font-bold shrink-0`}>
+                  <Badge className="bg-white/20 text-white border-transparent font-bold backdrop-blur-sm">
                     {topOffer.discount}
                   </Badge>
                 </div>
 
-                <div className="bg-background/60 backdrop-blur-sm rounded-lg p-3 mb-3">
+                <div className="bg-white/15 backdrop-blur-sm rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <Gift className={`w-3.5 h-3.5 ${color.icon}`} />
-                    <span className="text-sm font-medium text-foreground">{topOffer.title}</span>
+                    <Gift className="w-3.5 h-3.5 text-white/80" />
+                    <span className="text-sm font-medium text-white">{topOffer.title}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{topOffer.description}</p>
+                  <p className="text-xs text-white/70 line-clamp-2">{topOffer.description}</p>
                 </div>
+              </div>
 
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-3">
-                    {topOffer.validUntil && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        Until {topOffer.validUntil}
-                      </span>
-                    )}
-                    {topOffer.code && (
-                      <span className="flex items-center gap-1 font-mono bg-background/80 px-2 py-0.5 rounded border border-border/50">
-                        <Tag className="w-3 h-3" />
-                        {topOffer.code}
-                      </span>
-                    )}
-                  </div>
-                  <div className={`flex items-center gap-1 ${color.accent} font-medium opacity-0 group-hover:opacity-100 transition-opacity`}>
-                    View <ArrowRight className="w-3 h-3" />
-                  </div>
+              {/* Bottom content */}
+              <div className="relative z-10 p-5 pt-0 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-xs text-white/70">
+                  {topOffer.validUntil && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      Until {topOffer.validUntil}
+                    </span>
+                  )}
+                  {topOffer.code && (
+                    <span className="font-mono bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full text-white/80">
+                      <Tag className="w-3 h-3 inline mr-1" />
+                      {topOffer.code}
+                    </span>
+                  )}
                 </div>
-
-                {activeOffers.length > 1 && (
-                  <p className={`text-xs ${color.accent} mt-2 font-medium`}>
-                    +{activeOffers.length - 1} more offer{activeOffers.length > 2 ? "s" : ""}
-                  </p>
-                )}
+                <div className="flex items-center gap-1 text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  View <ArrowRight className="w-3 h-3" />
+                </div>
               </div>
             </div>
           );
