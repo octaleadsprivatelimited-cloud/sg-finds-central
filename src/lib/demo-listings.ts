@@ -28,14 +28,48 @@ import construction1 from "@/assets/businesses/construction1.jpg";
 // Gallery images
 import food1b from "@/assets/businesses/food1-b.jpg";
 import food1c from "@/assets/businesses/food1-c.jpg";
+import food2b from "@/assets/businesses/food2-b.jpg";
+import food2c from "@/assets/businesses/food2-c.jpg";
 import tech1b from "@/assets/businesses/tech1-b.jpg";
 import tech1c from "@/assets/businesses/tech1-c.jpg";
+import tech2b from "@/assets/businesses/tech2-b.jpg";
+import tech2c from "@/assets/businesses/tech2-c.jpg";
 import beauty1b from "@/assets/businesses/beauty1-b.jpg";
 import beauty1c from "@/assets/businesses/beauty1-c.jpg";
+import beauty2b from "@/assets/businesses/beauty2-b.jpg";
+import beauty2c from "@/assets/businesses/beauty2-c.jpg";
 import education1b from "@/assets/businesses/education1-b.jpg";
 import education1c from "@/assets/businesses/education1-c.jpg";
+import education2b from "@/assets/businesses/education2-b.jpg";
+import education2c from "@/assets/businesses/education2-c.jpg";
 import home1b from "@/assets/businesses/home1-b.jpg";
 import home1c from "@/assets/businesses/home1-c.jpg";
+import home2b from "@/assets/businesses/home2-b.jpg";
+import home2c from "@/assets/businesses/home2-c.jpg";
+import retail1b from "@/assets/businesses/retail1-b.jpg";
+import retail1c from "@/assets/businesses/retail1-c.jpg";
+import retail2b from "@/assets/businesses/retail2-b.jpg";
+import retail2c from "@/assets/businesses/retail2-c.jpg";
+import healthcare1b from "@/assets/businesses/healthcare1-b.jpg";
+import healthcare1c from "@/assets/businesses/healthcare1-c.jpg";
+import healthcare2b from "@/assets/businesses/healthcare2-b.jpg";
+import healthcare2c from "@/assets/businesses/healthcare2-c.jpg";
+import professional1b from "@/assets/businesses/professional1-b.jpg";
+import professional1c from "@/assets/businesses/professional1-c.jpg";
+import auto1b from "@/assets/businesses/auto1-b.jpg";
+import auto1c from "@/assets/businesses/auto1-c.jpg";
+import realestate1b from "@/assets/businesses/realestate1-b.jpg";
+import realestate1c from "@/assets/businesses/realestate1-c.jpg";
+import legal1b from "@/assets/businesses/legal1-b.jpg";
+import legal1c from "@/assets/businesses/legal1-c.jpg";
+import financial1b from "@/assets/businesses/financial1-b.jpg";
+import financial1c from "@/assets/businesses/financial1-c.jpg";
+import logistics1b from "@/assets/businesses/logistics1-b.jpg";
+import logistics1c from "@/assets/businesses/logistics1-c.jpg";
+import events1b from "@/assets/businesses/events1-b.jpg";
+import events1c from "@/assets/businesses/events1-c.jpg";
+import construction1b from "@/assets/businesses/construction1-b.jpg";
+import construction1c from "@/assets/businesses/construction1-c.jpg";
 
 export const GALLERY_MAP: Record<string, string[]> = {
   "1": [food1, food1b, food1c],
@@ -43,23 +77,23 @@ export const GALLERY_MAP: Record<string, string[]> = {
   "3": [beauty1, beauty1b, beauty1c],
   "4": [education1, education1b, education1c],
   "5": [home1, home1b, home1c],
-  "1b": [food2],
-  "6": [retail1],
-  "6b": [retail2],
-  "7": [healthcare1],
-  "7b": [healthcare2],
-  "4b": [education2],
-  "8": [professional1],
-  "3b": [beauty2],
-  "5b": [home2],
-  "9": [auto1],
-  "2b": [tech2],
-  "10": [realestate1],
-  "11": [legal1],
-  "12": [financial1],
-  "13": [logistics1],
-  "14": [events1],
-  "15": [construction1],
+  "1b": [food2, food2b, food2c],
+  "6": [retail1, retail1b, retail1c],
+  "6b": [retail2, retail2b, retail2c],
+  "7": [healthcare1, healthcare1b, healthcare1c],
+  "7b": [healthcare2, healthcare2b, healthcare2c],
+  "4b": [education2, education2b, education2c],
+  "8": [professional1, professional1b, professional1c],
+  "3b": [beauty2, beauty2b, beauty2c],
+  "5b": [home2, home2b, home2c],
+  "9": [auto1, auto1b, auto1c],
+  "2b": [tech2, tech2b, tech2c],
+  "10": [realestate1, realestate1b, realestate1c],
+  "11": [legal1, legal1b, legal1c],
+  "12": [financial1, financial1b, financial1c],
+  "13": [logistics1, logistics1b, logistics1c],
+  "14": [events1, events1b, events1c],
+  "15": [construction1, construction1b, construction1c],
 };
 
 export const DEMO_LISTINGS: Listing[] = [
