@@ -1,4 +1,4 @@
-import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check } from "lucide-react";
+import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -28,76 +28,72 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Name + badges */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            {listing.logoUrl ? (
-              <img src={listing.logoUrl} alt={listing.name} className="w-12 h-12 rounded-xl object-cover border border-border" />
-            ) : (
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <span className="text-xl font-bold text-primary">{listing.name.charAt(0)}</span>
+    <div className="space-y-6">
+      {/* Name + badges — Apple-style large title */}
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-3">
+            <div className="flex items-center gap-4">
+              {listing.logoUrl ? (
+                <img src={listing.logoUrl} alt={listing.name} className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-border/50 shadow-sm" />
+              ) : (
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center shadow-sm">
+                  <span className="text-2xl font-bold text-primary">{listing.name.charAt(0)}</span>
+                </div>
+              )}
+              <div>
+                <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">{listing.name}</h1>
+                <div className="flex items-center gap-2 mt-1">
+                  {listing.verified && <VerifiedBadge size="md" />}
+                  {listing.featured && (
+                    <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-[11px] font-semibold">⭐ Featured</Badge>
+                  )}
+                </div>
               </div>
-            )}
-            <h1 className="text-lg sm:text-2xl font-bold text-foreground">{listing.name}</h1>
-            {listing.verified && <VerifiedBadge size="md" />}
-            {listing.featured && (
-              <Badge className="bg-warning/10 text-warning border-warning/20 text-xs">⭐ Featured</Badge>
-            )}
+            </div>
           </div>
 
-          {/* Rating + meta */}
-          <div className="flex items-center gap-4 flex-wrap">
-            {listing.rating && (
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-success text-success-foreground text-sm font-semibold">
-                  {listing.rating} <Star className="w-3.5 h-3.5 fill-current" />
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {listing.reviewCount} Ratings
-                </span>
-              </div>
-            )}
-            {listing.verified && (
-              <span className="text-sm font-semibold text-primary">✓ Verified</span>
-            )}
-          </div>
-
-          {/* Location + hours */}
-          <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
-            <span className="flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5" />
-              {listing.district}
-            </span>
-            <span className="text-border">•</span>
-            <span className="flex items-center gap-1 text-success">
-              <Clock className="w-3.5 h-3.5" />
-              Open now
-            </span>
-          </div>
-
-          {/* Category tags */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="secondary">{listing.category}</Badge>
+          <div className="flex gap-1.5 shrink-0">
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-secondary" onClick={handleShare}>
+              {copied ? <Check className="w-4 h-4 text-primary" /> : <Share2 className="w-4 h-4 text-muted-foreground" />}
+            </Button>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-secondary">
+              <Bookmark className="w-4 h-4 text-muted-foreground" />
+            </Button>
           </div>
         </div>
 
-        <div className="flex gap-2 shrink-0">
-          <Button variant="outline" size="icon" className="h-9 w-9" onClick={handleShare}>
-            {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-          </Button>
-          <Button variant="outline" size="icon" className="h-9 w-9">
-            <Bookmark className="w-4 h-4" />
-          </Button>
+        {/* Rating pill + meta — clean horizontal layout */}
+        <div className="flex items-center gap-3 flex-wrap">
+          {listing.rating && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background text-sm font-bold">
+              {listing.rating}
+              <Star className="w-3.5 h-3.5 fill-current" />
+              <span className="text-xs font-normal opacity-70 ml-0.5">({listing.reviewCount})</span>
+            </div>
+          )}
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5" />
+            <span className="font-medium">{listing.district}</span>
+          </div>
+          <span className="w-1 h-1 rounded-full bg-border" />
+          <div className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Open now
+          </div>
+        </div>
+
+        {/* Category — minimal pill */}
+        <div>
+          <Badge variant="secondary" className="rounded-full px-3.5 py-1 text-xs font-medium">{listing.category}</Badge>
         </div>
       </div>
 
-      {/* CTA buttons - inline on desktop */}
+      {/* CTA buttons - inline on desktop — Apple-style rounded, spacious */}
       <div className="hidden sm:flex items-center gap-3">
         {listing.phone && (
           <a href={`tel:${listing.phone}`}>
-            <Button className="bg-success hover:bg-success/90 text-success-foreground gap-2 font-semibold">
+            <Button className="h-11 rounded-full bg-foreground hover:bg-foreground/90 text-background gap-2.5 font-semibold px-6 text-sm shadow-sm">
               <Phone className="w-4 h-4 shrink-0" />
               {listing.phone}
             </Button>
@@ -105,7 +101,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
         )}
         {listing.email && (
           <a href={`mailto:${listing.email}`}>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-semibold">
+            <Button className="h-11 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2.5 font-semibold px-6 text-sm shadow-sm">
               <Mail className="w-4 h-4 shrink-0" />
               Enquire Now
             </Button>
@@ -113,7 +109,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
         )}
         {listing.whatsapp && (
           <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer">
-            <Button variant="outline" className="gap-2 font-semibold border-success/30 text-success hover:bg-success/10">
+            <Button variant="outline" className="h-11 rounded-full gap-2.5 font-semibold px-6 text-sm border-border hover:bg-secondary">
               <MessageCircle className="w-4 h-4 shrink-0" />
               WhatsApp
             </Button>
@@ -121,12 +117,12 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
         )}
       </div>
 
-      {/* CTA buttons - sticky bottom bar on mobile */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border px-3 py-3 safe-bottom shadow-[0_-4px_20px_-4px_hsl(0_0%_0%/0.15)]">
+      {/* CTA buttons - sticky bottom bar on mobile — frosted glass Apple-style */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-t border-border/50 px-4 py-3 safe-bottom">
         <div className="grid grid-cols-3 gap-2.5">
           {listing.phone && (
             <a href={`tel:${listing.phone}`} className="min-w-0">
-              <Button className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white gap-2 font-bold text-sm shadow-md shadow-emerald-500/25">
+              <Button className="w-full h-[52px] rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5 font-bold text-[13px] shadow-lg shadow-emerald-500/20 transition-all active:scale-95">
                 <Phone className="w-5 h-5 shrink-0" />
                 Call
               </Button>
@@ -134,7 +130,7 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
           )}
           {listing.lat && listing.lng && (
             <a href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
-              <Button className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-bold text-sm shadow-md shadow-primary/25">
+              <Button className="w-full h-[52px] rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-bold text-[13px] shadow-lg shadow-primary/20 transition-all active:scale-95">
                 <MapPin className="w-5 h-5 shrink-0" />
                 Location
               </Button>
@@ -142,8 +138,8 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
           )}
           {listing.whatsapp && (
             <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
-              <Button className="w-full h-12 rounded-xl bg-white hover:bg-emerald-50 border-2 border-emerald-500 text-emerald-600 gap-2 font-bold text-sm shadow-md">
-                <MessageCircle className="w-5 h-5 shrink-0" />
+              <Button className="w-full h-[52px] rounded-2xl bg-card hover:bg-secondary border border-border text-foreground gap-1.5 font-bold text-[13px] shadow-lg transition-all active:scale-95">
+                <MessageCircle className="w-5 h-5 shrink-0 text-emerald-500" />
                 WhatsApp
               </Button>
             </a>

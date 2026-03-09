@@ -23,54 +23,77 @@ const ContactSidebar = ({ listing }: ContactSidebarProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Contact */}
-      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-        <h3 className="font-semibold text-foreground">Contact</h3>
-        <div className="space-y-3 text-sm">
+    <div className="space-y-4">
+      {/* Contact Card */}
+      <div className="rounded-2xl border border-border/60 bg-card p-6 space-y-5">
+        <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Contact</h3>
+        <div className="space-y-4">
           {listing.phone && (
-            <a href={`tel:${listing.phone}`} className="flex items-center gap-3 text-primary hover:underline font-medium">
-              <Phone className="w-4 h-4 shrink-0" />
-              {listing.phone}
+            <a href={`tel:${listing.phone}`} className="flex items-center gap-3.5 group">
+              <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                <Phone className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{listing.phone}</span>
             </a>
           )}
           {listing.email && (
-            <a href={`mailto:${listing.email}`} className="flex items-center gap-3 text-primary hover:underline">
-              <Mail className="w-4 h-4 shrink-0" />
-              Send Enquiry by Email
+            <a href={`mailto:${listing.email}`} className="flex items-center gap-3.5 group">
+              <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                <Mail className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Send Enquiry</span>
             </a>
           )}
           {listing.website && (
-            <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-primary hover:underline">
-              <Globe className="w-4 h-4 shrink-0" />
-              {listing.website.replace(/https?:\/\//, "")}
-              <ExternalLink className="w-3 h-3" />
+            <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3.5 group">
+              <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                <Globe className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                {listing.website.replace(/https?:\/\/(www\.)?/, "")}
+              </span>
+              <ExternalLink className="w-3 h-3 text-muted-foreground shrink-0" />
             </a>
           )}
         </div>
       </div>
 
-      {/* Address */}
-      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-        <h3 className="font-semibold text-foreground">Address</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{listing.address}</p>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="gap-2 text-primary" onClick={getDirections}>
+      {/* Address Card */}
+      <div className="rounded-2xl border border-border/60 bg-card p-6 space-y-4">
+        <h3 className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">Address</h3>
+        <p className="text-sm text-foreground leading-relaxed">{listing.address}</p>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-full gap-2 text-xs font-semibold px-4 hover:bg-secondary"
+            onClick={getDirections}
+          >
             <Navigation className="w-3.5 h-3.5" />
-            Get Directions
+            Directions
           </Button>
-          <Button variant="outline" size="sm" className="gap-2 text-primary" onClick={copyAddress}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-full gap-2 text-xs font-semibold px-4 hover:bg-secondary"
+            onClick={copyAddress}
+          >
             <Copy className="w-3.5 h-3.5" />
             Copy
           </Button>
         </div>
       </div>
 
-      {/* UEN */}
-      <div className="rounded-xl border border-border bg-card p-5 space-y-2">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Building2 className="w-4 h-4" />
-          <span>UEN: {listing.uen}</span>
+      {/* UEN Card */}
+      <div className="rounded-2xl border border-border/60 bg-card p-6">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+          </div>
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">UEN Registration</p>
+            <p className="text-sm font-semibold text-foreground mt-0.5">{listing.uen}</p>
+          </div>
         </div>
       </div>
     </div>
