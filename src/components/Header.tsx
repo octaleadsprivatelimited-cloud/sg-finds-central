@@ -196,7 +196,6 @@ const Header = () => {
                   <span className="px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-extrabold tracking-wide uppercase">$0</span>
                 </span>
               </Link>
-              </Link>
             </nav>
           </div>
         </div>
