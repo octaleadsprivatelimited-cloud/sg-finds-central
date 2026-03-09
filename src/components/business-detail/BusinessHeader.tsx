@@ -132,11 +132,11 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
               </Button>
             </a>
           )}
-          {listing.email && (
-            <a href={`mailto:${listing.email}`} className="min-w-0">
+          {listing.lat && listing.lng && (
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
               <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-semibold text-xs px-2 h-10">
-                <Mail className="w-4 h-4 shrink-0" />
-                Enquire
+                <MapPin className="w-4 h-4 shrink-0" />
+                Location
               </Button>
             </a>
           )}
