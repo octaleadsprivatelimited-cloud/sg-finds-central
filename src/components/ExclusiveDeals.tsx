@@ -9,12 +9,12 @@ interface ExclusiveDealsProps {
 }
 
 const dealColors = [
-  { bg: "from-rose-500/15 to-pink-500/10", accent: "text-rose-600 dark:text-rose-400", badge: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400", icon: "text-rose-500", glow: "bg-rose-500/10" },
-  { bg: "from-violet-500/15 to-purple-500/10", accent: "text-violet-600 dark:text-violet-400", badge: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400", icon: "text-violet-500", glow: "bg-violet-500/10" },
-  { bg: "from-amber-500/15 to-orange-500/10", accent: "text-amber-600 dark:text-amber-400", badge: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400", icon: "text-amber-500", glow: "bg-amber-500/10" },
-  { bg: "from-cyan-500/15 to-teal-500/10", accent: "text-cyan-600 dark:text-cyan-400", badge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400", icon: "text-cyan-500", glow: "bg-cyan-500/10" },
-  { bg: "from-emerald-500/15 to-green-500/10", accent: "text-emerald-600 dark:text-emerald-400", badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400", icon: "text-emerald-500", glow: "bg-emerald-500/10" },
-  { bg: "from-blue-500/15 to-indigo-500/10", accent: "text-blue-600 dark:text-blue-400", badge: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400", icon: "text-blue-500", glow: "bg-blue-500/10" },
+  { bg: "from-rose-500/15 to-pink-500/10", solid: "bg-blue-600", accent: "text-rose-600 dark:text-rose-400", badge: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400", icon: "text-rose-500", glow: "bg-rose-500/10" },
+  { bg: "from-violet-500/15 to-purple-500/10", solid: "bg-indigo-700", accent: "text-violet-600 dark:text-violet-400", badge: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400", icon: "text-violet-500", glow: "bg-violet-500/10" },
+  { bg: "from-amber-500/15 to-orange-500/10", solid: "bg-purple-600", accent: "text-amber-600 dark:text-amber-400", badge: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400", icon: "text-amber-500", glow: "bg-amber-500/10" },
+  { bg: "from-cyan-500/15 to-teal-500/10", solid: "bg-emerald-600", accent: "text-cyan-600 dark:text-cyan-400", badge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400", icon: "text-cyan-500", glow: "bg-cyan-500/10" },
+  { bg: "from-emerald-500/15 to-green-500/10", solid: "bg-sky-600", accent: "text-emerald-600 dark:text-emerald-400", badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400", icon: "text-emerald-500", glow: "bg-emerald-500/10" },
+  { bg: "from-blue-500/15 to-indigo-500/10", solid: "bg-orange-600", accent: "text-blue-600 dark:text-blue-400", badge: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400", icon: "text-blue-500", glow: "bg-blue-500/10" },
 ];
 
 const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
@@ -45,8 +45,8 @@ const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
         </div>
       </div>
 
-      {/* Mobile: horizontal scroll cards | Desktop: grid */}
-      <div className="flex md:hidden gap-2.5 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
+      {/* Mobile: 2-col block grid */}
+      <div className="grid grid-cols-2 gap-2 md:hidden">
         {dealsListings.slice(0, displayCount).map((listing, i) => {
           const color = dealColors[i % dealColors.length];
           const activeOffers = listing.offers!.filter((o) => !o.validUntil || o.validUntil >= now);
@@ -55,54 +55,35 @@ const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
           return (
             <div
               key={listing.id}
-              className={`snap-start shrink-0 w-[72vw] relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br ${color.bg} p-3 cursor-pointer active:scale-[0.98] transition-transform`}
+              className={`relative overflow-hidden rounded-2xl ${color.solid} p-3.5 pb-4 cursor-pointer active:scale-[0.97] transition-transform min-h-[140px] flex flex-col justify-between`}
               onClick={() => navigate(getBusinessUrl(listing))}
             >
-              <div className={`absolute top-0 right-0 w-16 h-16 ${color.glow} rounded-full -translate-y-1/2 translate-x-1/3 blur-xl`} />
-              
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-9 h-9 rounded-xl bg-background/80 flex items-center justify-center overflow-hidden border border-border/30 shadow-sm">
-                    {listing.logoUrl ? (
-                      <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className={`text-sm font-bold ${color.accent}`}>{listing.name.charAt(0)}</span>
-                    )}
+              {/* Logo/image positioned bottom-right */}
+              <div className="absolute bottom-0 right-0 w-20 h-20 opacity-20">
+                {listing.logoUrl ? (
+                  <img src={listing.logoUrl} alt="" className="w-full h-full object-cover rounded-tl-2xl" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Gift className="w-10 h-10 text-white/40" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground truncate text-xs">{listing.name}</h3>
-                    <p className="text-[10px] text-muted-foreground">{listing.category}</p>
-                  </div>
-                  <Badge className={`${color.badge} border-transparent font-bold text-[10px] px-2 py-0.5`}>
-                    {topOffer.discount}
-                  </Badge>
-                </div>
+                )}
+              </div>
 
-                <div className="bg-background/60 backdrop-blur-sm rounded-lg p-2 mb-2">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <Gift className={`w-3 h-3 ${color.icon}`} />
-                    <span className="text-xs font-medium text-foreground truncate">{topOffer.title}</span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground line-clamp-1">{topOffer.description}</p>
-                </div>
+              <div className="relative z-10">
+                <h3 className="font-extrabold text-white text-sm leading-tight tracking-tight uppercase">
+                  {topOffer.discount}
+                </h3>
+                <p className="text-white/80 text-[11px] mt-1 leading-snug">
+                  {listing.name}
+                </p>
+                <p className="text-white/60 text-[10px] mt-0.5 line-clamp-1">
+                  {topOffer.title}
+                </p>
+              </div>
 
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    {topOffer.validUntil && (
-                      <span className="flex items-center gap-0.5">
-                        <Clock className="w-2.5 h-2.5" />
-                        {topOffer.validUntil}
-                      </span>
-                    )}
-                    {topOffer.code && (
-                      <span className="font-mono bg-background/80 px-1.5 py-0.5 rounded text-[9px] border border-border/50">
-                        {topOffer.code}
-                      </span>
-                    )}
-                  </div>
-                  <span className={`${color.accent} font-medium flex items-center gap-0.5`}>
-                    View <ArrowRight className="w-2.5 h-2.5" />
-                  </span>
+              <div className="relative z-10 mt-2">
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                  <ArrowRight className="w-3 h-3 text-white" />
                 </div>
               </div>
             </div>
