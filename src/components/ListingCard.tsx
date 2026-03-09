@@ -138,7 +138,8 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover }: Listi
 
   return (
     <div
-      className={`glass-card rounded-xl overflow-hidden hover-lift cursor-pointer animate-fade-in group ${listing.featured ? "gradient-border" : ""} ${highlighted ? "ring-2 ring-primary shadow-lg scale-[1.01]" : ""}`}
+      data-listing-id={listing.id}
+      className={`glass-card rounded-xl overflow-hidden hover-lift cursor-pointer animate-fade-in group transition-all duration-300 ${listing.featured ? "gradient-border" : ""} ${highlighted ? "ring-2 ring-primary shadow-lg scale-[1.01]" : ""}`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}

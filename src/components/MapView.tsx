@@ -126,7 +126,12 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
             onClick={() => {
               setActiveMarker(listing.id);
               onSelectListing?.(listing);
-            }}
+              // Scroll to the listing card in the list
+              const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
+              if (card) {
+                card.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }
             onMouseOver={() => onHoverListing?.(listing.id)}
             onMouseOut={() => onHoverListing?.(null)}
             opacity={hoveredId === listing.id || selectedId === listing.id ? 1 : 0.7}
