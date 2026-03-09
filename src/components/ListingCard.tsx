@@ -126,7 +126,7 @@ function isWithinTime(now: Date, open: string, close: string): boolean {
   return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
 }
 
-const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
+const ListingCard = ({ listing, compact, highlighted, onSelect, onHover }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
@@ -138,8 +138,10 @@ const ListingCard = ({ listing, compact, onSelect }: ListingCardProps) => {
 
   return (
     <div
-      className={`glass-card rounded-xl overflow-hidden hover-lift cursor-pointer animate-fade-in group ${listing.featured ? "gradient-border" : ""}`}
+      className={`glass-card rounded-xl overflow-hidden hover-lift cursor-pointer animate-fade-in group ${listing.featured ? "gradient-border" : ""} ${highlighted ? "ring-2 ring-primary shadow-lg scale-[1.01]" : ""}`}
       onClick={handleClick}
+      onMouseEnter={() => onHover?.(listing.id)}
+      onMouseLeave={() => onHover?.(null)}
     >
       <div className="flex">
         {/* Image thumbnail */}

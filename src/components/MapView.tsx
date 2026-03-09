@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 interface MapViewProps {
   listings: Listing[];
   selectedId?: string;
+  hoveredId?: string | null;
   onSelectListing?: (listing: Listing) => void;
+  onHoverListing?: (id: string | null) => void;
   center?: { lat: number; lng: number };
 }
 
