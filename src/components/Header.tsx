@@ -194,8 +194,8 @@ const Header = () => {
                 to="/add-listing"
                 className="ml-auto"
               >
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors shadow-sm">
-                  List Your Business — <span className="text-warning font-extrabold">FREE</span>
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-warning text-warning-foreground text-xs font-bold hover:bg-warning/90 transition-colors shadow-sm">
+                  List Your Business — <span className="font-extrabold">FREE</span>
                 </span>
               </Link>
             </nav>
