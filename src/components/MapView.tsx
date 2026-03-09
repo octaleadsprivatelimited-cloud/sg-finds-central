@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 interface MapViewProps {
   listings: Listing[];
   selectedId?: string;
+  hoveredId?: string | null;
   onSelectListing?: (listing: Listing) => void;
+  onHoverListing?: (id: string | null) => void;
   center?: { lat: number; lng: number };
 }
 
@@ -23,7 +25,7 @@ const MAP_STYLES = [
 const getMapsScriptSrc = (apiKey: string) =>
   `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=maps&v=weekly`;
 
-const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps) => {
+const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverListing, center }: MapViewProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
@@ -125,7 +127,13 @@ const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps
               setActiveMarker(listing.id);
               onSelectListing?.(listing);
             }}
-            opacity={selectedId === listing.id ? 1 : 0.9}
+            onMouseOver={() => onHoverListing?.(listing.id)}
+            onMouseOut={() => onHoverListing?.(null)}
+            opacity={hoveredId === listing.id || selectedId === listing.id ? 1 : 0.7}
+            icon={hoveredId === listing.id ? {
+              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              scaledSize: (window as any).google?.maps ? new (window as any).google.maps.Size(44, 44) : undefined,
+            } : undefined}
           >
             {activeMarker === listing.id && activeListing && (
               <InfoWindowF

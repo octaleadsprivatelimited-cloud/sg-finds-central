@@ -75,6 +75,7 @@ const Index = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
+  const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
@@ -200,6 +201,8 @@ const Index = () => {
                   <ListingCard
                     key={listing.id}
                     listing={listing}
+                    highlighted={hoveredListingId === listing.id}
+                    onHover={setHoveredListingId}
                     onSelect={(l) => {
                       setSelectedListing(l);
                       if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
@@ -216,6 +219,8 @@ const Index = () => {
               <MapView
                 listings={filtered}
                 selectedId={selectedListing?.id}
+                hoveredId={hoveredListingId}
+                onHoverListing={setHoveredListingId}
                 onSelectListing={setSelectedListing}
                 center={mapCenter}
               />
