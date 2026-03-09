@@ -184,31 +184,35 @@ const Index = () => {
         </div>
 
         <div className="flex gap-4 md:gap-6 overflow-hidden">
-          <div className={`flex-1 min-w-0 space-y-2 md:space-y-3 ${showMap ? "hidden" : ""}`}>
-            {filtered.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-muted-foreground" />
+          {/* Listings column */}
+          <div className={`w-full lg:w-1/2 xl:w-[55%] min-w-0 space-y-2 md:space-y-3 ${showMap ? "hidden lg:block" : ""}`}>
+            <div className="lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto lg:pr-2 space-y-2 md:space-y-3 scrollbar-thin">
+              {filtered.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <p className="text-muted-foreground font-medium">No businesses found</p>
+                  <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
                 </div>
-                <p className="text-muted-foreground font-medium">No businesses found</p>
-                <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
-              </div>
-            ) : (
-              filtered.map((listing) => (
-                <ListingCard
-                  key={listing.id}
-                  listing={listing}
-                  onSelect={(l) => {
-                    setSelectedListing(l);
-                    if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
-                  }}
-                />
-              ))
-            )}
+              ) : (
+                filtered.map((listing) => (
+                  <ListingCard
+                    key={listing.id}
+                    listing={listing}
+                    onSelect={(l) => {
+                      setSelectedListing(l);
+                      if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
+                    }}
+                  />
+                ))
+              )}
+            </div>
           </div>
 
-          {showMap && (
-            <div className="flex-1 h-[calc(100vh-280px)] rounded-xl overflow-hidden border border-border shadow-lg">
+          {/* Map column — always visible on desktop, toggle on mobile */}
+          <div className={`lg:block lg:w-1/2 xl:w-[45%] ${showMap ? "block w-full" : "hidden"}`}>
+            <div className="h-[calc(100vh-200px)] rounded-xl overflow-hidden border border-border shadow-lg sticky top-24">
               <MapView
                 listings={filtered}
                 selectedId={selectedListing?.id}
@@ -216,7 +220,7 @@ const Index = () => {
                 center={mapCenter}
               />
             </div>
-          )}
+          </div>
         </div>
       </section>
     </div>
