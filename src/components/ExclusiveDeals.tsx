@@ -55,36 +55,42 @@ const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
           return (
             <div
               key={listing.id}
-              className={`relative overflow-hidden rounded-2xl ${color.solid} p-3.5 pb-4 cursor-pointer active:scale-[0.97] transition-transform min-h-[140px] flex flex-col justify-between`}
+              className="relative overflow-hidden rounded-2xl cursor-pointer active:scale-[0.97] transition-transform min-h-[200px] flex flex-col justify-between"
               onClick={() => navigate(getBusinessUrl(listing))}
             >
-              {/* Logo/image positioned bottom-right */}
-              <div className="absolute bottom-0 right-0 w-20 h-20 opacity-20">
-                {listing.logoUrl ? (
-                  <img src={listing.logoUrl} alt="" className="w-full h-full object-cover rounded-tl-2xl" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Gift className="w-10 h-10 text-white/40" />
-                  </div>
-                )}
-              </div>
+              {/* Cover image background */}
+              {listing.coverImage && (
+                <img
+                  src={listing.coverImage}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              )}
+              {/* Gradient overlay */}
+              <div className={`absolute inset-0 ${color.solid} ${listing.coverImage ? "opacity-70" : "opacity-100"}`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-              <div className="relative z-10">
-                <h3 className="font-extrabold text-white text-sm leading-tight tracking-tight uppercase">
+              <div className="relative z-10 p-4">
+                <h3 className="font-extrabold text-white text-lg leading-tight tracking-tight uppercase">
                   {topOffer.discount}
                 </h3>
-                <p className="text-white/80 text-[11px] mt-1 leading-snug">
+                <p className="text-white/90 text-sm mt-1.5 font-semibold leading-snug">
                   {listing.name}
                 </p>
-                <p className="text-white/60 text-[10px] mt-0.5 line-clamp-1">
+                <p className="text-white/70 text-xs mt-1 line-clamp-2">
                   {topOffer.title}
                 </p>
               </div>
 
-              <div className="relative z-10 mt-2">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <ArrowRight className="w-3 h-3 text-white" />
+              <div className="relative z-10 p-4 pt-0 flex items-center justify-between">
+                <div className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <ArrowRight className="w-3.5 h-3.5 text-white" />
                 </div>
+                {topOffer.code && (
+                  <span className="font-mono text-[10px] text-white/80 bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                    {topOffer.code}
+                  </span>
+                )}
               </div>
             </div>
           );
