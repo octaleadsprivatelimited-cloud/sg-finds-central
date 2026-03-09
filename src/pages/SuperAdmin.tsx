@@ -162,7 +162,7 @@ const SuperAdmin = () => {
     const fetchListings = async () => {
       try {
         const snap = await getDocs(collection(db, "listings"));
-        if (!snap.empty) setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+        setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
       } catch (err) {
         maybeToastPermissionDenied(err);
       }
