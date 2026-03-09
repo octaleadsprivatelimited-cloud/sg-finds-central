@@ -25,7 +25,7 @@ const MAP_STYLES = [
 const getMapsScriptSrc = (apiKey: string) =>
   `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=maps&v=weekly`;
 
-const MapView = ({ listings, selectedId, onSelectListing, center }: MapViewProps) => {
+const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverListing, center }: MapViewProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
