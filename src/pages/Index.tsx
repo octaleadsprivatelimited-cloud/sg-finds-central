@@ -97,6 +97,13 @@ const Index = () => {
       {/* ═══ PROMO BANNER ═══ */}
       {!hasActiveFilters && <PromoBanner />}
 
+      {/* ═══ CATEGORY HIGHLIGHTS ═══ */}
+      {!hasActiveFilters && (
+        <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
+          <CategoryHighlights />
+        </section>
+      )}
+
       {/* ═══ FEATURED BUSINESSES ═══ */}
       <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
         <FeaturedListings listings={filtered} />
