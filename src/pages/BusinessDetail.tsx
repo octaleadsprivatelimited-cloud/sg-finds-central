@@ -1,94 +1,20 @@
 import { useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Building2, Star, Camera, Clock, CalendarDays } from "lucide-react";
+import { Building2, Clock, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReviewSection from "@/components/ReviewSection";
 import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
-import { DEFAULT_OPERATING_HOURS, type SpecialHours } from "@/components/ListingCard";
+import { DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { toSlug } from "@/lib/url-helpers";
 import PhotoGallery from "@/components/business-detail/PhotoGallery";
 import BusinessHeader from "@/components/business-detail/BusinessHeader";
 import CatalogueSection from "@/components/business-detail/CatalogueSection";
 import QuickInfo from "@/components/business-detail/QuickInfo";
 import ContactSidebar from "@/components/business-detail/ContactSidebar";
-
-// Gallery images
-import food1 from "@/assets/businesses/food1.jpg";
-import food1b from "@/assets/businesses/food1-b.jpg";
-import food1c from "@/assets/businesses/food1-c.jpg";
-import tech1 from "@/assets/businesses/tech1.jpg";
-import tech1b from "@/assets/businesses/tech1-b.jpg";
-import tech1c from "@/assets/businesses/tech1-c.jpg";
-import beauty1 from "@/assets/businesses/beauty1.jpg";
-import beauty1b from "@/assets/businesses/beauty1-b.jpg";
-import beauty1c from "@/assets/businesses/beauty1-c.jpg";
-import education1 from "@/assets/businesses/education1.jpg";
-import education1b from "@/assets/businesses/education1-b.jpg";
-import education1c from "@/assets/businesses/education1-c.jpg";
-import home1 from "@/assets/businesses/home1.jpg";
-import home1b from "@/assets/businesses/home1-b.jpg";
-import home1c from "@/assets/businesses/home1-c.jpg";
-
-// Photo gallery map per listing ID
-const GALLERY_MAP: Record<string, string[]> = {
-  "1": [food1, food1b, food1c],
-  "2": [tech1, tech1b, tech1c],
-  "3": [beauty1, beauty1b, beauty1c],
-  "4": [education1, education1b, education1c],
-  "5": [home1, home1b, home1c],
-};
-
-// Demo listings
-const ALL_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
-  {
-    id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
-    category: "Food & Beverage", district: "Orchard", address: "391 Orchard Road, #B2-01, Singapore 238872",
-    postalCode: "238872", phone: "+65 6234 5678", website: "https://sgdelights.com",
-    email: "info@sgdelights.com", whatsapp: "+6592345678",
-    description: "Award-winning local cuisine serving traditional Peranakan dishes with a modern twist. Our chefs bring decades of experience crafting authentic flavours with contemporary presentation. From signature laksa to handmade kuehs, every dish tells a story of Singapore's rich culinary heritage.",
-    status: "approved", ownerId: "demo", lat: 1.3048, lng: 103.8318,
-    verified: true, featured: true, rating: 4.8, reviewCount: 127, coverImage: food1,
-  },
-  {
-    id: "2", name: "TechHub Solutions", uen: "202301234B",
-    category: "Technology & IT", district: "CBD / Raffles Place", address: "1 Raffles Place, #30-01, Singapore 048616",
-    postalCode: "048616", phone: "+65 6789 0123", website: "https://techhub.sg",
-    email: "hello@techhub.sg", whatsapp: "+6597890123",
-    description: "Full-service IT consultancy specializing in cloud infrastructure and cybersecurity. We help businesses of all sizes transform their digital operations with enterprise-grade solutions, 24/7 support, and proactive security monitoring.",
-    status: "approved", ownerId: "demo", lat: 1.2840, lng: 103.8510,
-    verified: true, featured: true, rating: 4.9, reviewCount: 89, coverImage: tech1,
-  },
-  {
-    id: "3", name: "Glow Aesthetics Clinic", uen: "202212345C",
-    category: "Beauty & Wellness", district: "Novena", address: "10 Sinaran Drive, #10-05, Singapore 307506",
-    postalCode: "307506", phone: "+65 6345 6789",
-    email: "appointments@glowaesthetics.sg",
-    description: "Premium aesthetic treatments using FDA-approved technology. Our clinic offers a comprehensive range of non-invasive procedures including laser treatments, dermal fillers, and skin rejuvenation therapies performed by certified medical professionals.",
-    status: "approved", ownerId: "demo", lat: 1.3204, lng: 103.8447,
-    verified: true, rating: 4.7, reviewCount: 64, coverImage: beauty1,
-  },
-  {
-    id: "4", name: "LearnSG Academy", uen: "201854321D",
-    category: "Education & Training", district: "Tampines", address: "1 Tampines Walk, #03-12, Singapore 528523",
-    postalCode: "528523", phone: "+65 6456 7890",
-    email: "enrol@learnsg.com",
-    description: "Enrichment centre offering coding, robotics, and STEM courses for ages 5–16. Our curriculum is designed by experienced educators and tech professionals to nurture the next generation of innovators.",
-    status: "approved", ownerId: "demo", lat: 1.3530, lng: 103.9453,
-    rating: 4.6, reviewCount: 42, coverImage: education1,
-  },
-  {
-    id: "5", name: "HomeFixSG Services", uen: "202098765E",
-    category: "Home Services", district: "Jurong East", address: "21 Jurong East St 31, Singapore 609517",
-    postalCode: "609517", phone: "+65 6567 8901",
-    whatsapp: "+6595678901",
-    description: "Reliable plumbing, electrical, and aircon servicing across Singapore. Our certified technicians respond within 2 hours for emergency jobs. Transparent pricing with no hidden charges.",
-    status: "approved", ownerId: "demo", lat: 1.3329, lng: 103.7436,
-    verified: true, featured: true, rating: 4.5, reviewCount: 156, coverImage: home1,
-  },
-];
+import { DEMO_LISTINGS, GALLERY_MAP } from "@/lib/demo-listings";
 
 const formatTime = (time: string) => {
   if (!time) return "";
@@ -108,7 +34,7 @@ const BusinessDetail = () => {
 
   const listing = useMemo(
     () =>
-      ALL_LISTINGS.find((l) => {
+      DEMO_LISTINGS.find((l) => {
         const matchArea = toSlug(l.district) === areaSlug;
         const matchCategory = toSlug(l.category) === categorySlug;
         const matchBusiness = (l.customSlug || toSlug(l.name)) === businessSlug;
@@ -253,7 +179,7 @@ const BusinessDetail = () => {
               </TabsContent>
 
               <TabsContent value="offers" className="mt-6">
-                <OffersSection offers={[]} />
+                <OffersSection offers={listing.offers || []} />
               </TabsContent>
             </Tabs>
           </div>
