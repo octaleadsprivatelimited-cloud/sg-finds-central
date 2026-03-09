@@ -103,11 +103,11 @@ const PromoBanner = () => {
             </div>
           </div>
 
-          {/* Nav arrows */}
+          {/* Nav arrows - hidden on mobile */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 md:h-8 md:w-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm border-0"
+            className="absolute left-2 top-1/2 -translate-y-1/2 hidden md:flex h-8 w-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm border-0"
             onClick={prev}
           >
             <ChevronLeft className="w-4 h-4" />
@@ -115,7 +115,7 @@ const PromoBanner = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 md:h-8 md:w-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm border-0"
+            className="absolute right-2 top-1/2 -translate-y-1/2 hidden md:flex h-8 w-8 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm border-0"
             onClick={next}
           >
             <ChevronRight className="w-4 h-4" />
