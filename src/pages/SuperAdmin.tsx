@@ -74,8 +74,8 @@ const SuperAdmin = () => {
   const navigate = useNavigate();
 
   const [activeNav, setActiveNav] = useState<NavItem>("dashboard");
-  const [users, setUsers] = useState<PlatformUser[]>(DEMO_USERS);
-  const [listings, setListings] = useState<Listing[]>(DEMO_ALL_LISTINGS);
+  const [users, setUsers] = useState<PlatformUser[]>([]);
+  const [listings, setListings] = useState<Listing[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [listingSearch, setListingSearch] = useState("");
   const [listingFilter, setListingFilter] = useState<string>("all");
@@ -162,7 +162,7 @@ const SuperAdmin = () => {
     const fetchListings = async () => {
       try {
         const snap = await getDocs(collection(db, "listings"));
-        if (!snap.empty) setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+        setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
       } catch (err) {
         maybeToastPermissionDenied(err);
       }
