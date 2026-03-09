@@ -9,12 +9,12 @@ interface ExclusiveDealsProps {
 }
 
 const dealColors = [
-  { bg: "from-rose-500/15 to-pink-500/10", accent: "text-rose-600 dark:text-rose-400", badge: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400", icon: "text-rose-500", glow: "bg-rose-500/10" },
-  { bg: "from-violet-500/15 to-purple-500/10", accent: "text-violet-600 dark:text-violet-400", badge: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400", icon: "text-violet-500", glow: "bg-violet-500/10" },
-  { bg: "from-amber-500/15 to-orange-500/10", accent: "text-amber-600 dark:text-amber-400", badge: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400", icon: "text-amber-500", glow: "bg-amber-500/10" },
-  { bg: "from-cyan-500/15 to-teal-500/10", accent: "text-cyan-600 dark:text-cyan-400", badge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400", icon: "text-cyan-500", glow: "bg-cyan-500/10" },
-  { bg: "from-emerald-500/15 to-green-500/10", accent: "text-emerald-600 dark:text-emerald-400", badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400", icon: "text-emerald-500", glow: "bg-emerald-500/10" },
-  { bg: "from-blue-500/15 to-indigo-500/10", accent: "text-blue-600 dark:text-blue-400", badge: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400", icon: "text-blue-500", glow: "bg-blue-500/10" },
+  { bg: "from-rose-500/15 to-pink-500/10", solid: "bg-blue-600", accent: "text-rose-600 dark:text-rose-400", badge: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400", icon: "text-rose-500", glow: "bg-rose-500/10" },
+  { bg: "from-violet-500/15 to-purple-500/10", solid: "bg-indigo-700", accent: "text-violet-600 dark:text-violet-400", badge: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400", icon: "text-violet-500", glow: "bg-violet-500/10" },
+  { bg: "from-amber-500/15 to-orange-500/10", solid: "bg-purple-600", accent: "text-amber-600 dark:text-amber-400", badge: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400", icon: "text-amber-500", glow: "bg-amber-500/10" },
+  { bg: "from-cyan-500/15 to-teal-500/10", solid: "bg-emerald-600", accent: "text-cyan-600 dark:text-cyan-400", badge: "bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400", icon: "text-cyan-500", glow: "bg-cyan-500/10" },
+  { bg: "from-emerald-500/15 to-green-500/10", solid: "bg-sky-600", accent: "text-emerald-600 dark:text-emerald-400", badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400", icon: "text-emerald-500", glow: "bg-emerald-500/10" },
+  { bg: "from-blue-500/15 to-indigo-500/10", solid: "bg-orange-600", accent: "text-blue-600 dark:text-blue-400", badge: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400", icon: "text-blue-500", glow: "bg-blue-500/10" },
 ];
 
 const ExclusiveDeals = ({ listings }: ExclusiveDealsProps) => {
