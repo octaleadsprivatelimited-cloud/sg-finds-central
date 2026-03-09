@@ -119,6 +119,7 @@ const PromoBanner = () => {
                 className="h-[130px] md:h-[210px] object-contain drop-shadow-2xl transition-all duration-500"
               />
             </div>
+          </div>
 
           {/* Nav arrows - hidden on mobile */}
           <Button
