@@ -91,7 +91,7 @@ const PromoBanner = () => {
               className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
             />
             {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 bg-black/20" />
 
             <div className="relative z-10 flex-1 px-5 md:px-10">
               <div className="flex items-center gap-2 mb-1.5 md:mb-2">
