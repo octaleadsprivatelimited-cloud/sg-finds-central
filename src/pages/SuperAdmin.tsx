@@ -72,6 +72,7 @@ type NavItem = "dashboard" | "users" | "listings" | "tickets" | "statistics" | "
 const SuperAdmin = () => {
   const { user, isSuperAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
   const [activeNav, setActiveNav] = useState<NavItem>("dashboard");
   const [users, setUsers] = useState<PlatformUser[]>(DEMO_USERS);
   const [listings, setListings] = useState<Listing[]>(DEMO_ALL_LISTINGS);
@@ -86,6 +87,8 @@ const SuperAdmin = () => {
   const [rejectingListingId, setRejectingListingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showAddBusiness, setShowAddBusiness] = useState(false);
+  const [permissionErrorShown, setPermissionErrorShown] = useState(false);
+
   const [platformSettings, setPlatformSettings] = useState({
     autoApprove: false,
     emailNotifications: true,
@@ -93,69 +96,127 @@ const SuperAdmin = () => {
     documentRequired: true,
   });
 
+  const maybeToastPermissionDenied = (err: any) => {
+    const code = err?.code;
+    const message = String(err?.message || "");
+    if (
+      !permissionErrorShown &&
+      (code === "permission-denied" || message.includes("Missing or insufficient permissions"))
+    ) {
+      setPermissionErrorShown(true);
+      toast.error("Missing or insufficient permissions — update your Firestore rules for Super Admin access.");
+    }
+  };
+
+  // Guard: don't run any Firestore queries until auth is ready
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      toast.error("Please sign in first");
+      navigate("/");
+      return;
+    }
+    if (!isSuperAdmin) {
+      toast.error("Super Admin access required");
+      navigate("/");
+    }
+  }, [authLoading, user, isSuperAdmin, navigate]);
+
   const toggleSetting = async (key: keyof typeof platformSettings) => {
+    if (!user || !isSuperAdmin) {
+      toast.error("Super Admin access required");
+      return;
+    }
+
     const newVal = !platformSettings[key];
     setPlatformSettings(prev => ({ ...prev, [key]: newVal }));
     try {
       await setDoc(doc(db, "platform_settings", "general"), { ...platformSettings, [key]: newVal }, { merge: true });
       toast.success("Setting updated");
-    } catch { toast.error("Failed to save setting"); }
+    } catch (err) {
+      maybeToastPermissionDenied(err);
+      toast.error("Failed to save setting");
+    }
   };
 
   useEffect(() => {
+    if (authLoading || !user || !isSuperAdmin) return;
+
     const fetchSettings = async () => {
       try {
         const snap = await getDocs(collection(db, "platform_settings"));
-        snap.docs.forEach(d => { if (d.id === "general") setPlatformSettings(prev => ({ ...prev, ...d.data() })); });
-      } catch {}
+        snap.docs.forEach(d => {
+          if (d.id === "general") setPlatformSettings(prev => ({ ...prev, ...d.data() }));
+        });
+      } catch (err) {
+        maybeToastPermissionDenied(err);
+      }
     };
+
     fetchSettings();
-  }, []);
+  }, [authLoading, user, isSuperAdmin]);
 
   useEffect(() => {
+    if (authLoading || !user || !isSuperAdmin) return;
+
     const fetchListings = async () => {
       try {
         const snap = await getDocs(collection(db, "listings"));
         if (!snap.empty) setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
-      } catch {}
+      } catch (err) {
+        maybeToastPermissionDenied(err);
+      }
     };
+
     fetchListings();
-  }, []);
+  }, [authLoading, user, isSuperAdmin]);
 
   useEffect(() => {
+    if (authLoading || !user || !isSuperAdmin) return;
+
     const fetchUsers = async () => {
       try {
         const snap = await getDocs(collection(db, "users"));
         if (!snap.empty) {
-          setUsers(snap.docs.map(d => {
-            const data = d.data();
-            return {
-              id: d.id,
-              email: data.email || "",
-              displayName: data.displayName || data.name || "Unknown",
-              role: data.role || "user",
-              status: data.status || "active",
-              joinedAt: data.joinedAt || data.createdAt?.toDate?.()?.toISOString?.()?.split("T")[0] || "—",
-              listingsCount: data.listingsCount || 0,
-              lastActive: data.lastActive || "—",
-              phone: data.phone || "",
-            } as PlatformUser;
-          }));
+          setUsers(
+            snap.docs.map(d => {
+              const data = d.data();
+              return {
+                id: d.id,
+                email: data.email || "",
+                displayName: data.displayName || data.name || "Unknown",
+                role: data.role || "user",
+                status: data.status || "active",
+                joinedAt: data.joinedAt || data.createdAt?.toDate?.()?.toISOString?.()?.split("T")[0] || "—",
+                listingsCount: data.listingsCount || 0,
+                lastActive: data.lastActive || "—",
+                phone: data.phone || "",
+              } as PlatformUser;
+            })
+          );
         }
-      } catch {}
+      } catch (err) {
+        maybeToastPermissionDenied(err);
+      }
     };
+
     fetchUsers();
-  }, []);
+  }, [authLoading, user, isSuperAdmin]);
 
   useEffect(() => {
+    if (authLoading || !user || !isSuperAdmin) return;
+
     const fetchTickets = async () => {
       try {
         const snap = await getDocs(collection(db, "featured_tickets"));
         if (!snap.empty) setFeaturedTickets(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-      } catch {}
+      } catch (err) {
+        maybeToastPermissionDenied(err);
+      }
     };
+
     fetchTickets();
-  }, []);
+  }, [authLoading, user, isSuperAdmin]);
 
   const totalUsers = users.length;
   const activeUsers = users.filter(u => u.status === "active").length;
