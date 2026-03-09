@@ -122,28 +122,28 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
       </div>
 
       {/* CTA buttons - sticky bottom bar on mobile */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border p-3 safe-bottom">
-        <div className="grid grid-cols-3 gap-2">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border px-3 py-3 safe-bottom shadow-[0_-4px_20px_-4px_hsl(0_0%_0%/0.15)]">
+        <div className="grid grid-cols-3 gap-2.5">
           {listing.phone && (
             <a href={`tel:${listing.phone}`} className="min-w-0">
-              <Button className="w-full bg-success hover:bg-success/90 text-success-foreground gap-1.5 font-semibold text-xs px-2 h-10">
-                <Phone className="w-4 h-4 shrink-0" />
+              <Button className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white gap-2 font-bold text-sm shadow-md shadow-emerald-500/25">
+                <Phone className="w-5 h-5 shrink-0" />
                 Call
               </Button>
             </a>
           )}
           {listing.lat && listing.lng && (
             <a href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-semibold text-xs px-2 h-10">
-                <MapPin className="w-4 h-4 shrink-0" />
+              <Button className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-bold text-sm shadow-md shadow-primary/25">
+                <MapPin className="w-5 h-5 shrink-0" />
                 Location
               </Button>
             </a>
           )}
           {listing.whatsapp && (
             <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
-              <Button variant="outline" className="w-full gap-1.5 font-semibold border-success/30 text-success hover:bg-success/10 text-xs px-2 h-10">
-                <MessageCircle className="w-4 h-4 shrink-0" />
+              <Button className="w-full h-12 rounded-xl bg-white hover:bg-emerald-50 border-2 border-emerald-500 text-emerald-600 gap-2 font-bold text-sm shadow-md">
+                <MessageCircle className="w-5 h-5 shrink-0" />
                 WhatsApp
               </Button>
             </a>
