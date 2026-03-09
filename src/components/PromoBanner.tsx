@@ -26,6 +26,7 @@ const BANNERS: Banner[] = [
     subtitle: "Discover top-rated businesses handpicked by our editors",
     cta: "Explore Now",
     image: banner1,
+    face: face1,
   },
   {
     id: "2",
@@ -33,6 +34,7 @@ const BANNERS: Banner[] = [
     subtitle: "Reach thousands of customers across Singapore — zero cost to get started",
     cta: "Add Listing",
     image: banner2,
+    face: face2,
   },
   {
     id: "3",
@@ -40,6 +42,7 @@ const BANNERS: Banner[] = [
     subtitle: "All our featured businesses are UEN-verified for your peace of mind",
     cta: "Browse Verified",
     image: banner3,
+    face: face3,
   },
   {
     id: "4",
@@ -47,6 +50,7 @@ const BANNERS: Banner[] = [
     subtitle: "Save up to 50% with partner businesses — limited time offers",
     cta: "View Deals",
     image: banner4,
+    face: face4,
   },
 ];
 
