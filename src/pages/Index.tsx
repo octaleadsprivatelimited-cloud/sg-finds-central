@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import ListingCard, { Listing, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import ExclusiveDeals from "@/components/ExclusiveDeals";
+import CategoryHighlights from "@/components/CategoryHighlights";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
@@ -95,6 +96,13 @@ const Index = () => {
 
       {/* ═══ PROMO BANNER ═══ */}
       {!hasActiveFilters && <PromoBanner />}
+
+      {/* ═══ CATEGORY HIGHLIGHTS ═══ */}
+      {!hasActiveFilters && (
+        <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
+          <CategoryHighlights />
+        </section>
+      )}
 
       {/* ═══ FEATURED BUSINESSES ═══ */}
       <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
