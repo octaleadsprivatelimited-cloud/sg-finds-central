@@ -5,6 +5,10 @@ import banner1 from "@/assets/banners/banner1.jpg";
 import banner2 from "@/assets/banners/banner2.jpg";
 import banner3 from "@/assets/banners/banner3.jpg";
 import banner4 from "@/assets/banners/banner4.jpg";
+import face1 from "@/assets/banners/face1.png";
+import face2 from "@/assets/banners/face2.png";
+import face3 from "@/assets/banners/face3.png";
+import face4 from "@/assets/banners/face4.png";
 
 interface Banner {
   id: string;
@@ -12,6 +16,7 @@ interface Banner {
   subtitle: string;
   cta: string;
   image: string;
+  face: string;
 }
 
 const BANNERS: Banner[] = [
@@ -21,6 +26,7 @@ const BANNERS: Banner[] = [
     subtitle: "Discover top-rated businesses handpicked by our editors",
     cta: "Explore Now",
     image: banner1,
+    face: face1,
   },
   {
     id: "2",
@@ -28,6 +34,7 @@ const BANNERS: Banner[] = [
     subtitle: "Reach thousands of customers across Singapore — zero cost to get started",
     cta: "Add Listing",
     image: banner2,
+    face: face2,
   },
   {
     id: "3",
@@ -35,6 +42,7 @@ const BANNERS: Banner[] = [
     subtitle: "All our featured businesses are UEN-verified for your peace of mind",
     cta: "Browse Verified",
     image: banner3,
+    face: face3,
   },
   {
     id: "4",
@@ -42,6 +50,7 @@ const BANNERS: Banner[] = [
     subtitle: "Save up to 50% with partner businesses — limited time offers",
     cta: "View Deals",
     image: banner4,
+    face: face4,
   },
 ];
 
@@ -91,15 +100,24 @@ const PromoBanner = () => {
                   Featured
                 </span>
               </div>
-              <h3 className="text-white font-bold text-lg md:text-3xl leading-tight mb-1 md:mb-2 max-w-lg drop-shadow-lg">
+              <h3 className="text-white font-bold text-lg md:text-3xl leading-tight mb-1 md:mb-2 max-w-sm md:max-w-lg drop-shadow-lg">
                 {banner.title}
               </h3>
-              <p className="text-white/85 text-xs md:text-base mb-2.5 md:mb-4 max-w-md line-clamp-2 drop-shadow">
+              <p className="text-white/85 text-xs md:text-base mb-2.5 md:mb-4 max-w-xs md:max-w-md line-clamp-2 drop-shadow">
                 {banner.subtitle}
               </p>
               <button className="inline-flex items-center gap-1.5 px-3.5 md:px-5 py-1.5 md:py-2.5 rounded-full bg-white text-foreground font-semibold text-xs md:text-sm hover:bg-white/90 transition-colors shadow-lg">
                 {banner.cta}
               </button>
+            </div>
+
+            {/* Face image */}
+            <div className="relative z-10 hidden sm:flex items-end justify-end pr-4 md:pr-10">
+              <img
+                src={banner.face}
+                alt=""
+                className="h-[130px] md:h-[210px] object-contain drop-shadow-2xl transition-all duration-500"
+              />
             </div>
           </div>
 
