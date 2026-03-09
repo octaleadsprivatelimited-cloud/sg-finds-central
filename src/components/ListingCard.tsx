@@ -71,7 +71,9 @@ export interface Listing {
 interface ListingCardProps {
   listing: Listing;
   compact?: boolean;
+  highlighted?: boolean;
   onSelect?: (listing: Listing) => void;
+  onHover?: (id: string | null) => void;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
