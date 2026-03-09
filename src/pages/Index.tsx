@@ -219,6 +219,8 @@ const Index = () => {
               <MapView
                 listings={filtered}
                 selectedId={selectedListing?.id}
+                hoveredId={hoveredListingId}
+                onHoverListing={setHoveredListingId}
                 onSelectListing={setSelectedListing}
                 center={mapCenter}
               />
