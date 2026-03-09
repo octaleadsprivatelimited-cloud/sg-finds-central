@@ -192,9 +192,11 @@ const Header = () => {
               </DropdownMenu>
               <Link
                 to="/add-listing"
-                className="flex items-center gap-1 px-3 h-full text-[13px] font-semibold text-destructive hover:text-destructive/80 whitespace-nowrap transition-colors ml-auto"
+                className="ml-auto"
               >
-                List Free
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors shadow-sm">
+                  List Your Business — <span className="text-warning font-extrabold">FREE</span>
+                </span>
               </Link>
             </nav>
           </div>
