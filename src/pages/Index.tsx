@@ -201,6 +201,8 @@ const Index = () => {
                   <ListingCard
                     key={listing.id}
                     listing={listing}
+                    highlighted={hoveredListingId === listing.id}
+                    onHover={setHoveredListingId}
                     onSelect={(l) => {
                       setSelectedListing(l);
                       if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
