@@ -191,7 +191,7 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
               <Link to="/add-listing" className="ml-auto">
-                <span className="inline-flex items-center gap-2 px-5 py-1.5 rounded-lg bg-warning text-warning-foreground text-xs font-bold hover:bg-warning/90 transition-all shadow-md shadow-warning/25 hover:shadow-lg hover:shadow-warning/30 hover:-translate-y-0.5 pulse">
+                <span className="inline-flex items-center gap-2 px-5 py-1.5 rounded-lg bg-yellow-400 text-black text-xs font-bold hover:bg-yellow-300 transition-all shadow-md shadow-yellow-400/25 hover:shadow-lg hover:shadow-yellow-400/30 hover:-translate-y-0.5 pulse">
                   List Free
                   <span className="px-1.5 py-0.5 rounded bg-black/10 text-[10px] font-extrabold tracking-wide uppercase">$0</span>
                 </span>
