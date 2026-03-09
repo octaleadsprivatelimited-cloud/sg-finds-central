@@ -5,6 +5,10 @@ import banner1 from "@/assets/banners/banner1.jpg";
 import banner2 from "@/assets/banners/banner2.jpg";
 import banner3 from "@/assets/banners/banner3.jpg";
 import banner4 from "@/assets/banners/banner4.jpg";
+import face1 from "@/assets/banners/face1.png";
+import face2 from "@/assets/banners/face2.png";
+import face3 from "@/assets/banners/face3.png";
+import face4 from "@/assets/banners/face4.png";
 
 interface Banner {
   id: string;
@@ -12,6 +16,7 @@ interface Banner {
   subtitle: string;
   cta: string;
   image: string;
+  face: string;
 }
 
 const BANNERS: Banner[] = [
