@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import ListingCard, { Listing, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import ExclusiveDeals from "@/components/ExclusiveDeals";
+import CategoryHighlights from "@/components/CategoryHighlights";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
