@@ -3,12 +3,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchProvider } from "@/contexts/SearchContext";
 import Header from "@/components/Header";
 import ScrollToTop from "@/components/ScrollToTop";
 import Footer from "@/components/Footer";
+import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import AddListing from "./pages/AddListing";
 import Admin from "./pages/Admin";
@@ -31,20 +33,22 @@ const AppContent = () => {
     <>
       <ScrollToTop />
       <Header />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/:areaSlug/:categorySlug/:businessSlug" element={<BusinessDetail />} />
-        <Route path="/add-listing" element={<AddListing />} />
-        <Route path="/dashboard" element={<BusinessDashboard />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/super-admin" element={<SuperAdmin />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/seed" element={<SeedFirestore />} />
-        <Route path="/:citySlug" element={<CityCategory />} />
-        <Route path="/:citySlug/:categorySlug" element={<CityCategory />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/:areaSlug/:categorySlug/:businessSlug" element={<PageTransition><BusinessDetail /></PageTransition>} />
+          <Route path="/add-listing" element={<PageTransition><AddListing /></PageTransition>} />
+          <Route path="/dashboard" element={<PageTransition><BusinessDashboard /></PageTransition>} />
+          <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
+          <Route path="/super-admin" element={<PageTransition><SuperAdmin /></PageTransition>} />
+          <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+          <Route path="/signup" element={<PageTransition><SignUp /></PageTransition>} />
+          <Route path="/seed" element={<PageTransition><SeedFirestore /></PageTransition>} />
+          <Route path="/:citySlug" element={<PageTransition><CityCategory /></PageTransition>} />
+          <Route path="/:citySlug/:categorySlug" element={<PageTransition><CityCategory /></PageTransition>} />
+          <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+        </Routes>
+      </AnimatePresence>
       {!hideFooter && <Footer />}
     </>
   );
