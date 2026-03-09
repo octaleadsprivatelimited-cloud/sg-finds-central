@@ -83,7 +83,7 @@ const PromoBanner = () => {
           onMouseLeave={() => setIsHovered(false)}
         >
           {/* Banner with background image */}
-          <div className="relative h-[140px] md:h-[220px] flex items-center transition-all duration-500">
+          <div key={banner.id} className="relative h-[140px] md:h-[220px] flex items-center transition-all duration-500">
             {/* Background image */}
             <img
               src={banner.image}
