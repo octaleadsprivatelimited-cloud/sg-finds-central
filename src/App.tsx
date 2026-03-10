@@ -39,11 +39,6 @@ const AppContent = () => {
   return (
     <>
       <ScrollToTop />
-      <Header
-        showMap={showMap}
-        onToggleMap={() => setShowMap(prev => !prev)}
-        onDetectLocation={detectLocationFn ?? undefined}
-      />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
