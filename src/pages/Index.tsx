@@ -87,34 +87,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
 
-      {/* ═══ CATEGORY GRID ═══ */}
-      {!hasActiveFilters && (
-        <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-          <CategoryGrid />
-        </section>
-      )}
-
-      {/* ═══ PROMO BANNER ═══ */}
-      {!hasActiveFilters && <PromoBanner />}
-
-      {/* ═══ CATEGORY HIGHLIGHTS ═══ */}
-      {!hasActiveFilters && (
-        <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
-          <CategoryHighlights />
-        </section>
-      )}
-
-      {/* ═══ FEATURED BUSINESSES ═══ */}
-      <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
-        <FeaturedListings listings={filtered} />
-      </section>
-
-      {/* ═══ EXCLUSIVE DEALS ═══ */}
-      <section className="container mx-auto px-3 md:px-4">
-        <ExclusiveDeals listings={filtered} />
-      </section>
-
-      {/* ═══ ALL BUSINESSES ═══ */}
+      {/* ═══ ALL BUSINESSES (TOP) ═══ */}
       <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         {/* Search + Location bar */}
         <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
@@ -259,6 +232,33 @@ const Index = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ═══ CATEGORY GRID ═══ */}
+      {!hasActiveFilters && (
+        <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+          <CategoryGrid />
+        </section>
+      )}
+
+      {/* ═══ PROMO BANNER ═══ */}
+      {!hasActiveFilters && <PromoBanner />}
+
+      {/* ═══ CATEGORY HIGHLIGHTS ═══ */}
+      {!hasActiveFilters && (
+        <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
+          <CategoryHighlights />
+        </section>
+      )}
+
+      {/* ═══ FEATURED BUSINESSES ═══ */}
+      <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
+        <FeaturedListings listings={filtered} />
+      </section>
+
+      {/* ═══ EXCLUSIVE DEALS ═══ */}
+      <section className="container mx-auto px-3 md:px-4">
+        <ExclusiveDeals listings={filtered} />
       </section>
     </div>
   );
