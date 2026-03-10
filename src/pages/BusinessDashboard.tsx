@@ -131,6 +131,7 @@ const BusinessDashboard = () => {
     fetchRecentEnquiries();
   }, [user]);
 
+  const submitFeaturedTicket = async () => {
     if (!user || !selectedListingForFeatured) return;
     const listing = listings.find(l => l.id === selectedListingForFeatured);
     if (!listing) return;
