@@ -90,6 +90,9 @@ const SuperAdmin = () => {
   const [showAddBusiness, setShowAddBusiness] = useState(false);
   const [permissionErrorShown, setPermissionErrorShown] = useState(false);
 
+  const allListingIds = useMemo(() => listings.map(l => l.id), [listings]);
+  const viewCounts = useListingViewCounts(allListingIds);
+
   const [platformSettings, setPlatformSettings] = useState({
     autoApprove: false,
     emailNotifications: true,
