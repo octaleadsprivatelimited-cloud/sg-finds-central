@@ -80,7 +80,7 @@ const Index = () => {
     );
   };
 
-  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null;
 
   return (
     <div className="min-h-screen bg-background">
