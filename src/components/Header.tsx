@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BUSINESS_CATEGORIES } from "@/lib/districts";
+
 
 interface HeaderProps {
   showMap?: boolean;
