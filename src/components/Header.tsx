@@ -139,25 +139,38 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
             </DropdownMenu>
           </div>
 
-          {/* Mobile: GPS + Map + hamburger */}
-          <div className="flex items-center gap-2 flex-1 md:hidden justify-end">
-            {isHomePage && onDetectLocation && (
-              <Button variant="outline" size="sm" className="h-8 px-3 text-xs" onClick={onDetectLocation}>
-                <MapPin className="w-3.5 h-3.5 mr-1" />GPS
-              </Button>
+          {/* Mobile: search + GPS + Map + hamburger */}
+          <div className="flex items-center gap-2 flex-1 md:hidden">
+            {isHomePage && (
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search businesses..."
+                  className="w-full pl-8 pr-3 h-8 rounded-lg border border-input bg-background text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             )}
-            {isHomePage && onToggleMap && (
-              <Button variant="outline" size="sm" className="h-8 px-3 text-xs" onClick={onToggleMap}>
-                {showMap ? <List className="w-3.5 h-3.5 mr-1" /> : <MapIcon className="w-3.5 h-3.5 mr-1" />}
-                {showMap ? "List" : "Map"}
-              </Button>
-            )}
-            <button
-              className="p-2 rounded-lg hover:bg-secondary transition-colors shrink-0"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {isHomePage && onDetectLocation && (
+                <Button variant="outline" size="sm" className="h-8 px-2.5 text-xs" onClick={onDetectLocation}>
+                  <MapPin className="w-3.5 h-3.5" />
+                </Button>
+              )}
+              {isHomePage && onToggleMap && (
+                <Button variant="outline" size="sm" className="h-8 px-2.5 text-xs" onClick={onToggleMap}>
+                  {showMap ? <List className="w-3.5 h-3.5" /> : <MapIcon className="w-3.5 h-3.5" />}
+                </Button>
+              )}
+              <button
+                className="p-2 rounded-lg hover:bg-secondary transition-colors"
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
 
