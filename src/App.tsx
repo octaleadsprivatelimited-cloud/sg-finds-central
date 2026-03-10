@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,14 +29,32 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const hideFooter = ["/signup", "/reset-password"].includes(location.pathname);
+  const [showMap, setShowMap] = useState(false);
+  const [detectLocationFn, setDetectLocationFn] = useState<(() => void) | null>(null);
+
+  const registerDetectLocation = useCallback((fn: () => void) => {
+    setDetectLocationFn(() => fn);
+  }, []);
 
   return (
     <>
       <ScrollToTop />
-      <Header />
+      <Header
+        showMap={showMap}
+        onToggleMap={() => setShowMap(prev => !prev)}
+        onDetectLocation={detectLocationFn ?? undefined}
+      />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+          <Route path="/" element={
+            <PageTransition>
+              <Index
+                showMap={showMap}
+                setShowMap={setShowMap}
+                registerDetectLocation={registerDetectLocation}
+              />
+            </PageTransition>
+          } />
           <Route path="/:areaSlug/:categorySlug/:businessSlug" element={<PageTransition><BusinessDetail /></PageTransition>} />
           <Route path="/add-listing" element={<PageTransition><AddListing /></PageTransition>} />
           <Route path="/dashboard" element={<PageTransition><BusinessDashboard /></PageTransition>} />
