@@ -100,7 +100,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
 
           {/* Category chips */}
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
             {[
               { value: "All Categories", label: "All" },
               { value: "Food & Beverage", label: "Food" },
