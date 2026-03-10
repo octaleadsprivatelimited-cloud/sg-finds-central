@@ -113,8 +113,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     registerDetectLocation(handleDetectLocation);
   }, [registerDetectLocation]);
 
-  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || priceRange !== null || openNow;
-  const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, priceRange !== null, openNow, !!searchQuery].filter(Boolean).length;
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || openNow;
+  const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, openNow, !!searchQuery].filter(Boolean).length;
 
   return (
     <div className="min-h-screen bg-background">
