@@ -83,6 +83,24 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Open now
           </div>
+          {viewCount > 0 && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Eye className="w-3.5 h-3.5" />
+                <span>{viewCount.toLocaleString()} views</span>
+              </div>
+            </>
+          )}
+          {liveViewers > 1 && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <div className="flex items-center gap-1.5 text-sm font-medium text-primary">
+                <Users className="w-3.5 h-3.5" />
+                <span>{liveViewers} viewing now</span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Category — minimal pill */}
