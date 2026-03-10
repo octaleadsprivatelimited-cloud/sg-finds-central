@@ -1038,4 +1038,64 @@ const AnalyticCard = ({ title, value, change, icon }: { title: string; value: st
   </div>
 );
 
+const DAYS_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const HoursEditor = ({ listing, onSave }: { listing: Listing; onSave: (hours: OperatingHours) => Promise<void> }) => {
+  const [hours, setHours] = useState<OperatingHours>(listing.operatingHours || { ...DEFAULT_OPERATING_HOURS });
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+
+  const update = (day: string, field: string, value: string | boolean) => {
+    setHours(prev => ({ ...prev, [day]: { ...prev[day], [field]: value } }));
+    setDirty(true);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    await onSave(hours);
+    setSaving(false);
+    setDirty(false);
+  };
+
+  return (
+    <div className="border border-border rounded-xl p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <h4 className="font-semibold text-sm text-foreground">{listing.name}</h4>
+        <Button size="sm" disabled={!dirty || saving} onClick={handleSave} className="h-8 text-xs">
+          {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Check className="w-3.5 h-3.5 mr-1" />}
+          {saving ? "Saving..." : "Save"}
+        </Button>
+      </div>
+      <div className="space-y-1.5">
+        {DAYS_ORDER.map((day) => {
+          const dh = hours[day] || { open: "09:00", close: "18:00", closed: false };
+          return (
+            <div key={day} className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground w-20 shrink-0">{day.slice(0, 3)}</span>
+              <label className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0 w-16">
+                <input
+                  type="checkbox"
+                  checked={!!dh.closed}
+                  onChange={e => update(day, "closed", e.target.checked)}
+                  className="rounded border-border"
+                />
+                Closed
+              </label>
+              {!dh.closed ? (
+                <>
+                  <Input type="time" className="w-[110px] h-8 text-xs" value={dh.open} onChange={e => update(day, "open", e.target.value)} />
+                  <span className="text-[11px] text-muted-foreground">to</span>
+                  <Input type="time" className="w-[110px] h-8 text-xs" value={dh.close} onChange={e => update(day, "close", e.target.value)} />
+                </>
+              ) : (
+                <span className="text-xs text-muted-foreground italic">Closed</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export default BusinessDashboard;
