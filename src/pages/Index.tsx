@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
+import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES, DISTRICT_COORDINATES } from "@/lib/districts";
 import { toast } from "sonner";
 
 interface IndexProps {
@@ -62,11 +62,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   };
 
   const filtered = useMemo(() => {
+    // Use GPS location, or fall back to selected district center
+    const filterOrigin = userLocation || (district !== "All Districts" ? DISTRICT_COORDINATES[district] : null);
     return listings.filter((l) => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
       const matchD = district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
-      const matchR = !radiusKm || !userLocation || !l.lat || !l.lng || getDistance(userLocation.lat, userLocation.lng, l.lat, l.lng) <= radiusKm;
+      const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
       return matchQ && matchD && matchC && matchR;
     });
   }, [listings, searchQuery, district, category, radiusKm, userLocation]);
@@ -162,8 +164,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 {r.label}
               </button>
             ))}
-            {!userLocation && (
-              <span className="text-xs text-muted-foreground italic ml-1">Enable GPS first</span>
+            {!userLocation && district === "All Districts" && (
+              <span className="text-xs text-muted-foreground italic ml-1 shrink-0">GPS or select a district</span>
             )}
           </div>
         </div>
