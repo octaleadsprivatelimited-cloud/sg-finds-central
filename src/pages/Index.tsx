@@ -48,8 +48,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         const q = query(collection(db, "listings"), where("status", "==", "approved"));
         const snap = await getDocs(q);
         if (!snap.empty) {
-          const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Listing));
-          setListings(data);
+          const firestoreData = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Listing));
+          // Merge: Firestore listings take priority, then fill in demo listings that don't conflict
+          const firestoreIds = new Set(firestoreData.map(l => l.id));
+          const uniqueDemo = DEMO_LISTINGS.filter(l => !firestoreIds.has(l.id));
+          setListings([...firestoreData, ...uniqueDemo]);
         }
       } catch { /* demo fallback */ }
     };
