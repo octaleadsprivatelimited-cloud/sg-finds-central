@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
+import EnquiryInbox from "@/components/EnquiryInbox";
 
 // Demo data fallback
 const MY_DEMO_LISTINGS: Listing[] = [
@@ -353,6 +354,10 @@ const BusinessDashboard = () => {
             <TabsTrigger value="featured" className="gap-1.5">
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Featured</span>
+            </TabsTrigger>
+            <TabsTrigger value="enquiries" className="gap-1.5">
+              <MessageSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Enquiries</span>
             </TabsTrigger>
             <TabsTrigger value="hours" className="gap-1.5">
               <Clock className="w-4 h-4" />
@@ -708,6 +713,11 @@ const BusinessDashboard = () => {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          {/* ENQUIRIES TAB */}
+          <TabsContent value="enquiries" className="space-y-6">
+            <EnquiryInbox />
           </TabsContent>
 
           {/* HOURS TAB */}
