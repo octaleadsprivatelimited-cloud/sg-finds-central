@@ -243,7 +243,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
               {hasActiveFilters && (
                 <button
-                  onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setPriceRange(null); setOpenNow(false); }}
+                  onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
                   className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   Clear All
