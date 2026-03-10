@@ -99,32 +99,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
 
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {["All Districts", "Bedok", "Tampines", "Pasir Ris", "Punggol", "Hougang", "Ang Mo Kio", "Bishan"].map((d) => (
-              <button
-                key={d}
-                onClick={() => setDistrict(d)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                  district === d
-                    ? "bg-foreground text-background border-foreground"
-                    : "bg-background text-foreground border-border hover:bg-muted"
-                }`}
-              >
-                {d === "All Districts" ? "All" : d}
-              </button>
-            ))}
-            <Select value={district} onValueChange={setDistrict}>
-              <SelectTrigger className="w-auto h-7 text-xs border-border rounded-full px-3">
-                <SelectValue placeholder="More..." />
-              </SelectTrigger>
-              <SelectContent>
-                {SINGAPORE_DISTRICTS.filter(d => !["All Districts", "Bedok", "Tampines", "Pasir Ris", "Punggol", "Hougang", "Ang Mo Kio", "Bishan"].includes(d)).map((d) => (
-                  <SelectItem key={d} value={d}>{d}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Category chips */}
           <div className="flex items-center gap-1.5 flex-wrap">
             {[
