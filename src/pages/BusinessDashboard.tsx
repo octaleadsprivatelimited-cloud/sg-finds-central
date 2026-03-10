@@ -354,6 +354,10 @@ const BusinessDashboard = () => {
               <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Featured</span>
             </TabsTrigger>
+            <TabsTrigger value="hours" className="gap-1.5">
+              <Clock className="w-4 h-4" />
+              <span className="hidden sm:inline">Hours</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* LISTINGS TAB */}
