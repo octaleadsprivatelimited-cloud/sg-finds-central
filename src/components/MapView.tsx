@@ -121,6 +121,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
 
   return (
     <GoogleMap
+      onLoad={onMapLoad}
       mapContainerClassName="w-full h-full rounded-xl"
       center={center || DEFAULT_CENTER}
       zoom={12}
