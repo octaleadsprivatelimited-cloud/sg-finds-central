@@ -558,11 +558,14 @@ const BusinessDashboard = () => {
                 Recent Enquiries
               </h3>
               <div className="space-y-0 divide-y divide-border/40">
-                {[
-                  { name: "Alice Tan", message: "Do you cater for events?", time: "2h ago", listing: "Singapore Delights" },
-                  { name: "Bob Lee", message: "What are your office hours?", time: "1d ago", listing: "TechHub Solutions" },
-                  { name: "Carol Ng", message: "Any promotions this month?", time: "3d ago", listing: "Singapore Delights" },
-                ].map((enquiry, i) => (
+                {recentEnquiries.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
+                      <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">No enquiries yet</p>
+                  </div>
+                ) : recentEnquiries.map((enquiry, i) => (
                   <div key={i} className="flex items-start gap-3.5 py-4 first:pt-0 last:pb-0">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary)/0.15)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center shrink-0">
                       <span className="text-xs font-bold text-primary">{enquiry.name.charAt(0)}</span>
@@ -572,8 +575,8 @@ const BusinessDashboard = () => {
                         <p className="text-sm font-semibold text-foreground">{enquiry.name}</p>
                         <span className="text-[11px] text-muted-foreground font-medium">{enquiry.time}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-0.5">{enquiry.message}</p>
-                      <p className="text-xs text-primary mt-1 font-medium">Re: {enquiry.listing}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{enquiry.message}</p>
+                      {enquiry.listing && <p className="text-xs text-primary mt-1 font-medium">Re: {enquiry.listing}</p>}
                     </div>
                   </div>
                 ))}
