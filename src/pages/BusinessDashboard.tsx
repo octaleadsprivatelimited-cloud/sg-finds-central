@@ -215,7 +215,10 @@ const BusinessDashboard = () => {
     rejected: listings.filter(l => l.status === "rejected").length,
   }), [listings]);
 
-  const openEdit = (listing: Listing) => {
+  const listingIds = useMemo(() => listings.map(l => l.id), [listings]);
+  const viewCounts = useListingViewCounts(listingIds);
+  const totalViews = useMemo(() => Object.values(viewCounts).reduce((a, b) => a + b, 0), [viewCounts]);
+
     setEditingListing(listing);
     setEditName(listing.name);
     setEditCategory(listing.category);
