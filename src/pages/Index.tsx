@@ -274,12 +274,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 <button onClick={() => setCategory("All Categories")} className="hover:text-destructive">×</button>
               </span>
             )}
-            {priceRange && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
-                {priceRange}
-                <button onClick={() => setPriceRange(null)} className="hover:text-destructive">×</button>
-              </span>
-            )}
             {radiusKm !== null && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
                 ≤{radiusKm}km
