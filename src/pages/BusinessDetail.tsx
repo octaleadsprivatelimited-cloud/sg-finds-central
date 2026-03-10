@@ -249,6 +249,7 @@ const BusinessDetail = () => {
             )}
 
             <ContactSidebar listing={listing} />
+            <BusinessEnquiryForm listingId={listing.id} listingName={listing.name} ownerId={listing.ownerId} />
           </div>
         </div>
       </div>
