@@ -27,6 +27,8 @@ const Index = () => {
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
+  const [radiusKm, setRadiusKm] = useState<number | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
