@@ -75,6 +75,7 @@ interface ListingCardProps {
   highlighted?: boolean;
   onSelect?: (listing: Listing) => void;
   onHover?: (id: string | null) => void;
+  distanceKm?: number | null;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
