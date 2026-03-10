@@ -174,42 +174,6 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           </div>
         </div>
 
-        {/* ═══ CATEGORY NAVIGATION BAR ═══ */}
-        <div className="hidden md:block border-t border-border">
-          <div className="container mx-auto px-4">
-            <nav className="flex items-center gap-0 h-10 overflow-x-auto scrollbar-hide">
-              {BUSINESS_CATEGORIES.filter(c => c !== "All Categories").slice(0, 8).map(cat => (
-                <Link
-                  key={cat}
-                  to={`/singapore/${cat.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}
-                  className="flex items-center gap-1 px-3 h-full text-[13px] font-medium text-muted-foreground hover:text-primary whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-primary"
-                >
-                  {cat}
-                </Link>
-              ))}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 px-3 h-full text-[13px] font-medium text-muted-foreground hover:text-primary whitespace-nowrap transition-colors">
-                    More <ChevronDown className="w-3.5 h-3.5" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56">
-                  {BUSINESS_CATEGORIES.filter(c => c !== "All Categories").slice(8).map(cat => (
-                    <DropdownMenuItem key={cat} asChild>
-                      <Link to={`/singapore/${cat.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}>{cat}</Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Link to="/add-listing" className="ml-auto">
-                <span className="inline-flex items-center gap-2 px-5 py-1.5 rounded-lg bg-yellow-400 text-black text-xs font-bold hover:bg-yellow-300 transition-all shadow-md shadow-yellow-400/25 hover:shadow-lg hover:shadow-yellow-400/30 hover:-translate-y-0.5 pulse">
-                  List Free
-                  <span className="px-1.5 py-0.5 rounded bg-black/10 text-[10px] font-extrabold tracking-wide uppercase">$0</span>
-                </span>
-              </Link>
-            </nav>
-          </div>
-        </div>
 
         {/* ═══ MOBILE NAV DROPDOWN ═══ */}
         {mobileOpen && (
