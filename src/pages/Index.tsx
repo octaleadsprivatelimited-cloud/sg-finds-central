@@ -230,6 +230,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       listing={listing}
                       highlighted={hoveredListingId === listing.id}
                       onHover={setHoveredListingId}
+                      distanceKm={getListingDistance(listing)}
                       onSelect={(l) => {
                         setSelectedListing(l);
                         if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
