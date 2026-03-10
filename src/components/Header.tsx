@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown,
-  MapPin, User, ChevronDown, List, Map as MapIcon, Search,
+  MapPin, User, List, Map as MapIcon, Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BUSINESS_CATEGORIES } from "@/lib/districts";
+
 
 interface HeaderProps {
   showMap?: boolean;
@@ -166,23 +166,31 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
         {mobileOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 border-t border-border bg-card p-4 space-y-1.5 animate-fade-in shadow-lg z-50">
             {isSuperAdmin && (
-              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
-                <Link to="/super-admin"><Crown className="w-4 h-4 mr-2 text-warning" />Super Admin</Link>
-              </Button>
+              <Link to="/super-admin" onClick={() => setMobileOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">
+                  <Crown className="w-4 h-4 mr-2 text-warning" />Super Admin
+                </Button>
+              </Link>
             )}
             {isAdmin && !isSuperAdmin && (
-              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
-                <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin</Link>
-              </Button>
+              <Link to="/admin" onClick={() => setMobileOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">
+                  <Shield className="w-4 h-4 mr-2" />Admin
+                </Button>
+              </Link>
             )}
             {user && (
-              <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
-                <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
-              </Button>
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">
+                  <LayoutDashboard className="w-4 h-4 mr-2" />Dashboard
+                </Button>
+              </Link>
             )}
-            <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileOpen(false)}>
-              <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
-            </Button>
+            <Link to="/add-listing" onClick={() => setMobileOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">
+                <Plus className="w-4 h-4 mr-2" />Add Listing
+              </Button>
+            </Link>
             {user ? (
               <Button variant="ghost" className="w-full justify-start text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
