@@ -66,7 +66,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     const filterOrigin = userLocation || (district !== "All Districts" ? DISTRICT_COORDINATES[district] : null);
     const result = listings.filter((l) => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchD = district === "All Districts" || l.district === district;
+      const matchD = (radiusKm && filterOrigin) || district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
       return matchQ && matchD && matchC && matchR;
