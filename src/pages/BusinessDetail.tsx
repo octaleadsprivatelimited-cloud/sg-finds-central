@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { useViewTracking } from "@/hooks/useViewTracking";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Building2, Clock, CalendarDays, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
