@@ -14,6 +14,8 @@ import BusinessHeader from "@/components/business-detail/BusinessHeader";
 import CatalogueSection from "@/components/business-detail/CatalogueSection";
 import QuickInfo from "@/components/business-detail/QuickInfo";
 import ContactSidebar from "@/components/business-detail/ContactSidebar";
+import BusinessEnquiryForm from "@/components/BusinessEnquiryForm";
+import SEOHead from "@/components/SEOHead";
 import { DEMO_LISTINGS, GALLERY_MAP } from "@/lib/demo-listings";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
