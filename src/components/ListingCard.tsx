@@ -227,6 +227,12 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
             ⭐ Featured
           </Badge>
         )}
+        {distanceKm != null && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-primary border-primary/30">
+            <MapPin className="w-3 h-3" />
+            {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)} km`}
+          </Badge>
+        )}
       </div>
     </div>
   );
