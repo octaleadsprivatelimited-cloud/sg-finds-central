@@ -275,6 +275,48 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           )}
         </div>
 
+        {/* Active filter chips (visible when panel is collapsed) */}
+        {!filtersOpen && hasActiveFilters && (
+          <div className="flex items-center gap-1.5 pt-1.5 border-t border-border overflow-x-auto scrollbar-hide flex-nowrap">
+            {searchQuery && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                "{searchQuery}"
+                <button onClick={() => setSearchQuery("")} className="hover:text-destructive">×</button>
+              </span>
+            )}
+            {district !== "All Districts" && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                {district}
+                <button onClick={() => setDistrict("All Districts")} className="hover:text-destructive">×</button>
+              </span>
+            )}
+            {category !== "All Categories" && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                {category}
+                <button onClick={() => setCategory("All Categories")} className="hover:text-destructive">×</button>
+              </span>
+            )}
+            {priceRange && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                {priceRange}
+                <button onClick={() => setPriceRange(null)} className="hover:text-destructive">×</button>
+              </span>
+            )}
+            {radiusKm !== null && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                ≤{radiusKm}km
+                <button onClick={() => setRadiusKm(null)} className="hover:text-destructive">×</button>
+              </span>
+            )}
+            {openNow && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-600/10 text-emerald-600 border border-emerald-600/20 whitespace-nowrap shrink-0">
+                Open Now
+                <button onClick={() => setOpenNow(false)} className="hover:text-destructive">×</button>
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Split view: Featured list + Map */}
         <div className="flex gap-4 md:gap-6 overflow-hidden">
           {/* Listings column */}
