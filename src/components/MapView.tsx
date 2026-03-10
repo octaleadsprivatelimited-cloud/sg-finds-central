@@ -1,7 +1,9 @@
 import { GoogleMap, MarkerF, InfoWindowF } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
+import { getBusinessUrl } from "@/lib/url-helpers";
 import { Loader2, Star } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MapViewProps {
   listings: Listing[];
