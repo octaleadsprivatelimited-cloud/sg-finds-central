@@ -503,10 +503,12 @@ const BusinessDashboard = () => {
           {/* ANALYTICS TAB */}
           <TabsContent value="analytics" className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <AnalyticCard title="Total Views" value="1,247" change="+12%" icon={<Eye className="w-5 h-5" />} />
-              <AnalyticCard title="Contact Clicks" value="89" change="+8%" icon={<Phone className="w-5 h-5" />} />
-              <AnalyticCard title="Website Visits" value="234" change="+15%" icon={<Globe className="w-5 h-5" />} />
+              <AnalyticCard title="Total Views" value={totalViews.toLocaleString()} change="" icon={<Eye className="w-5 h-5" />} />
+              <AnalyticCard title="Contact Clicks" value="—" change="" icon={<Phone className="w-5 h-5" />} />
+              <AnalyticCard title="Website Visits" value="—" change="" icon={<Globe className="w-5 h-5" />} />
             </div>
+
+            {user && <ViewAnalyticsChart listings={listings} userId={user.uid} />}
 
             <div className="bg-background rounded-2xl border border-border p-6">
               <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
