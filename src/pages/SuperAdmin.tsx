@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { useListingViewCounts } from "@/hooks/useViewTracking";
 import { db } from "@/lib/firebase";
 import AdminAddBusiness from "@/components/admin/AdminAddBusiness";
 import { getBusinessUrl } from "@/lib/url-helpers";
@@ -88,6 +89,9 @@ const SuperAdmin = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [showAddBusiness, setShowAddBusiness] = useState(false);
   const [permissionErrorShown, setPermissionErrorShown] = useState(false);
+
+  const allListingIds = useMemo(() => listings.map(l => l.id), [listings]);
+  const viewCounts = useListingViewCounts(allListingIds);
 
   const [platformSettings, setPlatformSettings] = useState({
     autoApprove: false,
@@ -716,6 +720,14 @@ const SuperAdmin = () => {
                           <span>{listing.category}</span>
                           <span>·</span>
                           <span>{listing.district}</span>
+                          {viewCounts[listing.id] > 0 && (
+                            <>
+                              <span>·</span>
+                              <span className="font-medium" style={{ color: "#5c6ac4" }}>
+                                <Eye className="w-3 h-3 inline mr-0.5" />{viewCounts[listing.id].toLocaleString()} views
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>

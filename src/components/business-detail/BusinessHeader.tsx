@@ -1,4 +1,4 @@
-import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink } from "lucide-react";
+import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink, Eye, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -9,9 +9,11 @@ import { toast } from "sonner";
 interface BusinessHeaderProps {
   listing: Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number };
   shareUrl: string;
+  viewCount?: number;
+  liveViewers?: number;
 }
 
-const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
+const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: BusinessHeaderProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -81,6 +83,24 @@ const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Open now
           </div>
+          {viewCount > 0 && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Eye className="w-3.5 h-3.5" />
+                <span>{viewCount.toLocaleString()} views</span>
+              </div>
+            </>
+          )}
+          {liveViewers > 1 && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <div className="flex items-center gap-1.5 text-sm font-medium text-primary">
+                <Users className="w-3.5 h-3.5" />
+                <span>{liveViewers} viewing now</span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Category — minimal pill */}

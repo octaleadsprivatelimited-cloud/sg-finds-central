@@ -41,6 +41,7 @@ import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, s
 import { db } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
 import EnquiryInbox from "@/components/EnquiryInbox";
+import { useListingViewCounts } from "@/hooks/useViewTracking";
 
 // Demo data fallback
 const MY_DEMO_LISTINGS: Listing[] = [
@@ -214,6 +215,10 @@ const BusinessDashboard = () => {
     rejected: listings.filter(l => l.status === "rejected").length,
   }), [listings]);
 
+  const listingIds = useMemo(() => listings.map(l => l.id), [listings]);
+  const viewCounts = useListingViewCounts(listingIds);
+  const totalViews = useMemo(() => Object.values(viewCounts).reduce((a, b) => a + b, 0), [viewCounts]);
+
   const openEdit = (listing: Listing) => {
     setEditingListing(listing);
     setEditName(listing.name);
@@ -368,11 +373,12 @@ const BusinessDashboard = () => {
           {/* LISTINGS TAB */}
           <TabsContent value="listings" className="space-y-6">
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
               <MiniStat label="Total Listings" value={stats.total} icon={<Building2 className="w-4 h-4" />} />
               <MiniStat label="Approved" value={stats.approved} icon={<Check className="w-4 h-4" />} color="text-emerald-600" />
               <MiniStat label="Pending" value={stats.pending} icon={<Clock className="w-4 h-4" />} color="text-amber-600" />
               <MiniStat label="Rejected" value={stats.rejected} icon={<X className="w-4 h-4" />} color="text-destructive" />
+              <MiniStat label="Total Views" value={totalViews} icon={<Eye className="w-4 h-4" />} color="text-primary" />
             </div>
 
             {/* Listing Cards */}
@@ -417,6 +423,11 @@ const BusinessDashboard = () => {
                               className="flex items-center gap-1 text-primary hover:underline">
                               <Globe className="w-3 h-3" />Website<ExternalLink className="w-2.5 h-2.5" />
                             </a>
+                          )}
+                          {viewCounts[listing.id] > 0 && (
+                            <span className="flex items-center gap-1 text-primary font-medium">
+                              <Eye className="w-3 h-3" />{viewCounts[listing.id].toLocaleString()} views
+                            </span>
                           )}
                         </div>
                       </div>

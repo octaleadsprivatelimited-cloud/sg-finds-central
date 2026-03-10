@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { useViewTracking } from "@/hooks/useViewTracking";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Building2, Clock, CalendarDays, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -99,6 +100,7 @@ const BusinessDetail = () => {
 
   const shareUrl = `${window.location.origin}/${areaSlug}/${categorySlug}/${businessSlug}`;
   const galleryPhotos = GALLERY_MAP[listing.id] || [];
+  const { viewCount, liveViewers } = useViewTracking(listing.id);
 
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
@@ -134,7 +136,7 @@ const BusinessDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Left: Header + Tabs */}
           <div className="lg:col-span-2 space-y-8">
-            <BusinessHeader listing={listing} shareUrl={shareUrl} />
+            <BusinessHeader listing={listing} shareUrl={shareUrl} viewCount={viewCount} liveViewers={liveViewers} />
 
             {/* Tabs — Apple-style clean segmented control */}
             <Tabs defaultValue="overview">
