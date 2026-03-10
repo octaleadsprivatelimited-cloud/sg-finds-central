@@ -1,4 +1,4 @@
-import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink } from "lucide-react";
+import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink, Eye, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -9,6 +9,8 @@ import { toast } from "sonner";
 interface BusinessHeaderProps {
   listing: Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number };
   shareUrl: string;
+  viewCount?: number;
+  liveViewers?: number;
 }
 
 const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {

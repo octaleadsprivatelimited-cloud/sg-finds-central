@@ -136,7 +136,7 @@ const BusinessDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Left: Header + Tabs */}
           <div className="lg:col-span-2 space-y-8">
-            <BusinessHeader listing={listing} shareUrl={shareUrl} />
+            <BusinessHeader listing={listing} shareUrl={shareUrl} viewCount={viewCount} liveViewers={liveViewers} />
 
             {/* Tabs — Apple-style clean segmented control */}
             <Tabs defaultValue="overview">
