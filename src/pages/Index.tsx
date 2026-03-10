@@ -53,9 +53,10 @@ const Index = () => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
       const matchD = district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
-      return matchQ && matchD && matchC;
+      const matchR = !radiusKm || !userLocation || !l.lat || !l.lng || getDistance(userLocation.lat, userLocation.lng, l.lat, l.lng) <= radiusKm;
+      return matchQ && matchD && matchC && matchR;
     });
-  }, [listings, searchQuery, district, category]);
+  }, [listings, searchQuery, district, category, radiusKm, userLocation]);
 
   const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
     const R = 6371;
