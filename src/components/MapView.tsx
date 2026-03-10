@@ -1,7 +1,9 @@
 import { GoogleMap, MarkerF, InfoWindowF } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
+import { getBusinessUrl } from "@/lib/url-helpers";
 import { Loader2, Star } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MapViewProps {
   listings: Listing[];
@@ -30,6 +32,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
+  const navigate = useNavigate();
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -162,7 +165,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
               >
                 <div
                   style={{ maxWidth: 220, cursor: "pointer" }}
-                  onClick={() => onSelectListing?.(activeListing)}
+                  onClick={() => navigate(getBusinessUrl(activeListing))}
                 >
                   {activeListing.coverImage && (
                     <img
@@ -189,6 +192,9 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                   </div>
                   <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
                     {activeListing.category}
+                  </div>
+                  <div style={{ fontSize: 12, color: "#3b82f6", marginTop: 6, fontWeight: 600 }}>
+                    View Details →
                   </div>
                 </div>
               </InfoWindowF>
