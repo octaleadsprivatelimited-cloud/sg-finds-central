@@ -77,7 +77,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
       
       const matchO = !openNow || getIsOpenNow(l) === true;
-      return matchQ && matchD && matchC && matchR && matchP && matchO;
+      return matchQ && matchD && matchC && matchR && matchO;
     });
     if (filterOrigin) {
       result.sort((a, b) => {
