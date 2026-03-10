@@ -142,6 +142,44 @@ function isWithinTime(now: Date, open: string, close: string): boolean {
   return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
 }
 
+function formatTime12(time: string): string {
+  if (!time) return "";
+  const [h, m] = time.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return m === 0 ? `${hour} ${ampm}` : `${hour}:${m.toString().padStart(2, "0")} ${ampm}`;
+}
+
+export function getNextOpenInfo(listing: Listing): string | null {
+  const hours = listing.operatingHours;
+  if (!hours) return null;
+  const now = new Date();
+  const currentDayIndex = now.getDay();
+
+  // Check if still opening later today
+  const todayName = DAYS[currentDayIndex];
+  const todayHours = hours[todayName];
+  if (todayHours && !todayHours.closed && todayHours.open) {
+    const [oh, om] = todayHours.open.split(":").map(Number);
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    if (nowMin < oh * 60 + om) {
+      return `Opens today at ${formatTime12(todayHours.open)}`;
+    }
+  }
+
+  // Check next 7 days
+  for (let i = 1; i <= 7; i++) {
+    const nextDayIndex = (currentDayIndex + i) % 7;
+    const dayName = DAYS[nextDayIndex];
+    const dayHours = hours[dayName];
+    if (dayHours && !dayHours.closed && dayHours.open) {
+      const label = i === 1 ? "tomorrow" : dayName;
+      return `Opens ${label} at ${formatTime12(dayHours.open)}`;
+    }
+  }
+  return null;
+}
+
 const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanceKm }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
