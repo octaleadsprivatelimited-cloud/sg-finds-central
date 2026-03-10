@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import ListingCard, { Listing, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
+import ListingCard, { Listing, DEFAULT_OPERATING_HOURS, getIsOpenNow } from "@/components/ListingCard";
 import FeaturedListings from "@/components/FeaturedListings";
 import ExclusiveDeals from "@/components/ExclusiveDeals";
 import CategoryHighlights from "@/components/CategoryHighlights";
@@ -34,6 +34,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
   const [radiusKm, setRadiusKm] = useState<number | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [priceRange, setPriceRange] = useState<string | null>(null);
+  const [openNow, setOpenNow] = useState(false);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
@@ -72,7 +74,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       const matchD = (radiusKm && filterOrigin) || district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
-      return matchQ && matchD && matchC && matchR;
+      const matchP = !priceRange || l.priceRange === priceRange;
+      const matchO = !openNow || getIsOpenNow(l) === true;
+      return matchQ && matchD && matchC && matchR && matchP && matchO;
     });
     if (filterOrigin) {
       result.sort((a, b) => {
@@ -82,7 +86,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       });
     }
     return result;
-  }, [listings, searchQuery, district, category, radiusKm, userLocation, filterOrigin]);
+  }, [listings, searchQuery, district, category, radiusKm, userLocation, filterOrigin, priceRange, openNow]);
 
   const getListingDistance = (listing: { lat?: number; lng?: number }) => {
     if (!filterOrigin || !listing.lat || !listing.lng) return null;
@@ -108,17 +112,46 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     registerDetectLocation(handleDetectLocation);
   }, [registerDetectLocation]);
 
-  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null;
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || priceRange !== null || openNow;
 
   return (
     <div className="min-h-screen bg-background">
 
       {/* ═══ ALL BUSINESSES (TOP) ═══ */}
       <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-        <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
+        <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-2.5">
+
+          {/* District chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Area:</span>
+            {["All Districts", "Bedok", "Tampines", "Pasir Ris", "Punggol", "Hougang", "Ang Mo Kio", "Bishan", "Orchard", "CBD / Raffles Place"].map((d) => (
+              <button
+                key={d}
+                onClick={() => setDistrict(d)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                  district === d
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                {d === "All Districts" ? "All" : d}
+              </button>
+            ))}
+            <Select value={district} onValueChange={setDistrict}>
+              <SelectTrigger className="w-auto h-7 text-xs border-border rounded-full px-3 shrink-0">
+                <SelectValue placeholder="More..." />
+              </SelectTrigger>
+              <SelectContent>
+                {SINGAPORE_DISTRICTS.filter(d => !["All Districts", "Bedok", "Tampines", "Pasir Ris", "Punggol", "Hougang", "Ang Mo Kio", "Bishan", "Orchard", "CBD / Raffles Place"].includes(d)).map((d) => (
+                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           {/* Category chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Type:</span>
             {[
               { value: "All Categories", label: "All" },
               { value: "Food & Beverage", label: "Food" },
@@ -140,12 +173,50 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 {c.label}
               </button>
             ))}
-            {(category !== "All Categories" || district !== "All Districts" || searchQuery || radiusKm !== null) && (
+          </div>
+
+          {/* Price range + Open now row */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Price:</span>
+            {[
+              { value: null as string | null, label: "Any" },
+              { value: "$", label: "$" },
+              { value: "$$", label: "$$" },
+              { value: "$$$", label: "$$$" },
+            ].map((p) => (
               <button
-                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); }}
+                key={p.label}
+                onClick={() => setPriceRange(p.value)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                  priceRange === p.value
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+
+            <div className="w-px h-5 bg-border mx-1 shrink-0" />
+
+            <button
+              onClick={() => setOpenNow(!openNow)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                openNow
+                  ? "bg-emerald-600 text-white border-emerald-600"
+                  : "bg-background text-foreground border-border hover:bg-muted"
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${openNow ? "bg-white" : "bg-emerald-500"}`} />
+              Open Now
+            </button>
+
+            {hasActiveFilters && (
+              <button
+                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setPriceRange(null); setOpenNow(false); }}
                 className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors whitespace-nowrap shrink-0"
               >
-                Clear
+                Clear All
               </button>
             )}
           </div>
