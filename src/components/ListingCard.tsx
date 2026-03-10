@@ -184,6 +184,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
+  const nextOpenInfo = useMemo(() => (isOpen === false ? getNextOpenInfo(listing) : null), [listing, isOpen]);
   const [liked, setLiked] = useState(false);
   const shortCategory = CATEGORY_SHORT[listing.category] || listing.category;
 
