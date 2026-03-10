@@ -1030,17 +1030,17 @@ const HoursEditor = ({ listing, onSave }: { listing: Listing; onSave: (hours: Op
         {DAYS_ORDER.map((day) => {
           const dh = hours[day] || { open: "09:00", close: "18:00", closed: false };
           return (
-            <div key={day} className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground w-20 shrink-0 font-medium">{day.slice(0, 3)}</span>
-              <label className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0 w-16">
+            <div key={day} className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-muted-foreground w-10 sm:w-20 shrink-0 font-medium">{day.slice(0, 3)}</span>
+              <label className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
                 <input type="checkbox" checked={!!dh.closed} onChange={e => update(day, "closed", e.target.checked)} className="rounded border-border" />Closed
               </label>
               {!dh.closed ? (
-                <>
-                  <Input type="time" className="w-[110px] h-8 text-xs rounded-lg" value={dh.open} onChange={e => update(day, "open", e.target.value)} />
-                  <span className="text-[11px] text-muted-foreground">to</span>
-                  <Input type="time" className="w-[110px] h-8 text-xs rounded-lg" value={dh.close} onChange={e => update(day, "close", e.target.value)} />
-                </>
+                <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                  <Input type="time" className="w-[100px] h-8 text-xs rounded-lg flex-shrink-0" value={dh.open} onChange={e => update(day, "open", e.target.value)} />
+                  <span className="text-[11px] text-muted-foreground">–</span>
+                  <Input type="time" className="w-[100px] h-8 text-xs rounded-lg flex-shrink-0" value={dh.close} onChange={e => update(day, "close", e.target.value)} />
+                </div>
               ) : (
                 <span className="text-xs text-muted-foreground italic">Closed</span>
               )}
