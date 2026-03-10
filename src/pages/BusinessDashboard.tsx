@@ -373,11 +373,12 @@ const BusinessDashboard = () => {
           {/* LISTINGS TAB */}
           <TabsContent value="listings" className="space-y-6">
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
               <MiniStat label="Total Listings" value={stats.total} icon={<Building2 className="w-4 h-4" />} />
               <MiniStat label="Approved" value={stats.approved} icon={<Check className="w-4 h-4" />} color="text-emerald-600" />
               <MiniStat label="Pending" value={stats.pending} icon={<Clock className="w-4 h-4" />} color="text-amber-600" />
               <MiniStat label="Rejected" value={stats.rejected} icon={<X className="w-4 h-4" />} color="text-destructive" />
+              <MiniStat label="Total Views" value={totalViews} icon={<Eye className="w-4 h-4" />} color="text-primary" />
             </div>
 
             {/* Listing Cards */}
