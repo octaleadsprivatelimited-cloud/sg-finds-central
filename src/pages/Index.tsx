@@ -119,7 +119,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     <div className="min-h-screen bg-background">
 
       {/* ═══ ALL BUSINESSES (TOP) ═══ */}
-      <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+      <section className="container mx-auto px-3 md:px-4 pt-2 md:pt-4 pb-4 md:pb-8">
         <div className="bg-card border border-border rounded-xl p-3 mb-4 space-y-2">
 
           {/* Row 1: Category chips + toggle */}
