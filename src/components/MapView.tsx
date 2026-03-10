@@ -165,7 +165,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
               >
                 <div
                   style={{ maxWidth: 220, cursor: "pointer" }}
-                  onClick={() => onSelectListing?.(activeListing)}
+                  onClick={() => navigate(getBusinessUrl(activeListing))}
                 >
                   {activeListing.coverImage && (
                     <img
