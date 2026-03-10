@@ -23,6 +23,10 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import SeedFirestore from "./pages/SeedFirestore";
 import SignUp from "./pages/SignUp";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +66,10 @@ const AppContent = () => {
           <Route path="/super-admin" element={<PageTransition><SuperAdmin /></PageTransition>} />
           <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
           <Route path="/signup" element={<PageTransition><SignUp /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+          <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+          <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
           <Route path="/seed" element={<PageTransition><SeedFirestore /></PageTransition>} />
           <Route path="/:citySlug" element={<PageTransition><CityCategory /></PageTransition>} />
           <Route path="/:citySlug/:categorySlug" element={<PageTransition><CityCategory /></PageTransition>} />

@@ -36,9 +36,10 @@ const Footer = () => {
             <ul className="space-y-2.5">
               {[
                 { label: "Home", to: "/" },
+                { label: "About Us", to: "/about" },
+                { label: "Contact Us", to: "/contact" },
                 { label: "Add Business", to: "/add-listing" },
                 { label: "Dashboard", to: "/dashboard" },
-                { label: "Admin Panel", to: "/admin" },
               ].map(({ label, to }) => (
                 <li key={to}>
                   <Link to={to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -93,11 +94,8 @@ const Footer = () => {
             © {new Date().getFullYear()} FindLocal.SG — Made with <Heart className="w-3 h-3 text-destructive fill-destructive" /> in Singapore
           </p>
           <div className="flex items-center gap-4">
-            {["Privacy Policy", "Terms of Service", "Sitemap"].map((item) => (
-              <span key={item} className="text-xs text-muted-foreground hover:text-primary cursor-pointer transition-colors">
-                {item}
-              </span>
-            ))}
+            <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

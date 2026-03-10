@@ -14,6 +14,8 @@ import BusinessHeader from "@/components/business-detail/BusinessHeader";
 import CatalogueSection from "@/components/business-detail/CatalogueSection";
 import QuickInfo from "@/components/business-detail/QuickInfo";
 import ContactSidebar from "@/components/business-detail/ContactSidebar";
+import BusinessEnquiryForm from "@/components/BusinessEnquiryForm";
+import SEOHead from "@/components/SEOHead";
 import { DEMO_LISTINGS, GALLERY_MAP } from "@/lib/demo-listings";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -100,6 +102,13 @@ const BusinessDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
+      <SEOHead
+        title={listing.name}
+        description={listing.description || `${listing.name} — ${listing.category} in ${listing.district}, Singapore`}
+        image={listing.coverImage}
+        url={shareUrl}
+        type="business.business"
+      />
       {/* Breadcrumb — Apple-style minimal */}
       <div className="border-b border-border/40">
         <div className="container mx-auto px-4 py-3">
@@ -240,6 +249,7 @@ const BusinessDetail = () => {
             )}
 
             <ContactSidebar listing={listing} />
+            <BusinessEnquiryForm listingId={listing.id} listingName={listing.name} ownerId={listing.ownerId} />
           </div>
         </div>
       </div>
