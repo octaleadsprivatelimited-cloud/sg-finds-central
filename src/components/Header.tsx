@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown,
-  MapPin, User, ChevronDown, List, Map as MapIcon,
+  MapPin, User, ChevronDown, List, Map as MapIcon, Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSearch } from "@/contexts/SearchContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
