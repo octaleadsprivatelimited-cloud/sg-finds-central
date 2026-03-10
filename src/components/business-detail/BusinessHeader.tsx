@@ -13,7 +13,7 @@ interface BusinessHeaderProps {
   liveViewers?: number;
 }
 
-const BusinessHeader = ({ listing, shareUrl }: BusinessHeaderProps) => {
+const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: BusinessHeaderProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
