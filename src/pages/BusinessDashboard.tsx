@@ -62,6 +62,9 @@ const BusinessDashboard = () => {
   const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
   const [selectedListingForFeatured, setSelectedListingForFeatured] = useState("");
 
+  // Recent enquiries for analytics
+  const [recentEnquiries, setRecentEnquiries] = useState<{ name: string; message: string; time: string; listing: string }[]>([]);
+
   // Offers state
   const [offerListingId, setOfferListingId] = useState("");
   const [offerTitle, setOfferTitle] = useState("");
