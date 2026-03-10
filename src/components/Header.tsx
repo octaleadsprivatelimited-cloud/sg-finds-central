@@ -151,16 +151,6 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                   <Plus className="w-3.5 h-3.5 mr-0.5" />List Free
                 </Button>
               </Link>
-              {isHomePage && onDetectLocation && (
-                <Button variant="outline" size="sm" className="h-8 px-2.5 text-xs" onClick={onDetectLocation}>
-                  <MapPin className="w-3.5 h-3.5" />
-                </Button>
-              )}
-              {isHomePage && onToggleMap && (
-                <Button variant="outline" size="sm" className="h-8 px-2.5 text-xs" onClick={onToggleMap}>
-                  {showMap ? <List className="w-3.5 h-3.5" /> : <MapIcon className="w-3.5 h-3.5" />}
-                </Button>
-              )}
               <button
                 className="p-2 rounded-lg hover:bg-secondary transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}
