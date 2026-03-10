@@ -207,30 +207,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </Select>
               </div>
 
-              {/* Price + Distance in one row */}
+              {/* Distance row */}
               <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-                <span className="text-[11px] font-medium text-muted-foreground shrink-0">Price:</span>
-                {[
-                  { value: null as string | null, label: "Any" },
-                  { value: "$", label: "$" },
-                  { value: "$$", label: "$$" },
-                  { value: "$$$", label: "$$$" },
-                ].map((p) => (
-                  <button
-                    key={p.label}
-                    onClick={() => setPriceRange(p.value)}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
-                      priceRange === p.value
-                        ? "bg-foreground text-background border-foreground"
-                        : "bg-background text-foreground border-border hover:bg-muted"
-                    }`}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-
-                <div className="w-px h-4 bg-border mx-0.5 shrink-0" />
-
                 <span className="text-[11px] font-medium text-muted-foreground shrink-0">Dist:</span>
                 {[
                   { value: null as number | null, label: "Any" },
