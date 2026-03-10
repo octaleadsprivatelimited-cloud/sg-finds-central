@@ -219,6 +219,7 @@ const BusinessDashboard = () => {
   const viewCounts = useListingViewCounts(listingIds);
   const totalViews = useMemo(() => Object.values(viewCounts).reduce((a, b) => a + b, 0), [viewCounts]);
 
+  const openEdit = (listing: Listing) => {
     setEditingListing(listing);
     setEditName(listing.name);
     setEditCategory(listing.category);
