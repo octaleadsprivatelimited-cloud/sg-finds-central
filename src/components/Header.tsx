@@ -27,6 +27,7 @@ interface HeaderProps {
 
 const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
+  const { searchQuery, setSearchQuery } = useSearch();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
