@@ -142,7 +142,7 @@ function isWithinTime(now: Date, open: string, close: string): boolean {
   return nowMin >= oh * 60 + om && nowMin < ch * 60 + cm;
 }
 
-const ListingCard = ({ listing, compact, highlighted, onSelect, onHover }: ListingCardProps) => {
+const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanceKm }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
