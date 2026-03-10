@@ -137,6 +137,16 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           {/* Distance filter chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
             <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Distance:</span>
+            <Select value={district} onValueChange={setDistrict}>
+              <SelectTrigger className="w-auto h-7 text-xs border-border rounded-full px-3 shrink-0">
+                <SelectValue placeholder="Area" />
+              </SelectTrigger>
+              <SelectContent>
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {[
               { value: null as number | null, label: "Any" },
               { value: 1, label: "< 1 km" },
