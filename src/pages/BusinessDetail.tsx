@@ -102,6 +102,13 @@ const BusinessDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
+      <SEOHead
+        title={listing.name}
+        description={listing.description || `${listing.name} — ${listing.category} in ${listing.district}, Singapore`}
+        image={listing.coverImage}
+        url={shareUrl}
+        type="business.business"
+      />
       {/* Breadcrumb — Apple-style minimal */}
       <div className="border-b border-border/40">
         <div className="container mx-auto px-4 py-3">
