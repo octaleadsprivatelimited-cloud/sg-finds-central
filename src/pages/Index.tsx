@@ -86,7 +86,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       });
     }
     return result;
-  }, [listings, searchQuery, district, category, radiusKm, userLocation, filterOrigin]);
+  }, [listings, searchQuery, district, category, radiusKm, userLocation, filterOrigin, priceRange, openNow]);
 
   const getListingDistance = (listing: { lat?: number; lng?: number }) => {
     if (!filterOrigin || !listing.lat || !listing.lng) return null;
