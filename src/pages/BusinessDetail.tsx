@@ -34,7 +34,10 @@ const BusinessDetail = () => {
   }>();
   const navigate = useNavigate();
 
-  const listing = useMemo(
+  const [firestoreListing, setFirestoreListing] = useState<Listing | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const demoListing = useMemo(
     () =>
       DEMO_LISTINGS.find((l) => {
         const matchArea = toSlug(l.district) === areaSlug;
@@ -44,6 +47,32 @@ const BusinessDetail = () => {
       }),
     [areaSlug, categorySlug, businessSlug]
   );
+
+  useEffect(() => {
+    if (demoListing) {
+      setLoading(false);
+      return;
+    }
+    const fetchListing = async () => {
+      try {
+        const q = query(collection(db, "listings"), where("status", "==", "approved"));
+        const snap = await getDocs(q);
+        const match = snap.docs
+          .map(d => ({ id: d.id, ...d.data() } as Listing))
+          .find(l => {
+            const matchArea = toSlug(l.district) === areaSlug;
+            const matchCategory = toSlug(l.category) === categorySlug;
+            const matchBusiness = (l.customSlug || toSlug(l.name)) === businessSlug;
+            return matchArea && matchCategory && matchBusiness;
+          });
+        if (match) setFirestoreListing(match);
+      } catch { /* fallback */ }
+      setLoading(false);
+    };
+    fetchListing();
+  }, [areaSlug, categorySlug, businessSlug, demoListing]);
+
+  const listing = demoListing || firestoreListing;
 
   if (!listing) {
     return (
