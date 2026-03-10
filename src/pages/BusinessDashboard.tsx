@@ -105,7 +105,32 @@ const BusinessDashboard = () => {
     fetchTickets();
   }, [user]);
 
-  const submitFeaturedTicket = async () => {
+  // Load recent enquiries from Firestore
+  useEffect(() => {
+    const fetchRecentEnquiries = async () => {
+      if (!user) return;
+      try {
+        const q = query(collection(db, "enquiries"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        const items = snap.docs
+          .map(d => ({ id: d.id, ...d.data() } as any))
+          .sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+          .slice(0, 5)
+          .map((e: any) => {
+            const seconds = e.createdAt?.seconds || 0;
+            const diff = Math.floor((Date.now() / 1000 - seconds) / 60);
+            let time = "";
+            if (diff < 60) time = `${diff}m ago`;
+            else if (diff < 1440) time = `${Math.floor(diff / 60)}h ago`;
+            else time = `${Math.floor(diff / 1440)}d ago`;
+            return { name: e.name || "Anonymous", message: e.message || "", time, listing: e.listingName || "" };
+          });
+        setRecentEnquiries(items);
+      } catch {}
+    };
+    fetchRecentEnquiries();
+  }, [user]);
+
     if (!user || !selectedListingForFeatured) return;
     const listing = listings.find(l => l.id === selectedListingForFeatured);
     if (!listing) return;
