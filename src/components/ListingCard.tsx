@@ -235,6 +235,19 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
 
       {/* Badge pills row */}
       <div className="flex items-center gap-1.5 flex-wrap">
+        {/* Open / Closed status */}
+        {isOpen === true && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            Open
+          </Badge>
+        )}
+        {isOpen === false && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-destructive border-destructive/30">
+            <Clock className="w-3 h-3" />
+            {nextOpenInfo || "Closed"}
+          </Badge>
+        )}
         {listing.rating && (
           <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full">
             <Star className="w-3 h-3 text-warning fill-warning" />
