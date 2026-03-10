@@ -64,13 +64,22 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const filtered = useMemo(() => {
     // Use GPS location, or fall back to selected district center
     const filterOrigin = userLocation || (district !== "All Districts" ? DISTRICT_COORDINATES[district] : null);
-    return listings.filter((l) => {
+    const result = listings.filter((l) => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
       const matchD = district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
       return matchQ && matchD && matchC && matchR;
     });
+    // Sort by distance (nearest first) when we have an origin
+    if (filterOrigin) {
+      result.sort((a, b) => {
+        const distA = a.lat && a.lng ? getDistance(filterOrigin.lat, filterOrigin.lng, a.lat, a.lng) : Infinity;
+        const distB = b.lat && b.lng ? getDistance(filterOrigin.lat, filterOrigin.lng, b.lat, b.lng) : Infinity;
+        return distA - distB;
+      });
+    }
+    return result;
   }, [listings, searchQuery, district, category, radiusKm, userLocation]);
 
   const handleDetectLocation = () => {
