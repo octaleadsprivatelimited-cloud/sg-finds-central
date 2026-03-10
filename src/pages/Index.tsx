@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -10,7 +10,7 @@ import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
-import { MapPin, List, Map as MapIcon } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -18,13 +18,18 @@ import {
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { toast } from "sonner";
 
-const Index = () => {
+interface IndexProps {
+  showMap: boolean;
+  setShowMap: (val: boolean) => void;
+  registerDetectLocation: (fn: () => void) => void;
+}
+
+const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const { searchQuery, setSearchQuery, setListings: setSearchListings } = useSearch();
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
   const [radiusKm, setRadiusKm] = useState<number | null>(null);
@@ -48,6 +53,14 @@ const Index = () => {
     fetchListings();
   }, []);
 
+  const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
   const filtered = useMemo(() => {
     return listings.filter((l) => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
@@ -57,14 +70,6 @@ const Index = () => {
       return matchQ && matchD && matchC && matchR;
     });
   }, [listings, searchQuery, district, category, radiusKm, userLocation]);
-
-  const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLng = ((lng2 - lng1) * Math.PI) / 180;
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  };
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) { toast.error("Geolocation is not supported"); return; }
@@ -80,6 +85,11 @@ const Index = () => {
     );
   };
 
+  // Register the detect location function for the header
+  useEffect(() => {
+    registerDetectLocation(handleDetectLocation);
+  }, [registerDetectLocation]);
+
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null;
 
   return (
@@ -87,28 +97,18 @@ const Index = () => {
 
       {/* ═══ ALL BUSINESSES (TOP) ═══ */}
       <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-        {/* Search + Location bar */}
+        {/* Search + Filters */}
         <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="relative flex-1">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search snacks, nails, tutoring, candles..."
-                className="w-full pl-10 pr-4 h-10 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="h-10 px-4 text-sm shrink-0" onClick={handleDetectLocation}>
-                <MapPin className="w-4 h-4 mr-1.5" />GPS
-              </Button>
-              <Button variant="outline" size="sm" className="h-10 px-4 text-sm shrink-0" onClick={() => setShowMap(!showMap)}>
-                {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
-                {showMap ? "List" : "Map"}
-              </Button>
-            </div>
+          {/* Search bar */}
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search snacks, nails, tutoring, candles..."
+              className="w-full pl-10 pr-4 h-10 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
           {/* District chips */}
