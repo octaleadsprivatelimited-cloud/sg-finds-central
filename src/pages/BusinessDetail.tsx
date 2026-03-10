@@ -76,6 +76,7 @@ const BusinessDetail = () => {
   }, [areaSlug, categorySlug, businessSlug, demoListing]);
 
   const listing = demoListing || firestoreListing;
+  const { viewCount, liveViewers } = useViewTracking(listing?.id);
 
   if (loading) {
     return (
@@ -100,7 +101,6 @@ const BusinessDetail = () => {
 
   const shareUrl = `${window.location.origin}/${areaSlug}/${categorySlug}/${businessSlug}`;
   const galleryPhotos = GALLERY_MAP[listing.id] || [];
-  const { viewCount, liveViewers } = useViewTracking(listing.id);
 
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
