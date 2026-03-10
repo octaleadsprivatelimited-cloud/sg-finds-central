@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -94,7 +94,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     return getDistance(filterOrigin.lat, filterOrigin.lng, listing.lat, listing.lng);
   };
 
-  const handleDetectLocation = () => {
+  const handleDetectLocation = useCallback(() => {
     if (!navigator.geolocation) { toast.error("Geolocation is not supported"); return; }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -106,12 +106,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       },
       () => toast.error("Unable to detect location — please enable location access")
     );
-  };
+  }, [setShowMap]);
 
-  // Register the detect location function for the header
   useEffect(() => {
     registerDetectLocation(handleDetectLocation);
-  }, [registerDetectLocation]);
+  }, [registerDetectLocation, handleDetectLocation]);
 
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || openNow;
   const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, openNow, !!searchQuery].filter(Boolean).length;
