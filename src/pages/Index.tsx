@@ -97,21 +97,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ ALL BUSINESSES (TOP) ═══ */}
       <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-        {/* Search + Filters */}
         <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
-          {/* Search bar */}
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search snacks, nails, tutoring, candles..."
-              className="w-full pl-10 pr-4 h-10 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
 
-          {/* District chips */}
           <div className="flex items-center gap-1.5 flex-wrap">
             {["All Districts", "Bedok", "Tampines", "Pasir Ris", "Punggol", "Hougang", "Ang Mo Kio", "Bishan"].map((d) => (
               <button
