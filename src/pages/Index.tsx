@@ -27,6 +27,8 @@ const Index = () => {
   const [showMap, setShowMap] = useState(false);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
+  const [radiusKm, setRadiusKm] = useState<number | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
@@ -51,9 +53,10 @@ const Index = () => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
       const matchD = district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
-      return matchQ && matchD && matchC;
+      const matchR = !radiusKm || !userLocation || !l.lat || !l.lng || getDistance(userLocation.lat, userLocation.lng, l.lat, l.lng) <= radiusKm;
+      return matchQ && matchD && matchC && matchR;
     });
-  }, [listings, searchQuery, district, category]);
+  }, [listings, searchQuery, district, category, radiusKm, userLocation]);
 
   const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
     const R = 6371;
@@ -68,21 +71,16 @@ const Index = () => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setUserLocation(userLoc);
         setMapCenter(userLoc);
         setShowMap(true);
-        const withDistance = listings.filter((l) => l.lat && l.lng).map((l) => ({ ...l, _distance: getDistance(userLoc.lat, userLoc.lng, l.lat!, l.lng!) })).filter((l) => l._distance <= 15).sort((a, b) => a._distance - b._distance);
-        if (withDistance.length > 0) { setListings(withDistance); toast.success(`Found ${withDistance.length} businesses near you`); }
-        else {
-          const allSorted = listings.filter((l) => l.lat && l.lng).map((l) => ({ ...l, _distance: getDistance(userLoc.lat, userLoc.lng, l.lat!, l.lng!) })).sort((a, b) => a._distance - b._distance);
-          setListings(allSorted.length > 0 ? allSorted : DEMO_LISTINGS);
-          toast.info("No businesses within 15km — showing all results sorted by distance");
-        }
+        toast.success("Location detected — use distance filters to narrow results");
       },
       () => toast.error("Unable to detect location — please enable location access")
     );
   };
 
-  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories";
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -163,13 +161,48 @@ const Index = () => {
                 {c.label}
               </button>
             ))}
-            {(category !== "All Categories" || district !== "All Districts" || searchQuery) && (
+            {(category !== "All Categories" || district !== "All Districts" || searchQuery || radiusKm !== null) && (
               <button
-                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); }}
+                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); }}
                 className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
               >
                 Clear
               </button>
+            )}
+          </div>
+
+          {/* Distance filter chips */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1">Distance:</span>
+            {[
+              { value: null as number | null, label: "Any" },
+              { value: 1, label: "< 1 km" },
+              { value: 2, label: "< 2 km" },
+              { value: 3, label: "< 3 km" },
+              { value: 5, label: "< 5 km" },
+              { value: 10, label: "< 10 km" },
+            ].map((r) => (
+              <button
+                key={r.label}
+                onClick={() => {
+                  if (r.value !== null && !userLocation) {
+                    handleDetectLocation();
+                    setRadiusKm(r.value);
+                  } else {
+                    setRadiusKm(r.value);
+                  }
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  radiusKm === r.value
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+            {!userLocation && (
+              <span className="text-xs text-muted-foreground italic ml-1">Enable GPS first</span>
             )}
           </div>
         </div>
