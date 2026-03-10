@@ -1,7 +1,7 @@
 import { GoogleMap, MarkerF, InfoWindowF } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
 import { Loader2, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 interface MapViewProps {
   listings: Listing[];
