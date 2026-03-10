@@ -193,6 +193,9 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                   <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
                     {activeListing.category}
                   </div>
+                  <div style={{ fontSize: 12, color: "#3b82f6", marginTop: 6, fontWeight: 600 }}>
+                    View Details →
+                  </div>
                 </div>
               </InfoWindowF>
             )}
