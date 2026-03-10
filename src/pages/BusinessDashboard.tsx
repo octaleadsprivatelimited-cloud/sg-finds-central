@@ -424,6 +424,11 @@ const BusinessDashboard = () => {
                               <Globe className="w-3 h-3" />Website<ExternalLink className="w-2.5 h-2.5" />
                             </a>
                           )}
+                          {viewCounts[listing.id] > 0 && (
+                            <span className="flex items-center gap-1 text-primary font-medium">
+                              <Eye className="w-3 h-3" />{viewCounts[listing.id].toLocaleString()} views
+                            </span>
+                          )}
                         </div>
                       </div>
                       <DropdownMenu>
