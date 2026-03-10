@@ -15,6 +15,8 @@ import CatalogueSection from "@/components/business-detail/CatalogueSection";
 import QuickInfo from "@/components/business-detail/QuickInfo";
 import ContactSidebar from "@/components/business-detail/ContactSidebar";
 import { DEMO_LISTINGS, GALLERY_MAP } from "@/lib/demo-listings";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const formatTime = (time: string) => {
   if (!time) return "";
