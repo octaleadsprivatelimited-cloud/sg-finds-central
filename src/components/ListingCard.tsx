@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { MapPin, Phone, Globe, Star, Clock, ExternalLink, MessageCircle, Mail } from "lucide-react";
+import { useMemo, useState } from "react";
+import { MapPin, Star, Clock, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
@@ -19,8 +19,8 @@ export interface OperatingHours {
 }
 
 export interface SpecialHours {
-  date: string; // YYYY-MM-DD
-  label: string; // e.g. "Christmas", "CNY Day 1"
+  date: string;
+  label: string;
   open: string;
   close: string;
   closed?: boolean;
@@ -66,6 +66,7 @@ export interface Listing {
   offers?: ListingOffer[];
   operatingHours?: OperatingHours;
   specialHours?: SpecialHours[];
+  priceRange?: string;
 }
 
 interface ListingCardProps {
@@ -94,16 +95,31 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Construction & Renovation": "from-orange-600 to-amber-700",
 };
 
+const CATEGORY_SHORT: Record<string, string> = {
+  "Food & Beverage": "Food",
+  "Retail & Shopping": "Retail",
+  "Healthcare & Medical": "Healthcare",
+  "Education & Training": "Education",
+  "Professional Services": "Professional",
+  "Beauty & Wellness": "Beauty",
+  "Home Services": "Home Services",
+  "Automotive": "Automotive",
+  "Technology & IT": "Tech",
+  "Real Estate": "Real Estate",
+  "Legal Services": "Legal",
+  "Financial Services": "Finance",
+  "Logistics & Transport": "Logistics",
+  "Events & Entertainment": "Events",
+  "Construction & Renovation": "Construction",
+};
+
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 function getIsOpenNow(listing: Listing): boolean | null {
   const hours = listing.operatingHours;
-  if (!hours) return null; // no data → don't show badge
-
+  if (!hours) return null;
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);
-
-  // Check special hours first
   if (listing.specialHours) {
     const special = listing.specialHours.find((sh) => sh.date === todayStr);
     if (special) {
@@ -111,7 +127,6 @@ function getIsOpenNow(listing: Listing): boolean | null {
       return isWithinTime(now, special.open, special.close);
     }
   }
-
   const dayName = DAYS[now.getDay()];
   const todayHours = hours[dayName];
   if (!todayHours || todayHours.closed) return false;
@@ -130,110 +145,87 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover }: Listi
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
+  const [liked, setLiked] = useState(false);
+  const shortCategory = CATEGORY_SHORT[listing.category] || listing.category;
 
   const handleClick = () => {
     if (onSelect) onSelect(listing);
     navigate(getBusinessUrl(listing));
   };
 
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLiked(!liked);
+  };
+
   return (
     <div
       data-listing-id={listing.id}
-      className={`glass-card rounded-xl overflow-hidden hover-lift cursor-pointer animate-fade-in group transition-all duration-300 ${listing.featured ? "gradient-border" : ""} ${highlighted ? "ring-2 ring-primary shadow-lg scale-[1.01]" : ""}`}
+      className={`bg-card rounded-xl border border-border p-4 cursor-pointer transition-all duration-200 hover:shadow-md ${highlighted ? "ring-2 ring-primary shadow-lg" : ""}`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
-      <div className="flex">
-        {/* Image thumbnail */}
-        <div className="w-24 h-24 sm:w-36 sm:h-36 shrink-0 bg-muted overflow-hidden">
-          {listing.coverImage ? (
-            <img
-              src={listing.coverImage}
-              alt={listing.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
-          ) : listing.logoUrl ? (
-            <img
-              src={listing.logoUrl}
-              alt={listing.name}
-              className="w-full h-full object-cover"
-            />
+      {/* Top row: Logo + Name + Heart */}
+      <div className="flex items-start gap-3 mb-3">
+        {/* Logo / Avatar */}
+        <div className="w-12 h-12 shrink-0 rounded-xl overflow-hidden bg-muted">
+          {listing.logoUrl ? (
+            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+          ) : listing.coverImage ? (
+            <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <span className="text-3xl sm:text-4xl font-bold text-white/90">{listing.name.charAt(0)}</span>
+              <span className="text-lg font-bold text-white/90">{listing.name.charAt(0)}</span>
             </div>
           )}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0 p-3 sm:p-4 overflow-hidden">
-          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 flex-wrap">
-            <h3 className="font-semibold text-foreground truncate text-sm sm:text-base group-hover:text-primary transition-colors">{listing.name}</h3>
-            {listing.verified && <VerifiedBadge size="sm" />}
-            {listing.featured && (
-              <Badge className="bg-gradient-to-r from-warning/20 to-orange-500/20 text-warning border-warning/30 text-[10px] sm:text-xs shrink-0 font-medium">
-                ⭐ Featured
-              </Badge>
-            )}
-            {isOpen !== null && (
-              isOpen ? (
-                <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-transparent text-[10px] sm:text-xs shrink-0 font-medium">
-                  <Clock className="w-2.5 h-2.5 mr-0.5" />Open
-                </Badge>
-              ) : (
-                <Badge className="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 border-transparent text-[10px] sm:text-xs shrink-0 font-medium">
-                  <Clock className="w-2.5 h-2.5 mr-0.5" />Closed
-                </Badge>
-              )
-            )}
-          </div>
-
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <Badge variant="secondary" className="text-[10px] sm:text-xs font-medium">{listing.category}</Badge>
-            {listing.rating && (
-              <span className="flex items-center gap-1 text-xs">
-                <Star className="w-3 h-3 text-warning fill-warning" />
-                <span className="font-semibold text-foreground">{listing.rating}</span>
-                {listing.reviewCount && <span className="text-muted-foreground">({listing.reviewCount})</span>}
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mb-2">
-            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-accent" />
-            <span className="truncate">{listing.address}</span>
-          </div>
-
-          {!compact && listing.description && (
-            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 sm:line-clamp-2 mb-2">{listing.description}</p>
-          )}
-
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            {listing.phone && (
-              <a href={`tel:${listing.phone}`} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>
-                <Phone className="w-3 h-3" />{listing.phone}
-              </a>
-            )}
-            {listing.whatsapp && (
-              <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-success font-medium hover:underline" onClick={(e) => e.stopPropagation()}>
-                <MessageCircle className="w-3 h-3" />WhatsApp
-              </a>
-            )}
-            {listing.email && (
-              <a href={`mailto:${listing.email}`} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>
-                <Mail className="w-3 h-3" />Email
-              </a>
-            )}
-            {listing.website && (
-              <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-info font-medium hover:underline" onClick={(e) => e.stopPropagation()}>
-                <Globe className="w-3 h-3" />Website<ExternalLink className="w-2.5 h-2.5" />
-              </a>
-            )}
-          </div>
+        {/* Name + Category·District */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-foreground text-sm truncate">{listing.name}</h3>
+          <p className="text-xs text-muted-foreground truncate">{shortCategory} · {listing.district}</p>
         </div>
+
+        {/* Heart */}
+        <button onClick={handleLike} className="shrink-0 p-1 hover:bg-muted rounded-lg transition-colors">
+          <Heart className={`w-5 h-5 ${liked ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
+        </button>
+      </div>
+
+      {/* Badge pills row */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {listing.rating && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full">
+            <Star className="w-3 h-3 text-warning fill-warning" />
+            {listing.rating}{listing.reviewCount ? ` (${listing.reviewCount})` : ""}
+          </Badge>
+        )}
+        {listing.verified && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
+            ✓ Verified
+          </Badge>
+        )}
+        {listing.priceRange && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
+            {listing.priceRange}
+          </Badge>
+        )}
+        {listing.city && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
+            {listing.city}
+          </Badge>
+        )}
+        {!listing.city && (
+          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
+            Singapore
+          </Badge>
+        )}
+        {listing.featured && (
+          <Badge className="bg-warning/10 text-warning border-warning/30 text-[11px] font-medium px-2 py-0.5 rounded-full">
+            ⭐ Featured
+          </Badge>
+        )}
       </div>
     </div>
   );
