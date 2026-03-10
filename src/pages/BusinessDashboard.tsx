@@ -62,6 +62,9 @@ const BusinessDashboard = () => {
   const [featuredTickets, setFeaturedTickets] = useState<any[]>([]);
   const [selectedListingForFeatured, setSelectedListingForFeatured] = useState("");
 
+  // Recent enquiries for analytics
+  const [recentEnquiries, setRecentEnquiries] = useState<{ name: string; message: string; time: string; listing: string }[]>([]);
+
   // Offers state
   const [offerListingId, setOfferListingId] = useState("");
   const [offerTitle, setOfferTitle] = useState("");
@@ -100,6 +103,32 @@ const BusinessDashboard = () => {
       } catch {}
     };
     fetchTickets();
+  }, [user]);
+
+  // Load recent enquiries from Firestore
+  useEffect(() => {
+    const fetchRecentEnquiries = async () => {
+      if (!user) return;
+      try {
+        const q = query(collection(db, "enquiries"), where("ownerId", "==", user.uid));
+        const snap = await getDocs(q);
+        const items = snap.docs
+          .map(d => ({ id: d.id, ...d.data() } as any))
+          .sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+          .slice(0, 5)
+          .map((e: any) => {
+            const seconds = e.createdAt?.seconds || 0;
+            const diff = Math.floor((Date.now() / 1000 - seconds) / 60);
+            let time = "";
+            if (diff < 60) time = `${diff}m ago`;
+            else if (diff < 1440) time = `${Math.floor(diff / 60)}h ago`;
+            else time = `${Math.floor(diff / 1440)}d ago`;
+            return { name: e.name || "Anonymous", message: e.message || "", time, listing: e.listingName || "" };
+          });
+        setRecentEnquiries(items);
+      } catch {}
+    };
+    fetchRecentEnquiries();
   }, [user]);
 
   const submitFeaturedTicket = async () => {
@@ -529,11 +558,14 @@ const BusinessDashboard = () => {
                 Recent Enquiries
               </h3>
               <div className="space-y-0 divide-y divide-border/40">
-                {[
-                  { name: "Alice Tan", message: "Do you cater for events?", time: "2h ago", listing: "Singapore Delights" },
-                  { name: "Bob Lee", message: "What are your office hours?", time: "1d ago", listing: "TechHub Solutions" },
-                  { name: "Carol Ng", message: "Any promotions this month?", time: "3d ago", listing: "Singapore Delights" },
-                ].map((enquiry, i) => (
+                {recentEnquiries.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
+                      <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">No enquiries yet</p>
+                  </div>
+                ) : recentEnquiries.map((enquiry, i) => (
                   <div key={i} className="flex items-start gap-3.5 py-4 first:pt-0 last:pb-0">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary)/0.15)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center shrink-0">
                       <span className="text-xs font-bold text-primary">{enquiry.name.charAt(0)}</span>
@@ -543,8 +575,8 @@ const BusinessDashboard = () => {
                         <p className="text-sm font-semibold text-foreground">{enquiry.name}</p>
                         <span className="text-[11px] text-muted-foreground font-medium">{enquiry.time}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-0.5">{enquiry.message}</p>
-                      <p className="text-xs text-primary mt-1 font-medium">Re: {enquiry.listing}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{enquiry.message}</p>
+                      {enquiry.listing && <p className="text-xs text-primary mt-1 font-medium">Re: {enquiry.listing}</p>}
                     </div>
                   </div>
                 ))}
