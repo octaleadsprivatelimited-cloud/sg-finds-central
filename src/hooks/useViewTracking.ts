@@ -15,9 +15,13 @@ export const useViewTracking = (listingId: string | undefined) => {
   useEffect(() => {
     if (!listingId) return;
 
-    // 1. Increment persistent view count
+    // 1. Increment persistent view count + log for analytics
     const listingRef = doc(db, "listings", listingId);
     updateDoc(listingRef, { viewCount: increment(1) }).catch(() => {});
+    addDoc(collection(db, "view_logs"), {
+      listingId,
+      timestamp: Timestamp.now(),
+    }).catch(() => {});
 
     // 2. Listen to view count in real-time
     const unsubListing = onSnapshot(listingRef, (snap) => {
