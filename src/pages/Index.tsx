@@ -164,8 +164,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 {r.label}
               </button>
             ))}
-            {!userLocation && (
-              <span className="text-xs text-muted-foreground italic ml-1">Enable GPS first</span>
+            {!userLocation && district === "All Districts" && (
+              <span className="text-xs text-muted-foreground italic ml-1 shrink-0">GPS or select a district</span>
             )}
           </div>
         </div>
