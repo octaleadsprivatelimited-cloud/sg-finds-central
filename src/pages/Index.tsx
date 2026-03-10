@@ -112,7 +112,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     registerDetectLocation(handleDetectLocation);
   }, [registerDetectLocation]);
 
-  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null;
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || priceRange !== null || openNow;
 
   return (
     <div className="min-h-screen bg-background">

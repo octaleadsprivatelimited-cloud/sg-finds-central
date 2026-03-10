@@ -116,7 +116,7 @@ const CATEGORY_SHORT: Record<string, string> = {
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-function getIsOpenNow(listing: Listing): boolean | null {
+export function getIsOpenNow(listing: Listing): boolean | null {
   const hours = listing.operatingHours;
   if (!hours) return null;
   const now = new Date();
