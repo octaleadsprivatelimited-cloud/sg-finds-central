@@ -715,6 +715,11 @@ const BusinessDashboard = () => {
             )}
           </TabsContent>
 
+          {/* ENQUIRIES TAB */}
+          <TabsContent value="enquiries" className="space-y-6">
+            <EnquiryInbox />
+          </TabsContent>
+
           {/* HOURS TAB */}
           <TabsContent value="hours" className="space-y-6">
             <div className="bg-background rounded-xl border border-border p-5">
