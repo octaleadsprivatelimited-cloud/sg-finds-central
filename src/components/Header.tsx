@@ -146,6 +146,11 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
               </div>
             )}
             <div className="flex items-center gap-1.5 shrink-0">
+              <Link to="/add-listing">
+                <Button size="sm" className="h-8 px-2.5 text-xs bg-yellow-400 hover:bg-yellow-500 text-black font-bold">
+                  <Plus className="w-3.5 h-3.5 mr-0.5" />List Free
+                </Button>
+              </Link>
               {isHomePage && onDetectLocation && (
                 <Button variant="outline" size="sm" className="h-8 px-2.5 text-xs" onClick={onDetectLocation}>
                   <MapPin className="w-3.5 h-3.5" />
