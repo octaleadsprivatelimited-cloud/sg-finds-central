@@ -42,6 +42,7 @@ import { db } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
+import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
 
 // Demo data fallback
 const MY_DEMO_LISTINGS: Listing[] = [
