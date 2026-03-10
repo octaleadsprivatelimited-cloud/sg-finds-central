@@ -90,53 +90,45 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           )}
 
           {/* Right actions */}
-          <div className="hidden md:flex items-center gap-1 ml-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg hover:bg-secondary/60 transition-colors text-foreground">
-                  <User className="w-4.5 h-4.5 text-muted-foreground" />
-                  <span className="text-[10px] font-medium text-muted-foreground">
-                    {user ? "Account" : "Sign in"}
-                  </span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                {user ? (
-                  <>
+          <div className="hidden md:flex items-center gap-2 ml-auto">
+            <Link to="/add-listing">
+              <Button size="sm" className="h-9 bg-yellow-400 hover:bg-yellow-500 text-black font-bold shadow-sm">
+                <Plus className="w-4 h-4 mr-1" />List Free
+              </Button>
+            </Link>
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-9 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold">
+                    <User className="w-4 h-4 mr-1.5" />Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
+                  </DropdownMenuItem>
+                  {isAdmin && !isSuperAdmin && (
                     <DropdownMenuItem asChild>
-                      <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
+                      <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
                     </DropdownMenuItem>
+                  )}
+                  {isSuperAdmin && (
                     <DropdownMenuItem asChild>
-                      <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
+                      <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
                     </DropdownMenuItem>
-                    {isAdmin && !isSuperAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
-                      </DropdownMenuItem>
-                    )}
-                    {isSuperAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                      <LogOut className="w-4 h-4 mr-2" />Sign Out
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem onClick={() => setShowAuth(true)}>
-                      <User className="w-4 h-4 mr-2" />Sign In / Register
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/add-listing"><Plus className="w-4 h-4 mr-2" />Add Listing</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="outline" size="sm" className="h-9 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold" onClick={() => setShowAuth(true)}>
+                <User className="w-4 h-4 mr-1.5" />Sign In
+              </Button>
+            )}
           </div>
 
           {/* Mobile: search + GPS + Map + hamburger */}
