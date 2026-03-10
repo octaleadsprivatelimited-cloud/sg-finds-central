@@ -74,6 +74,14 @@ const BusinessDetail = () => {
 
   const listing = demoListing || firestoreListing;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
   if (!listing) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
