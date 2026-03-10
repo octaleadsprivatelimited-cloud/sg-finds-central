@@ -125,7 +125,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             {(category !== "All Categories" || district !== "All Districts" || searchQuery || radiusKm !== null) && (
               <button
                 onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); }}
-                className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors whitespace-nowrap shrink-0"
               >
                 Clear
               </button>
