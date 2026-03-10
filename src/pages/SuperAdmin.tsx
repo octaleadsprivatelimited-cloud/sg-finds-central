@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { useListingViewCounts } from "@/hooks/useViewTracking";
 import { db } from "@/lib/firebase";
 import AdminAddBusiness from "@/components/admin/AdminAddBusiness";
 import { getBusinessUrl } from "@/lib/url-helpers";
