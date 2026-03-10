@@ -61,9 +61,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
 
+  const filterOrigin = useMemo(() => 
+    userLocation || (district !== "All Districts" ? DISTRICT_COORDINATES[district] : null),
+    [userLocation, district]
+  );
+
   const filtered = useMemo(() => {
-    // Use GPS location, or fall back to selected district center
-    const filterOrigin = userLocation || (district !== "All Districts" ? DISTRICT_COORDINATES[district] : null);
     const result = listings.filter((l) => {
       const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
       const matchD = (radiusKm && filterOrigin) || district === "All Districts" || l.district === district;
@@ -71,7 +74,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
       return matchQ && matchD && matchC && matchR;
     });
-    // Sort by distance (nearest first) when we have an origin
     if (filterOrigin) {
       result.sort((a, b) => {
         const distA = a.lat && a.lng ? getDistance(filterOrigin.lat, filterOrigin.lng, a.lat, a.lng) : Infinity;
@@ -80,7 +82,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       });
     }
     return result;
-  }, [listings, searchQuery, district, category, radiusKm, userLocation]);
+  }, [listings, searchQuery, district, category, radiusKm, userLocation, filterOrigin]);
+
+  const getListingDistance = (listing: { lat?: number; lng?: number }) => {
+    if (!filterOrigin || !listing.lat || !listing.lng) return null;
+    return getDistance(filterOrigin.lat, filterOrigin.lng, listing.lat, listing.lng);
+  };
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) { toast.error("Geolocation is not supported"); return; }
