@@ -32,6 +32,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
+  const navigate = useNavigate();
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
