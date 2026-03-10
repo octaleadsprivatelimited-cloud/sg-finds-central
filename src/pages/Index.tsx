@@ -161,13 +161,48 @@ const Index = () => {
                 {c.label}
               </button>
             ))}
-            {(category !== "All Categories" || district !== "All Districts" || searchQuery) && (
+            {(category !== "All Categories" || district !== "All Districts" || searchQuery || radiusKm !== null) && (
               <button
-                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); }}
+                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); }}
                 className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
               >
                 Clear
               </button>
+            )}
+          </div>
+
+          {/* Distance filter chips */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1">Distance:</span>
+            {[
+              { value: null as number | null, label: "Any" },
+              { value: 1, label: "< 1 km" },
+              { value: 2, label: "< 2 km" },
+              { value: 3, label: "< 3 km" },
+              { value: 5, label: "< 5 km" },
+              { value: 10, label: "< 10 km" },
+            ].map((r) => (
+              <button
+                key={r.label}
+                onClick={() => {
+                  if (r.value !== null && !userLocation) {
+                    handleDetectLocation();
+                    setRadiusKm(r.value);
+                  } else {
+                    setRadiusKm(r.value);
+                  }
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  radiusKm === r.value
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+            {!userLocation && (
+              <span className="text-xs text-muted-foreground italic ml-1">Enable GPS first</span>
             )}
           </div>
         </div>
