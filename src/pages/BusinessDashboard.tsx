@@ -709,6 +709,39 @@ const BusinessDashboard = () => {
               </div>
             )}
           </TabsContent>
+
+          {/* HOURS TAB */}
+          <TabsContent value="hours" className="space-y-6">
+            <div className="bg-background rounded-xl border border-border p-5">
+              <h3 className="font-semibold text-foreground flex items-center gap-2 mb-1">
+                <Clock className="w-5 h-5 text-muted-foreground" />
+                Operating Hours
+              </h3>
+              <p className="text-sm text-muted-foreground mb-5">Quickly update open/close times for all your listings.</p>
+
+              {listings.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No listings yet.</p>
+              ) : (
+                <div className="space-y-6">
+                  {listings.map((listing) => (
+                    <HoursEditor
+                      key={listing.id}
+                      listing={listing}
+                      onSave={async (hours) => {
+                        try {
+                          await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours });
+                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours } : l));
+                          toast.success(`Hours updated for ${listing.name}`);
+                        } catch (err: any) {
+                          toast.error(err.message || "Failed to update hours");
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
 
