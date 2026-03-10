@@ -10,7 +10,7 @@ import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
-import { MapPin } from "lucide-react";
+import { MapPin, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
