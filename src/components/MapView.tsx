@@ -1,7 +1,7 @@
 import { GoogleMap, MarkerF, InfoWindowF } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
 import { Loader2, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 interface MapViewProps {
   listings: Listing[];
@@ -29,6 +29,20 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  const onMapLoad = useCallback((map: google.maps.Map) => {
+    mapRef.current = map;
+  }, []);
+
+  // Auto-pan to hovered listing
+  useEffect(() => {
+    if (!mapRef.current || !hoveredId) return;
+    const listing = listings.find(l => l.id === hoveredId);
+    if (listing?.lat && listing?.lng) {
+      mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
+    }
+  }, [hoveredId, listings]);
 
   useEffect(() => {
     if (!GOOGLE_MAPS_API_KEY) {
@@ -107,6 +121,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
 
   return (
     <GoogleMap
+      onLoad={onMapLoad}
       mapContainerClassName="w-full h-full rounded-xl"
       center={center || DEFAULT_CENTER}
       zoom={12}
