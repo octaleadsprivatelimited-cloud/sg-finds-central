@@ -137,6 +137,16 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           {/* Distance filter chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
             <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Distance:</span>
+            <Select value={district} onValueChange={setDistrict}>
+              <SelectTrigger className="w-auto h-7 text-xs border-border rounded-full px-3 shrink-0">
+                <SelectValue placeholder="Area" />
+              </SelectTrigger>
+              <SelectContent>
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {[
               { value: null as number | null, label: "Any" },
               { value: 1, label: "< 1 km" },
@@ -148,12 +158,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={r.label}
                 onClick={() => {
-                  if (r.value !== null && !userLocation) {
+                  if (r.value !== null && !userLocation && district === "All Districts") {
                     handleDetectLocation();
-                    setRadiusKm(r.value);
-                  } else {
-                    setRadiusKm(r.value);
                   }
+                  setRadiusKm(r.value);
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
                   radiusKm === r.value
@@ -164,7 +172,18 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 {r.label}
               </button>
             ))}
-            {!userLocation && district === "All Districts" && (
+            {radiusKm !== null && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
+                {userLocation ? (
+                  <><MapPin className="w-3 h-3" /> GPS</>
+                ) : district !== "All Districts" ? (
+                  <><MapPin className="w-3 h-3" /> {district} center</>
+                ) : (
+                  <span className="text-muted-foreground italic">No origin set</span>
+                )}
+              </span>
+            )}
+            {!userLocation && district === "All Districts" && radiusKm === null && (
               <span className="text-xs text-muted-foreground italic ml-1 shrink-0">GPS or select a district</span>
             )}
           </div>
