@@ -71,15 +71,10 @@ const Index = () => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setUserLocation(userLoc);
         setMapCenter(userLoc);
         setShowMap(true);
-        const withDistance = listings.filter((l) => l.lat && l.lng).map((l) => ({ ...l, _distance: getDistance(userLoc.lat, userLoc.lng, l.lat!, l.lng!) })).filter((l) => l._distance <= 15).sort((a, b) => a._distance - b._distance);
-        if (withDistance.length > 0) { setListings(withDistance); toast.success(`Found ${withDistance.length} businesses near you`); }
-        else {
-          const allSorted = listings.filter((l) => l.lat && l.lng).map((l) => ({ ...l, _distance: getDistance(userLoc.lat, userLoc.lng, l.lat!, l.lng!) })).sort((a, b) => a._distance - b._distance);
-          setListings(allSorted.length > 0 ? allSorted : DEMO_LISTINGS);
-          toast.info("No businesses within 15km — showing all results sorted by distance");
-        }
+        toast.success("Location detected — use distance filters to narrow results");
       },
       () => toast.error("Unable to detect location — please enable location access")
     );
