@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Building2, Clock, CalendarDays, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import CatalogueSection from "@/components/business-detail/CatalogueSection";
 import QuickInfo from "@/components/business-detail/QuickInfo";
 import ContactSidebar from "@/components/business-detail/ContactSidebar";
 import { DEMO_LISTINGS, GALLERY_MAP } from "@/lib/demo-listings";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const formatTime = (time: string) => {
   if (!time) return "";
@@ -32,7 +34,10 @@ const BusinessDetail = () => {
   }>();
   const navigate = useNavigate();
 
-  const listing = useMemo(
+  const [firestoreListing, setFirestoreListing] = useState<Listing | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const demoListing = useMemo(
     () =>
       DEMO_LISTINGS.find((l) => {
         const matchArea = toSlug(l.district) === areaSlug;
@@ -42,6 +47,40 @@ const BusinessDetail = () => {
       }),
     [areaSlug, categorySlug, businessSlug]
   );
+
+  useEffect(() => {
+    if (demoListing) {
+      setLoading(false);
+      return;
+    }
+    const fetchListing = async () => {
+      try {
+        const q = query(collection(db, "listings"), where("status", "==", "approved"));
+        const snap = await getDocs(q);
+        const match = snap.docs
+          .map(d => ({ id: d.id, ...d.data() } as Listing))
+          .find(l => {
+            const matchArea = toSlug(l.district) === areaSlug;
+            const matchCategory = toSlug(l.category) === categorySlug;
+            const matchBusiness = (l.customSlug || toSlug(l.name)) === businessSlug;
+            return matchArea && matchCategory && matchBusiness;
+          });
+        if (match) setFirestoreListing(match);
+      } catch { /* fallback */ }
+      setLoading(false);
+    };
+    fetchListing();
+  }, [areaSlug, categorySlug, businessSlug, demoListing]);
+
+  const listing = demoListing || firestoreListing;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   if (!listing) {
     return (
