@@ -100,7 +100,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
 
           {/* Category chips */}
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
             {[
               { value: "All Categories", label: "All" },
               { value: "Food & Beverage", label: "Food" },
@@ -113,7 +113,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
                   category === c.value
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -125,7 +125,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             {(category !== "All Categories" || district !== "All Districts" || searchQuery || radiusKm !== null) && (
               <button
                 onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); }}
-                className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                className="px-3 py-1.5 rounded-full text-xs font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors whitespace-nowrap shrink-0"
               >
                 Clear
               </button>
@@ -133,8 +133,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
 
           {/* Distance filter chips */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-medium text-muted-foreground mr-1">Distance:</span>
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Distance:</span>
             {[
               { value: null as number | null, label: "Any" },
               { value: 1, label: "< 1 km" },
@@ -153,7 +153,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                     setRadiusKm(r.value);
                   }
                 }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
                   radiusKm === r.value
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
