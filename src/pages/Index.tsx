@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
+import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES, DISTRICT_COORDINATES } from "@/lib/districts";
 import { toast } from "sonner";
 
 interface IndexProps {
