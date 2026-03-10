@@ -133,8 +133,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
 
           {/* Distance filter chips */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-medium text-muted-foreground mr-1">Distance:</span>
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap md:flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground mr-1 shrink-0">Distance:</span>
             {[
               { value: null as number | null, label: "Any" },
               { value: 1, label: "< 1 km" },
