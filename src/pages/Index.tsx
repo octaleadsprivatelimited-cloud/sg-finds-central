@@ -75,7 +75,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       const matchD = (radiusKm && filterOrigin) || district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
-      const matchP = !priceRange || l.priceRange === priceRange;
+      
       const matchO = !openNow || getIsOpenNow(l) === true;
       return matchQ && matchD && matchC && matchR && matchP && matchO;
     });
