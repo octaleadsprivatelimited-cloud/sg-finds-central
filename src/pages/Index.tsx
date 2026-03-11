@@ -243,39 +243,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </Select>
               </div>
 
-              {/* Distance row */}
-              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-                <span className="text-[11px] font-medium text-muted-foreground shrink-0">Dist:</span>
-                {[
-                  { value: null as number | null, label: "Any" },
-                  { value: 2, label: "2km" },
-                  { value: 5, label: "5km" },
-                  { value: 10, label: "10km" },
-                ].map((r) => (
-                  <button
-                    key={r.label}
-                    onClick={() => {
-                      if (r.value !== null && !userLocation && district === "All Districts") {
-                        handleDetectLocation();
-                      }
-                      setRadiusKm(r.value);
-                    }}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
-                      radiusKm === r.value
-                        ? "bg-foreground text-background border-foreground"
-                        : "bg-background text-foreground border-border hover:bg-muted"
-                    }`}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-                {radiusKm !== null && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
-                    <MapPin className="w-2.5 h-2.5" />
-                    {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
-                  </span>
-                )}
-              </div>
+
+
 
               {hasActiveFilters && (
                 <button
