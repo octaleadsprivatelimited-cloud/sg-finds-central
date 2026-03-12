@@ -167,7 +167,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </button>
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-0.5 ${
                   filtersOpen || hasActiveFilters
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
