@@ -129,16 +129,11 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           {/* Mobile: search + GPS + Map + hamburger */}
           <div className="flex items-center gap-2 flex-1 md:hidden">
             {isHomePage && (
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search businesses..."
-                  className="w-full pl-8 pr-3 h-8 rounded-lg border border-input bg-background text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+              <SearchWithSuggestions
+                compact
+                placeholder="Search or postal code..."
+                className="flex-1"
+              />
             )}
             <div className="flex items-center gap-1.5 shrink-0">
               <button
