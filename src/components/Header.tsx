@@ -10,7 +10,6 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 import SearchWithSuggestions from "./SearchWithSuggestions";
-import AuthModal from "./AuthModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
