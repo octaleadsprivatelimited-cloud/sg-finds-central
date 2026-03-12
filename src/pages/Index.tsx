@@ -263,6 +263,25 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
             {filtersOpen && (
               <div className="space-y-2 pt-1 border-t border-border">
+                {/* Pincode search */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground shrink-0">Postal:</span>
+                  <div className="relative flex-1 max-w-[200px]">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Enter 6-digit postal code"
+                      value={pincode}
+                      onChange={(e) => handlePincodeSearch(e.target.value.replace(/\D/g, ''))}
+                      className="w-full h-7 px-2.5 pr-7 text-[11px] rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    />
+                    <Search className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                  </div>
+                  {pincodeAddress && (
+                    <span className="text-[10px] text-primary font-medium truncate max-w-[180px]">{pincodeAddress}</span>
+                  )}
+                </div>
                 <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
                   <span className="text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
                   {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
@@ -291,7 +310,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </div>
                 {hasActiveFilters && (
                   <button
-                    onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
+                    onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); setPincode(""); setPincodeAddress(""); setUserLocation(null); }}
                     className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
                   >
                     Clear All
