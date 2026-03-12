@@ -125,71 +125,38 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       <section className="container mx-auto px-3 md:px-4 pt-2 md:pt-4 pb-4 md:pb-8">
         <div className="bg-card border border-border rounded-xl p-3 mb-4 space-y-2">
 
-          {/* Row 1: Category chips + Distance + toggles */}
+          {/* Row 1: Category chips */}
           <div className="flex items-center gap-1.5">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
               {[
-                { value: "All Categories", label: "All" },
-                { value: "Food & Beverage", label: "Food" },
-                { value: "Beauty & Wellness", label: "Beauty" },
-                { value: "Education & Training", label: "Tutoring" },
-                { value: "Home Services", label: "Home" },
-                { value: "Healthcare & Medical", label: "Health" },
-                { value: "Retail & Shopping", label: "Retail" },
+                { value: "All Categories", label: "All", emoji: "✦" },
+                { value: "Food & Beverage", label: "Food", emoji: "🍰" },
+                { value: "Beauty & Wellness", label: "Beauty", emoji: "💅" },
+                { value: "Education & Training", label: "Tutoring", emoji: "📚" },
+                { value: "Home Services", label: "Home", emoji: "🏠" },
+                { value: "Healthcare & Medical", label: "Health", emoji: "🏥" },
+                { value: "Retail & Shopping", label: "Retail", emoji: "🛍️" },
               ].map((c) => (
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value)}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 ${
                     category === c.value
                       ? "bg-foreground text-background border-foreground"
                       : "bg-background text-foreground border-border hover:bg-muted"
                   }`}
                 >
+                  <span>{c.emoji}</span>
                   {c.label}
                 </button>
               ))}
-
-              {/* Separator */}
-              <span className="w-px h-4 bg-border shrink-0" />
-
-              {/* Distance chips inline */}
-              {[
-                { value: null as number | null, label: "Any" },
-                { value: 2, label: "2km" },
-                { value: 5, label: "5km" },
-                { value: 10, label: "10km" },
-              ].map((r) => (
-                <button
-                  key={r.label}
-                  onClick={() => {
-                    if (r.value !== null && !userLocation && district === "All Districts") {
-                      handleDetectLocation();
-                    }
-                    setRadiusKm(r.value);
-                  }}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
-                    radiusKm === r.value
-                      ? "bg-foreground text-background border-foreground"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  {r.label}
-                </button>
-              ))}
-              {radiusKm !== null && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
-                  <MapPin className="w-2.5 h-2.5" />
-                  {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
-                </span>
-              )}
             </div>
 
             {/* Filter toggle + Open Now */}
             <div className="flex items-center gap-1.5 shrink-0">
               <button
                 onClick={() => setOpenNow(!openNow)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
                   openNow
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -200,7 +167,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </button>
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
                   filtersOpen || hasActiveFilters
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -210,6 +177,42 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 {activeFilterCount > 0 ? activeFilterCount : ""}
               </button>
             </div>
+          </div>
+
+          {/* Row 2: Distance chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
+            <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
+            {[
+              { value: 0.5, label: "500m" },
+              { value: 1, label: "1 km" },
+              { value: 2, label: "2 km" },
+              { value: 3, label: "3 km" },
+              { value: 5, label: "5 km" },
+              { value: null as number | null, label: "All SG" },
+            ].map((r) => (
+              <button
+                key={r.label}
+                onClick={() => {
+                  if (r.value !== null && !userLocation && district === "All Districts") {
+                    handleDetectLocation();
+                  }
+                  setRadiusKm(r.value);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                  radiusKm === r.value
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+            {radiusKm !== null && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
+                <MapPin className="w-2.5 h-2.5" />
+                {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
+              </span>
+            )}
           </div>
 
           {/* Row 2: Expanded filters (collapsible) */}
