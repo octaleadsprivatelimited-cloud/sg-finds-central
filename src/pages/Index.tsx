@@ -297,14 +297,40 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         )}
 
+        {/* Map (mobile: always visible after filters, desktop: side panel) */}
+        <div className="lg:hidden mb-4">
+          <div className="bg-card border border-border rounded-xl p-3">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-sm font-bold text-foreground">Map · tap a pin or card</h2>
+              {radiusKm !== null && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                  <MapPin className="w-2.5 h-2.5" />
+                  {userLocation ? "GPS" : district !== "All Districts" ? district : "—"} · {radiusKm ? `${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : "All SG"}
+                </span>
+              )}
+            </div>
+            <div className="h-[280px] rounded-xl overflow-hidden border border-border">
+              <MapView
+                listings={filtered}
+                selectedId={selectedListing?.id}
+                hoveredId={hoveredListingId}
+                onHoverListing={setHoveredListingId}
+                onSelectListing={setSelectedListing}
+                center={mapCenter}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Split view: Featured list + Map */}
         <div className="flex gap-4 md:gap-6 overflow-hidden">
           {/* Listings column */}
-          <div className={`w-full lg:w-1/2 xl:w-[55%] min-w-0 ${showMap ? "hidden lg:block" : ""}`}>
+          <div className="w-full lg:w-1/2 xl:w-[55%] min-w-0">
             <div className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base md:text-lg font-bold text-foreground">Featured</h2>
-                <span className="text-sm text-muted-foreground">{filtered.length} found</span>
+                <h2 className="text-base md:text-lg font-bold text-foreground">
+                  {filtered.length} <span className="font-normal text-muted-foreground text-sm">{category !== "All Categories" ? category : ""} businesses{radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}</span>
+                </h2>
               </div>
               <div className="lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto lg:pr-1 space-y-2 scrollbar-thin">
                 {filtered.length === 0 ? (
@@ -334,8 +360,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             </div>
           </div>
 
-          {/* Map column */}
-          <div className={`lg:block lg:w-1/2 xl:w-[45%] ${showMap ? "block w-full" : "hidden"}`}>
+          {/* Map column (desktop only) */}
+          <div className="hidden lg:block lg:w-1/2 xl:w-[45%]">
             <div className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base md:text-lg font-bold text-foreground">Map</h2>
