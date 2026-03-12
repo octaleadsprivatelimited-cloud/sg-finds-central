@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MapPin, SlidersHorizontal, ChevronUp, ChevronDown, Maximize2, Minimize2, LocateFixed } from "lucide-react";
+import { MapPin, SlidersHorizontal, ChevronUp, ChevronDown, Maximize2, Minimize2, LocateFixed, Search } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
