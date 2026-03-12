@@ -55,6 +55,7 @@ const SearchContext = createContext<SearchContextType>({
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [listings, setListings] = useState<SearchableListing[]>(DEMO_SEARCH_LISTINGS);
+  const [onPincodeSearch, setOnPincodeSearch] = useState<((code: string) => void) | null>(null);
 
   // Try to fetch real listings for suggestions
   useEffect(() => {
