@@ -28,7 +28,6 @@ interface HeaderProps {
 const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const location = useLocation();
-  const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isHomePage = location.pathname === "/";
