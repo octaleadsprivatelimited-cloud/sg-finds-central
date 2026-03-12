@@ -156,7 +156,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setOpenNow(!openNow)}
-                className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-0.5 ${
                   openNow
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "bg-background text-foreground border-border hover:bg-muted"
