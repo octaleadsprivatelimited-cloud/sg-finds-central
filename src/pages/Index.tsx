@@ -225,7 +225,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   <button
                     key={d}
                     onClick={() => setDistrict(d)}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                    className={`px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
                       district === d
                         ? "bg-foreground text-background border-foreground"
                         : "bg-background text-foreground border-border hover:bg-muted"
