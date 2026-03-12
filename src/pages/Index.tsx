@@ -301,7 +301,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <div className="lg:hidden mb-4">
           <div className="bg-card border border-border rounded-xl p-3">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-sm font-bold text-foreground">Map · tap a pin or card</h2>
               {radiusKm !== null && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
                   <MapPin className="w-2.5 h-2.5" />
