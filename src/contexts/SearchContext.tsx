@@ -48,6 +48,8 @@ const SearchContext = createContext<SearchContextType>({
   setSearchQuery: () => {},
   listings: [],
   setListings: () => {},
+  onPincodeSearch: null,
+  setOnPincodeSearch: () => {},
 });
 
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
