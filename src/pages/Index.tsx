@@ -123,11 +123,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ ALL BUSINESSES (TOP) ═══ */}
       <section className="container mx-auto px-3 md:px-4 pt-2 md:pt-4 pb-4 md:pb-8">
-        <div className="bg-card border border-border rounded-xl p-3 mb-4 space-y-2">
+        <div className="bg-card border border-border rounded-xl p-2 md:p-3 mb-3 md:mb-4 space-y-1.5 md:space-y-2">
 
           {/* Row 1: Category chips */}
-          <div className="flex items-center gap-1.5">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
               {[
                 { value: "All Categories", label: "All", emoji: "✦" },
                 { value: "Food & Beverage", label: "Food", emoji: "🍰" },
@@ -140,23 +140,23 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 ${
+                  className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-0.5 ${
                     category === c.value
                       ? "bg-foreground text-background border-foreground"
                       : "bg-background text-foreground border-border hover:bg-muted"
                   }`}
                 >
-                  <span>{c.emoji}</span>
+                  <span className="text-[10px] md:text-xs">{c.emoji}</span>
                   {c.label}
                 </button>
               ))}
             </div>
 
             {/* Filter toggle + Open Now */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setOpenNow(!openNow)}
-                className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-0.5 ${
                   openNow
                     ? "bg-emerald-600 text-white border-emerald-600"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -167,7 +167,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </button>
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-0.5 ${
                   filtersOpen || hasActiveFilters
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -180,8 +180,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
 
           {/* Row 2: Distance chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-            <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
+            <span className="text-[11px] md:text-xs font-medium text-muted-foreground shrink-0">Distance</span>
             {[
               { value: 0.5, label: "500m" },
               { value: 1, label: "1 km" },
@@ -198,7 +198,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   }
                   setRadiusKm(r.value);
                 }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
                   radiusKm === r.value
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -217,15 +217,15 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
           {/* Row 2: Expanded filters (collapsible) */}
           {filtersOpen && (
-            <div className="space-y-2 pt-1 border-t border-border">
+            <div className="space-y-1.5 md:space-y-2 pt-1 border-t border-border">
               {/* District */}
-              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-                <span className="text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
+              <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
+                <span className="text-[10px] md:text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
                 {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
                   <button
                     key={d}
                     onClick={() => setDistrict(d)}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                    className={`px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
                       district === d
                         ? "bg-foreground text-background border-foreground"
                         : "bg-background text-foreground border-border hover:bg-muted"
@@ -235,7 +235,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   </button>
                 ))}
                 <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger className="w-auto h-6 text-[11px] border-border rounded-full px-2.5 shrink-0">
+                  <SelectTrigger className="w-auto h-5 md:h-6 text-[10px] md:text-[11px] border-border rounded-full px-2 md:px-2.5 shrink-0">
                     <SelectValue placeholder="More" />
                   </SelectTrigger>
                   <SelectContent>
@@ -252,7 +252,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               {hasActiveFilters && (
                 <button
                   onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
-                  className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                  className="px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   Clear All
                 </button>
