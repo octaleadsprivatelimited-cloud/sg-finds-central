@@ -39,6 +39,8 @@ interface SearchContextType {
   setSearchQuery: (val: string) => void;
   listings: SearchableListing[];
   setListings: (listings: SearchableListing[]) => void;
+  onPincodeSearch: ((code: string) => void) | null;
+  setOnPincodeSearch: (fn: ((code: string) => void) | null) => void;
 }
 
 const SearchContext = createContext<SearchContextType>({
@@ -46,11 +48,14 @@ const SearchContext = createContext<SearchContextType>({
   setSearchQuery: () => {},
   listings: [],
   setListings: () => {},
+  onPincodeSearch: null,
+  setOnPincodeSearch: () => {},
 });
 
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [listings, setListings] = useState<SearchableListing[]>(DEMO_SEARCH_LISTINGS);
+  const [onPincodeSearch, setOnPincodeSearch] = useState<((code: string) => void) | null>(null);
 
   // Try to fetch real listings for suggestions
   useEffect(() => {
@@ -73,7 +78,7 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery, listings, setListings }}>
+    <SearchContext.Provider value={{ searchQuery, setSearchQuery, listings, setListings, onPincodeSearch, setOnPincodeSearch }}>
       {children}
     </SearchContext.Provider>
   );

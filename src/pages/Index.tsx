@@ -27,7 +27,7 @@ interface IndexProps {
 }
 
 const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
-  const { searchQuery, setSearchQuery, setListings: setSearchListings } = useSearch();
+  const { searchQuery, setSearchQuery, setListings: setSearchListings, setOnPincodeSearch } = useSearch();
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
@@ -62,6 +62,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
   }, [listings, setSearchListings]);
+
+  // Register pincode search handler globally
+  useEffect(() => {
+    setOnPincodeSearch(() => handlePincodeSearch);
+    return () => setOnPincodeSearch(null);
+  }, [handlePincodeSearch, setOnPincodeSearch]);
 
   useEffect(() => {
     const fetchListings = async () => {
