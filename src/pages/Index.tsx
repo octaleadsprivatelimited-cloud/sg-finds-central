@@ -198,7 +198,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   }
                   setRadiusKm(r.value);
                 }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
                   radiusKm === r.value
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background text-foreground border-border hover:bg-muted"
