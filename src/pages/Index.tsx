@@ -146,7 +146,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       : "bg-background text-foreground border-border hover:bg-muted"
                   }`}
                 >
-                  <span>{c.emoji}</span>
+                  <span className="text-[10px] md:text-xs">{c.emoji}</span>
                   {c.label}
                 </button>
               ))}
