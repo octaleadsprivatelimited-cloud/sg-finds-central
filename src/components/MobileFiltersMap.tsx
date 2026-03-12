@@ -115,17 +115,6 @@ const MobileFiltersMap = ({
 
             <div className="flex items-center gap-1 shrink-0">
               <button
-                onClick={() => setOpenNow(!openNow)}
-                className={`px-2 py-1 rounded-full text-[11px] font-medium border transition-all whitespace-nowrap flex items-center gap-0.5 active:scale-95 ${
-                  openNow
-                    ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                    : "bg-background text-foreground border-border hover:bg-muted"
-                }`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full ${openNow ? "bg-white animate-pulse" : "bg-emerald-500"}`} />
-                Open
-              </button>
-              <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
                 className={`px-2 py-1 rounded-full text-[11px] font-medium border transition-all whitespace-nowrap flex items-center gap-0.5 active:scale-95 ${
                   filtersOpen || hasActiveFilters
