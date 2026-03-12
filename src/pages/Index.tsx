@@ -180,8 +180,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
 
           {/* Row 2: Distance chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-            <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
+            <span className="text-[11px] md:text-xs font-medium text-muted-foreground shrink-0">Distance</span>
             {[
               { value: 0.5, label: "500m" },
               { value: 1, label: "1 km" },
