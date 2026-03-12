@@ -298,9 +298,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         )}
 
         {/* Map (mobile: always visible after filters, desktop: side panel) */}
-        <div className="lg:hidden mb-4">
-          <div className="bg-card border border-border rounded-xl p-3">
-            <div className="flex items-center justify-between mb-2">
+        <div className="lg:hidden mb-3">
+          <div className="bg-card border border-border rounded-xl p-1.5">
+            <div className="flex items-center justify-between mb-1">
               {radiusKm !== null && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
                   <MapPin className="w-2.5 h-2.5" />
@@ -308,7 +308,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </span>
               )}
             </div>
-            <div className="h-[180px] rounded-xl overflow-hidden border border-border">
+            <div className="h-[140px] rounded-lg overflow-hidden">
               <MapView
                 listings={filtered}
                 selectedId={selectedListing?.id}
