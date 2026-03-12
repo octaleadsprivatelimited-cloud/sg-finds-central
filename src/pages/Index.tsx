@@ -9,6 +9,7 @@ import CategoryHighlights from "@/components/CategoryHighlights";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
+import MobileFiltersMap from "@/components/MobileFiltersMap";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
 import { MapPin, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         const snap = await getDocs(q);
         if (!snap.empty) {
           const firestoreData = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Listing));
-          // Merge: Firestore listings take priority, then fill in demo listings that don't conflict
           const firestoreIds = new Set(firestoreData.map(l => l.id));
           const uniqueDemo = DEMO_LISTINGS.filter(l => !firestoreIds.has(l.id));
           setListings([...firestoreData, ...uniqueDemo]);
@@ -78,7 +78,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       const matchD = (radiusKm && filterOrigin) || district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;
-      
       const matchO = !openNow || getIsOpenNow(l) === true;
       return matchQ && matchD && matchC && matchR && matchO;
     });
@@ -123,201 +122,160 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ ALL BUSINESSES (TOP) ═══ */}
       <section className="container mx-auto px-3 md:px-4 pt-2 md:pt-4 pb-4 md:pb-8">
-        <div className="bg-card border border-border rounded-xl p-2 md:p-3 mb-3 md:mb-4 space-y-1.5 md:space-y-2">
 
-          {/* Row 1: Category chips */}
-          <div className="flex items-center gap-1">
-            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
-              {[
-                { value: "All Categories", label: "All", emoji: "✦" },
-                { value: "Food & Beverage", label: "Food", emoji: "🍰" },
-                { value: "Beauty & Wellness", label: "Beauty", emoji: "💅" },
-                { value: "Education & Training", label: "Tutoring", emoji: "📚" },
-                { value: "Home Services", label: "Home", emoji: "🏠" },
-                { value: "Healthcare & Medical", label: "Health", emoji: "🏥" },
-                { value: "Retail & Shopping", label: "Retail", emoji: "🛍️" },
-              ].map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setCategory(c.value)}
-                  className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-0.5 ${
-                    category === c.value
-                      ? "bg-foreground text-background border-foreground"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  <span className="text-[10px] md:text-xs">{c.emoji}</span>
-                  {c.label}
-                </button>
-              ))}
-            </div>
+        {/* Mobile: Sticky filters + Map */}
+        <MobileFiltersMap
+          category={category}
+          setCategory={setCategory}
+          openNow={openNow}
+          setOpenNow={setOpenNow}
+          filtersOpen={filtersOpen}
+          setFiltersOpen={setFiltersOpen}
+          radiusKm={radiusKm}
+          setRadiusKm={setRadiusKm}
+          district={district}
+          setDistrict={setDistrict}
+          userLocation={userLocation}
+          handleDetectLocation={handleDetectLocation}
+          hasActiveFilters={!!hasActiveFilters}
+          activeFilterCount={activeFilterCount}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          setOpenNowState={setOpenNow}
+          filtered={filtered}
+          selectedListing={selectedListing}
+          setSelectedListing={setSelectedListing}
+          hoveredListingId={hoveredListingId}
+          setHoveredListingId={setHoveredListingId}
+          mapCenter={mapCenter}
+          setMapCenter={setMapCenter}
+        />
 
-            {/* Filter toggle + Open Now */}
-            <div className="flex items-center gap-1 shrink-0">
-              <button
-                onClick={() => setOpenNow(!openNow)}
-                className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-0.5 ${
-                  openNow
-                    ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-background text-foreground border-border hover:bg-muted"
-                }`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full ${openNow ? "bg-white" : "bg-emerald-500"}`} />
-                Open
-              </button>
-              <button
-                onClick={() => setFiltersOpen(!filtersOpen)}
-                className={`px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-0.5 ${
-                  filtersOpen || hasActiveFilters
-                    ? "bg-foreground text-background border-foreground"
-                    : "bg-background text-foreground border-border hover:bg-muted"
-                }`}
-              >
-                <SlidersHorizontal className="w-3 h-3" />
-                {activeFilterCount > 0 ? activeFilterCount : ""}
-              </button>
-            </div>
-          </div>
-
-          {/* Row 2: Distance chips */}
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
-            <span className="text-[11px] md:text-xs font-medium text-muted-foreground shrink-0">Distance</span>
-            {[
-              { value: 0.5, label: "500m" },
-              { value: 1, label: "1 km" },
-              { value: 2, label: "2 km" },
-              { value: 3, label: "3 km" },
-              { value: 5, label: "5 km" },
-              { value: null as number | null, label: "All SG" },
-            ].map((r) => (
-              <button
-                key={r.label}
-                onClick={() => {
-                  if (r.value !== null && !userLocation && district === "All Districts") {
-                    handleDetectLocation();
-                  }
-                  setRadiusKm(r.value);
-                }}
-                className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
-                  radiusKm === r.value
-                    ? "bg-foreground text-background border-foreground"
-                    : "bg-background text-foreground border-border hover:bg-muted"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-            {radiusKm !== null && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
-                <MapPin className="w-2.5 h-2.5" />
-                {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
-              </span>
-            )}
-          </div>
-
-          {/* Row 2: Expanded filters (collapsible) */}
-          {filtersOpen && (
-            <div className="space-y-1.5 md:space-y-2 pt-1 border-t border-border">
-              {/* District */}
-              <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
-                <span className="text-[10px] md:text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
-                {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
+        {/* Desktop: Inline filters (hidden on mobile) */}
+        <div className="hidden lg:block">
+          <div className="bg-card border border-border rounded-xl p-3 mb-4 space-y-2">
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
+                {[
+                  { value: "All Categories", label: "All", emoji: "✦" },
+                  { value: "Food & Beverage", label: "Food", emoji: "🍰" },
+                  { value: "Beauty & Wellness", label: "Beauty", emoji: "💅" },
+                  { value: "Education & Training", label: "Tutoring", emoji: "📚" },
+                  { value: "Home Services", label: "Home", emoji: "🏠" },
+                  { value: "Healthcare & Medical", label: "Health", emoji: "🏥" },
+                  { value: "Retail & Shopping", label: "Retail", emoji: "🛍️" },
+                ].map((c) => (
                   <button
-                    key={d}
-                    onClick={() => setDistrict(d)}
-                    className={`px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
-                      district === d
+                    key={c.value}
+                    onClick={() => setCategory(c.value)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 ${
+                      category === c.value
                         ? "bg-foreground text-background border-foreground"
                         : "bg-background text-foreground border-border hover:bg-muted"
                     }`}
                   >
-                    {d === "All Districts" ? "All" : d}
+                    <span>{c.emoji}</span>
+                    {c.label}
                   </button>
                 ))}
-                <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger className="w-auto h-5 md:h-6 text-[10px] md:text-[11px] border-border rounded-full px-2 md:px-2.5 shrink-0">
-                    <SelectValue placeholder="More" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SINGAPORE_DISTRICTS.filter(d => !["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].includes(d)).map((d) => (
-                      <SelectItem key={d} value={d}>{d}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
-
-
-
-
-              {hasActiveFilters && (
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
-                  onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
-                  className="px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                  onClick={() => setOpenNow(!openNow)}
+                  className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                    openNow
+                      ? "bg-emerald-600 text-white border-emerald-600"
+                      : "bg-background text-foreground border-border hover:bg-muted"
+                  }`}
                 >
-                  Clear All
+                  <span className={`w-1.5 h-1.5 rounded-full ${openNow ? "bg-white" : "bg-emerald-500"}`} />
+                  Open
                 </button>
-              )}
+                <button
+                  onClick={() => setFiltersOpen(!filtersOpen)}
+                  className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
+                    filtersOpen || hasActiveFilters
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-background text-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  <SlidersHorizontal className="w-3 h-3" />
+                  {activeFilterCount > 0 ? activeFilterCount : ""}
+                </button>
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Active filter chips (visible when panel is collapsed) */}
-        {!filtersOpen && hasActiveFilters && (
-          <div className="flex items-center gap-1.5 pt-1.5 border-t border-border overflow-x-auto scrollbar-hide flex-nowrap">
-            {searchQuery && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
-                "{searchQuery}"
-                <button onClick={() => setSearchQuery("")} className="hover:text-destructive">×</button>
-              </span>
-            )}
-            {district !== "All Districts" && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
-                {district}
-                <button onClick={() => setDistrict("All Districts")} className="hover:text-destructive">×</button>
-              </span>
-            )}
-            {category !== "All Categories" && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
-                {category}
-                <button onClick={() => setCategory("All Categories")} className="hover:text-destructive">×</button>
-              </span>
-            )}
-            {radiusKm !== null && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
-                ≤{radiusKm}km
-                <button onClick={() => setRadiusKm(null)} className="hover:text-destructive">×</button>
-              </span>
-            )}
-            {openNow && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-600/10 text-emerald-600 border border-emerald-600/20 whitespace-nowrap shrink-0">
-                Open Now
-                <button onClick={() => setOpenNow(false)} className="hover:text-destructive">×</button>
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Map (mobile: always visible after filters, desktop: side panel) */}
-        <div className="lg:hidden mb-3">
-          <div className="bg-card border border-border rounded-xl p-1.5">
-            <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
+              <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
+              {[
+                { value: 0.5, label: "500m" },
+                { value: 1, label: "1 km" },
+                { value: 2, label: "2 km" },
+                { value: 3, label: "3 km" },
+                { value: 5, label: "5 km" },
+                { value: null as number | null, label: "All SG" },
+              ].map((r) => (
+                <button
+                  key={r.label}
+                  onClick={() => {
+                    if (r.value !== null && !userLocation && district === "All Districts") handleDetectLocation();
+                    setRadiusKm(r.value);
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                    radiusKm === r.value
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-background text-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
               {radiusKm !== null && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
                   <MapPin className="w-2.5 h-2.5" />
-                  {userLocation ? "GPS" : district !== "All Districts" ? district : "—"} · {radiusKm ? `${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : "All SG"}
+                  {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
                 </span>
               )}
             </div>
-            <div className="h-[140px] rounded-lg overflow-hidden">
-              <MapView
-                listings={filtered}
-                selectedId={selectedListing?.id}
-                hoveredId={hoveredListingId}
-                onHoverListing={setHoveredListingId}
-                onSelectListing={setSelectedListing}
-                center={mapCenter}
-              />
-            </div>
+
+            {filtersOpen && (
+              <div className="space-y-2 pt-1 border-t border-border">
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
+                  <span className="text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
+                  {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => setDistrict(d)}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                        district === d
+                          ? "bg-foreground text-background border-foreground"
+                          : "bg-background text-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {d === "All Districts" ? "All" : d}
+                    </button>
+                  ))}
+                  <Select value={district} onValueChange={setDistrict}>
+                    <SelectTrigger className="w-auto h-6 text-[11px] border-border rounded-full px-2.5 shrink-0">
+                      <SelectValue placeholder="More" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SINGAPORE_DISTRICTS.filter(d => !["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].includes(d)).map((d) => (
+                        <SelectItem key={d} value={d}>{d}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {hasActiveFilters && (
+                  <button
+                    onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
+                    className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -325,10 +283,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <div className="flex gap-4 md:gap-6 overflow-hidden">
           {/* Listings column */}
           <div className="w-full lg:w-1/2 xl:w-[55%] min-w-0">
-            <div className="bg-card border border-border rounded-xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base md:text-lg font-bold text-foreground">
-                  {filtered.length} <span className="font-normal text-muted-foreground text-sm">{category !== "All Categories" ? category : ""} businesses{radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}</span>
+            <div className="bg-card border border-border rounded-xl p-3 md:p-4">
+              <div className="flex items-center justify-between mb-2 md:mb-3">
+                <h2 className="text-sm md:text-lg font-bold text-foreground">
+                  {filtered.length} <span className="font-normal text-muted-foreground text-xs md:text-sm">{category !== "All Categories" ? category : ""} businesses{radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}</span>
                 </h2>
               </div>
               <div className="lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto lg:pr-1 space-y-2 scrollbar-thin">
