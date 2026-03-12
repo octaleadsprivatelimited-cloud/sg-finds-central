@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -11,7 +11,8 @@ import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import MobileFiltersMap from "@/components/MobileFiltersMap";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
-import { MapPin, SlidersHorizontal } from "lucide-react";
+import { MapPin, SlidersHorizontal, Search } from "lucide-react";
+import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -38,6 +39,25 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   
   const [openNow, setOpenNow] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [pincode, setPincode] = useState("");
+  const [pincodeAddress, setPincodeAddress] = useState("");
+
+  const handlePincodeSearch = useCallback(async (code: string) => {
+    setPincode(code);
+    if (code.length !== 6) { setPincodeAddress(""); return; }
+    const result = await geocodeSingaporePostalCode(code);
+    if (result) {
+      setUserLocation({ lat: result.lat, lng: result.lng });
+      setMapCenter({ lat: result.lat, lng: result.lng });
+      setPincodeAddress(result.address);
+      if (!radiusKm) setRadiusKm(2);
+      setShowMap(true);
+      toast.success(`Found: ${result.address}`);
+    } else {
+      setPincodeAddress("");
+      toast.error("Invalid postal code — try a 6-digit Singapore postal code");
+    }
+  }, [radiusKm, setShowMap]);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
@@ -114,8 +134,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     registerDetectLocation(handleDetectLocation);
   }, [registerDetectLocation, handleDetectLocation]);
 
-  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || openNow;
-  const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, openNow, !!searchQuery].filter(Boolean).length;
+  const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || openNow || pincode;
+  const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, openNow, !!searchQuery, !!pincode].filter(Boolean).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -142,6 +162,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setOpenNowState={setOpenNow}
+          pincode={pincode}
+          onPincodeSearch={handlePincodeSearch}
+          pincodeAddress={pincodeAddress}
           filtered={filtered}
           selectedListing={selectedListing}
           setSelectedListing={setSelectedListing}
@@ -240,6 +263,25 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
             {filtersOpen && (
               <div className="space-y-2 pt-1 border-t border-border">
+                {/* Pincode search */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground shrink-0">Postal:</span>
+                  <div className="relative flex-1 max-w-[200px]">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Enter 6-digit postal code"
+                      value={pincode}
+                      onChange={(e) => handlePincodeSearch(e.target.value.replace(/\D/g, ''))}
+                      className="w-full h-7 px-2.5 pr-7 text-[11px] rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    />
+                    <Search className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                  </div>
+                  {pincodeAddress && (
+                    <span className="text-[10px] text-primary font-medium truncate max-w-[180px]">{pincodeAddress}</span>
+                  )}
+                </div>
                 <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
                   <span className="text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
                   {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
@@ -268,7 +310,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </div>
                 {hasActiveFilters && (
                   <button
-                    onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
+                    onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); setPincode(""); setPincodeAddress(""); setUserLocation(null); }}
                     className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
                   >
                     Clear All

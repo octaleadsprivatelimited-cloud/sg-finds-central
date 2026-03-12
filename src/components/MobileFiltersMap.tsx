@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MapPin, SlidersHorizontal, ChevronUp, ChevronDown, Maximize2, Minimize2, LocateFixed } from "lucide-react";
+import { MapPin, SlidersHorizontal, ChevronUp, ChevronDown, Maximize2, Minimize2, LocateFixed, Search } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -25,6 +25,9 @@ interface MobileFiltersMapProps {
   searchQuery: string;
   setSearchQuery: (val: string) => void;
   setOpenNowState: (val: boolean) => void;
+  pincode: string;
+  onPincodeSearch: (code: string) => void;
+  pincodeAddress: string;
   // Map
   filtered: Listing[];
   selectedListing: Listing | null;
@@ -60,6 +63,7 @@ const MobileFiltersMap = ({
   category, setCategory, openNow, setOpenNow, filtersOpen, setFiltersOpen,
   radiusKm, setRadiusKm, district, setDistrict, userLocation, handleDetectLocation,
   hasActiveFilters, activeFilterCount, searchQuery, setSearchQuery, setOpenNowState,
+  pincode, onPincodeSearch, pincodeAddress,
   filtered, selectedListing, setSelectedListing, hoveredListingId, setHoveredListingId,
   mapCenter, setMapCenter,
 }: MobileFiltersMapProps) => {
@@ -160,6 +164,25 @@ const MobileFiltersMap = ({
           {/* Expanded filters */}
           {filtersOpen && (
             <div className="space-y-1.5 pt-1 border-t border-border">
+              {/* Pincode search */}
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-medium text-muted-foreground shrink-0">Postal:</span>
+                <div className="relative flex-1 max-w-[160px]">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="6-digit postal code"
+                    value={pincode}
+                    onChange={(e) => onPincodeSearch(e.target.value.replace(/\D/g, ''))}
+                    className="w-full h-6 px-2 pr-6 text-[10px] rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                  <Search className="absolute right-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 text-muted-foreground" />
+                </div>
+                {pincodeAddress && (
+                  <span className="text-[9px] text-primary font-medium truncate max-w-[120px]">{pincodeAddress}</span>
+                )}
+              </div>
               <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
                 <span className="text-[10px] font-medium text-muted-foreground shrink-0">Area:</span>
                 {QUICK_DISTRICTS.map((d) => (
@@ -188,7 +211,7 @@ const MobileFiltersMap = ({
               </div>
               {hasActiveFilters && (
                 <button
-                  onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNowState(false); }}
+                  onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNowState(false); onPincodeSearch(""); }}
                   className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors active:scale-95"
                 >
                   Clear All
@@ -223,6 +246,12 @@ const MobileFiltersMap = ({
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
                 ≤{radiusKm}km
                 <button onClick={() => setRadiusKm(null)} className="hover:text-destructive">×</button>
+              </span>
+            )}
+            {pincode && (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                📍 {pincode}
+                <button onClick={() => onPincodeSearch("")} className="hover:text-destructive">×</button>
               </span>
             )}
             {openNow && (
