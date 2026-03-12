@@ -39,6 +39,25 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   
   const [openNow, setOpenNow] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [pincode, setPincode] = useState("");
+  const [pincodeAddress, setPincodeAddress] = useState("");
+
+  const handlePincodeSearch = useCallback(async (code: string) => {
+    setPincode(code);
+    if (code.length !== 6) { setPincodeAddress(""); return; }
+    const result = await geocodeSingaporePostalCode(code);
+    if (result) {
+      setUserLocation({ lat: result.lat, lng: result.lng });
+      setMapCenter({ lat: result.lat, lng: result.lng });
+      setPincodeAddress(result.address);
+      if (!radiusKm) setRadiusKm(2);
+      setShowMap(true);
+      toast.success(`Found: ${result.address}`);
+    } else {
+      setPincodeAddress("");
+      toast.error("Invalid postal code — try a 6-digit Singapore postal code");
+    }
+  }, [radiusKm, setShowMap]);
 
   useEffect(() => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
