@@ -308,7 +308,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </span>
               )}
             </div>
-            <div className="h-[280px] rounded-xl overflow-hidden border border-border">
+            <div className="h-[180px] rounded-xl overflow-hidden border border-border">
               <MapView
                 listings={filtered}
                 selectedId={selectedListing?.id}
