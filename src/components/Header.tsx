@@ -66,16 +66,10 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           {/* Search + GPS + Map toggle — visible on homepage */}
           {isHomePage && (
             <div className="hidden md:flex items-center gap-2 ml-4 flex-1 max-w-xl">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search snacks, nails, tutoring, candles..."
-                  className="w-full pl-10 pr-4 h-9 rounded-lg border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+              <SearchWithSuggestions
+                placeholder="Search businesses, categories, or postal code..."
+                className="flex-1"
+              />
               {onDetectLocation && (
                 <Button variant="outline" size="sm" className="h-9 px-4 text-sm shrink-0" onClick={onDetectLocation}>
                   <MapPin className="w-4 h-4 mr-1.5" />GPS
