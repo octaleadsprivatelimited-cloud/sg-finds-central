@@ -248,6 +248,12 @@ const MobileFiltersMap = ({
                 <button onClick={() => setRadiusKm(null)} className="hover:text-destructive">×</button>
               </span>
             )}
+            {pincode && (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 whitespace-nowrap shrink-0">
+                📍 {pincode}
+                <button onClick={() => onPincodeSearch("")} className="hover:text-destructive">×</button>
+              </span>
+            )}
             {openNow && (
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-600/10 text-emerald-600 border border-emerald-600/20 whitespace-nowrap shrink-0">
                 Open Now
