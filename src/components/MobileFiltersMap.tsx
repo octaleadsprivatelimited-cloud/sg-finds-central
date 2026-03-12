@@ -25,6 +25,9 @@ interface MobileFiltersMapProps {
   searchQuery: string;
   setSearchQuery: (val: string) => void;
   setOpenNowState: (val: boolean) => void;
+  pincode: string;
+  onPincodeSearch: (code: string) => void;
+  pincodeAddress: string;
   // Map
   filtered: Listing[];
   selectedListing: Listing | null;
