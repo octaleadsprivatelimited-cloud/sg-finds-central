@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, MapPin, Star, Building2 } from "lucide-react";
+import { Search, MapPin, Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
 import { getBusinessUrl } from "@/lib/url-helpers";
@@ -12,18 +12,21 @@ interface SearchWithSuggestionsProps {
   className?: string;
 }
 
-const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", className }: SearchWithSuggestionsProps) => {
-  const { searchQuery, setSearchQuery, listings } = useSearch();
+const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, categories, or postal code...", className }: SearchWithSuggestionsProps) => {
+  const { searchQuery, setSearchQuery, listings, onPincodeSearch } = useSearch();
   const navigate = useNavigate();
   const location = useLocation();
   const [focused, setFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Detect if input looks like a Singapore postal code
+  const isPincodeQuery = useMemo(() => /^\d{4,6}$/.test(searchQuery.trim()), [searchQuery]);
+  const isFullPincode = useMemo(() => /^\d{6}$/.test(searchQuery.trim()), [searchQuery]);
+
   const suggestions = useMemo(() => {
     if (!searchQuery || searchQuery.length < 2) return [];
     const q = searchQuery.toLowerCase();
     
-    // Match by name or category
     const matches = listings.filter(
       (l) =>
         l.name.toLowerCase().includes(q) ||
@@ -31,21 +34,18 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
         l.district.toLowerCase().includes(q)
     );
 
-    // Deduplicate and limit
     return matches.slice(0, 6);
   }, [searchQuery, listings]);
 
-  // Also suggest matching categories
   const categoryMatches = useMemo(() => {
-    if (!searchQuery || searchQuery.length < 2) return [];
+    if (!searchQuery || searchQuery.length < 2 || isPincodeQuery) return [];
     const q = searchQuery.toLowerCase();
     const cats = [...new Set(listings.map((l) => l.category))];
     return cats.filter((c) => c.toLowerCase().includes(q)).slice(0, 3);
-  }, [searchQuery, listings]);
+  }, [searchQuery, listings, isPincodeQuery]);
 
-  const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0);
+  const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0 || isPincodeQuery);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -70,9 +70,25 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
     navigate(getBusinessUrl(item));
   };
 
+  const handlePincodeSelect = () => {
+    const code = searchQuery.trim();
+    if (onPincodeSearch && /^\d{6}$/.test(code)) {
+      onPincodeSearch(code);
+      setSearchQuery("");
+      setFocused(false);
+      if (location.pathname !== "/") {
+        navigate("/");
+      }
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && searchQuery.length > 0 && location.pathname !== "/") {
-      navigate("/");
+    if (e.key === "Enter") {
+      if (isFullPincode && onPincodeSearch) {
+        handlePincodeSelect();
+      } else if (searchQuery.length > 0 && location.pathname !== "/") {
+        navigate("/");
+      }
     }
   };
 
@@ -104,6 +120,34 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
           compact ? "top-10 -left-8" : "top-full mt-1",
           compact ? "min-w-[280px]" : ""
         )}>
+          {/* Pincode suggestion */}
+          {isPincodeQuery && (
+            <div className="px-3 pt-2.5 pb-1.5">
+              <button
+                onClick={handlePincodeSelect}
+                disabled={!isFullPincode}
+                className={cn(
+                  "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors text-left",
+                  isFullPincode
+                    ? "bg-primary/10 hover:bg-primary/20 cursor-pointer"
+                    : "bg-muted/50 opacity-60 cursor-default"
+                )}
+              >
+                <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground">
+                    {isFullPincode ? `Search near postal code ${searchQuery}` : `Type 6 digits for postal code search`}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {isFullPincode ? "Find businesses near this location" : `${6 - searchQuery.trim().length} more digit${6 - searchQuery.trim().length !== 1 ? 's' : ''} needed`}
+                  </p>
+                </div>
+              </button>
+            </div>
+          )}
+
           {/* Category suggestions */}
           {categoryMatches.length > 0 && (
             <div className="px-3 pt-2.5 pb-1">
@@ -124,7 +168,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses...", 
           )}
 
           {/* Business suggestions */}
-          {suggestions.length > 0 && (
+          {suggestions.length > 0 && !isPincodeQuery && (
             <div className="py-1.5">
               {categoryMatches.length > 0 && (
                 <p className="px-3 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Businesses</p>
