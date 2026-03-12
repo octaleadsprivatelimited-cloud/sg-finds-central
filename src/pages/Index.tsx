@@ -153,7 +153,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             </div>
 
             {/* Filter toggle + Open Now */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setOpenNow(!openNow)}
                 className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
