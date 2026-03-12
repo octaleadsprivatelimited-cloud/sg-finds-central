@@ -63,6 +63,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
   }, [listings, setSearchListings]);
 
+  // Register pincode search handler globally
+  useEffect(() => {
+    setOnPincodeSearch(() => handlePincodeSearch);
+    return () => setOnPincodeSearch(null);
+  }, [handlePincodeSearch, setOnPincodeSearch]);
+
   useEffect(() => {
     const fetchListings = async () => {
       try {
