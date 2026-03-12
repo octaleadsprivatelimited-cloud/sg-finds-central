@@ -66,8 +66,6 @@ const MobileFiltersMap = ({
   pincode, onPincodeSearch, pincodeAddress,
   filtered, selectedListing, setSelectedListing, hoveredListingId, setHoveredListingId,
   mapCenter, setMapCenter,
-  filtered, selectedListing, setSelectedListing, hoveredListingId, setHoveredListingId,
-  mapCenter, setMapCenter,
 }: MobileFiltersMapProps) => {
   const [isSticky, setIsSticky] = useState(false);
   const [mapExpanded, setMapExpanded] = useState(false);
