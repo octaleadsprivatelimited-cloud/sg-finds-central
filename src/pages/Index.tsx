@@ -235,7 +235,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   </button>
                 ))}
                 <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger className="w-auto h-6 text-[11px] border-border rounded-full px-2.5 shrink-0">
+                  <SelectTrigger className="w-auto h-5 md:h-6 text-[10px] md:text-[11px] border-border rounded-full px-2 md:px-2.5 shrink-0">
                     <SelectValue placeholder="More" />
                   </SelectTrigger>
                   <SelectContent>
