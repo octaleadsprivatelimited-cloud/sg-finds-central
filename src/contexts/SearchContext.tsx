@@ -39,6 +39,8 @@ interface SearchContextType {
   setSearchQuery: (val: string) => void;
   listings: SearchableListing[];
   setListings: (listings: SearchableListing[]) => void;
+  onPincodeSearch: ((code: string) => void) | null;
+  setOnPincodeSearch: (fn: ((code: string) => void) | null) => void;
 }
 
 const SearchContext = createContext<SearchContextType>({
