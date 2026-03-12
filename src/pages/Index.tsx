@@ -217,10 +217,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
           {/* Row 2: Expanded filters (collapsible) */}
           {filtersOpen && (
-            <div className="space-y-2 pt-1 border-t border-border">
+            <div className="space-y-1.5 md:space-y-2 pt-1 border-t border-border">
               {/* District */}
-              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-                <span className="text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
+              <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
+                <span className="text-[10px] md:text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
                 {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
                   <button
                     key={d}
