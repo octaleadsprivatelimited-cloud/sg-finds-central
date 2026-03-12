@@ -252,7 +252,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               {hasActiveFilters && (
                 <button
                   onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); }}
-                  className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                  className="px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[10px] md:text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   Clear All
                 </button>
