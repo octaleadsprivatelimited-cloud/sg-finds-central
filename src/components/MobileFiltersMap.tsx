@@ -63,6 +63,9 @@ const MobileFiltersMap = ({
   category, setCategory, openNow, setOpenNow, filtersOpen, setFiltersOpen,
   radiusKm, setRadiusKm, district, setDistrict, userLocation, handleDetectLocation,
   hasActiveFilters, activeFilterCount, searchQuery, setSearchQuery, setOpenNowState,
+  pincode, onPincodeSearch, pincodeAddress,
+  filtered, selectedListing, setSelectedListing, hoveredListingId, setHoveredListingId,
+  mapCenter, setMapCenter,
   filtered, selectedListing, setSelectedListing, hoveredListingId, setHoveredListingId,
   mapCenter, setMapCenter,
 }: MobileFiltersMapProps) => {
