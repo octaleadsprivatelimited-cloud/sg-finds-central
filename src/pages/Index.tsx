@@ -162,6 +162,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setOpenNowState={setOpenNow}
+          pincode={pincode}
+          onPincodeSearch={handlePincodeSearch}
+          pincodeAddress={pincodeAddress}
           filtered={filtered}
           selectedListing={selectedListing}
           setSelectedListing={setSelectedListing}
