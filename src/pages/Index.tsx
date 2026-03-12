@@ -11,7 +11,8 @@ import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
 import MobileFiltersMap from "@/components/MobileFiltersMap";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
-import { MapPin, SlidersHorizontal } from "lucide-react";
+import { MapPin, SlidersHorizontal, Search } from "lucide-react";
+import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
