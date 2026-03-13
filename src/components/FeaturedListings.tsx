@@ -12,7 +12,7 @@ interface FeaturedListingsProps {
 
 const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) => {
   const navigate = useNavigate();
-  const featured = listings.filter((l) => l.featured);
+  const featured = listings.slice(0, 8);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const displayCount = compact ? 4 : isMobile ? 4 : 8;
 
