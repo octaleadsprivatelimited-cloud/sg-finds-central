@@ -1,4 +1,4 @@
-import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink, Eye, Users } from "lucide-react";
+import { MapPin, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink, Eye, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";

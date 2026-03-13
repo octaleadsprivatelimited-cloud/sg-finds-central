@@ -1,4 +1,4 @@
-import { Sparkles, MapPin, Star, ArrowRight } from "lucide-react";
+import { Sparkles, MapPin, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import type { Listing } from "./ListingCard";
