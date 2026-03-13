@@ -64,13 +64,6 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
 
         {/* Rating pill + meta — clean horizontal layout */}
         <div className="flex items-center gap-3 flex-wrap">
-          {listing.rating && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background text-sm font-bold">
-              {listing.rating}
-              <Star className="w-3.5 h-3.5 fill-current" />
-              <span className="text-xs font-normal opacity-70 ml-0.5">({listing.reviewCount})</span>
-            </div>
-          )}
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <MapPin className="w-3.5 h-3.5" />
             <span className="font-medium">{listing.district}</span>
