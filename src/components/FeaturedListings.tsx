@@ -1,4 +1,4 @@
-import { Sparkles, MapPin, Star, ArrowRight } from "lucide-react";
+import { Sparkles, MapPin, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import type { Listing } from "./ListingCard";
@@ -12,7 +12,7 @@ interface FeaturedListingsProps {
 
 const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) => {
   const navigate = useNavigate();
-  const featured = listings.filter((l) => l.featured);
+  const featured = listings.slice(0, 8);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const displayCount = compact ? 4 : isMobile ? 4 : 8;
 
@@ -55,20 +55,9 @@ const FeaturedListings = ({ listings, compact = false }: FeaturedListingsProps) 
               {listing.description && (
                 <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-1 md:line-clamp-2 mb-2 md:mb-3">{listing.description}</p>
               )}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 text-warning fill-warning" />
-                  <span className="text-xs font-semibold text-foreground">
-                    {listing.rating?.toFixed(1) || "4.8"}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    ({listing.reviewCount || 24})
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <MapPin className="w-3 h-3" />
-                  <span>{listing.district}</span>
-                </div>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="w-3 h-3" />
+                <span>{listing.district}</span>
               </div>
             </div>
           </div>

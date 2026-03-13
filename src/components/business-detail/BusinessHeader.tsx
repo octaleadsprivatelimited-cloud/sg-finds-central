@@ -1,4 +1,4 @@
-import { MapPin, Star, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink, Eye, Users } from "lucide-react";
+import { MapPin, Clock, Phone, MessageCircle, Mail, Share2, Bookmark, Check, ExternalLink, Eye, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -47,9 +47,6 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
                 <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">{listing.name}</h1>
                 <div className="flex items-center gap-2 mt-1">
                   {listing.verified && <VerifiedBadge size="md" />}
-                  {listing.featured && (
-                    <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-[11px] font-semibold">⭐ Featured</Badge>
-                  )}
                 </div>
               </div>
             </div>
@@ -67,13 +64,6 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
 
         {/* Rating pill + meta — clean horizontal layout */}
         <div className="flex items-center gap-3 flex-wrap">
-          {listing.rating && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background text-sm font-bold">
-              {listing.rating}
-              <Star className="w-3.5 h-3.5 fill-current" />
-              <span className="text-xs font-normal opacity-70 ml-0.5">({listing.reviewCount})</span>
-            </div>
-          )}
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <MapPin className="w-3.5 h-3.5" />
             <span className="font-medium">{listing.district}</span>
