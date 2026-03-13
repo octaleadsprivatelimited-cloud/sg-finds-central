@@ -248,12 +248,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
             {nextOpenInfo || "Closed"}
           </Badge>
         )}
-        {listing.rating && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full">
-            <Star className="w-3 h-3 text-warning fill-warning" />
-            {listing.rating}{listing.reviewCount ? ` (${listing.reviewCount})` : ""}
-          </Badge>
-        )}
         {listing.verified && (
           <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
             ✓ Verified
@@ -262,21 +256,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
         {listing.priceRange && (
           <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
             {listing.priceRange}
-          </Badge>
-        )}
-        {listing.city && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
-            {listing.city}
-          </Badge>
-        )}
-        {!listing.city && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
-            Singapore
-          </Badge>
-        )}
-        {listing.featured && (
-          <Badge className="bg-warning/10 text-warning border-warning/30 text-[11px] font-medium px-2 py-0.5 rounded-full">
-            ⭐ Featured
           </Badge>
         )}
         {distanceKm != null && (
