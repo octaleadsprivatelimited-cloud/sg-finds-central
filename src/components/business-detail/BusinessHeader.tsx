@@ -47,9 +47,6 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
                 <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">{listing.name}</h1>
                 <div className="flex items-center gap-2 mt-1">
                   {listing.verified && <VerifiedBadge size="md" />}
-                  {listing.featured && (
-                    <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-[11px] font-semibold">⭐ Featured</Badge>
-                  )}
                 </div>
               </div>
             </div>
