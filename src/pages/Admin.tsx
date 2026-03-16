@@ -76,7 +76,7 @@ const Admin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("all");
+  const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("pending_approval");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [settings, setSettings] = useState({
