@@ -58,6 +58,36 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
     }
   }, [hoveredId, listings]);
 
+  // Draw radius circle and adjust zoom
+  useEffect(() => {
+    if (circleRef.current) {
+      circleRef.current.setMap(null);
+      circleRef.current = null;
+    }
+    if (!mapRef.current || !center || !radiusKm) return;
+
+    mapRef.current.setZoom(radiusToZoom(radiusKm));
+    mapRef.current.panTo(center);
+
+    circleRef.current = new google.maps.Circle({
+      map: mapRef.current,
+      center,
+      radius: radiusKm * 1000,
+      fillColor: "hsl(221, 83%, 53%)",
+      fillOpacity: 0.08,
+      strokeColor: "hsl(221, 83%, 53%)",
+      strokeOpacity: 0.5,
+      strokeWeight: 2,
+    });
+
+    return () => {
+      if (circleRef.current) {
+        circleRef.current.setMap(null);
+        circleRef.current = null;
+      }
+    };
+  }, [center, radiusKm, isLoaded]);
+
   useEffect(() => {
     if (!GOOGLE_MAPS_API_KEY) {
       setLoadError("Missing Google Maps API key");
