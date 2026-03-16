@@ -1,62 +1,88 @@
-import { useState, useEffect } from "react";
-import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { useState, useEffect, useMemo } from "react";
+import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Listing } from "@/components/ListingCard";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Shield, Check, X, ExternalLink, FileText, Building2, Clock,
   Loader2, AlertTriangle, LayoutDashboard, Inbox, Settings,
-  LogOut, Search, Bell, ChevronRight, Eye, Store,
+  LogOut, Search, Bell, ChevronRight, Eye, Store, Trash2,
+  MessageSquare, Mail, Phone, ChevronDown, ChevronUp, Menu,
 } from "lucide-react";
 import { toast } from "sonner";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 
-/* ── Sidebar Nav Item ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   SHARED PURPLE THEME CONSTANTS
+   ═══════════════════════════════════════════════════════════ */
+const P = {
+  bg: "bg-[hsl(262,30%,97%)] dark:bg-[hsl(262,20%,7%)]",
+  card: "bg-white dark:bg-[hsl(262,20%,12%)] border border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,20%)]",
+  cardHover: "hover:shadow-md transition-shadow",
+  subtle: "bg-[hsl(262,30%,97%)] dark:bg-[hsl(262,20%,10%)]",
+  muted: "text-[hsl(262,15%,50%)]",
+  accent: "hsl(262,60%,55%)",
+  accentBg: "bg-[hsl(262,60%,55%)]",
+  accentLight: "bg-[hsl(262,40%,95%)] dark:bg-[hsl(262,20%,18%)]",
+  border: "border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,20%)]",
+  gradient: "bg-gradient-to-br from-[hsl(262,60%,55%)] to-[hsl(262,70%,45%)]",
+};
+
+type AdminTab = "dashboard" | "listings" | "enquiries" | "settings";
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR NAV ITEM
+   ═══════════════════════════════════════════════════════════ */
 const SideItem = ({
-  icon: Icon, label, active, onClick,
-}: { icon: any; label: string; active?: boolean; onClick?: () => void }) => (
+  icon: Icon, label, active, count, onClick,
+}: { icon: any; label: string; active?: boolean; count?: number; onClick?: () => void }) => (
   <button
     onClick={onClick}
     className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all
       ${active
-        ? "bg-[hsl(262,60%,55%)] text-white shadow-md"
-        : "text-[hsl(262,15%,45%)] hover:bg-[hsl(262,40%,95%)]"
+        ? `${P.accentBg} text-white shadow-md`
+        : `${P.muted} hover:bg-[hsl(262,40%,95%)] dark:hover:bg-[hsl(262,20%,15%)]`
       }`}
   >
     <Icon className="w-[18px] h-[18px]" />
-    {label}
+    <span className="flex-1 text-left">{label}</span>
+    {count !== undefined && count > 0 && (
+      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center ${
+        active ? "bg-white/20 text-white" : "bg-[hsl(262,60%,55%)] text-white"
+      }`}>{count}</span>
+    )}
   </button>
 );
 
-/* ── Stat Card ────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   STAT CARD
+   ═══════════════════════════════════════════════════════════ */
 const StatCard = ({
   icon: Icon, label, value, color,
 }: { icon: any; label: string; value: number | string; color: string }) => (
-  <div className="bg-white dark:bg-[hsl(262,20%,12%)] rounded-2xl p-5 shadow-sm border border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,20%)]">
+  <div className={`${P.card} rounded-2xl p-5 shadow-sm`}>
     <div className="flex items-center gap-2 mb-3">
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${color}`}>
         <Icon className="w-4 h-4" />
       </div>
-      <span className="text-xs font-medium text-[hsl(262,15%,50%)]">{label}</span>
+      <span className={`text-xs font-medium ${P.muted}`}>{label}</span>
     </div>
     <p className="text-3xl font-bold text-foreground">{value}</p>
   </div>
 );
 
-/* ── Listing Review Card ─────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   LISTING REVIEW CARD (Pending Queue)
+   ═══════════════════════════════════════════════════════════ */
 const ListingReviewCard = ({
   listing, actionLoading, onApprove, onReject,
 }: {
@@ -65,11 +91,9 @@ const ListingReviewCard = ({
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
 }) => (
-  <div className="bg-white dark:bg-[hsl(262,20%,12%)] rounded-2xl p-5 shadow-sm border border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,20%)] hover:shadow-md transition-shadow">
-    {/* Top row */}
+  <div className={`${P.card} rounded-2xl p-5 shadow-sm ${P.cardHover}`}>
     <div className="flex items-start gap-4 mb-4">
-      {/* Logo */}
-      <div className="w-14 h-14 rounded-xl bg-[hsl(262,40%,95%)] dark:bg-[hsl(262,20%,18%)] flex items-center justify-center overflow-hidden flex-shrink-0 border border-[hsl(262,20%,90%)] dark:border-[hsl(262,20%,25%)]">
+      <div className={`w-14 h-14 rounded-xl ${P.accentLight} flex items-center justify-center overflow-hidden flex-shrink-0 border ${P.border}`}>
         {listing.logoUrl ? (
           <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover rounded-xl" />
         ) : (
@@ -79,132 +103,194 @@ const ListingReviewCard = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <h3 className="font-semibold text-foreground truncate">{listing.name}</h3>
-          <Badge className="bg-[hsl(38,92%,50%)] text-white border-0 text-[10px] px-2 py-0.5 rounded-full font-medium">
-            Pending
-          </Badge>
+          <Badge className="bg-[hsl(38,92%,50%)] text-white border-0 text-[10px] px-2 py-0.5 rounded-full font-medium">Pending</Badge>
         </div>
-        <p className="text-xs text-[hsl(262,15%,50%)] truncate">{listing.address}</p>
+        <p className={`text-xs ${P.muted} truncate`}>{listing.address}</p>
       </div>
-      <Badge className="bg-[hsl(262,40%,95%)] text-[hsl(262,50%,45%)] dark:bg-[hsl(262,20%,18%)] dark:text-[hsl(262,50%,70%)] border-0 text-xs font-medium rounded-full px-3">
+      <Badge className={`${P.accentLight} text-[hsl(262,50%,45%)] dark:text-[hsl(262,50%,70%)] border-0 text-xs font-medium rounded-full px-3`}>
         {listing.category}
       </Badge>
     </div>
-
-    {/* Info grid */}
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-4 bg-[hsl(262,30%,97%)] dark:bg-[hsl(262,20%,10%)] rounded-xl p-3">
-      <div>
-        <span className="text-[hsl(262,15%,55%)]">UEN</span>
-        <p className="font-semibold text-foreground mt-0.5">{listing.uen}</p>
-      </div>
-      <div>
-        <span className="text-[hsl(262,15%,55%)]">District</span>
-        <p className="font-semibold text-foreground mt-0.5">{listing.district}</p>
-      </div>
-      <div>
-        <span className="text-[hsl(262,15%,55%)]">Phone</span>
-        <p className="font-semibold text-foreground mt-0.5">{listing.phone || "—"}</p>
-      </div>
-      <div>
-        <span className="text-[hsl(262,15%,55%)]">Postal</span>
-        <p className="font-semibold text-foreground mt-0.5">{listing.postalCode}</p>
-      </div>
+    <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-4 ${P.subtle} rounded-xl p-3`}>
+      {[
+        { l: "UEN", v: listing.uen },
+        { l: "District", v: listing.district },
+        { l: "Phone", v: listing.phone || "—" },
+        { l: "Postal", v: listing.postalCode },
+      ].map((f) => (
+        <div key={f.l}>
+          <span className={P.muted}>{f.l}</span>
+          <p className="font-semibold text-foreground mt-0.5">{f.v}</p>
+        </div>
+      ))}
     </div>
-
-    {/* Description */}
-    {listing.description && (
-      <p className="text-xs text-[hsl(262,15%,50%)] mb-4 line-clamp-2">{listing.description}</p>
-    )}
-
-    {/* Documents */}
+    {listing.description && <p className={`text-xs ${P.muted} mb-4 line-clamp-2`}>{listing.description}</p>}
     {listing.documentsUrl && listing.documentsUrl.length > 0 && (
       <div className="flex gap-2 mb-4 flex-wrap">
         {listing.documentsUrl.map((url, i) => (
-          <a
-            key={i}
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-[hsl(262,60%,55%)] hover:underline bg-[hsl(262,40%,96%)] dark:bg-[hsl(262,20%,18%)] px-2.5 py-1.5 rounded-lg"
-          >
-            <FileText className="w-3 h-3" />
-            Doc {i + 1}
-            <ExternalLink className="w-2.5 h-2.5" />
+          <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+            className={`inline-flex items-center gap-1 text-xs text-[hsl(262,60%,55%)] hover:underline ${P.accentLight} px-2.5 py-1.5 rounded-lg`}>
+            <FileText className="w-3 h-3" />Doc {i + 1}<ExternalLink className="w-2.5 h-2.5" />
           </a>
         ))}
       </div>
     )}
-
-    {/* Actions */}
-    <div className="flex gap-2 pt-3 border-t border-[hsl(262,20%,93%)] dark:border-[hsl(262,20%,20%)]">
-      <Button
-        size="sm"
-        onClick={() => onApprove(listing.id)}
-        disabled={actionLoading === listing.id}
-        className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white rounded-xl text-xs px-4"
-      >
-        {actionLoading === listing.id ? (
-          <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-        ) : (
-          <Check className="w-3.5 h-3.5 mr-1.5" />
-        )}
+    <div className={`flex gap-2 pt-3 border-t ${P.border}`}>
+      <Button size="sm" onClick={() => onApprove(listing.id)} disabled={actionLoading === listing.id}
+        className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white rounded-xl text-xs px-4">
+        {actionLoading === listing.id ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Check className="w-3.5 h-3.5 mr-1.5" />}
         Approve
       </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => onReject(listing.id)}
-        disabled={actionLoading === listing.id}
-        className="border-[hsl(0,70%,60%)] text-[hsl(0,70%,50%)] hover:bg-[hsl(0,70%,97%)] rounded-xl text-xs px-4"
-      >
-        <X className="w-3.5 h-3.5 mr-1.5" />
-        Reject
-      </Button>
-      <Button
-        size="sm"
-        variant="ghost"
-        className="ml-auto text-[hsl(262,40%,55%)] hover:bg-[hsl(262,40%,95%)] rounded-xl text-xs"
-      >
-        <Eye className="w-3.5 h-3.5 mr-1.5" />
-        Preview
+      <Button size="sm" variant="outline" onClick={() => onReject(listing.id)} disabled={actionLoading === listing.id}
+        className="border-[hsl(0,70%,60%)] text-[hsl(0,70%,50%)] hover:bg-[hsl(0,70%,97%)] rounded-xl text-xs px-4">
+        <X className="w-3.5 h-3.5 mr-1.5" />Reject
       </Button>
     </div>
   </div>
 );
 
-/* ── Main Admin Page ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   ALL LISTINGS CARD
+   ═══════════════════════════════════════════════════════════ */
+const AllListingRow = ({
+  listing, onDelete, deleting,
+}: { listing: Listing; onDelete: (id: string) => void; deleting: string | null }) => {
+  const statusMap: Record<string, { bg: string; text: string; label: string }> = {
+    approved: { bg: "bg-[hsl(152,50%,92%)]", text: "text-[hsl(152,69%,35%)]", label: "Live" },
+    pending_approval: { bg: "bg-[hsl(38,70%,92%)]", text: "text-[hsl(38,80%,35%)]", label: "Pending" },
+    rejected: { bg: "bg-[hsl(0,60%,94%)]", text: "text-[hsl(0,70%,45%)]", label: "Rejected" },
+  };
+  const s = statusMap[listing.status] || statusMap.approved;
+
+  return (
+    <div className={`${P.card} rounded-xl p-4 shadow-sm flex items-center gap-4 ${P.cardHover}`}>
+      <div className={`w-11 h-11 rounded-lg ${P.accentLight} flex items-center justify-center overflow-hidden flex-shrink-0`}>
+        {listing.logoUrl ? (
+          <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover rounded-lg" />
+        ) : (
+          <Store className="w-5 h-5 text-[hsl(262,40%,60%)]" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-sm text-foreground truncate">{listing.name}</p>
+        <p className={`text-xs ${P.muted} truncate`}>{listing.category} · {listing.district}</p>
+      </div>
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${s.bg} ${s.text}`}>{s.label}</span>
+      <Button size="sm" variant="ghost" onClick={() => onDelete(listing.id)} disabled={deleting === listing.id}
+        className="text-[hsl(0,70%,55%)] hover:bg-[hsl(0,70%,97%)] rounded-lg h-8 w-8 p-0">
+        {deleting === listing.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+      </Button>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   ENQUIRY CARD
+   ═══════════════════════════════════════════════════════════ */
+interface Enquiry {
+  id: string; listingId: string; listingName: string;
+  name: string; email: string; phone?: string; message: string;
+  status: "unread" | "read" | "replied"; createdAt: any;
+}
+
+const EnquiryCard = ({ e }: { e: Enquiry }) => {
+  const statusColor = e.status === "unread"
+    ? "bg-[hsl(262,60%,55%)]"
+    : e.status === "replied"
+      ? "bg-[hsl(152,69%,40%)]"
+      : "bg-[hsl(38,92%,50%)]";
+
+  return (
+    <div className={`${P.card} rounded-xl p-4 shadow-sm ${P.cardHover}`}>
+      <div className="flex items-start gap-3">
+        <div className={`w-10 h-10 rounded-full ${P.accentLight} flex items-center justify-center flex-shrink-0 text-sm font-bold text-[hsl(262,60%,55%)]`}>
+          {e.name[0]?.toUpperCase() || "?"}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <p className="font-semibold text-sm text-foreground">{e.name}</p>
+            <div className={`w-2 h-2 rounded-full ${statusColor}`} />
+          </div>
+          <p className={`text-xs ${P.muted} mb-1`}>{e.listingName}</p>
+          <p className="text-xs text-foreground line-clamp-2">{e.message}</p>
+        </div>
+        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <div className="flex items-center gap-1.5">
+            {e.email && (
+              <a href={`mailto:${e.email}`} className="w-7 h-7 rounded-lg bg-[hsl(262,40%,95%)] dark:bg-[hsl(262,20%,18%)] flex items-center justify-center hover:bg-[hsl(262,40%,90%)] transition">
+                <Mail className="w-3 h-3 text-[hsl(262,60%,55%)]" />
+              </a>
+            )}
+            {e.phone && (
+              <a href={`tel:${e.phone}`} className="w-7 h-7 rounded-lg bg-[hsl(262,40%,95%)] dark:bg-[hsl(262,20%,18%)] flex items-center justify-center hover:bg-[hsl(262,40%,90%)] transition">
+                <Phone className="w-3 h-3 text-[hsl(262,60%,55%)]" />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN ADMIN PAGE
+   ═══════════════════════════════════════════════════════════ */
 const Admin = () => {
   const { user, isAdmin, isSuperAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [listings, setListings] = useState<Listing[]>([]);
+
+  const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
+  const [pendingListings, setPendingListings] = useState<Listing[]>([]);
+  const [allListings, setAllListings] = useState<Listing[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("all");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Settings state
+  const [settings, setSettings] = useState({
+    autoApprove: false,
+    emailNotifications: true,
+    documentRequired: true,
+  });
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
       navigate("/");
       return;
     }
-    fetchPending();
+    fetchData();
   }, [authLoading, user, isAdmin]);
 
-  const fetchPending = async () => {
+  const fetchData = async () => {
     try {
-      const q = query(collection(db, "listings"), where("status", "==", "pending_approval"));
-      const snap = await getDocs(q);
-      setListings(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Listing)));
+      // Fetch all listings
+      const allSnap = await getDocs(collection(db, "listings"));
+      const all = allSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Listing));
+      setAllListings(all);
+      setPendingListings(all.filter((l) => l.status === "pending_approval"));
+
+      // Fetch enquiries
+      try {
+        const eSnap = await getDocs(collection(db, "enquiries"));
+        setEnquiries(eSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Enquiry)));
+      } catch {}
     } catch {
-      setListings([
-        {
-          id: "pending-1", name: "New Café SG", uen: "202399999F",
-          category: "Food & Beverage", district: "Tiong Bahru",
-          address: "78 Yong Siak Street, Singapore 163078", postalCode: "163078",
-          phone: "+65 6111 2222", status: "pending_approval", ownerId: "demo",
-          documentsUrl: ["https://example.com/doc.pdf"],
-        },
-      ]);
+      // Demo fallback
+      const demo: Listing[] = [{
+        id: "pending-1", name: "New Café SG", uen: "202399999F",
+        category: "Food & Beverage", district: "Tiong Bahru",
+        address: "78 Yong Siak Street, Singapore 163078", postalCode: "163078",
+        phone: "+65 6111 2222", status: "pending_approval", ownerId: "demo",
+        documentsUrl: ["https://example.com/doc.pdf"],
+      }];
+      setAllListings(demo);
+      setPendingListings(demo);
     }
     setLoading(false);
   };
@@ -213,214 +299,351 @@ const Admin = () => {
     setActionLoading(id);
     try {
       await updateDoc(doc(db, "listings", id), { status: "approved", rejectionReason: "" });
-      setListings((prev) => prev.filter((l) => l.id !== id));
+      setPendingListings((prev) => prev.filter((l) => l.id !== id));
+      setAllListings((prev) => prev.map((l) => l.id === id ? { ...l, status: "approved" } : l));
       toast.success("Listing approved");
-    } catch {
-      toast.error("Failed to update listing");
-    }
+    } catch { toast.error("Failed to update listing"); }
     setActionLoading(null);
   };
 
   const handleReject = async () => {
-    if (!rejectingId) return;
-    if (!rejectionReason.trim()) {
-      toast.error("Please provide a reason for rejection");
-      return;
-    }
+    if (!rejectingId || !rejectionReason.trim()) { toast.error("Please provide a reason"); return; }
     setActionLoading(rejectingId);
     try {
-      await updateDoc(doc(db, "listings", rejectingId), {
-        status: "rejected",
-        rejectionReason: rejectionReason.trim(),
-      });
-      setListings((prev) => prev.filter((l) => l.id !== rejectingId));
+      await updateDoc(doc(db, "listings", rejectingId), { status: "rejected", rejectionReason: rejectionReason.trim() });
+      setPendingListings((prev) => prev.filter((l) => l.id !== rejectingId));
+      setAllListings((prev) => prev.map((l) => l.id === rejectingId ? { ...l, status: "rejected" } : l));
       toast.success("Listing rejected");
-    } catch {
-      toast.error("Failed to update listing");
-    }
-    setActionLoading(null);
-    setRejectingId(null);
-    setRejectionReason("");
+    } catch { toast.error("Failed to update listing"); }
+    setActionLoading(null); setRejectingId(null); setRejectionReason("");
   };
 
-  const filteredListings = listings.filter((l) =>
+  const handleDelete = async (id: string) => {
+    setActionLoading(id);
+    try {
+      await deleteDoc(doc(db, "listings", id));
+      setAllListings((prev) => prev.filter((l) => l.id !== id));
+      setPendingListings((prev) => prev.filter((l) => l.id !== id));
+      toast.success("Listing deleted");
+    } catch { toast.error("Failed to delete"); }
+    setActionLoading(null);
+  };
+
+  const stats = useMemo(() => ({
+    total: allListings.length,
+    pending: pendingListings.length,
+    approved: allListings.filter((l) => l.status === "approved").length,
+    rejected: allListings.filter((l) => l.status === "rejected").length,
+    enquiries: enquiries.length,
+    unreadEnquiries: enquiries.filter((e) => e.status === "unread").length,
+  }), [allListings, pendingListings, enquiries]);
+
+  const filteredAllListings = useMemo(() => {
+    return allListings.filter((l) => {
+      const matchSearch = l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        l.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchFilter = listingFilter === "all" || l.status === listingFilter;
+      return matchSearch && matchFilter;
+    });
+  }, [allListings, searchQuery, listingFilter]);
+
+  const filteredPending = pendingListings.filter((l) =>
     l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     l.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredEnquiries = enquiries.filter((e) =>
+    e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    e.listingName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[hsl(262,30%,97%)]">
+      <div className={`min-h-screen flex items-center justify-center ${P.bg}`}>
         <Loader2 className="w-6 h-6 animate-spin text-[hsl(262,60%,55%)]" />
       </div>
     );
   }
 
+  const searchPlaceholder: Record<AdminTab, string> = {
+    dashboard: "Search pending listings...",
+    listings: "Search all listings...",
+    enquiries: "Search enquiries...",
+    settings: "Search settings...",
+  };
+
+  const sidebarContent = (
+    <>
+      <div className="flex items-center gap-2.5 mb-8">
+        <div className={`w-9 h-9 rounded-xl ${P.accentBg} flex items-center justify-center`}>
+          <Shield className="w-5 h-5 text-white" />
+        </div>
+        <span className="font-bold text-lg text-foreground">Admin</span>
+      </div>
+      <div className="space-y-1 mb-6">
+        <p className={`text-[10px] uppercase tracking-widest ${P.muted} font-semibold px-4 mb-2`}>Overview</p>
+        <SideItem icon={LayoutDashboard} label="Dashboard" active={activeTab === "dashboard"} count={stats.pending} onClick={() => { setActiveTab("dashboard"); setMobileMenuOpen(false); }} />
+        <SideItem icon={Building2} label="All Listings" active={activeTab === "listings"} count={stats.total} onClick={() => { setActiveTab("listings"); setMobileMenuOpen(false); }} />
+        <SideItem icon={MessageSquare} label="Enquiries" active={activeTab === "enquiries"} count={stats.unreadEnquiries} onClick={() => { setActiveTab("enquiries"); setMobileMenuOpen(false); }} />
+      </div>
+      <div className="space-y-1 mb-6">
+        <p className={`text-[10px] uppercase tracking-widest ${P.muted} font-semibold px-4 mb-2`}>System</p>
+        <SideItem icon={Settings} label="Settings" active={activeTab === "settings"} onClick={() => { setActiveTab("settings"); setMobileMenuOpen(false); }} />
+        {isSuperAdmin && (
+          <SideItem icon={Shield} label="Super Admin" onClick={() => navigate("/super-admin")} />
+        )}
+      </div>
+      <div className="mt-auto space-y-1">
+        <SideItem icon={LogOut} label="Logout" onClick={async () => { await signOut(auth); navigate("/"); }} />
+      </div>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-[hsl(262,30%,97%)] dark:bg-[hsl(262,20%,7%)] flex">
-      {/* ── Left Sidebar ──────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-[240px] bg-white dark:bg-[hsl(262,20%,10%)] border-r border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,18%)] p-5 sticky top-0 h-screen">
-        {/* Brand */}
-        <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-[hsl(262,60%,55%)] flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold text-lg text-foreground">Admin</span>
-        </div>
-
-        {/* Nav sections */}
-        <div className="space-y-1 mb-6">
-          <p className="text-[10px] uppercase tracking-widest text-[hsl(262,15%,60%)] font-semibold px-4 mb-2">Overview</p>
-          <SideItem icon={LayoutDashboard} label="Dashboard" active />
-          <SideItem icon={Inbox} label="Enquiries" onClick={() => navigate("/dashboard")} />
-        </div>
-
-        <div className="space-y-1 mb-6">
-          <p className="text-[10px] uppercase tracking-widest text-[hsl(262,15%,60%)] font-semibold px-4 mb-2">Management</p>
-          <SideItem icon={Building2} label="All Listings" onClick={() => navigate("/")} />
-          {isSuperAdmin && (
-            <SideItem icon={Settings} label="Super Admin" onClick={() => navigate("/super-admin")} />
-          )}
-        </div>
-
-        <div className="mt-auto space-y-1">
-          <p className="text-[10px] uppercase tracking-widest text-[hsl(262,15%,60%)] font-semibold px-4 mb-2">Settings</p>
-          <SideItem icon={Settings} label="Settings" />
-          <SideItem
-            icon={LogOut}
-            label="Logout"
-            onClick={async () => { await signOut(auth); navigate("/"); }}
-          />
-        </div>
+    <div className={`min-h-screen ${P.bg} flex`}>
+      {/* ── Desktop Sidebar ──────────────────────────────── */}
+      <aside className={`hidden lg:flex flex-col w-[240px] bg-white dark:bg-[hsl(262,20%,10%)] border-r ${P.border} p-5 sticky top-0 h-screen`}>
+        {sidebarContent}
       </aside>
 
-      {/* ── Main Content ─────────────────────────────────── */}
+      {/* ── Mobile sidebar overlay ───────────────────────── */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
+          <aside className={`relative w-[260px] h-full bg-white dark:bg-[hsl(262,20%,10%)] p-5 flex flex-col shadow-2xl`}>
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+
+      {/* ── Main ─────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 bg-white/80 dark:bg-[hsl(262,20%,10%)]/80 backdrop-blur-xl border-b border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,18%)] px-6 py-3 flex items-center gap-4">
+        <header className={`sticky top-0 z-30 bg-white/80 dark:bg-[hsl(262,20%,10%)]/80 backdrop-blur-xl border-b ${P.border} px-4 sm:px-6 py-3 flex items-center gap-3`}>
+          <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden w-9 h-9 rounded-xl bg-[hsl(262,30%,96%)] dark:bg-[hsl(262,20%,14%)] flex items-center justify-center">
+            <Menu className="w-4 h-4 text-[hsl(262,15%,45%)]" />
+          </button>
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[hsl(262,15%,55%)]" />
-            <input
-              type="text"
-              placeholder="Search pending listings..."
-              value={searchQuery}
+            <input type="text" placeholder={searchPlaceholder[activeTab]} value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[hsl(262,30%,96%)] dark:bg-[hsl(262,20%,14%)] text-sm text-foreground placeholder:text-[hsl(262,15%,55%)] border-0 focus:outline-none focus:ring-2 focus:ring-[hsl(262,60%,55%)] transition"
-            />
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[hsl(262,30%,96%)] dark:bg-[hsl(262,20%,14%)] text-sm text-foreground placeholder:text-[hsl(262,15%,55%)] border-0 focus:outline-none focus:ring-2 focus:ring-[hsl(262,60%,55%)] transition" />
           </div>
           <div className="flex items-center gap-3 ml-auto">
-            <button className="w-10 h-10 rounded-xl bg-[hsl(262,30%,96%)] dark:bg-[hsl(262,20%,14%)] flex items-center justify-center hover:bg-[hsl(262,30%,92%)] transition">
+            <button className="w-9 h-9 rounded-xl bg-[hsl(262,30%,96%)] dark:bg-[hsl(262,20%,14%)] flex items-center justify-center relative">
               <Bell className="w-4 h-4 text-[hsl(262,15%,45%)]" />
+              {stats.pending > 0 && <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[hsl(0,70%,55%)] text-white text-[9px] font-bold flex items-center justify-center">{stats.pending}</span>}
             </button>
-            <div className="flex items-center gap-2.5 pl-3 border-l border-[hsl(262,20%,90%)] dark:border-[hsl(262,20%,20%)]">
-              <div className="w-9 h-9 rounded-full bg-[hsl(262,60%,55%)] flex items-center justify-center text-white text-sm font-bold">
+            <div className={`hidden sm:flex items-center gap-2.5 pl-3 border-l ${P.border}`}>
+              <div className={`w-8 h-8 rounded-full ${P.accentBg} flex items-center justify-center text-white text-xs font-bold`}>
                 {user?.displayName?.[0] || user?.email?.[0]?.toUpperCase() || "A"}
               </div>
-              <span className="text-sm font-medium text-foreground hidden sm:block">
-                {user?.displayName || user?.email?.split("@")[0] || "Admin"}
-              </span>
+              <span className="text-sm font-medium text-foreground">{user?.displayName || user?.email?.split("@")[0] || "Admin"}</span>
             </div>
           </div>
         </header>
 
-        {/* Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          {/* Hero Banner */}
-          <div className="bg-gradient-to-br from-[hsl(262,60%,55%)] to-[hsl(262,70%,45%)] rounded-2xl p-8 mb-6 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-4 right-12 w-24 h-24 rounded-full border-2 border-white/30" />
-              <div className="absolute bottom-4 right-32 w-16 h-16 rounded-full border-2 border-white/20" />
-              <svg className="absolute right-8 top-1/2 -translate-y-1/2 w-32 h-32 text-white/20" viewBox="0 0 100 100">
-                <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="1" fill="none" />
-              </svg>
-            </div>
-            <p className="text-white/70 text-xs uppercase tracking-widest font-semibold mb-2">Admin Dashboard</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Review & Manage Listings
-            </h1>
-            <p className="text-white/70 text-sm max-w-md">
-              Approve or reject business listings to keep the directory trusted and up-to-date.
-            </p>
-          </div>
+        {/* ── Tab Content ─────────────────────────────────── */}
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <StatCard icon={Clock} label="Pending Review" value={listings.length} color="bg-[hsl(262,40%,93%)] text-[hsl(262,60%,50%)]" />
-            <StatCard icon={Check} label="Approved Today" value="—" color="bg-[hsl(152,50%,92%)] text-[hsl(152,69%,35%)]" />
-            <StatCard icon={AlertTriangle} label="Rejected Today" value="—" color="bg-[hsl(0,60%,94%)] text-[hsl(0,70%,50%)]" />
-          </div>
-
-          {/* Queue heading */}
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-foreground">Pending Queue</h2>
-            <span className="text-xs text-[hsl(262,15%,55%)]">{filteredListings.length} listing{filteredListings.length !== 1 ? "s" : ""}</span>
-          </div>
-
-          {/* Listing Queue */}
-          {loading ? (
-            <div className="text-center py-20">
-              <Loader2 className="w-6 h-6 animate-spin mx-auto text-[hsl(262,60%,55%)]" />
-            </div>
-          ) : filteredListings.length === 0 ? (
-            <div className="text-center py-20 bg-white dark:bg-[hsl(262,20%,12%)] rounded-2xl border border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,20%)]">
-              <div className="w-14 h-14 rounded-full bg-[hsl(152,50%,92%)] flex items-center justify-center mx-auto mb-4">
-                <Check className="w-6 h-6 text-[hsl(152,69%,40%)]" />
+          {/* ═══ DASHBOARD TAB ═══════════════════════════════ */}
+          {activeTab === "dashboard" && (
+            <div className="space-y-6">
+              {/* Hero */}
+              <div className={`${P.gradient} rounded-2xl p-6 sm:p-8 relative overflow-hidden`}>
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-4 right-12 w-24 h-24 rounded-full border-2 border-white/30" />
+                  <div className="absolute bottom-4 right-32 w-16 h-16 rounded-full border-2 border-white/20" />
+                </div>
+                <p className="text-white/70 text-xs uppercase tracking-widest font-semibold mb-2">Admin Dashboard</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Review & Manage Listings</h1>
+                <p className="text-white/70 text-sm max-w-md">Approve or reject business listings to keep the directory trusted.</p>
               </div>
-              <p className="font-semibold text-foreground mb-1">All caught up!</p>
-              <p className="text-sm text-[hsl(262,15%,50%)]">No pending listings to review</p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <StatCard icon={Clock} label="Pending" value={stats.pending} color="bg-[hsl(262,40%,93%)] text-[hsl(262,60%,50%)]" />
+                <StatCard icon={Check} label="Approved" value={stats.approved} color="bg-[hsl(152,50%,92%)] text-[hsl(152,69%,35%)]" />
+                <StatCard icon={AlertTriangle} label="Rejected" value={stats.rejected} color="bg-[hsl(0,60%,94%)] text-[hsl(0,70%,50%)]" />
+                <StatCard icon={MessageSquare} label="Enquiries" value={stats.enquiries} color="bg-[hsl(210,60%,93%)] text-[hsl(210,80%,45%)]" />
+              </div>
+
+              {/* Pending Queue */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-foreground">Pending Queue</h2>
+                  <span className={`text-xs ${P.muted}`}>{filteredPending.length} listing{filteredPending.length !== 1 ? "s" : ""}</span>
+                </div>
+                {loading ? (
+                  <div className="text-center py-16"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[hsl(262,60%,55%)]" /></div>
+                ) : filteredPending.length === 0 ? (
+                  <div className={`text-center py-16 ${P.card} rounded-2xl`}>
+                    <div className="w-14 h-14 rounded-full bg-[hsl(152,50%,92%)] flex items-center justify-center mx-auto mb-4">
+                      <Check className="w-6 h-6 text-[hsl(152,69%,40%)]" />
+                    </div>
+                    <p className="font-semibold text-foreground mb-1">All caught up!</p>
+                    <p className={`text-sm ${P.muted}`}>No pending listings to review</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredPending.map((listing) => (
+                      <ListingReviewCard key={listing.id} listing={listing} actionLoading={actionLoading}
+                        onApprove={handleApprove} onReject={(id) => { setRejectingId(id); setRejectionReason(""); }} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredListings.map((listing) => (
-                <ListingReviewCard
-                  key={listing.id}
-                  listing={listing}
-                  actionLoading={actionLoading}
-                  onApprove={handleApprove}
-                  onReject={(id) => {
-                    setRejectingId(id);
-                    setRejectionReason("");
-                  }}
-                />
-              ))}
+          )}
+
+          {/* ═══ ALL LISTINGS TAB ════════════════════════════ */}
+          {activeTab === "listings" && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-1">All Listings</h1>
+                <p className={`text-sm ${P.muted}`}>Manage all business listings across the platform</p>
+              </div>
+
+              {/* Filter chips */}
+              <div className="flex gap-2 flex-wrap">
+                {([
+                  { key: "all", label: "All", count: allListings.length },
+                  { key: "approved", label: "Live", count: stats.approved },
+                  { key: "pending_approval", label: "Pending", count: stats.pending },
+                  { key: "rejected", label: "Rejected", count: stats.rejected },
+                ] as const).map((f) => (
+                  <button key={f.key} onClick={() => setListingFilter(f.key)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                      listingFilter === f.key
+                        ? `${P.accentBg} text-white shadow-sm`
+                        : `${P.accentLight} ${P.muted} hover:bg-[hsl(262,40%,90%)]`
+                    }`}>
+                    {f.label} ({f.count})
+                  </button>
+                ))}
+              </div>
+
+              {/* Listing rows */}
+              {loading ? (
+                <div className="text-center py-16"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[hsl(262,60%,55%)]" /></div>
+              ) : filteredAllListings.length === 0 ? (
+                <div className={`text-center py-16 ${P.card} rounded-2xl`}>
+                  <Building2 className="w-10 h-10 mx-auto mb-3 text-[hsl(262,40%,70%)]" />
+                  <p className="font-semibold text-foreground mb-1">No listings found</p>
+                  <p className={`text-sm ${P.muted}`}>Try adjusting your search or filters</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredAllListings.map((l) => (
+                    <AllListingRow key={l.id} listing={l} onDelete={handleDelete} deleting={actionLoading} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══ ENQUIRIES TAB ═══════════════════════════════ */}
+          {activeTab === "enquiries" && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-1">Enquiries</h1>
+                <p className={`text-sm ${P.muted}`}>{stats.unreadEnquiries} unread · {stats.enquiries} total</p>
+              </div>
+
+              {loading ? (
+                <div className="text-center py-16"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[hsl(262,60%,55%)]" /></div>
+              ) : filteredEnquiries.length === 0 ? (
+                <div className={`text-center py-16 ${P.card} rounded-2xl`}>
+                  <Inbox className="w-10 h-10 mx-auto mb-3 text-[hsl(262,40%,70%)]" />
+                  <p className="font-semibold text-foreground mb-1">No enquiries yet</p>
+                  <p className={`text-sm ${P.muted}`}>Enquiries from business listings will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredEnquiries.map((e) => <EnquiryCard key={e.id} e={e} />)}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══ SETTINGS TAB ════════════════════════════════ */}
+          {activeTab === "settings" && (
+            <div className="space-y-6 max-w-2xl">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-1">Settings</h1>
+                <p className={`text-sm ${P.muted}`}>Configure platform-wide preferences</p>
+              </div>
+
+              <div className={`${P.card} rounded-2xl p-6 shadow-sm space-y-6`}>
+                {[
+                  { key: "autoApprove" as const, label: "Auto-approve listings", desc: "Automatically approve new listings without manual review" },
+                  { key: "emailNotifications" as const, label: "Email notifications", desc: "Send email alerts for new listings and enquiries" },
+                  { key: "documentRequired" as const, label: "Require documents", desc: "Require ACRA business profile upload during listing submission" },
+                ].map((s) => (
+                  <div key={s.key} className={`flex items-center justify-between py-3 ${s.key !== "documentRequired" ? `border-b ${P.border}` : ""}`}>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{s.label}</p>
+                      <p className={`text-xs ${P.muted} mt-0.5`}>{s.desc}</p>
+                    </div>
+                    <Switch
+                      checked={settings[s.key]}
+                      onCheckedChange={() => setSettings((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className={`${P.card} rounded-2xl p-6 shadow-sm`}>
+                <h3 className="text-sm font-bold text-foreground mb-3">Account</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${P.muted}`}>Email</span>
+                    <span className="text-sm font-medium text-foreground">{user?.email || "—"}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${P.muted}`}>Role</span>
+                    <Badge className={`${P.accentLight} text-[hsl(262,50%,45%)] border-0 text-xs`}>
+                      {isSuperAdmin ? "Super Admin" : "Admin"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </main>
       </div>
 
       {/* ── Right Sidebar ────────────────────────────────── */}
-      <aside className="hidden xl:flex flex-col w-[280px] bg-white dark:bg-[hsl(262,20%,10%)] border-l border-[hsl(262,20%,92%)] dark:border-[hsl(262,20%,18%)] p-5 sticky top-0 h-screen overflow-y-auto">
-        {/* Admin Profile */}
+      <aside className={`hidden xl:flex flex-col w-[280px] bg-white dark:bg-[hsl(262,20%,10%)] border-l ${P.border} p-5 sticky top-0 h-screen overflow-y-auto`}>
+        {/* Profile */}
         <div className="text-center mb-6">
           <div className="relative inline-block mb-3">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[hsl(262,60%,55%)] to-[hsl(262,70%,45%)] flex items-center justify-center text-white text-2xl font-bold mx-auto ring-4 ring-[hsl(262,40%,92%)]">
+            <div className={`w-20 h-20 rounded-full ${P.gradient} flex items-center justify-center text-white text-2xl font-bold mx-auto ring-4 ring-[hsl(262,40%,92%)]`}>
               {user?.displayName?.[0] || user?.email?.[0]?.toUpperCase() || "A"}
             </div>
             <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[hsl(152,69%,40%)] flex items-center justify-center">
               <Check className="w-3 h-3 text-white" />
             </div>
           </div>
-          <h3 className="font-bold text-foreground">
-            {user?.displayName || "Admin"} 🔒
-          </h3>
-          <p className="text-xs text-[hsl(262,15%,50%)] mt-1">
-            {isSuperAdmin ? "Super Administrator" : "Administrator"}
-          </p>
+          <h3 className="font-bold text-foreground">{user?.displayName || "Admin"} 🔒</h3>
+          <p className={`text-xs ${P.muted} mt-1`}>{isSuperAdmin ? "Super Administrator" : "Administrator"}</p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="bg-[hsl(262,30%,97%)] dark:bg-[hsl(262,20%,8%)] rounded-2xl p-4 mb-6">
-          <h4 className="text-sm font-bold text-foreground mb-3">Quick Stats</h4>
+        {/* Stats */}
+        <div className={`${P.subtle} rounded-2xl p-4 mb-6`}>
+          <h4 className="text-sm font-bold text-foreground mb-3">Platform Stats</h4>
           <div className="space-y-3">
             {[
-              { label: "Pending", val: listings.length, color: "bg-[hsl(38,92%,50%)]" },
-              { label: "Approved", val: "—", color: "bg-[hsl(152,69%,40%)]" },
-              { label: "Rejected", val: "—", color: "bg-[hsl(0,70%,55%)]" },
+              { label: "Total Listings", val: stats.total, color: "bg-[hsl(262,60%,55%)]" },
+              { label: "Pending", val: stats.pending, color: "bg-[hsl(38,92%,50%)]" },
+              { label: "Approved", val: stats.approved, color: "bg-[hsl(152,69%,40%)]" },
+              { label: "Rejected", val: stats.rejected, color: "bg-[hsl(0,70%,55%)]" },
+              { label: "Enquiries", val: stats.enquiries, color: "bg-[hsl(210,80%,50%)]" },
             ].map((s) => (
               <div key={s.label} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className={`w-2.5 h-2.5 rounded-full ${s.color}`} />
-                  <span className="text-xs text-[hsl(262,15%,50%)]">{s.label}</span>
+                  <span className={`text-xs ${P.muted}`}>{s.label}</span>
                 </div>
                 <span className="text-sm font-bold text-foreground">{s.val}</span>
               </div>
@@ -428,16 +651,13 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Recent Listings */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-bold text-foreground">Recent Activity</h4>
-            <button className="text-[10px] text-[hsl(262,60%,55%)] font-medium">See all</button>
-          </div>
+          <h4 className="text-sm font-bold text-foreground mb-3">Recent Listings</h4>
           <div className="space-y-3">
-            {listings.slice(0, 3).map((l) => (
+            {allListings.slice(0, 5).map((l) => (
               <div key={l.id} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[hsl(262,40%,95%)] dark:bg-[hsl(262,20%,18%)] flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div className={`w-9 h-9 rounded-lg ${P.accentLight} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
                   {l.logoUrl ? (
                     <img src={l.logoUrl} alt={l.name} className="w-full h-full object-cover rounded-lg" />
                   ) : (
@@ -446,56 +666,38 @@ const Admin = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-foreground truncate">{l.name}</p>
-                  <p className="text-[10px] text-[hsl(262,15%,55%)]">{l.category}</p>
+                  <p className={`text-[10px] ${P.muted}`}>{l.category}</p>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-[hsl(262,15%,60%)] flex-shrink-0" />
+                <ChevronRight className={`w-3.5 h-3.5 ${P.muted} flex-shrink-0`} />
               </div>
             ))}
-            {listings.length === 0 && (
-              <p className="text-xs text-[hsl(262,15%,55%)] text-center py-4">No recent activity</p>
-            )}
+            {allListings.length === 0 && <p className={`text-xs ${P.muted} text-center py-4`}>No listings yet</p>}
           </div>
         </div>
       </aside>
 
       {/* ── Rejection Dialog ─────────────────────────────── */}
       <Dialog open={!!rejectingId} onOpenChange={(open) => { if (!open) { setRejectingId(null); setRejectionReason(""); } }}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-[hsl(262,20%,12%)] border-[hsl(262,20%,90%)] dark:border-[hsl(262,20%,20%)]">
+        <DialogContent className={`sm:max-w-md bg-white dark:bg-[hsl(262,20%,12%)] ${P.border}`}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground">
-              <X className="w-5 h-5 text-[hsl(0,70%,55%)]" />
-              Reject Listing
+              <X className="w-5 h-5 text-[hsl(0,70%,55%)]" />Reject Listing
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-[hsl(262,15%,50%)]">
-              Please provide a reason. This will be visible to the business owner.
-            </p>
+            <p className={`text-sm ${P.muted}`}>Please provide a reason. This will be visible to the business owner.</p>
             <div className="space-y-2">
               <Label className="text-foreground">Rejection Reason *</Label>
-              <Textarea
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="e.g. Missing ACRA business profile document, invalid UEN number..."
-                rows={3}
-                className="bg-[hsl(262,30%,97%)] dark:bg-[hsl(262,20%,8%)] border-[hsl(262,20%,90%)] dark:border-[hsl(262,20%,20%)] rounded-xl"
-              />
+              <Textarea value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="e.g. Missing ACRA business profile document..." rows={3}
+                className={`${P.subtle} ${P.border} rounded-xl`} />
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => { setRejectingId(null); setRejectionReason(""); }} className="rounded-xl">
-              Cancel
-            </Button>
-            <Button
-              onClick={handleReject}
-              disabled={!rejectionReason.trim() || actionLoading === rejectingId}
-              className="bg-[hsl(0,70%,55%)] hover:bg-[hsl(0,70%,48%)] text-white rounded-xl"
-            >
-              {actionLoading === rejectingId ? (
-                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-              ) : (
-                <X className="w-4 h-4 mr-1.5" />
-              )}
+            <Button variant="outline" onClick={() => { setRejectingId(null); setRejectionReason(""); }} className="rounded-xl">Cancel</Button>
+            <Button onClick={handleReject} disabled={!rejectionReason.trim() || actionLoading === rejectingId}
+              className="bg-[hsl(0,70%,55%)] hover:bg-[hsl(0,70%,48%)] text-white rounded-xl">
+              {actionLoading === rejectingId ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <X className="w-4 h-4 mr-1.5" />}
               Confirm Rejection
             </Button>
           </DialogFooter>
