@@ -101,14 +101,9 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
                   </DropdownMenuItem>
-                  {isAdmin && !isSuperAdmin && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
-                    </DropdownMenuItem>
-                  )}
                   {isSuperAdmin && (
                     <DropdownMenuItem asChild>
-                      <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
+                      <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
@@ -149,16 +144,9 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
         {mobileOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 border-t border-border bg-card p-4 space-y-1.5 animate-fade-in shadow-lg z-50">
             {isSuperAdmin && (
-              <Link to="/super-admin" onClick={() => setMobileOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start">
-                  <Crown className="w-4 h-4 mr-2 text-warning" />Super Admin
-                </Button>
-              </Link>
-            )}
-            {isAdmin && !isSuperAdmin && (
               <Link to="/admin" onClick={() => setMobileOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
-                  <Shield className="w-4 h-4 mr-2" />Admin
+                  <Shield className="w-4 h-4 mr-2" />Admin Panel
                 </Button>
               </Link>
             )}
