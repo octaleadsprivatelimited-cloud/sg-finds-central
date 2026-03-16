@@ -101,14 +101,9 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
                   </DropdownMenuItem>
-                  {isAdmin && !isSuperAdmin && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
-                    </DropdownMenuItem>
-                  )}
                   {isSuperAdmin && (
                     <DropdownMenuItem asChild>
-                      <Link to="/super-admin"><Crown className="w-4 h-4 mr-2" />Super Admin</Link>
+                      <Link to="/admin"><Shield className="w-4 h-4 mr-2" />Admin Panel</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
