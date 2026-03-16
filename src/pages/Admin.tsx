@@ -323,7 +323,7 @@ const Admin = () => {
 
           {/* ═══ DASHBOARD ════════════════════════════════════ */}
           {activeTab === "dashboard" && (
-            <div className="space-y-5 max-w-5xl">
+            <div className="space-y-5">
               {/* Welcome banner — Teams flat style */}
               <div className="bg-[hsl(250,40%,16%)] rounded-lg p-5 sm:p-6">
                 <p className="text-[hsl(250,30%,75%)] text-xs uppercase tracking-wider font-semibold mb-1">Admin Overview</p>
