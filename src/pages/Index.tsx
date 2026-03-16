@@ -382,6 +382,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   onHoverListing={setHoveredListingId}
                   onSelectListing={setSelectedListing}
                   center={mapCenter}
+                  radiusKm={radiusKm}
                 />
               </div>
             </div>
