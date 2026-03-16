@@ -67,7 +67,7 @@ const Admin = () => {
   const { user, isSuperAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
+  const [activeTab, setActiveTab] = useState<AdminTab>("listings");
   const [pendingListings, setPendingListings] = useState<Listing[]>([]);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -76,7 +76,7 @@ const Admin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("all");
+  const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("pending_approval");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [settings, setSettings] = useState({
@@ -323,7 +323,7 @@ const Admin = () => {
 
           {/* ═══ DASHBOARD ════════════════════════════════════ */}
           {activeTab === "dashboard" && (
-            <div className="space-y-5 max-w-5xl">
+            <div className="space-y-5">
               {/* Welcome banner — Teams flat style */}
               <div className="bg-[hsl(250,40%,16%)] rounded-lg p-5 sm:p-6">
                 <p className="text-[hsl(250,30%,75%)] text-xs uppercase tracking-wider font-semibold mb-1">Admin Overview</p>
