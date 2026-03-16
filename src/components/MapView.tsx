@@ -12,7 +12,17 @@ interface MapViewProps {
   onSelectListing?: (listing: Listing) => void;
   onHoverListing?: (id: string | null) => void;
   center?: { lat: number; lng: number };
+  radiusKm?: number | null;
 }
+
+const radiusToZoom = (km: number): number => {
+  if (km <= 0.5) return 16;
+  if (km <= 1) return 15;
+  if (km <= 2) return 14;
+  if (km <= 3) return 13;
+  if (km <= 5) return 12;
+  return 11;
+};
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
 const GOOGLE_MAPS_SCRIPT_ID = "google-maps-script";
@@ -27,11 +37,12 @@ const MAP_STYLES = [
 const getMapsScriptSrc = (apiKey: string) =>
   `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=maps&v=weekly`;
 
-const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverListing, center }: MapViewProps) => {
+const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverListing, center, radiusKm }: MapViewProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
+  const circleRef = useRef<google.maps.Circle | null>(null);
   const navigate = useNavigate();
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
@@ -46,6 +57,36 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
     }
   }, [hoveredId, listings]);
+
+  // Draw radius circle and adjust zoom
+  useEffect(() => {
+    if (circleRef.current) {
+      circleRef.current.setMap(null);
+      circleRef.current = null;
+    }
+    if (!mapRef.current || !center || !radiusKm) return;
+
+    mapRef.current.setZoom(radiusToZoom(radiusKm));
+    mapRef.current.panTo(center);
+
+    circleRef.current = new google.maps.Circle({
+      map: mapRef.current,
+      center,
+      radius: radiusKm * 1000,
+      fillColor: "hsl(221, 83%, 53%)",
+      fillOpacity: 0.08,
+      strokeColor: "hsl(221, 83%, 53%)",
+      strokeOpacity: 0.5,
+      strokeWeight: 2,
+    });
+
+    return () => {
+      if (circleRef.current) {
+        circleRef.current.setMap(null);
+        circleRef.current = null;
+      }
+    };
+  }, [center, radiusKm, isLoaded]);
 
   useEffect(() => {
     if (!GOOGLE_MAPS_API_KEY) {

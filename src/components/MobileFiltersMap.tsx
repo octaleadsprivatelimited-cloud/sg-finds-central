@@ -294,6 +294,7 @@ const MobileFiltersMap = ({
                 onHoverListing={setHoveredListingId}
                 onSelectListing={setSelectedListing}
                 center={mapCenter}
+                radiusKm={radiusKm}
               />
 
               {/* Map overlay controls */}
