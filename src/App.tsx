@@ -15,7 +15,7 @@ import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import AddListing from "./pages/AddListing";
 import Admin from "./pages/Admin";
-import SuperAdmin from "./pages/SuperAdmin";
+
 import BusinessDashboard from "./pages/BusinessDashboard";
 import BusinessDetail from "./pages/BusinessDetail";
 import CityCategory from "./pages/CityCategory";
