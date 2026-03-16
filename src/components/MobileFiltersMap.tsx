@@ -164,51 +164,6 @@ const MobileFiltersMap = ({
           {/* Expanded filters */}
           {filtersOpen && (
             <div className="space-y-1.5 pt-1 border-t border-border">
-              {/* Pincode search */}
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] font-medium text-muted-foreground shrink-0">Postal:</span>
-                <div className="relative flex-1 max-w-[160px]">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="6-digit postal code"
-                    value={pincode}
-                    onChange={(e) => onPincodeSearch(e.target.value.replace(/\D/g, ''))}
-                    className="w-full h-6 px-2 pr-6 text-[10px] rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                  />
-                  <Search className="absolute right-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 text-muted-foreground" />
-                </div>
-                {pincodeAddress && (
-                  <span className="text-[9px] text-primary font-medium truncate max-w-[120px]">{pincodeAddress}</span>
-                )}
-              </div>
-              <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
-                <span className="text-[10px] font-medium text-muted-foreground shrink-0">Area:</span>
-                {QUICK_DISTRICTS.map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => setDistrict(d)}
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                      district === d
-                        ? "bg-foreground text-background border-foreground shadow-sm"
-                        : "bg-background text-foreground border-border hover:bg-muted"
-                    }`}
-                  >
-                    {d === "All Districts" ? "All" : d}
-                  </button>
-                ))}
-                <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger className="w-auto h-5 text-[10px] border-border rounded-full px-2 shrink-0">
-                    <SelectValue placeholder="More" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SINGAPORE_DISTRICTS.filter(d => !QUICK_DISTRICTS.includes(d)).map((d) => (
-                      <SelectItem key={d} value={d}>{d}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
               {hasActiveFilters && (
                 <button
                   onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNowState(false); onPincodeSearch(""); }}
