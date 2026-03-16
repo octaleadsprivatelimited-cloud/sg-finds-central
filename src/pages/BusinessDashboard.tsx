@@ -46,7 +46,7 @@ const BusinessDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("listings");
-  const [listings, setListings] = useState<Listing[]>(MY_DEMO_LISTINGS);
+  const [listings, setListings] = useState<Listing[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [viewingListing, setViewingListing] = useState<Listing | null>(null);
