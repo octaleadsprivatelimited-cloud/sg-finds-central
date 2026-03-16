@@ -12,7 +12,17 @@ interface MapViewProps {
   onSelectListing?: (listing: Listing) => void;
   onHoverListing?: (id: string | null) => void;
   center?: { lat: number; lng: number };
+  radiusKm?: number | null;
 }
+
+const radiusToZoom = (km: number): number => {
+  if (km <= 0.5) return 16;
+  if (km <= 1) return 15;
+  if (km <= 2) return 14;
+  if (km <= 3) return 13;
+  if (km <= 5) return 12;
+  return 11;
+};
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
 const GOOGLE_MAPS_SCRIPT_ID = "google-maps-script";
