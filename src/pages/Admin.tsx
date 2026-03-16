@@ -260,12 +260,12 @@ const Admin = () => {
   });
 
   useEffect(() => {
-    if (!authLoading && (!user || !isAdmin)) {
+    if (!authLoading && (!user || !isSuperAdmin)) {
       navigate("/");
       return;
     }
     fetchData();
-  }, [authLoading, user, isAdmin]);
+  }, [authLoading, user, isSuperAdmin]);
 
   const fetchData = async () => {
     try {

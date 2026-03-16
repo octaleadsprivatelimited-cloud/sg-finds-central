@@ -63,7 +63,7 @@ const AppContent = () => {
           <Route path="/add-listing" element={<PageTransition><AddListing /></PageTransition>} />
           <Route path="/dashboard" element={<PageTransition><BusinessDashboard /></PageTransition>} />
           <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
-          <Route path="/super-admin" element={<PageTransition><SuperAdmin /></PageTransition>} />
+          <Route path="/super-admin" element={<PageTransition><Admin /></PageTransition>} />
           <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
           <Route path="/signup" element={<PageTransition><SignUp /></PageTransition>} />
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
