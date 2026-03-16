@@ -35,10 +35,6 @@ import { useListingViewCounts } from "@/hooks/useViewTracking";
 import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Demo data fallback
-const MY_DEMO_LISTINGS: Listing[] = [
-  { id: "my-1", name: "Singapore Delights Pte Ltd", uen: "201912345A", category: "Food & Beverage", district: "Orchard", address: "391 Orchard Road, #B2-01, Singapore 238872", postalCode: "238872", phone: "+65 6234 5678", website: "https://sgdelights.com", email: "info@sgdelights.com", description: "Award-winning local cuisine.", status: "approved", ownerId: "me", lat: 1.3048, lng: 103.8318 },
-];
 
 const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected"; label: string; dotColor: string }> = {
   approved: { variant: "approved", label: "Live", dotColor: "bg-emerald-500" },
