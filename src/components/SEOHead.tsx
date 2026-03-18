@@ -8,7 +8,7 @@ interface SEOHeadProps {
   type?: string;
 }
 
-const SITE_NAME = "FindLocal SG";
+const SITE_NAME = "Nearly";
 const DEFAULT_DESC = "Discover top-rated local businesses in Singapore. Find restaurants, services, healthcare, and more — verified and trusted.";
 
 const SEOHead = ({

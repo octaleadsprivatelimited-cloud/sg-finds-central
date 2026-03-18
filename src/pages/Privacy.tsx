@@ -2,7 +2,7 @@ import SEOHead from "@/components/SEOHead";
 
 const Privacy = () => (
   <div className="min-h-screen bg-background">
-    <SEOHead title="Privacy Policy" description="Read FindLocal SG's Privacy Policy — how we collect, use, and protect your personal data." />
+    <SEOHead title="Privacy Policy" description="Read Nearly's Privacy Policy — how we collect, use, and protect your personal data." />
 
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="text-3xl font-bold text-foreground mb-8">Privacy Policy</h1>
@@ -40,7 +40,7 @@ const Privacy = () => (
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <h2 className="text-lg font-semibold text-foreground">7. Contact</h2>
-          <p className="text-sm text-muted-foreground">For privacy-related inquiries, contact us at support@findlocal.sg or through our Contact Us page.</p>
+          <p className="text-sm text-muted-foreground">For privacy-related inquiries, contact us at hello@nearly.sg or through our Contact Us page.</p>
         </section>
 
         <p className="text-xs text-muted-foreground pt-4">Last updated: March 2026</p>
