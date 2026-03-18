@@ -46,7 +46,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Contact Us" description="Get in touch with FindLocal SG. We're here to help with questions, feedback, or business listing support." />
+      <SEOHead title="Contact Us" description="Get in touch with Nearly. We're here to help with questions, feedback, or business listing support." />
 
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-10">
