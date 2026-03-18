@@ -33,7 +33,7 @@ const About = () => (
             our platform connects you with verified businesses in your neighbourhood.
           </p>
           <p className="text-muted-foreground">
-            We believe every local business deserves visibility. That's why listing on FindLocal SG is completely free —
+            We believe every local business deserves visibility. That's why listing on Nearly is completely free —
             helping small businesses compete and thrive in the digital age.
           </p>
         </div>
