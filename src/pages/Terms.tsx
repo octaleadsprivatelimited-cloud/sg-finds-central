@@ -10,7 +10,7 @@ const Terms = () => (
       <div className="prose prose-sm max-w-none space-y-6">
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <h2 className="text-lg font-semibold text-foreground">1. Acceptance of Terms</h2>
-          <p className="text-sm text-muted-foreground">By accessing and using FindLocal SG, you agree to be bound by these Terms of Service. If you do not agree, please do not use our platform.</p>
+          <p className="text-sm text-muted-foreground">By accessing and using Nearly, you agree to be bound by these Terms of Service. If you do not agree, please do not use our platform.</p>
         </section>
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
