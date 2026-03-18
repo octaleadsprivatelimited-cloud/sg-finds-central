@@ -35,7 +35,7 @@ const Terms = () => (
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <h2 className="text-lg font-semibold text-foreground">6. Limitation of Liability</h2>
-          <p className="text-sm text-muted-foreground">FindLocal SG is provided "as is" without warranties. We are not liable for any damages arising from the use of our platform or reliance on listed business information.</p>
+          <p className="text-sm text-muted-foreground">Nearly is provided "as is" without warranties. We are not liable for any damages arising from the use of our platform or reliance on listed business information.</p>
         </section>
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
