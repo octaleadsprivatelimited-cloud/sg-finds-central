@@ -30,7 +30,7 @@ const Terms = () => (
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <h2 className="text-lg font-semibold text-foreground">5. Reviews & Content</h2>
-          <p className="text-sm text-muted-foreground">Users may submit reviews and content. You retain ownership of your content but grant FindLocal SG a license to display it on the platform. Content must be truthful, non-defamatory, and comply with Singapore law.</p>
+          <p className="text-sm text-muted-foreground">Users may submit reviews and content. You retain ownership of your content but grant Nearly a license to display it on the platform. Content must be truthful, non-defamatory, and comply with Singapore law.</p>
         </section>
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
