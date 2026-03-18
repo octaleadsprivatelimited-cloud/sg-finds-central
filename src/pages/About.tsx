@@ -18,7 +18,7 @@ const About = () => (
 
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">About FindLocal SG</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">About Nearly</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Singapore's trusted business directory — connecting customers with verified local businesses since day one.
         </p>
