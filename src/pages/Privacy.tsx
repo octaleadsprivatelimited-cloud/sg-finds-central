@@ -2,7 +2,7 @@ import SEOHead from "@/components/SEOHead";
 
 const Privacy = () => (
   <div className="min-h-screen bg-background">
-    <SEOHead title="Privacy Policy" description="Read FindLocal SG's Privacy Policy — how we collect, use, and protect your personal data." />
+    <SEOHead title="Privacy Policy" description="Read Nearly's Privacy Policy — how we collect, use, and protect your personal data." />
 
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="text-3xl font-bold text-foreground mb-8">Privacy Policy</h1>
