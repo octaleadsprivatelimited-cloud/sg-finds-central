@@ -2,7 +2,7 @@ import SEOHead from "@/components/SEOHead";
 
 const Terms = () => (
   <div className="min-h-screen bg-background">
-    <SEOHead title="Terms of Service" description="Read the Terms of Service for FindLocal SG — Singapore's trusted business directory." />
+    <SEOHead title="Terms of Service" description="Read the Terms of Service for Nearly — Singapore's trusted business directory." />
 
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="text-3xl font-bold text-foreground mb-8">Terms of Service</h1>

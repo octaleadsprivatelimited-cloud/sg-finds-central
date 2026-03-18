@@ -40,7 +40,7 @@ const Privacy = () => (
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <h2 className="text-lg font-semibold text-foreground">7. Contact</h2>
-          <p className="text-sm text-muted-foreground">For privacy-related inquiries, contact us at support@findlocal.sg or through our Contact Us page.</p>
+          <p className="text-sm text-muted-foreground">For privacy-related inquiries, contact us at hello@nearly.sg or through our Contact Us page.</p>
         </section>
 
         <p className="text-xs text-muted-foreground pt-4">Last updated: March 2026</p>

@@ -57,7 +57,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <span className="text-xl font-extrabold tracking-tight text-foreground uppercase">
-              FIND<span className="text-primary">LOCAL</span>
+              NEAR<span className="text-primary">LY</span>
             </span>
           </Link>
 

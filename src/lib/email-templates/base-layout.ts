@@ -2,8 +2,8 @@
 // Extracted from index.css design system
 
 export const brand = {
-  name: "SG Biz Finder",
-  url: "https://sg-biz-finder.lovable.app",
+  name: "Nearly",
+  url: "https://nearly.sg",
   logo: "", // Add logo URL when available
   colors: {
     primary: "hsl(246, 80%, 60%)",

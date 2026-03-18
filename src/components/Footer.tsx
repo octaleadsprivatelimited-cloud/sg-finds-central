@@ -91,7 +91,7 @@ const Footer = () => {
       <div className="border-t border-border">
         <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-muted-foreground flex items-center gap-1">
-            © {new Date().getFullYear()} FindLocal.SG — Made with <Heart className="w-3 h-3 text-destructive fill-destructive" /> in Singapore
+            © {new Date().getFullYear()} Nearly.SG — Made with <Heart className="w-3 h-3 text-destructive fill-destructive" /> in Singapore
           </p>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>

@@ -58,7 +58,7 @@ const Contact = () => {
           <div className="bg-card border border-border rounded-xl p-5 text-center space-y-2">
             <Mail className="w-6 h-6 text-primary mx-auto" />
             <h3 className="font-semibold text-foreground text-sm">Email</h3>
-            <p className="text-xs text-muted-foreground">support@findlocal.sg</p>
+            <p className="text-xs text-muted-foreground">hello@nearly.sg</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-5 text-center space-y-2">
             <MapPin className="w-6 h-6 text-primary mx-auto" />
