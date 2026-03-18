@@ -28,7 +28,7 @@ const About = () => (
         <div className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-4">
           <h2 className="text-xl font-semibold text-foreground">Our Mission</h2>
           <p className="text-muted-foreground">
-            FindLocal SG was created to make it easier for Singaporeans to discover and support local businesses.
+            Nearly was created to make it easier for Singaporeans to discover and support local businesses.
             Whether you're looking for a trusted plumber, the best laksa in town, or a reliable tutor for your kids,
             our platform connects you with verified businesses in your neighbourhood.
           </p>
