@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block mb-4">
               <span className="text-xl font-extrabold tracking-tight text-foreground uppercase">
-                FIND<span className="text-primary">LOCAL</span>
+                NEAR<span className="text-primary">LY</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
