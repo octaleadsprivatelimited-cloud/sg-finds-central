@@ -15,7 +15,7 @@ const Terms = () => (
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
           <h2 className="text-lg font-semibold text-foreground">2. Use of Service</h2>
-          <p className="text-sm text-muted-foreground">FindLocal SG provides a business directory platform for discovering and listing local businesses in Singapore. Users must provide accurate information and comply with all applicable laws.</p>
+          <p className="text-sm text-muted-foreground">Nearly provides a business directory platform for discovering and listing local businesses in Singapore. Users must provide accurate information and comply with all applicable laws.</p>
         </section>
 
         <section className="bg-card border border-border rounded-xl p-6 space-y-3">
