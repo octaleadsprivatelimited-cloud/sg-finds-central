@@ -687,6 +687,115 @@ const Admin = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ── Admin Edit Dialog ───────────────────────────── */}
+      <Dialog open={!!editingListing} onOpenChange={(open) => { if (!open) setEditingListing(null); }}>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Edit3 className="w-5 h-5 text-[hsl(250,50%,55%)]" />Edit Listing (Admin)
+            </DialogTitle>
+          </DialogHeader>
+          {editingListing && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Business Name</Label>
+                <Input value={adminEditData.name || ""} onChange={e => setAdminEditData(prev => ({ ...prev, name: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Category</Label>
+                  <Input value={adminEditData.category || ""} onChange={e => setAdminEditData(prev => ({ ...prev, category: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">District</Label>
+                  <Input value={adminEditData.district || ""} onChange={e => setAdminEditData(prev => ({ ...prev, district: e.target.value }))} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Address</Label>
+                <Input value={adminEditData.address || ""} onChange={e => setAdminEditData(prev => ({ ...prev, address: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Phone</Label>
+                  <Input value={adminEditData.phone || ""} onChange={e => setAdminEditData(prev => ({ ...prev, phone: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Email</Label>
+                  <Input value={adminEditData.email || ""} onChange={e => setAdminEditData(prev => ({ ...prev, email: e.target.value }))} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Website</Label>
+                <Input value={adminEditData.website || ""} onChange={e => setAdminEditData(prev => ({ ...prev, website: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Description</Label>
+                <Textarea value={adminEditData.description || ""} onChange={e => setAdminEditData(prev => ({ ...prev, description: e.target.value }))} rows={3} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Status</Label>
+                <select value={adminEditData.status || "pending_approval"}
+                  onChange={e => setAdminEditData(prev => ({ ...prev, status: e.target.value }))}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <option value="approved">Approved (Live)</option>
+                  <option value="pending_approval">Pending Review</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+
+              {/* Images Review */}
+              {adminEditData.imageUrls && adminEditData.imageUrls.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,18%)]">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                    <Image className="w-3.5 h-3.5" />Business Images ({adminEditData.imageUrls.length})
+                  </Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(adminEditData.imageUrls as string[]).map((url, i) => (
+                      <div key={i} className="relative group aspect-square rounded-md overflow-hidden border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]">
+                        <img src={url} alt={`Image ${i + 1}`} className="w-full h-full object-cover" />
+                        <button onClick={() => setAdminEditData(prev => ({ ...prev, imageUrls: prev.imageUrls.filter((_: string, idx: number) => idx !== i) }))}
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-[hsl(354,70%,54%)] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <DialogFooter className="gap-2 pt-2">
+                <Button variant="outline" onClick={() => setEditingListing(null)} className="rounded-md">Cancel</Button>
+                <Button onClick={saveAdminEdit} disabled={adminSaving}
+                  className="bg-[hsl(250,50%,55%)] hover:bg-[hsl(250,50%,48%)] text-white rounded-md">
+                  {adminSaving ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Check className="w-4 h-4 mr-1.5" />}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Image Viewer Dialog ─────────────────────────── */}
+      <Dialog open={!!viewingImages} onOpenChange={(open) => { if (!open) setViewingImages(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Image className="w-5 h-5 text-[hsl(250,50%,55%)]" />
+              {viewingImages?.listing.name} — Images
+            </DialogTitle>
+          </DialogHeader>
+          {viewingImages && (
+            <div className="grid grid-cols-2 gap-3 py-2">
+              {((viewingImages.listing as any).imageUrls as string[] || []).map((url, i) => (
+                <img key={i} src={url} alt={`Image ${i + 1}`} className="w-full aspect-square rounded-lg object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]" />
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
