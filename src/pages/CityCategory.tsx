@@ -157,10 +157,10 @@ const CityCategory = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* SEO Hero */}
-      <section className="border-b border-border/50 bg-secondary/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+      {/* Breadcrumb */}
+      <div className="border-b border-border/50 bg-secondary/30">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
             <Link to={`/${citySlug}`} className="hover:text-primary transition-colors">{city?.name || citySlug}</Link>
@@ -181,18 +181,8 @@ const CityCategory = () => {
               </>
             )}
           </div>
-
-          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">{pageTitle}</h1>
-          <p className="text-muted-foreground max-w-2xl">{pageDescription}</p>
-
-          {city && (
-            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
-              <MapPin className="w-4 h-4" />
-              {city.description}
-            </div>
-          )}
         </div>
-      </section>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-8">
