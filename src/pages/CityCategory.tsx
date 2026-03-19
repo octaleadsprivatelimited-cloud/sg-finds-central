@@ -183,21 +183,61 @@ const CityCategory = () => {
             </aside>
           )}
 
-          {/* Listings */}
+          {/* Listings or Subcategory Picker */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{filtered.length}</span> businesses found
-              </p>
-              {matchedCategory && (
-                <Button variant="outline" size="sm" onClick={() => navigate(`/${citySlug}`)}>
-                  <ArrowLeft className="w-4 h-4 mr-1" />
-                  All Categories
-                </Button>
+              {showSubcategoryPicker ? (
+                <p className="text-sm text-muted-foreground">
+                  Choose a <span className="font-medium text-foreground">{matchedCategory}</span> subcategory
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{filtered.length}</span> businesses found
+                </p>
               )}
+              <div className="flex gap-2">
+                {activeSub && (
+                  <Button variant="outline" size="sm" onClick={() => setSearchParams({})}>
+                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    All {matchedCategory}
+                  </Button>
+                )}
+                {matchedCategory && !activeSub && (
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/${citySlug}`)}>
+                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    All Categories
+                  </Button>
+                )}
+              </div>
             </div>
 
-            {filtered.length === 0 ? (
+            {/* Subcategory picker cards */}
+            {showSubcategoryPicker ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {subcategories.map((sub) => (
+                  <button
+                    key={sub.value}
+                    onClick={() => setSearchParams({ sub: sub.value })}
+                    className="p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all text-center group"
+                  >
+                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
+                    </p>
+                  </button>
+                ))}
+                {/* View all option */}
+                <button
+                  onClick={() => setSearchParams({ sub: "all" })}
+                  className="p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-md transition-all text-center"
+                >
+                  <p className="text-sm font-semibold text-primary">View All</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {listings.filter((l) => l.category === matchedCategory).length} listings
+                  </p>
+                </button>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-16">
                 <Building2 className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">No businesses found</p>
