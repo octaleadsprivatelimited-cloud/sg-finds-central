@@ -310,13 +310,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
         {/* Category Grid & extras (mobile) */}
         {!hasActiveFilters && (
-          <section className="px-3 py-4">
+          <section className="px-3 py-4" data-reveal>
             <CategoryGrid />
           </section>
         )}
-        {!hasActiveFilters && <PromoBanner />}
+        {!hasActiveFilters && <div data-reveal><PromoBanner /></div>}
         {!hasActiveFilters && (
-          <section className="px-3 py-3">
+          <section className="px-3 py-3" data-reveal>
             <CategoryHighlights />
           </section>
         )}
