@@ -2,13 +2,7 @@ import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useMemo, useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import {
-  MapPin, Building2, ArrowLeft, ChevronRight, Loader2, LayoutGrid,
-  Calculator, BookOpen, Leaf, Atom, FlaskConical, TrendingUp,
-  Languages, Music, Palette, Scissors, Sparkles, Eye, EyeOff,
-  PaintBucket, Dog, Cat, Bath, Hammer, Wrench, Zap, PaintRoller,
-  type LucideIcon,
-} from "lucide-react";
+import { MapPin, Building2, ArrowLeft, ChevronRight, Loader2, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
@@ -17,32 +11,39 @@ import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
-// Icon map for subcategories
-const SUBCATEGORY_ICONS: Record<string, LucideIcon> = {
-  maths: Calculator, english: BookOpen, biology: Leaf, physics: Atom,
-  chemistry: FlaskConical, economics: TrendingUp,
-  hindi: Languages, chinese: Languages, spanish: Languages,
-  french: Languages, tamil: Languages, malay: Languages,
-  music: Music, art: Palette, craft: Scissors,
-  nails: Sparkles, lashes: Eye, brows: EyeOff, hair: Scissors, makeup: PaintBucket,
-  "dog-walking": Dog, "pet-sitting": Cat, "basic-grooming": Bath,
-  carpenter: Hammer, plumber: Wrench, "minor-electrical": Zap, "patching-painting": PaintRoller,
-};
+// Subcategory images
+import nailsImg from "@/assets/subcategories/nails.jpg";
+import lashesImg from "@/assets/subcategories/lashes.jpg";
+import browsImg from "@/assets/subcategories/brows.jpg";
+import hairImg from "@/assets/subcategories/hair.jpg";
+import makeupImg from "@/assets/subcategories/makeup.jpg";
+import musicImg from "@/assets/subcategories/music.jpg";
+import artImg from "@/assets/subcategories/art.jpg";
+import craftImg from "@/assets/subcategories/craft.jpg";
+import dogWalkingImg from "@/assets/subcategories/dog-walking.jpg";
+import petSittingImg from "@/assets/subcategories/pet-sitting.jpg";
+import groomingImg from "@/assets/subcategories/basic-grooming.jpg";
+import carpenterImg from "@/assets/subcategories/carpenter.jpg";
+import plumberImg from "@/assets/subcategories/plumber.jpg";
+import electricalImg from "@/assets/subcategories/minor-electrical.jpg";
+import paintingImg from "@/assets/subcategories/patching-painting.jpg";
+import mathsImg from "@/assets/subcategories/maths.jpg";
+import englishImg from "@/assets/subcategories/english.jpg";
+import biologyImg from "@/assets/subcategories/biology.jpg";
+import physicsImg from "@/assets/subcategories/physics.jpg";
+import chemistryImg from "@/assets/subcategories/chemistry.jpg";
+import economicsImg from "@/assets/subcategories/economics.jpg";
+import languagesImg from "@/assets/subcategories/languages.jpg";
 
-const SUBCATEGORY_COLORS: Record<string, string> = {
-  maths: "bg-blue-50 text-blue-600", english: "bg-amber-50 text-amber-600",
-  biology: "bg-green-50 text-green-600", physics: "bg-indigo-50 text-indigo-600",
-  chemistry: "bg-purple-50 text-purple-600", economics: "bg-teal-50 text-teal-600",
-  hindi: "bg-orange-50 text-orange-600", chinese: "bg-red-50 text-red-600",
-  spanish: "bg-yellow-50 text-yellow-600", french: "bg-sky-50 text-sky-600",
-  tamil: "bg-rose-50 text-rose-600", malay: "bg-emerald-50 text-emerald-600",
-  music: "bg-violet-50 text-violet-600", art: "bg-pink-50 text-pink-600", craft: "bg-amber-50 text-amber-600",
-  nails: "bg-pink-50 text-pink-600", lashes: "bg-purple-50 text-purple-600",
-  brows: "bg-rose-50 text-rose-600", hair: "bg-fuchsia-50 text-fuchsia-600", makeup: "bg-red-50 text-red-500",
-  "dog-walking": "bg-amber-50 text-amber-600", "pet-sitting": "bg-orange-50 text-orange-600",
-  "basic-grooming": "bg-cyan-50 text-cyan-600",
-  carpenter: "bg-yellow-50 text-yellow-700", plumber: "bg-blue-50 text-blue-600",
-  "minor-electrical": "bg-amber-50 text-amber-600", "patching-painting": "bg-lime-50 text-lime-600",
+const SUBCATEGORY_IMAGES: Record<string, string> = {
+  nails: nailsImg, lashes: lashesImg, brows: browsImg, hair: hairImg, makeup: makeupImg,
+  music: musicImg, art: artImg, craft: craftImg,
+  "dog-walking": dogWalkingImg, "pet-sitting": petSittingImg, "basic-grooming": groomingImg,
+  carpenter: carpenterImg, plumber: plumberImg, "minor-electrical": electricalImg, "patching-painting": paintingImg,
+  maths: mathsImg, english: englishImg, biology: biologyImg, physics: physicsImg,
+  chemistry: chemistryImg, economics: economicsImg,
+  hindi: languagesImg, chinese: languagesImg, spanish: languagesImg,
+  french: languagesImg, tamil: languagesImg, malay: languagesImg,
 };
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
