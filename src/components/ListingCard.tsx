@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { MapPin, Clock, Heart } from "lucide-react";
+import { MapPin, Clock, Heart, Globe, Phone, Navigation } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
@@ -76,6 +76,7 @@ interface ListingCardProps {
   onSelect?: (listing: Listing) => void;
   onHover?: (id: string | null) => void;
   distanceKm?: number | null;
+  index?: number;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -94,24 +95,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Logistics & Transport": "from-stone-500 to-stone-700",
   "Events & Entertainment": "from-rose-500 to-pink-700",
   "Construction & Renovation": "from-orange-600 to-amber-700",
-};
-
-const CATEGORY_SHORT: Record<string, string> = {
-  "Food & Beverage": "Food",
-  "Retail & Shopping": "Retail",
-  "Healthcare & Medical": "Healthcare",
-  "Education & Training": "Education",
-  "Professional Services": "Professional",
-  "Beauty & Wellness": "Beauty",
-  "Home Services": "Home Services",
-  "Automotive": "Automotive",
-  "Technology & IT": "Tech",
-  "Real Estate": "Real Estate",
-  "Legal Services": "Legal",
-  "Financial Services": "Finance",
-  "Logistics & Transport": "Logistics",
-  "Events & Entertainment": "Events",
-  "Construction & Renovation": "Construction",
 };
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -155,8 +138,6 @@ export function getNextOpenInfo(listing: Listing): string | null {
   if (!hours) return null;
   const now = new Date();
   const currentDayIndex = now.getDay();
-
-  // Check if still opening later today
   const todayName = DAYS[currentDayIndex];
   const todayHours = hours[todayName];
   if (todayHours && !todayHours.closed && todayHours.open) {
@@ -166,8 +147,6 @@ export function getNextOpenInfo(listing: Listing): string | null {
       return `Opens today at ${formatTime12(todayHours.open)}`;
     }
   }
-
-  // Check next 7 days
   for (let i = 1; i <= 7; i++) {
     const nextDayIndex = (currentDayIndex + i) % 7;
     const dayName = DAYS[nextDayIndex];
@@ -180,90 +159,137 @@ export function getNextOpenInfo(listing: Listing): string | null {
   return null;
 }
 
-const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanceKm }: ListingCardProps) => {
+const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanceKm, index }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
   const nextOpenInfo = useMemo(() => (isOpen === false ? getNextOpenInfo(listing) : null), [listing, isOpen]);
-  const [liked, setLiked] = useState(false);
-  const shortCategory = CATEGORY_SHORT[listing.category] || listing.category;
 
   const handleClick = () => {
     if (onSelect) onSelect(listing);
     navigate(getBusinessUrl(listing));
   };
 
-  const handleLike = (e: React.MouseEvent) => {
+  const handleWebsiteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setLiked(!liked);
+    if (listing.website) window.open(listing.website, "_blank");
+  };
+
+  const handlePhoneClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (listing.phone) window.open(`tel:${listing.phone}`, "_self");
   };
 
   return (
     <div
       data-listing-id={listing.id}
-      className={`bg-card rounded-xl border border-border p-4 cursor-pointer transition-all duration-200 hover:shadow-md ${highlighted ? "ring-2 ring-primary shadow-lg" : ""}`}
+      className={`bg-card border border-border p-4 md:p-5 cursor-pointer transition-all duration-200 hover:bg-accent/5 ${highlighted ? "ring-2 ring-primary bg-primary/5" : ""}`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
-      {/* Top row: Logo + Name + Heart */}
-      <div className="flex items-start gap-3 mb-3">
-        {/* Logo / Avatar */}
-        <div className="w-12 h-12 shrink-0 rounded-xl overflow-hidden bg-muted">
+      <div className="flex gap-4">
+        {/* Left: Image */}
+        <div className="w-[100px] h-[100px] md:w-[130px] md:h-[110px] shrink-0 rounded-lg overflow-hidden bg-muted border border-border">
           {listing.logoUrl ? (
             <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
           ) : listing.coverImage ? (
             <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <span className="text-lg font-bold text-white/90">{listing.name.charAt(0)}</span>
+              <span className="text-2xl md:text-3xl font-bold text-white/90">{listing.name.charAt(0)}</span>
             </div>
           )}
         </div>
 
-        {/* Name + Category·District */}
+        {/* Middle: Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground text-sm truncate">{listing.name}</h3>
-          <p className="text-xs text-muted-foreground truncate">{shortCategory} · {listing.district}</p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-primary text-sm md:text-base hover:underline truncate">
+                {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
+                {listing.name}
+              </h3>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{listing.category}</p>
+            </div>
+
+            {/* Right: Phone & Address */}
+            <div className="hidden sm:flex flex-col items-end shrink-0 gap-1">
+              {listing.phone && (
+                <button
+                  onClick={handlePhoneClick}
+                  className="text-sm md:text-base font-bold text-foreground hover:text-primary transition-colors"
+                >
+                  {listing.phone}
+                </button>
+              )}
+              <p className="text-[11px] md:text-xs text-muted-foreground text-right max-w-[180px]">
+                {listing.address}
+              </p>
+              {isOpen === true && (
+                <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <Clock className="w-3 h-3" />
+                  OPEN NOW
+                </span>
+              )}
+              {isOpen === false && (
+                <span className="flex items-center gap-1 text-[11px] text-destructive">
+                  <Clock className="w-3 h-3" />
+                  {nextOpenInfo || "Closed"}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Action links */}
+          <div className="flex items-center gap-3 mt-2">
+            {listing.website && (
+              <button onClick={handleWebsiteClick} className="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+                <Globe className="w-3 h-3" />Website
+              </button>
+            )}
+            <button onClick={handleClick} className="text-xs font-medium text-primary hover:underline">
+              More Info
+            </button>
+          </div>
+
+          {/* Description */}
+          {listing.description && (
+            <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
+              {listing.description}
+            </p>
+          )}
+
+          {/* Badge row */}
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            {listing.verified && (
+              <span className="inline-flex items-center gap-1 text-[10px] md:text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                ✓ Verified
+              </span>
+            )}
+            {distanceKm != null && (
+              <span className="inline-flex items-center gap-1 text-[10px] md:text-[11px] font-medium text-primary">
+                <MapPin className="w-3 h-3" />
+                {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)} km`}
+              </span>
+            )}
+            {listing.priceRange && (
+              <span className="text-[10px] md:text-[11px] text-muted-foreground">{listing.priceRange}</span>
+            )}
+          </div>
+
+          {/* Mobile: phone & status */}
+          <div className="flex items-center gap-3 mt-2 sm:hidden">
+            {listing.phone && (
+              <button onClick={handlePhoneClick} className="text-xs font-bold text-foreground flex items-center gap-1">
+                <Phone className="w-3 h-3" />{listing.phone}
+              </button>
+            )}
+            {isOpen === true && (
+              <span className="text-[11px] font-semibold text-emerald-600">OPEN NOW</span>
+            )}
+          </div>
         </div>
-
-        {/* Heart */}
-        <button onClick={handleLike} className="shrink-0 p-1 hover:bg-muted rounded-lg transition-colors">
-          <Heart className={`w-5 h-5 ${liked ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
-        </button>
-      </div>
-
-      {/* Badge pills row */}
-      <div className="flex items-center gap-1.5 flex-wrap">
-        {/* Open / Closed status */}
-        {isOpen === true && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Open
-          </Badge>
-        )}
-        {isOpen === false && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-destructive border-destructive/30">
-            <Clock className="w-3 h-3" />
-            {nextOpenInfo || "Closed"}
-          </Badge>
-        )}
-        {listing.verified && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
-            ✓ Verified
-          </Badge>
-        )}
-        {listing.priceRange && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 rounded-full">
-            {listing.priceRange}
-          </Badge>
-        )}
-        {distanceKm != null && (
-          <Badge variant="outline" className="text-[11px] font-medium px-2 py-0.5 gap-1 rounded-full text-primary border-primary/30">
-            <MapPin className="w-3 h-3" />
-            {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)} km`}
-          </Badge>
-        )}
       </div>
     </div>
   );

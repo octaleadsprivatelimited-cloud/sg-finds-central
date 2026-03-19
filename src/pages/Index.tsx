@@ -9,10 +9,12 @@ import CategoryHighlights from "@/components/CategoryHighlights";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
+import { Link } from "react-router-dom";
 import MobileFiltersMap from "@/components/MobileFiltersMap";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
-import { MapPin, SlidersHorizontal, Search } from "lucide-react";
+import { MapPin, SlidersHorizontal, Search, Map as MapIcon, ChevronRight, Clock, ArrowUpDown } from "lucide-react";
 import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -143,99 +145,140 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || openNow || pincode;
   const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, openNow, !!searchQuery, !!pincode].filter(Boolean).length;
 
+  const [sortBy, setSortBy] = useState<"default" | "name" | "distance">("default");
+
+  const sortedFiltered = useMemo(() => {
+    const arr = [...filtered];
+    if (sortBy === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
+    return arr;
+  }, [filtered, sortBy]);
+
+  const CATEGORY_NAV = [
+    { value: "Automotive", label: "Auto Services", emoji: "🚗" },
+    { value: "Beauty & Wellness", label: "Beauty", emoji: "💅" },
+    { value: "Home Services", label: "Home Services", emoji: "🏠" },
+    { value: "Financial Services", label: "Insurance", emoji: "🛡️" },
+    { value: "Legal Services", label: "Legal Services", emoji: "⚖️" },
+    { value: "Healthcare & Medical", label: "Medical Services", emoji: "🏥" },
+    { value: "Food & Beverage", label: "Restaurants", emoji: "🍽️" },
+    { value: "Retail & Shopping", label: "Retail", emoji: "🛍️" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
 
-      {/* ═══ ALL BUSINESSES (TOP) ═══ */}
-      <section className="container mx-auto px-3 md:px-4 pt-2 md:pt-4 pb-4 md:pb-8">
+      {/* ═══ CATEGORY NAV BAR ═══ */}
+      <div className="border-b border-border bg-card">
+        <div className="container mx-auto px-3 md:px-4">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-2">
+            {CATEGORY_NAV.map((c) => (
+              <button
+                key={c.value}
+                onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
+                  category === c.value
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                <span>{c.emoji}</span>
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-        {/* Mobile: Sticky filters + Map */}
-        <MobileFiltersMap
-          category={category}
-          setCategory={setCategory}
-          openNow={openNow}
-          setOpenNow={setOpenNow}
-          filtersOpen={filtersOpen}
-          setFiltersOpen={setFiltersOpen}
-          radiusKm={radiusKm}
-          setRadiusKm={setRadiusKm}
-          district={district}
-          setDistrict={setDistrict}
-          userLocation={userLocation}
-          handleDetectLocation={handleDetectLocation}
-          hasActiveFilters={!!hasActiveFilters}
-          activeFilterCount={activeFilterCount}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          setOpenNowState={setOpenNow}
-          pincode={pincode}
-          onPincodeSearch={handlePincodeSearch}
-          pincodeAddress={pincodeAddress}
-          filtered={filtered}
-          selectedListing={selectedListing}
-          setSelectedListing={setSelectedListing}
-          hoveredListingId={hoveredListingId}
-          setHoveredListingId={setHoveredListingId}
-          mapCenter={mapCenter}
-          setMapCenter={setMapCenter}
-        />
+      {/* ═══ MAIN CONTENT ═══ */}
+      <section className="container mx-auto px-3 md:px-4 pt-3 md:pt-5 pb-4 md:pb-8">
 
-        {/* Desktop: Inline filters (hidden on mobile) */}
-        <div className="hidden lg:block">
-          <div className="bg-card border border-border rounded-xl p-3 mb-4 space-y-2">
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
-                {[
-                  { value: "All Categories", label: "All", emoji: "✦" },
-                  { value: "Food & Beverage", label: "Food", emoji: "🍰" },
-                  { value: "Beauty & Wellness", label: "Beauty", emoji: "💅" },
-                  { value: "Education & Training", label: "Tutoring", emoji: "📚" },
-                  { value: "Home Services", label: "Home", emoji: "🏠" },
-                  { value: "Healthcare & Medical", label: "Health", emoji: "🏥" },
-                  { value: "Retail & Shopping", label: "Retail", emoji: "🛍️" },
-                ].map((c) => (
-                  <button
-                    key={c.value}
-                    onClick={() => setCategory(c.value)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 ${
-                      category === c.value
-                        ? "bg-foreground text-background border-foreground"
-                        : "bg-background text-foreground border-border hover:bg-muted"
-                    }`}
-                  >
-                    <span>{c.emoji}</span>
-                    {c.label}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  onClick={() => setOpenNow(!openNow)}
-                  className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
-                    openNow
-                      ? "bg-emerald-600 text-white border-emerald-600"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${openNow ? "bg-white" : "bg-emerald-500"}`} />
-                  Open
-                </button>
-                <button
-                  onClick={() => setFiltersOpen(!filtersOpen)}
-                  className={`px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap flex items-center gap-1 ${
-                    filtersOpen || hasActiveFilters
-                      ? "bg-foreground text-background border-foreground"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  <SlidersHorizontal className="w-3 h-3" />
-                  {activeFilterCount > 0 ? activeFilterCount : ""}
-                </button>
-              </div>
-            </div>
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
+          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+          <ChevronRight className="w-3 h-3" />
+          <span>Singapore</span>
+          {category !== "All Categories" && (
+            <>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-foreground font-medium">{category}</span>
+            </>
+          )}
+        </nav>
 
+        {/* Page heading */}
+        <h1 className="text-lg md:text-2xl font-bold text-foreground mb-4">
+          {category !== "All Categories" ? category : "All Businesses"} in Singapore
+          {district !== "All Districts" && `, ${district}`}
+        </h1>
+
+        {/* Toolbar: Map View, Filters, Sort */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs rounded-full"
+              onClick={() => setShowMap(!showMap)}
+            >
+              <MapIcon className="w-3.5 h-3.5 mr-1" />
+              Map View
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs rounded-full"
+              onClick={() => setFiltersOpen(!filtersOpen)}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 mr-1" />
+              All Filters
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary" className="ml-1 h-4 w-4 p-0 flex items-center justify-center text-[9px] rounded-full">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+            {openNow && (
+              <Badge variant="outline" className="text-[11px] gap-1 rounded-full text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Open Now
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Sort:</span>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+              <SelectTrigger className="w-auto h-8 text-xs border-border rounded-full px-3">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="name">Name A–Z</SelectItem>
+                <SelectItem value="distance">Distance</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Open 24 Hours banner */}
+        <button
+          onClick={() => setOpenNow(!openNow)}
+          className={`w-full flex items-center gap-2 px-4 py-2.5 border rounded-lg mb-3 text-xs transition-colors ${
+            openNow
+              ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800"
+              : "bg-card border-border hover:bg-muted/50"
+          }`}
+        >
+          <Clock className="w-4 h-4 text-muted-foreground" />
+          <span className="text-muted-foreground">View all businesses that are </span>
+          <span className="font-bold text-emerald-600 dark:text-emerald-400">OPEN 24 Hours</span>
+        </button>
+
+        {/* Filters panel (expandable) */}
+        {filtersOpen && (
+          <div className="bg-card border border-border rounded-lg p-3 mb-3 space-y-2.5">
+            {/* Distance */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-              <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
+              <span className="text-xs font-medium text-muted-foreground shrink-0">Distance:</span>
               {[
                 { value: 0.5, label: "500m" },
                 { value: 1, label: "1 km" },
@@ -250,7 +293,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                     if (r.value !== null && !userLocation && district === "All Districts") handleDetectLocation();
                     setRadiusKm(r.value);
                   }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                  className={`px-3 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
                     radiusKm === r.value
                       ? "bg-foreground text-background border-foreground"
                       : "bg-background text-foreground border-border hover:bg-muted"
@@ -259,134 +302,156 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   {r.label}
                 </button>
               ))}
-              {radiusKm !== null && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
-                  <MapPin className="w-2.5 h-2.5" />
-                  {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
-                </span>
+            </div>
+
+            {/* Postal code */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-muted-foreground shrink-0">Postal:</span>
+              <div className="relative flex-1 max-w-[200px]">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="Enter 6-digit postal code"
+                  value={pincode}
+                  onChange={(e) => handlePincodeSearch(e.target.value.replace(/\D/g, ''))}
+                  className="w-full h-7 px-2.5 pr-7 text-[11px] rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+                <Search className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+              </div>
+              {pincodeAddress && (
+                <span className="text-[10px] text-primary font-medium truncate max-w-[180px]">{pincodeAddress}</span>
               )}
             </div>
 
-            {filtersOpen && (
-              <div className="space-y-2 pt-1 border-t border-border">
-                {/* Pincode search */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-medium text-muted-foreground shrink-0">Postal:</span>
-                  <div className="relative flex-1 max-w-[200px]">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={6}
-                      placeholder="Enter 6-digit postal code"
-                      value={pincode}
-                      onChange={(e) => handlePincodeSearch(e.target.value.replace(/\D/g, ''))}
-                      className="w-full h-7 px-2.5 pr-7 text-[11px] rounded-full border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                    />
-                    <Search className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-                  </div>
-                  {pincodeAddress && (
-                    <span className="text-[10px] text-primary font-medium truncate max-w-[180px]">{pincodeAddress}</span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
-                  <span className="text-[11px] font-medium text-muted-foreground shrink-0">Area:</span>
-                  {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => setDistrict(d)}
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
-                        district === d
-                          ? "bg-foreground text-background border-foreground"
-                          : "bg-background text-foreground border-border hover:bg-muted"
-                      }`}
-                    >
-                      {d === "All Districts" ? "All" : d}
-                    </button>
+            {/* Area */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-nowrap">
+              <span className="text-xs font-medium text-muted-foreground shrink-0">Area:</span>
+              {["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDistrict(d)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors whitespace-nowrap shrink-0 ${
+                    district === d
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-background text-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  {d === "All Districts" ? "All" : d}
+                </button>
+              ))}
+              <Select value={district} onValueChange={setDistrict}>
+                <SelectTrigger className="w-auto h-6 text-[11px] border-border rounded-full px-2.5 shrink-0">
+                  <SelectValue placeholder="More" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SINGAPORE_DISTRICTS.filter(d => !["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].includes(d)).map((d) => (
+                    <SelectItem key={d} value={d}>{d}</SelectItem>
                   ))}
-                  <Select value={district} onValueChange={setDistrict}>
-                    <SelectTrigger className="w-auto h-6 text-[11px] border-border rounded-full px-2.5 shrink-0">
-                      <SelectValue placeholder="More" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SINGAPORE_DISTRICTS.filter(d => !["All Districts", "Bedok", "Tampines", "Orchard", "CBD / Raffles Place", "Novena", "Bishan"].includes(d)).map((d) => (
-                        <SelectItem key={d} value={d}>{d}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {hasActiveFilters && (
-                  <button
-                    onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); setPincode(""); setPincodeAddress(""); setUserLocation(null); }}
-                    className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
-                  >
-                    Clear All
-                  </button>
-                )}
-              </div>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {hasActiveFilters && (
+              <button
+                onClick={() => { setCategory("All Categories"); setDistrict("All Districts"); setSearchQuery(""); setRadiusKm(null); setOpenNow(false); setPincode(""); setPincodeAddress(""); setUserLocation(null); }}
+                className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                Clear All Filters
+              </button>
             )}
           </div>
-        </div>
+        )}
 
-        {/* Split view: Featured list + Map */}
-        <div className="flex gap-4 md:gap-6 overflow-hidden">
-          {/* Listings column */}
-          <div className="w-full lg:w-1/2 xl:w-[55%] min-w-0">
-            <div className="bg-card border border-border rounded-xl p-3 md:p-4">
-              <div className="flex items-center justify-between mb-2 md:mb-3">
-                <h2 className="text-sm md:text-lg font-bold text-foreground">
-                  {filtered.length} <span className="font-normal text-muted-foreground text-xs md:text-sm">{category !== "All Categories" ? category : ""} businesses{radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}</span>
-                </h2>
-              </div>
-              <div className="lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto lg:pr-1 space-y-2 scrollbar-thin">
-                {filtered.length === 0 ? (
-                  <div className="text-center py-16">
-                    <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
-                      <MapPin className="w-8 h-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-muted-foreground font-medium">No businesses found</p>
-                    <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
+        {/* Split layout: Listings + Map/Sidebar */}
+        <div className="flex gap-5 overflow-hidden">
+          {/* Listings column - Yellow Pages style stacked cards */}
+          <div className={`min-w-0 ${showMap ? "w-full lg:w-3/5" : "w-full"}`}>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted-foreground">
+                {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
+                {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
+              </p>
+            </div>
+
+            <div className="divide-y divide-border border border-border rounded-lg overflow-hidden">
+              {sortedFiltered.length === 0 ? (
+                <div className="text-center py-16 bg-card">
+                  <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="w-8 h-8 text-muted-foreground" />
                   </div>
-                ) : (
-                  filtered.map((listing) => (
-                    <ListingCard
-                      key={listing.id}
-                      listing={listing}
-                      highlighted={hoveredListingId === listing.id}
-                      onHover={setHoveredListingId}
-                      distanceKm={getListingDistance(listing)}
-                      onSelect={(l) => {
-                        setSelectedListing(l);
-                        if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
-                      }}
-                    />
-                  ))
-                )}
-              </div>
+                  <p className="text-muted-foreground font-medium">No businesses found</p>
+                  <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
+                </div>
+              ) : (
+                sortedFiltered.map((listing, idx) => (
+                  <ListingCard
+                    key={listing.id}
+                    listing={listing}
+                    index={idx + 1}
+                    highlighted={hoveredListingId === listing.id}
+                    onHover={setHoveredListingId}
+                    distanceKm={getListingDistance(listing)}
+                    onSelect={(l) => {
+                      setSelectedListing(l);
+                      if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
+                    }}
+                  />
+                ))
+              )}
             </div>
           </div>
 
-          {/* Map column (desktop only) */}
-          <div className="hidden lg:block lg:w-1/2 xl:w-[45%]">
-            <div className="bg-card border border-border rounded-xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base md:text-lg font-bold text-foreground">Map</h2>
-                <Button variant="outline" size="sm" className="h-8 text-xs rounded-full" onClick={() => setMapCenter(undefined)}>
-                  Reset
-                </Button>
-              </div>
-              <div className="h-[calc(100vh-280px)] rounded-xl overflow-hidden border border-border">
-                <MapView
-                  listings={filtered}
-                  selectedId={selectedListing?.id}
-                  hoveredId={hoveredListingId}
-                  onHoverListing={setHoveredListingId}
-                  onSelectListing={setSelectedListing}
-                  center={mapCenter}
-                  radiusKm={radiusKm}
-                />
+          {/* Map / Sidebar column */}
+          {showMap && (
+            <div className="hidden lg:block lg:w-2/5">
+              <div className="sticky top-16">
+                <div className="bg-card border border-border rounded-lg overflow-hidden">
+                  <div className="h-[calc(100vh-200px)]">
+                    <MapView
+                      listings={sortedFiltered}
+                      selectedId={selectedListing?.id}
+                      hoveredId={hoveredListingId}
+                      onHoverListing={setHoveredListingId}
+                      onSelectListing={setSelectedListing}
+                      center={mapCenter}
+                      radiusKm={radiusKm}
+                    />
+                  </div>
+                </div>
+
+                {/* Sidebar CTA */}
+                <div className="mt-4 border border-border rounded-lg bg-card p-5 text-center">
+                  <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
+                  <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
+                  <Link to="/add-listing">
+                    <Button className="w-full bg-primary text-primary-foreground font-bold">
+                      Claim Your Listing
+                    </Button>
+                  </Link>
+                  <p className="text-[10px] text-muted-foreground mt-2">or email hello@nearly.sg</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Sidebar when map is hidden */}
+          {!showMap && (
+            <div className="hidden lg:block lg:w-72 shrink-0">
+              <div className="sticky top-16 space-y-4">
+                <div className="border border-border rounded-lg bg-card p-5 text-center">
+                  <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
+                  <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
+                  <Link to="/add-listing">
+                    <Button className="w-full bg-primary text-primary-foreground font-bold">
+                      Claim Your Listing
+                    </Button>
+                  </Link>
+                  <p className="text-[10px] text-muted-foreground mt-2">or email hello@nearly.sg</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
