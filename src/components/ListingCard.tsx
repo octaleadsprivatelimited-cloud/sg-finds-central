@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl } from "@/lib/url-helpers";
-import whatsappIcon from "@/assets/whatsapp-icon.png";
+import whatsappLogo from "@/assets/whatsapp-logo.png";
 
 export interface ListingOffer {
   id: string;
@@ -234,10 +234,10 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold text-white active:scale-95 transition-transform"
-                style={{ backgroundColor: "#25D366" }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold text-white active:scale-95 transition-transform shadow-md"
+                style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}
               >
-                <img src={whatsappIcon} alt="WhatsApp" className="w-3.5 h-3.5" />WhatsApp
+                <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 rounded-sm" />WhatsApp
               </a>
             )}
             {listing.lat && listing.lng && (
