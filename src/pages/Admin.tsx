@@ -424,6 +424,21 @@ const Admin = () => {
                           </div>
                         </div>
 
+                        {/* Business Images Preview */}
+                        {(listing as any).imageUrls && (listing as any).imageUrls.length > 0 && (
+                          <div className="mt-3 ml-[52px]">
+                            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                              <Image className="w-3 h-3" />Business Images ({(listing as any).imageUrls.length})
+                            </p>
+                            <div className="flex gap-1.5 overflow-x-auto">
+                              {((listing as any).imageUrls as string[]).map((url, i) => (
+                                <img key={i} src={url} alt={`${listing.name} ${i + 1}`}
+                                  className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] shrink-0" />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {listing.description && (
                           <p className="text-xs text-muted-foreground mt-2 line-clamp-2 ml-[52px]">{listing.description}</p>
                         )}
@@ -448,6 +463,10 @@ const Admin = () => {
                           <Button size="sm" variant="outline" onClick={() => { setRejectingId(listing.id); setRejectionReason(""); }} disabled={actionLoading === listing.id}
                             className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] hover:bg-[hsl(354,70%,97%)] rounded-md text-xs h-8 px-3">
                             <X className="w-3.5 h-3.5 mr-1" />Reject
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => openAdminEdit(listing)}
+                            className="rounded-md text-xs h-8 px-3">
+                            <Edit3 className="w-3.5 h-3.5 mr-1" />Edit
                           </Button>
                         </div>
                       </div>
