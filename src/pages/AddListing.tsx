@@ -145,7 +145,8 @@ const AddListing = () => {
   const [loading, setLoading] = useState(false);
   const [hasExistingListing, setHasExistingListing] = useState(false);
   const [checkingExisting, setCheckingExisting] = useState(true);
-
+  const [showErrors, setShowErrors] = useState(false);
+  
   // ── Screen 1: Category ──
   const [category, setCategory] = useState("");
   const [district, setDistrict] = useState("");
