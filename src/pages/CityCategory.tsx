@@ -2,7 +2,13 @@ import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useMemo, useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { MapPin, Building2, ArrowLeft, ChevronRight, Loader2 } from "lucide-react";
+import {
+  MapPin, Building2, ArrowLeft, ChevronRight, Loader2, LayoutGrid,
+  Calculator, BookOpen, Leaf, Atom, FlaskConical, TrendingUp,
+  Languages, Music, Palette, Scissors, Sparkles, Eye, EyeOff,
+  PaintBucket, Dog, Cat, Bath, Hammer, Wrench, Zap, PaintRoller,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
@@ -11,7 +17,33 @@ import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
-// Fallback demo listings for when Firestore is unavailable
+// Icon map for subcategories
+const SUBCATEGORY_ICONS: Record<string, LucideIcon> = {
+  maths: Calculator, english: BookOpen, biology: Leaf, physics: Atom,
+  chemistry: FlaskConical, economics: TrendingUp,
+  hindi: Languages, chinese: Languages, spanish: Languages,
+  french: Languages, tamil: Languages, malay: Languages,
+  music: Music, art: Palette, craft: Scissors,
+  nails: Sparkles, lashes: Eye, brows: EyeOff, hair: Scissors, makeup: PaintBucket,
+  "dog-walking": Dog, "pet-sitting": Cat, "basic-grooming": Bath,
+  carpenter: Hammer, plumber: Wrench, "minor-electrical": Zap, "patching-painting": PaintRoller,
+};
+
+const SUBCATEGORY_COLORS: Record<string, string> = {
+  maths: "bg-blue-50 text-blue-600", english: "bg-amber-50 text-amber-600",
+  biology: "bg-green-50 text-green-600", physics: "bg-indigo-50 text-indigo-600",
+  chemistry: "bg-purple-50 text-purple-600", economics: "bg-teal-50 text-teal-600",
+  hindi: "bg-orange-50 text-orange-600", chinese: "bg-red-50 text-red-600",
+  spanish: "bg-yellow-50 text-yellow-600", french: "bg-sky-50 text-sky-600",
+  tamil: "bg-rose-50 text-rose-600", malay: "bg-emerald-50 text-emerald-600",
+  music: "bg-violet-50 text-violet-600", art: "bg-pink-50 text-pink-600", craft: "bg-amber-50 text-amber-600",
+  nails: "bg-pink-50 text-pink-600", lashes: "bg-purple-50 text-purple-600",
+  brows: "bg-rose-50 text-rose-600", hair: "bg-fuchsia-50 text-fuchsia-600", makeup: "bg-red-50 text-red-500",
+  "dog-walking": "bg-amber-50 text-amber-600", "pet-sitting": "bg-orange-50 text-orange-600",
+  "basic-grooming": "bg-cyan-50 text-cyan-600",
+  carpenter: "bg-yellow-50 text-yellow-700", plumber: "bg-blue-50 text-blue-600",
+  "minor-electrical": "bg-amber-50 text-amber-600", "patching-painting": "bg-lime-50 text-lime-600",
+};
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
     id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
@@ -214,27 +246,41 @@ const CityCategory = () => {
             {/* Subcategory picker cards */}
             {showSubcategoryPicker ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {subcategories.map((sub) => (
-                  <button
-                    key={sub.value}
-                    onClick={() => setSearchParams({ sub: sub.value })}
-                    className="p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all text-center group"
-                  >
-                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
-                    </p>
-                  </button>
-                ))}
+                {subcategories.map((sub) => {
+                  const Icon = SUBCATEGORY_ICONS[sub.value] || Building2;
+                  const colorClass = SUBCATEGORY_COLORS[sub.value] || "bg-muted text-muted-foreground";
+                  return (
+                    <button
+                      key={sub.value}
+                      onClick={() => setSearchParams({ sub: sub.value })}
+                      className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-200 group active:scale-95"
+                    >
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${colorClass} group-hover:scale-110 transition-transform duration-200`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
                 {/* View all option */}
                 <button
                   onClick={() => setSearchParams({ sub: "all" })}
-                  className="p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-md transition-all text-center"
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-lg transition-all duration-200 active:scale-95"
                 >
-                  <p className="text-sm font-semibold text-primary">View All</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {listings.filter((l) => l.category === matchedCategory).length} listings
-                  </p>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary">
+                    <LayoutGrid className="w-5 h-5" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-primary">View All</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {listings.filter((l) => l.category === matchedCategory).length} listings
+                    </p>
+                  </div>
                 </button>
               </div>
             ) : filtered.length === 0 ? (
