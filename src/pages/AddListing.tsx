@@ -531,6 +531,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select one *</Label>
                         <SingleChipSelect options={MUSIC_ART_CRAFT_SUBS} selected={musicArtSub} onChange={setMusicArtSub} allowOther otherValue={musicArtOther} onOtherChange={setMusicArtOther} />
+                        <FieldError show={showErrors && !musicArtSub && !musicArtOther} message="Please select or enter a subcategory" />
                       </div>
                     </>
                   )}
