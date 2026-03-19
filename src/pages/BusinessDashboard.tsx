@@ -759,9 +759,9 @@ const BusinessDashboard = () => {
                       listing={listing}
                       onSave={async (hours) => {
                         try {
-                          await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours });
-                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours } : l));
-                          toast.success(`Hours updated for ${listing.name}`);
+                          await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours, status: "pending_approval" });
+                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours, status: "pending_approval" } : l));
+                          toast.success(`Hours updated for ${listing.name} — pending admin re-approval.`);
                         } catch (err: any) { toast.error(err.message || "Failed to update hours"); }
                       }}
                     />
