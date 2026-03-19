@@ -619,9 +619,11 @@ const AddListing = () => {
                       rows={4}
                       className="resize-none"
                     />
-                    <p className={`text-xs text-right ${wordCount(shortDescription) < 10 ? "text-destructive" : wordCount(shortDescription) > 100 ? "text-amber-500" : "text-muted-foreground"}`}>
+                    <p className={`text-xs text-right ${wordCount(shortDescription) < 50 ? "text-destructive" : wordCount(shortDescription) > 100 ? "text-destructive" : "text-muted-foreground"}`}>
                       {wordCount(shortDescription)} / 50–100 words
                     </p>
+                    <FieldError show={showErrors && wordCount(shortDescription) < 50} message={`Need at least 50 words (currently ${wordCount(shortDescription)})`} />
+                    <FieldError show={showErrors && wordCount(shortDescription) > 100} message={`Maximum 100 words allowed (currently ${wordCount(shortDescription)})`} />
                   </div>
 
                   <div className="space-y-2">
