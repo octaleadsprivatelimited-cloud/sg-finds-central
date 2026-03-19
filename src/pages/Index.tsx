@@ -244,9 +244,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </nav>
 
         {/* Split layout: Listings + Map */}
-        <div className="flex gap-5 overflow-hidden">
-          {/* Listings column */}
-          <div className="min-w-0 w-full lg:w-3/5">
+        <div className="flex gap-5">
+          {/* Listings column - scrollable */}
+          <div className="min-w-0 w-full lg:w-3/5 max-h-[calc(100vh-180px)] overflow-y-auto scrollbar-hide">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-muted-foreground">
                 {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
@@ -282,10 +282,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             </div>
           </div>
 
-          {/* Map column - always visible on desktop */}
+          {/* Map column - sticky on desktop */}
           <div className="hidden lg:block lg:w-2/5">
-            <div className="flex flex-col gap-3">
-              <div className="bg-card border border-border rounded-lg overflow-hidden h-[400px]">
+            <div className="sticky top-4 flex flex-col gap-3">
+              <div className="bg-card border border-border rounded-lg overflow-hidden h-[calc(100vh-220px)]">
                 <MapView
                   listings={sortedFiltered}
                   selectedId={selectedListing?.id}
