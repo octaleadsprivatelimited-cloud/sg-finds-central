@@ -71,6 +71,61 @@ export const HANDYMAN_SUBS: MultiSelectOption[] = [
   { label: "Patching / painting", value: "patching-painting" },
 ];
 
+// ── 3F  Home Food ──
+export const HOME_FOOD_SUBS: MultiSelectOption[] = [
+  { label: "Nasi Lemak / Malay cuisine", value: "malay-cuisine" },
+  { label: "Indian cuisine", value: "indian-cuisine" },
+  { label: "Chinese cuisine", value: "chinese-cuisine" },
+  { label: "Western cuisine", value: "western-cuisine" },
+  { label: "Vegetarian / Vegan", value: "vegetarian-vegan" },
+  { label: "Meal prep / Bento", value: "meal-prep" },
+];
+
+// ── 3G  Baking ──
+export const BAKING_SUBS: MultiSelectOption[] = [
+  { label: "Cakes", value: "cakes" },
+  { label: "Cookies", value: "cookies" },
+  { label: "Pastries", value: "pastries" },
+  { label: "Bread", value: "bread" },
+  { label: "Cupcakes", value: "cupcakes" },
+  { label: "Custom / themed cakes", value: "custom-cakes" },
+];
+
+// ── 3H  Photography / Videography ──
+export const PHOTOGRAPHY_SUBS: MultiSelectOption[] = [
+  { label: "Portrait", value: "portrait" },
+  { label: "Event / wedding", value: "event-wedding" },
+  { label: "Product photography", value: "product" },
+  { label: "Videography", value: "videography" },
+  { label: "Drone photography", value: "drone" },
+];
+
+// ── 3I  Tailoring ──
+export const TAILORING_SUBS: MultiSelectOption[] = [
+  { label: "Alterations", value: "alterations" },
+  { label: "Custom clothing", value: "custom-clothing" },
+  { label: "Curtains / soft furnishings", value: "curtains" },
+  { label: "Traditional wear", value: "traditional-wear" },
+];
+
+// ── 3J  Event Services ──
+export const EVENT_SERVICES_SUBS: MultiSelectOption[] = [
+  { label: "Balloon decoration", value: "balloon-decoration" },
+  { label: "Party planning", value: "party-planning" },
+  { label: "Catering coordination", value: "catering-coordination" },
+  { label: "Floral arrangements", value: "floral" },
+  { label: "Photo booth", value: "photo-booth" },
+];
+
+// ── 3K  Cleaning ──
+export const CLEANING_SUBS: MultiSelectOption[] = [
+  { label: "Regular home cleaning", value: "regular-cleaning" },
+  { label: "Deep cleaning", value: "deep-cleaning" },
+  { label: "Move-in / move-out", value: "move-in-out" },
+  { label: "Post-renovation cleaning", value: "post-renovation" },
+  { label: "Spring cleaning", value: "spring-cleaning" },
+];
+
 // ── Helper: get subcategories for a category ──
 export function getSubcategoriesForCategory(category: string): MultiSelectOption[] | null {
   switch (category) {
