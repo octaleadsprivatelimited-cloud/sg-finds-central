@@ -227,6 +227,17 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 <Phone className="w-3 h-3" />Call
               </a>
             )}
+            {(listing.whatsapp || listing.phone) && (
+              <a
+                href={`https://wa.me/${(listing.whatsapp || listing.phone || "").replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-[11px] font-medium text-emerald-600 active:scale-95 transition-transform"
+              >
+                <MessageCircle className="w-3 h-3" />WhatsApp
+              </a>
+            )}
             {listing.lat && listing.lng && (
               <a
                 href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`}
