@@ -457,10 +457,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <FeaturedListings listings={filtered} />
       </section>
 
-      {/* ═══ EXCLUSIVE DEALS ═══ */}
-      <section className="container mx-auto px-3 md:px-4">
-        <ExclusiveDeals listings={filtered} />
-      </section>
     </div>
   );
 };
