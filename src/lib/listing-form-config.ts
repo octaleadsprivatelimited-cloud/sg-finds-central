@@ -159,17 +159,13 @@ export const CONTACT_METHODS: MultiSelectOption[] = [
   { label: "Website", value: "website" },
 ];
 
-// ── Categories that require subcategory screen ──
+// ── All categories require subcategory screen ──
 export const CATEGORIES_WITH_SUBCATEGORY = [
   "Tuition",
   "Music / Art / Craft",
   "Beauty",
   "Pet Services",
   "Handyman",
-] as const;
-
-// ── Categories that skip subcategory (Screen 3) ──
-export const CATEGORIES_SKIP_SUBCATEGORY = [
   "Home Food",
   "Baking",
   "Photography / Videography",
