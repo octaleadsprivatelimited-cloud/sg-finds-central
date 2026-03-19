@@ -1,11 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -16,7 +19,7 @@ import {
 import {
   Shield, Check, X, ExternalLink, FileText, Building2, Clock,
   Loader2, AlertTriangle, LayoutDashboard, Inbox, Settings,
-  LogOut, Search, Bell, Eye, Store, Trash2,
+  LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
   MessageSquare, Mail, Phone, Menu, MoreHorizontal,
   ChevronRight, Activity, Users,
 } from "lucide-react";
@@ -78,6 +81,10 @@ const Admin = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("pending_approval");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [editingListing, setEditingListing] = useState<Listing | null>(null);
+  const [adminEditData, setAdminEditData] = useState<Record<string, any>>({});
+  const [adminSaving, setAdminSaving] = useState(false);
+  const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
 
   const [settings, setSettings] = useState({
     autoApprove: false,
@@ -149,6 +156,31 @@ const Admin = () => {
       toast.success("Listing deleted");
     } catch { toast.error("Failed to delete"); }
     setActionLoading(null);
+  };
+
+  const openAdminEdit = (listing: Listing) => {
+    setEditingListing(listing);
+    setAdminEditData({
+      name: listing.name, category: listing.category, district: listing.district,
+      address: listing.address, phone: listing.phone || "", email: listing.email || "",
+      website: listing.website || "", description: listing.description || "",
+      imageUrls: (listing as any).imageUrls || [], logoUrl: listing.logoUrl || "",
+      status: listing.status,
+    });
+  };
+
+  const saveAdminEdit = async () => {
+    if (!editingListing) return;
+    setAdminSaving(true);
+    try {
+      await updateDoc(doc(db, "listings", editingListing.id), adminEditData);
+      setAllListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...adminEditData } : l));
+      setPendingListings(prev => prev.filter(l => l.id !== editingListing.id || adminEditData.status === "pending_approval")
+        .map(l => l.id === editingListing.id ? { ...l, ...adminEditData } : l));
+      setEditingListing(null);
+      toast.success("Listing updated by admin");
+    } catch { toast.error("Failed to update"); }
+    setAdminSaving(false);
   };
 
   const stats = useMemo(() => ({
@@ -392,6 +424,21 @@ const Admin = () => {
                           </div>
                         </div>
 
+                        {/* Business Images Preview */}
+                        {(listing as any).imageUrls && (listing as any).imageUrls.length > 0 && (
+                          <div className="mt-3 ml-[52px]">
+                            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                              <Image className="w-3 h-3" />Business Images ({(listing as any).imageUrls.length})
+                            </p>
+                            <div className="flex gap-1.5 overflow-x-auto">
+                              {((listing as any).imageUrls as string[]).map((url, i) => (
+                                <img key={i} src={url} alt={`${listing.name} ${i + 1}`}
+                                  className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] shrink-0" />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {listing.description && (
                           <p className="text-xs text-muted-foreground mt-2 line-clamp-2 ml-[52px]">{listing.description}</p>
                         )}
@@ -416,6 +463,10 @@ const Admin = () => {
                           <Button size="sm" variant="outline" onClick={() => { setRejectingId(listing.id); setRejectionReason(""); }} disabled={actionLoading === listing.id}
                             className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] hover:bg-[hsl(354,70%,97%)] rounded-md text-xs h-8 px-3">
                             <X className="w-3.5 h-3.5 mr-1" />Reject
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => openAdminEdit(listing)}
+                            className="rounded-md text-xs h-8 px-3">
+                            <Edit3 className="w-3.5 h-3.5 mr-1" />Edit
                           </Button>
                         </div>
                       </div>
@@ -483,6 +534,15 @@ const Admin = () => {
                           <p className="text-[11px] text-muted-foreground truncate">{l.category} · {l.district}</p>
                         </div>
                         <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${s.bg} ${s.text}`}>{s.label}</span>
+                        {(l as any).imageUrls?.length > 0 && (
+                          <button onClick={() => setViewingImages({ listing: l })} className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition">
+                            <Image className="w-3 h-3" />{(l as any).imageUrls.length}
+                          </button>
+                        )}
+                        <Button size="sm" variant="ghost" onClick={() => openAdminEdit(l)}
+                          className="rounded-md h-7 w-7 p-0 text-muted-foreground hover:text-foreground">
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => handleDelete(l.id)} disabled={actionLoading === l.id}
                           className="text-[hsl(354,70%,55%)] hover:bg-[hsl(354,70%,97%)] rounded-md h-7 w-7 p-0">
                           {actionLoading === l.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
@@ -625,6 +685,115 @@ const Admin = () => {
               Confirm Rejection
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Admin Edit Dialog ───────────────────────────── */}
+      <Dialog open={!!editingListing} onOpenChange={(open) => { if (!open) setEditingListing(null); }}>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Edit3 className="w-5 h-5 text-[hsl(250,50%,55%)]" />Edit Listing (Admin)
+            </DialogTitle>
+          </DialogHeader>
+          {editingListing && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Business Name</Label>
+                <Input value={adminEditData.name || ""} onChange={e => setAdminEditData(prev => ({ ...prev, name: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Category</Label>
+                  <Input value={adminEditData.category || ""} onChange={e => setAdminEditData(prev => ({ ...prev, category: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">District</Label>
+                  <Input value={adminEditData.district || ""} onChange={e => setAdminEditData(prev => ({ ...prev, district: e.target.value }))} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Address</Label>
+                <Input value={adminEditData.address || ""} onChange={e => setAdminEditData(prev => ({ ...prev, address: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Phone</Label>
+                  <Input value={adminEditData.phone || ""} onChange={e => setAdminEditData(prev => ({ ...prev, phone: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Email</Label>
+                  <Input value={adminEditData.email || ""} onChange={e => setAdminEditData(prev => ({ ...prev, email: e.target.value }))} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Website</Label>
+                <Input value={adminEditData.website || ""} onChange={e => setAdminEditData(prev => ({ ...prev, website: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Description</Label>
+                <Textarea value={adminEditData.description || ""} onChange={e => setAdminEditData(prev => ({ ...prev, description: e.target.value }))} rows={3} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground text-xs font-semibold uppercase tracking-wider">Status</Label>
+                <select value={adminEditData.status || "pending_approval"}
+                  onChange={e => setAdminEditData(prev => ({ ...prev, status: e.target.value }))}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                  <option value="approved">Approved (Live)</option>
+                  <option value="pending_approval">Pending Review</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+
+              {/* Images Review */}
+              {adminEditData.imageUrls && adminEditData.imageUrls.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,18%)]">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                    <Image className="w-3.5 h-3.5" />Business Images ({adminEditData.imageUrls.length})
+                  </Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(adminEditData.imageUrls as string[]).map((url, i) => (
+                      <div key={i} className="relative group aspect-square rounded-md overflow-hidden border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]">
+                        <img src={url} alt={`Image ${i + 1}`} className="w-full h-full object-cover" />
+                        <button onClick={() => setAdminEditData(prev => ({ ...prev, imageUrls: prev.imageUrls.filter((_: string, idx: number) => idx !== i) }))}
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-[hsl(354,70%,54%)] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <DialogFooter className="gap-2 pt-2">
+                <Button variant="outline" onClick={() => setEditingListing(null)} className="rounded-md">Cancel</Button>
+                <Button onClick={saveAdminEdit} disabled={adminSaving}
+                  className="bg-[hsl(250,50%,55%)] hover:bg-[hsl(250,50%,48%)] text-white rounded-md">
+                  {adminSaving ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Check className="w-4 h-4 mr-1.5" />}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Image Viewer Dialog ─────────────────────────── */}
+      <Dialog open={!!viewingImages} onOpenChange={(open) => { if (!open) setViewingImages(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Image className="w-5 h-5 text-[hsl(250,50%,55%)]" />
+              {viewingImages?.listing.name} — Images
+            </DialogTitle>
+          </DialogHeader>
+          {viewingImages && (
+            <div className="grid grid-cols-2 gap-3 py-2">
+              {((viewingImages.listing as any).imageUrls as string[] || []).map((url, i) => (
+                <img key={i} src={url} alt={`Image ${i + 1}`} className="w-full aspect-square rounded-lg object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]" />
+              ))}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
-  CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap,
+  CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +28,8 @@ import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
@@ -160,10 +161,10 @@ const BusinessDashboard = () => {
         ...(offerCode ? { code: offerCode } : {}),
       };
       const updatedOffers = [...existingOffers, newOffer];
-      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers });
-      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers } : l));
+      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers, status: "pending_approval" });
+      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers, status: "pending_approval" } : l));
       setOfferTitle(""); setOfferDescription(""); setOfferDiscount(""); setOfferValidUntil(""); setOfferCode("");
-      toast.success("Offer added! It will appear in Exclusive Deals on the homepage.");
+      toast.success("Offer added — pending admin approval before going live.");
     } catch (err: any) { toast.error(err.message || "Failed to add offer"); }
     setOfferSaving(false);
   };
@@ -172,9 +173,9 @@ const BusinessDashboard = () => {
     try {
       const listing = listings.find(l => l.id === listingId);
       const updatedOffers = (listing?.offers || []).filter(o => o.id !== offerId);
-      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers });
-      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers } : l));
-      toast.success("Offer removed");
+      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers, status: "pending_approval" });
+      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers, status: "pending_approval" } : l));
+      toast.success("Offer removed — pending admin re-approval.");
     } catch (err: any) { toast.error(err.message || "Failed to remove offer"); }
   };
 
@@ -191,6 +192,9 @@ const BusinessDashboard = () => {
   const [editLogoUrl, setEditLogoUrl] = useState("");
   const [editHours, setEditHours] = useState<OperatingHours>(DEFAULT_OPERATING_HOURS);
   const [editSpecialHours, setEditSpecialHours] = useState<SpecialHours[]>([]);
+  const [editImageUrls, setEditImageUrls] = useState<string[]>([]);
+  const [editUploadingImages, setEditUploadingImages] = useState(false);
+  const editImageInputRef = useRef<HTMLInputElement>(null);
 
   const stats = useMemo(() => ({
     total: listings.length,
@@ -211,6 +215,7 @@ const BusinessDashboard = () => {
     setEditCustomSlug(listing.customSlug || toSlug(listing.name)); setEditLogoUrl(listing.logoUrl || "");
     setEditHours(listing.operatingHours || { ...DEFAULT_OPERATING_HOURS });
     setEditSpecialHours(listing.specialHours || []);
+    setEditImageUrls((listing as any).imageUrls || []);
   };
 
   const slugError = useMemo(() => {
@@ -235,7 +240,7 @@ const BusinessDashboard = () => {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
         customSlug: sanitizedSlug, logoUrl: editLogoUrl, operatingHours: editHours,
-        specialHours: editSpecialHours, status: "pending_approval",
+        specialHours: editSpecialHours, imageUrls: editImageUrls, status: "pending_approval",
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
@@ -251,6 +256,30 @@ const BusinessDashboard = () => {
       setListings(prev => prev.filter(l => l.id !== id));
       toast.success("Listing deleted");
     } catch (err: any) { toast.error(err.message || "Failed to delete listing"); }
+  };
+
+  const handleEditImageUpload = async (files: FileList) => {
+    if (!user) return;
+    const remaining = 5 - editImageUrls.length;
+    const filesToUpload = Array.from(files).slice(0, remaining);
+    if (filesToUpload.length === 0) { toast.error("Maximum 5 images allowed"); return; }
+    for (const file of filesToUpload) {
+      if (!file.type.startsWith("image/")) { toast.error(`${file.name} is not an image`); return; }
+      if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} exceeds 5MB limit`); return; }
+    }
+    setEditUploadingImages(true);
+    try {
+      const urls: string[] = [];
+      for (const file of filesToUpload) {
+        const ext = file.name.split(".").pop() || "jpg";
+        const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
+        await uploadBytes(storageRef, file);
+        urls.push(await getDownloadURL(storageRef));
+      }
+      setEditImageUrls(prev => [...prev, ...urls]);
+      toast.success(`${urls.length} image(s) uploaded`);
+    } catch (err: any) { toast.error(err.message || "Failed to upload images"); }
+    setEditUploadingImages(false);
   };
 
   const [resubmitting, setResubmitting] = useState<string | null>(null);
@@ -759,9 +788,9 @@ const BusinessDashboard = () => {
                       listing={listing}
                       onSave={async (hours) => {
                         try {
-                          await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours });
-                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours } : l));
-                          toast.success(`Hours updated for ${listing.name}`);
+                          await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours, status: "pending_approval" });
+                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours, status: "pending_approval" } : l));
+                          toast.success(`Hours updated for ${listing.name} — pending admin re-approval.`);
                         } catch (err: any) { toast.error(err.message || "Failed to update hours"); }
                       }}
                     />
@@ -936,6 +965,37 @@ const BusinessDashboard = () => {
                   onClick={() => setEditSpecialHours(prev => [...prev, { date: "", label: "", open: "09:00", close: "18:00", closed: false }])}>
                   <Plus className="w-3.5 h-3.5 mr-1" />Add Special Date
                 </Button>
+              </div>
+              {/* Business Images */}
+              <div className="space-y-3 pt-4 border-t border-border/40">
+                <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Image className="w-4 h-4" />Business Images ({editImageUrls.length}/5)
+                </Label>
+                <p className="text-xs text-muted-foreground">Upload 3–5 high-quality images. Image changes require admin re-approval.</p>
+                {editImageUrls.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2">
+                    {editImageUrls.map((url, idx) => (
+                      <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-border/50">
+                        <img src={url} alt={`Image ${idx + 1}`} className="w-full h-full object-cover" />
+                        <button onClick={() => setEditImageUrls(prev => prev.filter((_, i) => i !== idx))}
+                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {editImageUrls.length < 5 && (
+                  <>
+                    <input ref={editImageInputRef} type="file" accept="image/*" multiple className="hidden"
+                      onChange={(e) => e.target.files && handleEditImageUpload(e.target.files)} />
+                    <Button variant="outline" size="sm" className="rounded-lg text-xs" disabled={editUploadingImages}
+                      onClick={() => editImageInputRef.current?.click()}>
+                      {editUploadingImages ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Upload className="w-3.5 h-3.5 mr-1.5" />}
+                      Upload Images
+                    </Button>
+                  </>
+                )}
               </div>
               {user && (
                 <div className="pt-4 border-t border-border/40">
