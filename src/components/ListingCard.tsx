@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { MapPin, Clock, Heart, Globe, Phone, Navigation } from "lucide-react";
+import { MapPin, Clock, Heart, Globe, Phone, Navigation, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
