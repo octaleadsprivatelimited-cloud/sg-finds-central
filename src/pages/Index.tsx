@@ -405,7 +405,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
 
           {/* Map column - always visible on desktop */}
-          <div className="hidden lg:block lg:w-2/5 self-start sticky top-[72px] h-[calc(100vh-80px)]">
+          <div className="hidden lg:block lg:w-2/5">
             <div className="flex flex-col h-full gap-3">
               <div className="bg-card border border-border rounded-lg overflow-hidden flex-1 min-h-0">
                 <div className="h-full">
