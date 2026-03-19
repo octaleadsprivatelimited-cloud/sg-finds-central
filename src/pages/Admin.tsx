@@ -164,7 +164,7 @@ const Admin = () => {
       name: listing.name, category: listing.category, district: listing.district,
       address: listing.address, phone: listing.phone || "", email: listing.email || "",
       website: listing.website || "", description: listing.description || "",
-      imageUrls: (listing as any).imageUrls || [], logoUrl: listing.logoUrl || "",
+      imageUrls: listing.imageUrls || [], logoUrl: listing.logoUrl || "",
       status: listing.status,
     });
   };
