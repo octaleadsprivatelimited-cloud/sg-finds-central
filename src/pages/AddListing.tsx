@@ -175,6 +175,18 @@ const AddListing = () => {
   const [petOther, setPetOther] = useState("");
   const [handymanSubs, setHandymanSubs] = useState<string[]>([]);
   const [handymanOther, setHandymanOther] = useState("");
+  const [homeFoodSubs, setHomeFoodSubs] = useState<string[]>([]);
+  const [homeFoodOther, setHomeFoodOther] = useState("");
+  const [bakingSubs, setBakingSubs] = useState<string[]>([]);
+  const [bakingOther, setBakingOther] = useState("");
+  const [photoSubs, setPhotoSubs] = useState<string[]>([]);
+  const [photoOther, setPhotoOther] = useState("");
+  const [tailoringSubs, setTailoringSubs] = useState<string[]>([]);
+  const [tailoringOther, setTailoringOther] = useState("");
+  const [eventSubs, setEventSubs] = useState<string[]>([]);
+  const [eventOther, setEventOther] = useState("");
+  const [cleaningSubs, setCleaningSubs] = useState<string[]>([]);
+  const [cleaningOther, setCleaningOther] = useState("");
 
   // ── Screen 4: Service location ──
   const [serviceLocations, setServiceLocations] = useState<string[]>([]);
