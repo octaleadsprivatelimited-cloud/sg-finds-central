@@ -135,7 +135,17 @@ const CityCategory = () => {
             {matchedCategory && (
               <>
                 <ChevronRight className="w-3 h-3" />
-                <span className="text-foreground">{matchedCategory}</span>
+                {activeSub ? (
+                  <Link to={`/${citySlug}/${categorySlug}`} className="hover:text-primary transition-colors">{matchedCategory}</Link>
+                ) : (
+                  <span className="text-foreground">{matchedCategory}</span>
+                )}
+              </>
+            )}
+            {activeSub && subLabel && (
+              <>
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-foreground">{subLabel}</span>
               </>
             )}
           </div>
