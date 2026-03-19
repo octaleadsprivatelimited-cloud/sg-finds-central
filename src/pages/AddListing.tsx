@@ -542,6 +542,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select services *</Label>
                         <ChipSelect options={BEAUTY_SUBS} selected={beautySubs} onChange={setBeautySubs} allowOther otherValue={beautyOther} onOtherChange={setBeautyOther} />
+                        <FieldError show={showErrors && beautySubs.length === 0 && !beautyOther} message="Please select at least one service" />
                       </div>
                     </>
                   )}
