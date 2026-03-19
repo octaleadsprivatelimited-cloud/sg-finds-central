@@ -160,10 +160,10 @@ const BusinessDashboard = () => {
         ...(offerCode ? { code: offerCode } : {}),
       };
       const updatedOffers = [...existingOffers, newOffer];
-      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers });
-      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers } : l));
+      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers, status: "pending_approval" });
+      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers, status: "pending_approval" } : l));
       setOfferTitle(""); setOfferDescription(""); setOfferDiscount(""); setOfferValidUntil(""); setOfferCode("");
-      toast.success("Offer added! It will appear in Exclusive Deals on the homepage.");
+      toast.success("Offer added — pending admin approval before going live.");
     } catch (err: any) { toast.error(err.message || "Failed to add offer"); }
     setOfferSaving(false);
   };
