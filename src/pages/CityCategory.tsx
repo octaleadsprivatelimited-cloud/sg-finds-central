@@ -11,40 +11,107 @@ import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
-// Subcategory images
-import nailsImg from "@/assets/subcategories/nails.jpg";
-import lashesImg from "@/assets/subcategories/lashes.jpg";
-import browsImg from "@/assets/subcategories/brows.jpg";
-import hairImg from "@/assets/subcategories/hair.jpg";
-import makeupImg from "@/assets/subcategories/makeup.jpg";
-import musicImg from "@/assets/subcategories/music.jpg";
-import artImg from "@/assets/subcategories/art.jpg";
-import craftImg from "@/assets/subcategories/craft.jpg";
-import dogWalkingImg from "@/assets/subcategories/dog-walking.jpg";
-import petSittingImg from "@/assets/subcategories/pet-sitting.jpg";
-import groomingImg from "@/assets/subcategories/basic-grooming.jpg";
-import carpenterImg from "@/assets/subcategories/carpenter.jpg";
-import plumberImg from "@/assets/subcategories/plumber.jpg";
-import electricalImg from "@/assets/subcategories/minor-electrical.jpg";
-import paintingImg from "@/assets/subcategories/patching-painting.jpg";
-import mathsImg from "@/assets/subcategories/maths.jpg";
-import englishImg from "@/assets/subcategories/english.jpg";
-import biologyImg from "@/assets/subcategories/biology.jpg";
-import physicsImg from "@/assets/subcategories/physics.jpg";
-import chemistryImg from "@/assets/subcategories/chemistry.jpg";
-import economicsImg from "@/assets/subcategories/economics.jpg";
-import languagesImg from "@/assets/subcategories/languages.jpg";
+// Subcategory images — all WebP for fast loading
+// Beauty
+import nailsImg from "@/assets/subcategories/nails.webp";
+import lashesImg from "@/assets/subcategories/lashes.webp";
+import browsImg from "@/assets/subcategories/brows.webp";
+import hairImg from "@/assets/subcategories/hair.webp";
+import makeupImg from "@/assets/subcategories/makeup.webp";
+// Music / Art / Craft
+import musicImg from "@/assets/subcategories/music.webp";
+import artImg from "@/assets/subcategories/art.webp";
+import craftImg from "@/assets/subcategories/craft.webp";
+// Pet Services
+import dogWalkingImg from "@/assets/subcategories/dog-walking.webp";
+import petSittingImg from "@/assets/subcategories/pet-sitting.webp";
+import groomingImg from "@/assets/subcategories/basic-grooming.webp";
+// Handyman
+import carpenterImg from "@/assets/subcategories/carpenter.webp";
+import plumberImg from "@/assets/subcategories/plumber.webp";
+import electricalImg from "@/assets/subcategories/minor-electrical.webp";
+import paintingImg from "@/assets/subcategories/patching-painting.webp";
+// Tuition
+import mathsImg from "@/assets/subcategories/maths.webp";
+import englishImg from "@/assets/subcategories/english.webp";
+import biologyImg from "@/assets/subcategories/biology.webp";
+import physicsImg from "@/assets/subcategories/physics.webp";
+import chemistryImg from "@/assets/subcategories/chemistry.webp";
+import economicsImg from "@/assets/subcategories/economics.webp";
+import languagesImg from "@/assets/subcategories/languages.webp";
+// Home Food
+import malayCuisineImg from "@/assets/subcategories/malay-cuisine.webp";
+import indianCuisineImg from "@/assets/subcategories/indian-cuisine.webp";
+import chineseCuisineImg from "@/assets/subcategories/chinese-cuisine.webp";
+import westernCuisineImg from "@/assets/subcategories/western-cuisine.webp";
+import vegetarianVeganImg from "@/assets/subcategories/vegetarian-vegan.webp";
+import mealPrepImg from "@/assets/subcategories/meal-prep.webp";
+// Baking
+import cakesImg from "@/assets/subcategories/cakes.webp";
+import cookiesImg from "@/assets/subcategories/cookies.webp";
+import pastriesImg from "@/assets/subcategories/pastries.webp";
+import breadImg from "@/assets/subcategories/bread.webp";
+import cupcakesImg from "@/assets/subcategories/cupcakes.webp";
+import customCakesImg from "@/assets/subcategories/custom-cakes.webp";
+// Photography / Videography
+import portraitImg from "@/assets/subcategories/portrait.webp";
+import eventWeddingImg from "@/assets/subcategories/event-wedding.webp";
+import productImg from "@/assets/subcategories/product.webp";
+import videographyImg from "@/assets/subcategories/videography.webp";
+import droneImg from "@/assets/subcategories/drone.webp";
+// Tailoring
+import alterationsImg from "@/assets/subcategories/alterations.webp";
+import customClothingImg from "@/assets/subcategories/custom-clothing.webp";
+import curtainsImg from "@/assets/subcategories/curtains.webp";
+import traditionalWearImg from "@/assets/subcategories/traditional-wear.webp";
+// Event Services
+import balloonDecorationImg from "@/assets/subcategories/balloon-decoration.webp";
+import partyPlanningImg from "@/assets/subcategories/party-planning.webp";
+import cateringCoordinationImg from "@/assets/subcategories/catering-coordination.webp";
+import floralImg from "@/assets/subcategories/floral.webp";
+import photoBoothImg from "@/assets/subcategories/photo-booth.webp";
+// Cleaning
+import regularCleaningImg from "@/assets/subcategories/regular-cleaning.webp";
+import deepCleaningImg from "@/assets/subcategories/deep-cleaning.webp";
+import moveInOutImg from "@/assets/subcategories/move-in-out.webp";
+import postRenovationImg from "@/assets/subcategories/post-renovation.webp";
+import springCleaningImg from "@/assets/subcategories/spring-cleaning.webp";
 
 const SUBCATEGORY_IMAGES: Record<string, string> = {
+  // Beauty
   nails: nailsImg, lashes: lashesImg, brows: browsImg, hair: hairImg, makeup: makeupImg,
+  // Music / Art / Craft
   music: musicImg, art: artImg, craft: craftImg,
+  // Pet Services
   "dog-walking": dogWalkingImg, "pet-sitting": petSittingImg, "basic-grooming": groomingImg,
+  // Handyman
   carpenter: carpenterImg, plumber: plumberImg, "minor-electrical": electricalImg, "patching-painting": paintingImg,
+  // Tuition
   maths: mathsImg, english: englishImg, biology: biologyImg, physics: physicsImg,
   chemistry: chemistryImg, economics: economicsImg,
   hindi: languagesImg, chinese: languagesImg, spanish: languagesImg,
   french: languagesImg, tamil: languagesImg, malay: languagesImg,
+  // Home Food
+  "malay-cuisine": malayCuisineImg, "indian-cuisine": indianCuisineImg,
+  "chinese-cuisine": chineseCuisineImg, "western-cuisine": westernCuisineImg,
+  "vegetarian-vegan": vegetarianVeganImg, "meal-prep": mealPrepImg,
+  // Baking
+  cakes: cakesImg, cookies: cookiesImg, pastries: pastriesImg,
+  bread: breadImg, cupcakes: cupcakesImg, "custom-cakes": customCakesImg,
+  // Photography / Videography
+  portrait: portraitImg, "event-wedding": eventWeddingImg, product: productImg,
+  videography: videographyImg, drone: droneImg,
+  // Tailoring
+  alterations: alterationsImg, "custom-clothing": customClothingImg,
+  curtains: curtainsImg, "traditional-wear": traditionalWearImg,
+  // Event Services
+  "balloon-decoration": balloonDecorationImg, "party-planning": partyPlanningImg,
+  "catering-coordination": cateringCoordinationImg, floral: floralImg, "photo-booth": photoBoothImg,
+  // Cleaning
+  "regular-cleaning": regularCleaningImg, "deep-cleaning": deepCleaningImg,
+  "move-in-out": moveInOutImg, "post-renovation": postRenovationImg, "spring-cleaning": springCleaningImg,
 };
+
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
     id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
@@ -247,7 +314,13 @@ const CityCategory = () => {
                     >
                       <div className="aspect-square overflow-hidden">
                         {img ? (
-                          <img src={img} alt={sub.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                          <img
+                            src={img}
+                            alt={sub.label}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            loading="lazy"
+                            decoding="async"
+                          />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-muted to-secondary flex items-center justify-center">
                             <Building2 className="w-6 h-6 text-muted-foreground" />
