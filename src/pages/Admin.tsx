@@ -158,7 +158,31 @@ const Admin = () => {
     setActionLoading(null);
   };
 
-  const stats = useMemo(() => ({
+  const openAdminEdit = (listing: Listing) => {
+    setEditingListing(listing);
+    setAdminEditData({
+      name: listing.name, category: listing.category, district: listing.district,
+      address: listing.address, phone: listing.phone || "", email: listing.email || "",
+      website: listing.website || "", description: listing.description || "",
+      imageUrls: (listing as any).imageUrls || [], logoUrl: listing.logoUrl || "",
+      status: listing.status,
+    });
+  };
+
+  const saveAdminEdit = async () => {
+    if (!editingListing) return;
+    setAdminSaving(true);
+    try {
+      await updateDoc(doc(db, "listings", editingListing.id), adminEditData);
+      setAllListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...adminEditData } : l));
+      setPendingListings(prev => prev.filter(l => l.id !== editingListing.id || adminEditData.status === "pending_approval")
+        .map(l => l.id === editingListing.id ? { ...l, ...adminEditData } : l));
+      setEditingListing(null);
+      toast.success("Listing updated by admin");
+    } catch { toast.error("Failed to update"); }
+    setAdminSaving(false);
+  };
+
     total: allListings.length,
     pending: pendingListings.length,
     approved: allListings.filter((l) => l.status === "approved").length,
