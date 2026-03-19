@@ -813,6 +813,7 @@ const AddListing = () => {
                       onChange={e => setContactEmail(e.target.value)}
                       placeholder="info@yourbusiness.com"
                     />
+                    <FieldError show={showErrors && (!contactEmail || !/\S+@\S+\.\S+/.test(contactEmail))} message="Valid email address is required" />
                   </div>
 
                   <div className="space-y-2">
