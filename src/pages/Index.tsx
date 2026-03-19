@@ -9,6 +9,7 @@ import CategoryHighlights from "@/components/CategoryHighlights";
 import CategoryGrid from "@/components/CategoryGrid";
 import PromoBanner from "@/components/PromoBanner";
 import MapView from "@/components/MapView";
+import { Link } from "react-router-dom";
 import MobileFiltersMap from "@/components/MobileFiltersMap";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
 import { MapPin, SlidersHorizontal, Search } from "lucide-react";
