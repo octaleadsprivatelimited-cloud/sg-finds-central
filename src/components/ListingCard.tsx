@@ -80,21 +80,17 @@ interface ListingCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  "Food & Beverage": "from-orange-500 to-red-500",
-  "Retail & Shopping": "from-sky-500 to-blue-600",
-  "Healthcare & Medical": "from-emerald-500 to-teal-600",
-  "Education & Training": "from-indigo-500 to-blue-700",
-  "Professional Services": "from-slate-500 to-slate-700",
-  "Beauty & Wellness": "from-pink-500 to-rose-600",
-  "Home Services": "from-amber-500 to-orange-600",
-  "Automotive": "from-zinc-500 to-zinc-700",
-  "Technology & IT": "from-violet-500 to-purple-700",
-  "Real Estate": "from-cyan-500 to-blue-600",
-  "Legal Services": "from-yellow-600 to-amber-700",
-  "Financial Services": "from-green-500 to-emerald-700",
-  "Logistics & Transport": "from-stone-500 to-stone-700",
-  "Events & Entertainment": "from-rose-500 to-pink-700",
-  "Construction & Renovation": "from-orange-600 to-amber-700",
+  "Tuition": "from-blue-500 to-indigo-600",
+  "Baking": "from-amber-400 to-orange-500",
+  "Music / Art / Craft": "from-purple-500 to-pink-600",
+  "Home Food": "from-orange-500 to-red-500",
+  "Beauty": "from-pink-500 to-rose-600",
+  "Pet Services": "from-emerald-500 to-teal-600",
+  "Event Services": "from-rose-500 to-pink-700",
+  "Tailoring": "from-violet-500 to-purple-700",
+  "Cleaning": "from-sky-500 to-blue-600",
+  "Handyman": "from-amber-500 to-orange-600",
+  "Photography / Videography": "from-slate-500 to-slate-700",
 };
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -183,110 +179,110 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   return (
     <div
       data-listing-id={listing.id}
-      className={`bg-card border border-border p-4 md:p-5 cursor-pointer transition-all duration-200 hover:bg-accent/5 ${highlighted ? "ring-2 ring-primary bg-primary/5" : ""}`}
+      className={`bg-card rounded-lg border border-border p-4 cursor-pointer transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] ${
+        highlighted ? "ring-2 ring-primary shadow-[var(--shadow-card-hover)]" : "shadow-[var(--shadow-card)]"
+      }`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
       <div className="flex gap-4">
         {/* Left: Image */}
-        <div className="w-[100px] h-[100px] md:w-[130px] md:h-[110px] shrink-0 rounded-lg overflow-hidden bg-muted border border-border">
+        <div className="w-[140px] h-[130px] md:w-[200px] md:h-[160px] shrink-0 rounded-md overflow-hidden bg-muted">
           {listing.logoUrl ? (
             <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
           ) : listing.coverImage ? (
             <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <span className="text-2xl md:text-3xl font-bold text-white/90">{listing.name.charAt(0)}</span>
+              <span className="text-3xl md:text-4xl font-bold text-white/90">{listing.name.charAt(0)}</span>
             </div>
           )}
         </div>
 
-        {/* Middle: Info */}
+        {/* Right: Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <h3 className="font-semibold text-primary text-sm md:text-base hover:underline truncate">
-                {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
-                {listing.name}
-              </h3>
-              <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{listing.category}</p>
-            </div>
+          {/* Title */}
+          <h3 className="font-bold text-foreground text-base md:text-lg leading-tight">
+            {index !== undefined && <span className="text-muted-foreground mr-1.5">{index}.</span>}
+            <span className="text-primary hover:underline">{listing.name}</span>
+          </h3>
 
-            {/* Right: Phone & Address */}
-            <div className="hidden sm:flex flex-col items-end shrink-0 gap-1">
-              {listing.phone && (
-                <button
-                  onClick={handlePhoneClick}
-                  className="text-sm md:text-base font-bold text-foreground hover:text-primary transition-colors"
-                >
-                  {listing.phone}
-                </button>
-              )}
-              <p className="text-[11px] md:text-xs text-muted-foreground text-right max-w-[180px]">
-                {listing.address}
-              </p>
-              {isOpen === true && (
-                <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                  <Clock className="w-3 h-3" />
-                  OPEN NOW
-                </span>
-              )}
-              {isOpen === false && (
-                <span className="flex items-center gap-1 text-[11px] text-destructive">
-                  <Clock className="w-3 h-3" />
-                  {nextOpenInfo || "Closed"}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Action links */}
-          <div className="flex items-center gap-3 mt-2">
-            {listing.website && (
-              <button onClick={handleWebsiteClick} className="text-xs font-medium text-primary hover:underline flex items-center gap-1">
-                <Globe className="w-3 h-3" />Website
-              </button>
+          {/* Location + Open status */}
+          <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{listing.district}</span>
+            {listing.priceRange && (
+              <>
+                <span>•</span>
+                <span>{listing.priceRange}</span>
+              </>
             )}
-            <button onClick={handleClick} className="text-xs font-medium text-primary hover:underline">
-              More Info
-            </button>
+            {isOpen === true && (
+              <>
+                <span>•</span>
+                <span className="text-[hsl(var(--success))] font-semibold">Open</span>
+              </>
+            )}
+            {isOpen === false && (
+              <>
+                <span>•</span>
+                <span className="text-destructive font-medium">{nextOpenInfo || "Closed"}</span>
+              </>
+            )}
           </div>
+
+          {/* Distance */}
+          {distanceKm != null && (
+            <p className="text-xs text-muted-foreground mt-1">
+              {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m away` : `${distanceKm.toFixed(1)} km away`}
+            </p>
+          )}
 
           {/* Description */}
           {listing.description && (
-            <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
+            <p className="text-sm text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
               {listing.description}
             </p>
           )}
 
-          {/* Badge row */}
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
+          {/* Tags */}
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            <span className="px-2.5 py-0.5 rounded-md border border-border text-xs font-medium text-foreground bg-secondary">
+              {listing.category}
+            </span>
             {listing.verified && (
-              <span className="inline-flex items-center gap-1 text-[10px] md:text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="px-2.5 py-0.5 rounded-md border border-[hsl(var(--success))]/30 text-xs font-medium text-[hsl(var(--success))] bg-[hsl(var(--success))]/10">
                 ✓ Verified
               </span>
             )}
-            {distanceKm != null && (
-              <span className="inline-flex items-center gap-1 text-[10px] md:text-[11px] font-medium text-primary">
-                <MapPin className="w-3 h-3" />
-                {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)} km`}
-              </span>
-            )}
-            {listing.priceRange && (
-              <span className="text-[10px] md:text-[11px] text-muted-foreground">{listing.priceRange}</span>
-            )}
           </div>
 
-          {/* Mobile: phone & status */}
-          <div className="flex items-center gap-3 mt-2 sm:hidden">
-            {listing.phone && (
-              <button onClick={handlePhoneClick} className="text-xs font-bold text-foreground flex items-center gap-1">
-                <Phone className="w-3 h-3" />{listing.phone}
-              </button>
-            )}
-            {isOpen === true && (
-              <span className="text-[11px] font-semibold text-emerald-600">OPEN NOW</span>
+          {/* Actions */}
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center gap-3">
+              {listing.website && (
+                <button onClick={handleWebsiteClick} className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
+                  <Globe className="w-3.5 h-3.5" />Website
+                </button>
+              )}
+              {listing.phone && (
+                <button onClick={handlePhoneClick} className="text-sm font-medium text-foreground hover:text-primary flex items-center gap-1 transition-colors">
+                  <Phone className="w-3.5 h-3.5" />{listing.phone}
+                </button>
+              )}
+            </div>
+            {listing.lat && listing.lng && (
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                Get Directions
+              </a>
             )}
           </div>
         </div>

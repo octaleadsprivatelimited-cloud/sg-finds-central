@@ -33,7 +33,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
-  // Map is always shown by default
   useEffect(() => { setShowMap(true); }, [setShowMap]);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
@@ -67,7 +66,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     setSearchListings(listings.map((l) => ({ id: l.id, name: l.name, category: l.category, district: l.district })));
   }, [listings, setSearchListings]);
 
-  // Register pincode search handler globally
   useEffect(() => {
     setOnPincodeSearch(() => handlePincodeSearch);
     return () => setOnPincodeSearch(null);
@@ -156,37 +154,92 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   }, [filtered, sortBy]);
 
   const CATEGORY_NAV = [
-    { value: "Tuition", label: "Tuition", emoji: "📚" },
-    { value: "Baking", label: "Baking", emoji: "🧁" },
-    { value: "Music / Art / Craft", label: "Music / Art", emoji: "🎵" },
-    { value: "Home Food", label: "Home Food", emoji: "🍱" },
-    { value: "Beauty", label: "Beauty", emoji: "💅" },
-    { value: "Pet Services", label: "Pet Services", emoji: "🐾" },
-    { value: "Event Services", label: "Events", emoji: "🎈" },
-    { value: "Tailoring", label: "Tailoring", emoji: "🧵" },
-    { value: "Cleaning", label: "Cleaning", emoji: "🧹" },
-    { value: "Handyman", label: "Handyman", emoji: "🔧" },
-    { value: "Photography / Videography", label: "Photo / Video", emoji: "📸" },
+    { value: "Tuition", label: "Tuition" },
+    { value: "Baking", label: "Baking" },
+    { value: "Music / Art / Craft", label: "Music / Art" },
+    { value: "Home Food", label: "Home Food" },
+    { value: "Beauty", label: "Beauty" },
+    { value: "Pet Services", label: "Pet Services" },
+    { value: "Event Services", label: "Events" },
+    { value: "Tailoring", label: "Tailoring" },
+    { value: "Cleaning", label: "Cleaning" },
+    { value: "Handyman", label: "Handyman" },
+    { value: "Photography / Videography", label: "Photo / Video" },
   ];
 
   return (
     <div className="min-h-screen bg-background">
 
-      {/* ═══ CATEGORY NAV BAR ═══ */}
+      {/* ═══ FILTER CHIPS BAR (Yelp-style) ═══ */}
       <div className="border-b border-border bg-card">
         <div className="container mx-auto px-3 md:px-4">
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-2">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2.5">
+            {/* All filter */}
+            <button
+              onClick={() => {
+                setCategory("All Categories");
+                setRadiusKm(null);
+                setOpenNow(false);
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                !hasActiveFilters
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-foreground border-border hover:border-foreground/30"
+              }`}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              All
+            </button>
+
+            {/* Open Now */}
+            <button
+              onClick={() => setOpenNow(!openNow)}
+              className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                openNow
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-foreground border-border hover:border-foreground/30"
+              }`}
+            >
+              Open Now
+            </button>
+
+            {/* Distance chips */}
+            {[
+              { label: "500m", value: 0.5 },
+              { label: "1 km", value: 1 },
+              { label: "2 km", value: 2 },
+              { label: "5 km", value: 5 },
+            ].map((opt) => (
+              <button
+                key={opt.label}
+                onClick={() => {
+                  setRadiusKm(radiusKm === opt.value ? null : opt.value);
+                  if (opt.value && !userLocation) handleDetectLocation();
+                }}
+                className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                  radiusKm === opt.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-foreground border-border hover:border-foreground/30"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+
+            {/* Divider */}
+            <div className="w-px h-5 bg-border shrink-0" />
+
+            {/* Category chips */}
             {CATEGORY_NAV.map((c) => (
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
+                className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
                   category === c.value
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-foreground border-border hover:border-foreground/30"
                 }`}
               >
-                <span>{c.emoji}</span>
                 {c.label}
               </button>
             ))}
@@ -194,124 +247,101 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </div>
       </div>
 
-      {/* ═══ DISTANCE FILTER BAR ═══ */}
-      <div className="border-b border-border bg-card/80">
-        <div className="container mx-auto px-3 md:px-4">
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1.5">
-            <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            <span className="text-xs text-muted-foreground shrink-0">Distance:</span>
-            {[
-              { label: "500m", value: 0.5 },
-              { label: "1 km", value: 1 },
-              { label: "2 km", value: 2 },
-              { label: "3 km", value: 3 },
-              { label: "5 km", value: 5 },
-              { label: "All SG", value: null as number | null },
-            ].map((opt) => (
-              <button
-                key={opt.label}
-                onClick={() => {
-                  setRadiusKm(opt.value);
-                  if (opt.value && !userLocation) handleDetectLocation();
-                }}
-                className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
-                  radiusKm === opt.value
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+      {/* ═══ MAIN CONTENT ═══ */}
+      <div className="container mx-auto px-3 md:px-4">
+        <div className="flex gap-0">
+
+          {/* ── LEFT: Listings panel ── */}
+          <div className="min-w-0 w-full lg:w-[58%] lg:border-r lg:border-border lg:pr-5">
+
+            {/* Breadcrumb + Sort row */}
+            <div className="flex items-center justify-between pt-4 pb-3">
+              <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+                <ChevronRight className="w-3 h-3" />
+                <span>Singapore</span>
+                {category !== "All Categories" && (
+                  <>
+                    <ChevronRight className="w-3 h-3" />
+                    <span className="text-foreground font-medium">{category}</span>
+                  </>
+                )}
+              </nav>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <span className="hidden sm:inline">Sort:</span>
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                  <SelectTrigger className="h-8 w-auto border-0 shadow-none text-sm font-semibold text-foreground p-0 gap-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Recommended</SelectItem>
+                    <SelectItem value="name">Name A–Z</SelectItem>
+                    <SelectItem value="distance">Distance</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Results heading */}
+            <h1 className="text-xl md:text-2xl font-bold text-foreground mb-1">
+              {category !== "All Categories" ? category : "All Results"}
+              {" "}
+              <span className="font-normal text-muted-foreground text-base">
+                Near Singapore
+              </span>
+            </h1>
+            <p className="text-sm text-muted-foreground mb-4">
+              {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
+              {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
+            </p>
+
+            {/* Listings (scrollable) */}
+            <div className="max-h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide pb-6">
+              <div className="space-y-4">
+                {sortedFiltered.length === 0 ? (
+                  <div className="text-center py-16 bg-card rounded-lg border border-border">
+                    <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
+                      <MapPin className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-foreground font-semibold">No businesses found</p>
+                    <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
+                  </div>
+                ) : (
+                  sortedFiltered.map((listing, idx) => (
+                    <ListingCard
+                      key={listing.id}
+                      listing={listing}
+                      index={idx + 1}
+                      highlighted={hoveredListingId === listing.id}
+                      onHover={setHoveredListingId}
+                      distanceKm={getListingDistance(listing)}
+                      onSelect={(l) => {
+                        setSelectedListing(l);
+                        if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
+                      }}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT: Map panel (sticky, Yelp-style) ── */}
+          <div className="hidden lg:block lg:w-[42%]">
+            <div className="sticky top-0 h-[calc(100vh-64px)]">
+              <MapView
+                listings={sortedFiltered}
+                selectedId={selectedListing?.id}
+                hoveredId={hoveredListingId}
+                onHoverListing={setHoveredListingId}
+                onSelectListing={setSelectedListing}
+                center={mapCenter}
+                radiusKm={radiusKm}
+              />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* ═══ MAIN CONTENT ═══ */}
-      <section className="container mx-auto px-3 md:px-4 pt-3 md:pt-5 pb-4 md:pb-8">
-
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
-          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-          <ChevronRight className="w-3 h-3" />
-          <span>Singapore</span>
-          {category !== "All Categories" && (
-            <>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{category}</span>
-            </>
-          )}
-        </nav>
-
-        {/* Split layout: Listings + Map */}
-        <div className="flex gap-5">
-          {/* Listings column - scrollable */}
-          <div className="min-w-0 w-full lg:w-3/5 max-h-[calc(100vh-180px)] overflow-y-auto scrollbar-hide">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground">
-                {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
-                {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
-              </p>
-            </div>
-
-            <div className="divide-y divide-border border border-border rounded-lg overflow-hidden">
-              {sortedFiltered.length === 0 ? (
-                <div className="text-center py-16 bg-card">
-                  <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                  <p className="text-muted-foreground font-medium">No businesses found</p>
-                  <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
-                </div>
-              ) : (
-                sortedFiltered.map((listing, idx) => (
-                  <ListingCard
-                    key={listing.id}
-                    listing={listing}
-                    index={idx + 1}
-                    highlighted={hoveredListingId === listing.id}
-                    onHover={setHoveredListingId}
-                    distanceKm={getListingDistance(listing)}
-                    onSelect={(l) => {
-                      setSelectedListing(l);
-                      if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
-                    }}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Map column - sticky on desktop */}
-          <div className="hidden lg:block lg:w-2/5">
-            <div className="sticky top-4 flex flex-col gap-3">
-              <div className="bg-card border border-border rounded-lg overflow-hidden h-[calc(100vh-220px)]">
-                <MapView
-                  listings={sortedFiltered}
-                  selectedId={selectedListing?.id}
-                  hoveredId={hoveredListingId}
-                  onHoverListing={setHoveredListingId}
-                  onSelectListing={setSelectedListing}
-                  center={mapCenter}
-                  radiusKm={radiusKm}
-                />
-              </div>
-
-              {/* Sidebar CTA */}
-              <div className="border border-border rounded-lg bg-card p-5 text-center">
-                <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
-                <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
-                <Link to="/add-listing">
-                  <Button className="w-full bg-primary text-primary-foreground font-bold">
-                    Claim Your Listing
-                  </Button>
-                </Link>
-                <p className="text-[10px] text-muted-foreground mt-2">or email hello@nearly.sg</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ═══ CATEGORY GRID ═══ */}
       {!hasActiveFilters && (
@@ -329,7 +359,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           <CategoryHighlights />
         </section>
       )}
-
 
     </div>
   );

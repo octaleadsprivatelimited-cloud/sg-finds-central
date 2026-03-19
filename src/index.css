@@ -6,36 +6,36 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 20% 14%;
+    --background: 0 0% 97%;
+    --foreground: 0 0% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 14%;
+    --card-foreground: 0 0% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 14%;
+    --popover-foreground: 0 0% 13%;
 
-    --primary: 225 73% 57%;
+    --primary: 4 84% 44%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 225 80% 65%;
+    --primary-glow: 4 84% 50%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 20% 30%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 30%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 225 73% 57%;
+    --accent: 4 84% 44%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 225 73% 57%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 4 84% 44%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
 
     --success: 152 69% 40%;
     --success-foreground: 0 0% 100%;
@@ -44,58 +44,57 @@
     --info: 210 100% 56%;
     --info-foreground: 0 0% 100%;
 
-    /* Hyper theme tokens */
-    --header-bg: 225 50% 25%;
+    --header-bg: 4 84% 44%;
     --header-foreground: 0 0% 100%;
-    --announcement-bg: 225 73% 57%;
+    --announcement-bg: 0 0% 13%;
     --announcement-foreground: 0 0% 100%;
     --nav-bg: 0 0% 100%;
-    --nav-border: 220 13% 91%;
-    --hero-overlay: 225 50% 20%;
+    --nav-border: 0 0% 90%;
+    --hero-overlay: 0 0% 10%;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-foreground: 0 0% 26%;
+    --sidebar-primary: 0 0% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 225 73% 57%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 4 84% 44%;
 
-    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.04), 0 1px 2px -1px hsl(0 0% 0% / 0.04);
-    --shadow-card-hover: 0 10px 30px -5px hsl(0 0% 0% / 0.1);
-    --shadow-primary: 0 4px 14px 0 hsl(225 73% 57% / 0.25);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.06), 0 1px 2px -1px hsl(0 0% 0% / 0.06);
+    --shadow-card-hover: 0 4px 12px -2px hsl(0 0% 0% / 0.12);
+    --shadow-primary: 0 4px 14px 0 hsl(4 84% 44% / 0.25);
   }
 
   .dark {
-    --background: 225 30% 6%;
-    --foreground: 210 40% 96%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 93%;
 
-    --card: 225 30% 9%;
-    --card-foreground: 210 40% 96%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 93%;
 
-    --popover: 225 30% 9%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 93%;
 
-    --primary: 225 73% 62%;
+    --primary: 4 84% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 225 80% 70%;
+    --primary-glow: 4 84% 55%;
 
-    --secondary: 220 25% 14%;
-    --secondary-foreground: 210 40% 80%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 80%;
 
-    --muted: 220 25% 14%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 225 73% 62%;
+    --accent: 4 84% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 63% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
-    --ring: 225 73% 62%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 4 84% 50%;
 
     --success: 152 69% 45%;
     --success-foreground: 0 0% 100%;
@@ -104,23 +103,23 @@
     --info: 210 100% 56%;
     --info-foreground: 0 0% 100%;
 
-    --header-bg: 225 40% 10%;
+    --header-bg: 4 84% 38%;
     --header-foreground: 0 0% 100%;
-    --announcement-bg: 225 73% 50%;
+    --announcement-bg: 0 0% 10%;
     --announcement-foreground: 0 0% 100%;
 
-    --sidebar-background: 225 30% 8%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 210 40% 96%;
-    --sidebar-primary-foreground: 225 30% 8%;
-    --sidebar-accent: 220 25% 14%;
-    --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 220 20% 18%;
-    --sidebar-ring: 225 73% 62%;
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 0% 96%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 16%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 4 84% 50%;
 
     --shadow-card: 0 2px 20px -2px hsl(0 0% 0% / 0.3);
-    --shadow-card-hover: 0 12px 40px -8px hsl(0 0% 0% / 0.5);
-    --shadow-primary: 0 8px 30px -4px hsl(225 73% 62% / 0.3);
+    --shadow-card-hover: 0 8px 30px -6px hsl(0 0% 0% / 0.4);
+    --shadow-primary: 0 8px 30px -4px hsl(4 84% 50% / 0.3);
   }
 }
 
