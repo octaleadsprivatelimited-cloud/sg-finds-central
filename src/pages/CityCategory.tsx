@@ -238,20 +238,25 @@ const CityCategory = () => {
             {showSubcategoryPicker ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {subcategories.map((sub) => {
-                  const Icon = SUBCATEGORY_ICONS[sub.value] || Building2;
-                  const colorClass = SUBCATEGORY_COLORS[sub.value] || "bg-muted text-muted-foreground";
+                  const img = SUBCATEGORY_IMAGES[sub.value];
                   return (
                     <button
                       key={sub.value}
                       onClick={() => setSearchParams({ sub: sub.value })}
-                      className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-200 group active:scale-95"
+                      className="relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-200 group active:scale-95"
                     >
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${colorClass} group-hover:scale-110 transition-transform duration-200`}>
-                        <Icon className="w-5 h-5" />
+                      <div className="aspect-[4/3] overflow-hidden">
+                        {img ? (
+                          <img src={img} alt={sub.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-muted to-secondary flex items-center justify-center">
+                            <Building2 className="w-8 h-8 text-muted-foreground" />
+                          </div>
+                        )}
                       </div>
-                      <div className="text-center">
+                      <div className="p-2.5 text-center">
                         <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
                           {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
                         </p>
                       </div>
