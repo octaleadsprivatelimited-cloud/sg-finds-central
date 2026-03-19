@@ -172,9 +172,9 @@ const BusinessDashboard = () => {
     try {
       const listing = listings.find(l => l.id === listingId);
       const updatedOffers = (listing?.offers || []).filter(o => o.id !== offerId);
-      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers });
-      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers } : l));
-      toast.success("Offer removed");
+      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers, status: "pending_approval" });
+      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers, status: "pending_approval" } : l));
+      toast.success("Offer removed — pending admin re-approval.");
     } catch (err: any) { toast.error(err.message || "Failed to remove offer"); }
   };
 
