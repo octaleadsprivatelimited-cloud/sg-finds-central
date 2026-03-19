@@ -902,15 +902,30 @@ const AddListing = () => {
 
               {/* ── Navigation ── */}
               <div className="flex justify-between mt-8 pt-6 border-t border-border">
-                <Button variant="outline" onClick={() => setStepIndex(i => i - 1)} disabled={stepIndex === 0}>
+                <Button variant="outline" onClick={() => { setShowErrors(false); setStepIndex(i => i - 1); }} disabled={stepIndex === 0}>
                   <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
                 </Button>
                 {!isLastStep ? (
-                  <Button onClick={() => setStepIndex(i => i + 1)} disabled={!canProceed()}>
+                  <Button onClick={() => {
+                    if (canProceed()) {
+                      setShowErrors(false);
+                      setStepIndex(i => i + 1);
+                    } else {
+                      setShowErrors(true);
+                      toast.error("Please fill in all required fields");
+                    }
+                  }}>
                     Next <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={loading || !canProceed()}>
+                  <Button onClick={() => {
+                    if (canProceed()) {
+                      handleSubmit();
+                    } else {
+                      setShowErrors(true);
+                      toast.error("Please fill in all required fields");
+                    }
+                  }} disabled={loading}>
                     {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Submit Listing
                   </Button>
