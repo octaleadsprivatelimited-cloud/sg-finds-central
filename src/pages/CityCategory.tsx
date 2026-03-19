@@ -2,7 +2,13 @@ import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useMemo, useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { MapPin, Building2, ArrowLeft, ChevronRight, Loader2 } from "lucide-react";
+import {
+  MapPin, Building2, ArrowLeft, ChevronRight, Loader2, LayoutGrid,
+  Calculator, BookOpen, Leaf, Atom, FlaskConical, TrendingUp,
+  Languages, Music, Palette, Scissors, Sparkles, Eye, EyeOff,
+  PaintBucket, Dog, Cat, Bath, Hammer, Wrench, Zap, PaintRoller,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
