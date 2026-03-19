@@ -119,13 +119,11 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
 
           {/* Mobile: search + GPS + Map + hamburger */}
           <div className="flex items-center gap-2 flex-1 md:hidden">
-            {isHomePage && (
-              <SearchWithSuggestions
-                compact
-                placeholder="Search or postal code..."
-                className="flex-1"
-              />
-            )}
+            <SearchWithSuggestions
+              compact
+              placeholder="Search or postal code..."
+              className="flex-1"
+            />
             <div className="flex items-center gap-1.5 shrink-0">
               <button
                 className="p-2 rounded-lg hover:bg-secondary transition-colors"
