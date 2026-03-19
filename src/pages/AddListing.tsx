@@ -242,6 +242,10 @@ const AddListing = () => {
 
   const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 
+  /* ── Inline error helper ── */
+  const FieldError = ({ show, message }: { show: boolean; message: string }) =>
+    show ? <p className="text-xs font-medium text-destructive mt-1">{message}</p> : null;
+
   const canProceed = (): boolean => {
     if (!currentStep) return false;
     switch (currentStep.key) {
@@ -256,7 +260,10 @@ const AddListing = () => {
         return true;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode;
-      case "description": return wordCount(shortDescription) >= 10 && !!detailedDescription.trim();
+      case "description": {
+        const wc = wordCount(shortDescription);
+        return wc >= 50 && wc <= 100 && !!detailedDescription.trim();
+      }
       case "hours": return true;
       case "images": return imageUrls.length >= 3;
       case "profile": return true;
