@@ -246,27 +246,41 @@ const CityCategory = () => {
             {/* Subcategory picker cards */}
             {showSubcategoryPicker ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {subcategories.map((sub) => (
-                  <button
-                    key={sub.value}
-                    onClick={() => setSearchParams({ sub: sub.value })}
-                    className="p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all text-center group"
-                  >
-                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
-                    </p>
-                  </button>
-                ))}
+                {subcategories.map((sub) => {
+                  const Icon = SUBCATEGORY_ICONS[sub.value] || Building2;
+                  const colorClass = SUBCATEGORY_COLORS[sub.value] || "bg-muted text-muted-foreground";
+                  return (
+                    <button
+                      key={sub.value}
+                      onClick={() => setSearchParams({ sub: sub.value })}
+                      className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-200 group active:scale-95"
+                    >
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${colorClass} group-hover:scale-110 transition-transform duration-200`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
                 {/* View all option */}
                 <button
                   onClick={() => setSearchParams({ sub: "all" })}
-                  className="p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-md transition-all text-center"
+                  className="flex flex-col items-center gap-3 p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-lg transition-all duration-200 active:scale-95"
                 >
-                  <p className="text-sm font-semibold text-primary">View All</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {listings.filter((l) => l.category === matchedCategory).length} listings
-                  </p>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary">
+                    <LayoutGrid className="w-5 h-5" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-primary">View All</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {listings.filter((l) => l.category === matchedCategory).length} listings
+                    </p>
+                  </div>
                 </button>
               </div>
             ) : filtered.length === 0 ? (
