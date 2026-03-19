@@ -170,41 +170,43 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   return (
     <div className="min-h-screen bg-background">
 
-      {/* ═══ FILTER CHIPS BAR (Yelp-style) ═══ */}
-      <div className="border-b border-border bg-card">
-        <div className="container mx-auto px-3 md:px-4">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2.5">
-            {/* All filter */}
+      {/* ═══ MOBILE LAYOUT ═══ */}
+      <div className="lg:hidden">
+        {/* Row 1: Category chips */}
+        <div className="border-b border-border bg-card px-3 py-2">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
-              onClick={() => {
-                setCategory("All Categories");
-                setRadiusKm(null);
-                setOpenNow(false);
-              }}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
-                !hasActiveFilters
+              onClick={() => setCategory("All Categories")}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+                category === "All Categories"
                   ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-foreground border-border hover:border-foreground/30"
+                  : "bg-card text-foreground border-border"
               }`}
             >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
               All
             </button>
+            {CATEGORY_NAV.map((c) => (
+              <button
+                key={c.value}
+                onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+                  category === c.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-foreground border-border"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-            {/* Open Now */}
-            <button
-              onClick={() => setOpenNow(!openNow)}
-              className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
-                openNow
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-foreground border-border hover:border-foreground/30"
-              }`}
-            >
-              Open Now
-            </button>
-
-            {/* Distance chips */}
+        {/* Row 2: Distance chips */}
+        <div className="border-b border-border bg-card px-3 py-2">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+            <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
             {[
+              { label: "All", value: null as number | null },
               { label: "500m", value: 0.5 },
               { label: "1 km", value: 1 },
               { label: "2 km", value: 2 },
@@ -213,153 +215,286 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={opt.label}
                 onClick={() => {
-                  setRadiusKm(radiusKm === opt.value ? null : opt.value);
-                  if (opt.value && !userLocation) handleDetectLocation();
+                  setRadiusKm(opt.value);
+                  if (opt.value !== null && !userLocation) handleDetectLocation();
                 }}
-                className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
                   radiusKm === opt.value
                     ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border hover:border-foreground/30"
+                    : "bg-card text-foreground border-border"
                 }`}
               >
                 {opt.label}
               </button>
             ))}
+            {/* Open Now */}
+            <button
+              onClick={() => setOpenNow(!openNow)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+                openNow
+                  ? "bg-emerald-600 text-white border-emerald-600"
+                  : "bg-card text-foreground border-border"
+              }`}
+            >
+              Open Now
+            </button>
+          </div>
+        </div>
 
-            {/* Divider */}
-            <div className="w-px h-5 bg-border shrink-0" />
+        {/* Row 3: Map */}
+        <div className="h-[200px] relative">
+          <MapView
+            listings={sortedFiltered}
+            selectedId={selectedListing?.id}
+            hoveredId={hoveredListingId}
+            onHoverListing={setHoveredListingId}
+            onSelectListing={setSelectedListing}
+            center={mapCenter}
+            radiusKm={radiusKm}
+          />
+          {/* GPS button overlay */}
+          <div className="absolute top-2 right-2 flex flex-col gap-1">
+            <button
+              onClick={handleDetectLocation}
+              className="w-8 h-8 rounded-lg bg-card/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <MapPin className="w-4 h-4 text-foreground" />
+            </button>
+          </div>
+        </div>
 
-            {/* Category chips */}
-            {CATEGORY_NAV.map((c) => (
+        {/* Results count */}
+        <div className="px-3 pt-3 pb-2 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            <span className="font-semibold text-foreground">{sortedFiltered.length}</span> result{sortedFiltered.length !== 1 ? "s" : ""}
+            {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
+          </p>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+            <SelectTrigger className="h-7 w-auto border-0 shadow-none text-xs font-semibold text-foreground p-0 gap-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Recommended</SelectItem>
+              <SelectItem value="name">Name A–Z</SelectItem>
+              <SelectItem value="distance">Distance</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Listings */}
+        <div className="px-3 pb-6 space-y-3">
+          {sortedFiltered.length === 0 ? (
+            <div className="text-center py-12 bg-card rounded-lg border border-border">
+              <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
+              <p className="text-foreground font-semibold">No businesses found</p>
+              <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+            </div>
+          ) : (
+            sortedFiltered.map((listing, idx) => (
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                index={idx + 1}
+                highlighted={hoveredListingId === listing.id}
+                onHover={setHoveredListingId}
+                distanceKm={getListingDistance(listing)}
+                onSelect={(l) => {
+                  setSelectedListing(l);
+                  if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
+                }}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Category Grid & extras (mobile) */}
+        {!hasActiveFilters && (
+          <section className="px-3 py-4">
+            <CategoryGrid />
+          </section>
+        )}
+        {!hasActiveFilters && <PromoBanner />}
+        {!hasActiveFilters && (
+          <section className="px-3 py-3">
+            <CategoryHighlights />
+          </section>
+        )}
+      </div>
+
+      {/* ═══ DESKTOP LAYOUT ═══ */}
+      <div className="hidden lg:block">
+        {/* Filter chips bar */}
+        <div className="border-b border-border bg-card">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2.5">
               <button
-                key={c.value}
-                onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
-                  category === c.value
+                onClick={() => {
+                  setCategory("All Categories");
+                  setRadiusKm(null);
+                  setOpenNow(false);
+                }}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                  !hasActiveFilters
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-card text-foreground border-border hover:border-foreground/30"
                 }`}
               >
-                {c.label}
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                All
               </button>
-            ))}
+
+              <button
+                onClick={() => setOpenNow(!openNow)}
+                className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                  openNow
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-foreground border-border hover:border-foreground/30"
+                }`}
+              >
+                Open Now
+              </button>
+
+              {[
+                { label: "500m", value: 0.5 },
+                { label: "1 km", value: 1 },
+                { label: "2 km", value: 2 },
+                { label: "5 km", value: 5 },
+              ].map((opt) => (
+                <button
+                  key={opt.label}
+                  onClick={() => {
+                    setRadiusKm(radiusKm === opt.value ? null : opt.value);
+                    if (opt.value && !userLocation) handleDetectLocation();
+                  }}
+                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                    radiusKm === opt.value
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-foreground border-border hover:border-foreground/30"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+
+              <div className="w-px h-5 bg-border shrink-0" />
+
+              {CATEGORY_NAV.map((c) => (
+                <button
+                  key={c.value}
+                  onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
+                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                    category === c.value
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-foreground border-border hover:border-foreground/30"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ═══ MAIN CONTENT ═══ */}
-      <div className="container mx-auto px-3 md:px-4">
-        <div className="flex gap-0">
-
-          {/* ── LEFT: Listings panel ── */}
-          <div className="min-w-0 w-full lg:w-[58%] lg:border-r lg:border-border lg:pr-5">
-
-            {/* Breadcrumb + Sort row */}
-            <div className="flex items-center justify-between pt-4 pb-3">
-              <nav className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-                <ChevronRight className="w-3 h-3" />
-                <span>Singapore</span>
-                {category !== "All Categories" && (
-                  <>
-                    <ChevronRight className="w-3 h-3" />
-                    <span className="text-foreground font-medium">{category}</span>
-                  </>
-                )}
-              </nav>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <span className="hidden sm:inline">Sort:</span>
-                <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                  <SelectTrigger className="h-8 w-auto border-0 shadow-none text-sm font-semibold text-foreground p-0 gap-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Recommended</SelectItem>
-                    <SelectItem value="name">Name A–Z</SelectItem>
-                    <SelectItem value="distance">Distance</SelectItem>
-                  </SelectContent>
-                </Select>
+        {/* Desktop split view */}
+        <div className="container mx-auto px-4">
+          <div className="flex gap-0">
+            {/* LEFT: Listings */}
+            <div className="min-w-0 w-[58%] border-r border-border pr-5">
+              <div className="flex items-center justify-between pt-4 pb-3">
+                <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+                  <ChevronRight className="w-3 h-3" />
+                  <span>Singapore</span>
+                  {category !== "All Categories" && (
+                    <>
+                      <ChevronRight className="w-3 h-3" />
+                      <span className="text-foreground font-medium">{category}</span>
+                    </>
+                  )}
+                </nav>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <span>Sort:</span>
+                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                    <SelectTrigger className="h-8 w-auto border-0 shadow-none text-sm font-semibold text-foreground p-0 gap-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">Recommended</SelectItem>
+                      <SelectItem value="name">Name A–Z</SelectItem>
+                      <SelectItem value="distance">Distance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
 
-            {/* Results heading */}
-            <h1 className="text-xl md:text-2xl font-bold text-foreground mb-1">
-              {category !== "All Categories" ? category : "All Results"}
-              {" "}
-              <span className="font-normal text-muted-foreground text-base">
-                Near Singapore
-              </span>
-            </h1>
-            <p className="text-sm text-muted-foreground mb-4">
-              {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
-              {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
-            </p>
+              <h1 className="text-2xl font-bold text-foreground mb-1">
+                {category !== "All Categories" ? category : "All Results"}
+                {" "}
+                <span className="font-normal text-muted-foreground text-base">Near Singapore</span>
+              </h1>
+              <p className="text-sm text-muted-foreground mb-4">
+                {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
+                {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
+              </p>
 
-            {/* Listings (scrollable) */}
-            <div className="max-h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide pb-6">
-              <div className="space-y-4">
-                {sortedFiltered.length === 0 ? (
-                  <div className="text-center py-16 bg-card rounded-lg border border-border">
-                    <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4">
-                      <MapPin className="w-8 h-8 text-muted-foreground" />
+              <div className="max-h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide pb-6">
+                <div className="space-y-4">
+                  {sortedFiltered.length === 0 ? (
+                    <div className="text-center py-16 bg-card rounded-lg border border-border">
+                      <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-foreground font-semibold">No businesses found</p>
+                      <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
                     </div>
-                    <p className="text-foreground font-semibold">No businesses found</p>
-                    <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
-                  </div>
-                ) : (
-                  sortedFiltered.map((listing, idx) => (
-                    <ListingCard
-                      key={listing.id}
-                      listing={listing}
-                      index={idx + 1}
-                      highlighted={hoveredListingId === listing.id}
-                      onHover={setHoveredListingId}
-                      distanceKm={getListingDistance(listing)}
-                      onSelect={(l) => {
-                        setSelectedListing(l);
-                        if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
-                      }}
-                    />
-                  ))
-                )}
+                  ) : (
+                    sortedFiltered.map((listing, idx) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        index={idx + 1}
+                        highlighted={hoveredListingId === listing.id}
+                        onHover={setHoveredListingId}
+                        distanceKm={getListingDistance(listing)}
+                        onSelect={(l) => {
+                          setSelectedListing(l);
+                          if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
+                        }}
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT: Map */}
+            <div className="w-[42%]">
+              <div className="sticky top-0 h-[calc(100vh-64px)]">
+                <MapView
+                  listings={sortedFiltered}
+                  selectedId={selectedListing?.id}
+                  hoveredId={hoveredListingId}
+                  onHoverListing={setHoveredListingId}
+                  onSelectListing={setSelectedListing}
+                  center={mapCenter}
+                  radiusKm={radiusKm}
+                />
               </div>
             </div>
           </div>
-
-          {/* ── RIGHT: Map panel (sticky, Yelp-style) ── */}
-          <div className="hidden lg:block lg:w-[42%]">
-            <div className="sticky top-0 h-[calc(100vh-64px)]">
-              <MapView
-                listings={sortedFiltered}
-                selectedId={selectedListing?.id}
-                hoveredId={hoveredListingId}
-                onHoverListing={setHoveredListingId}
-                onSelectListing={setSelectedListing}
-                center={mapCenter}
-                radiusKm={radiusKm}
-              />
-            </div>
-          </div>
         </div>
+
+        {/* Desktop extras */}
+        {!hasActiveFilters && (
+          <section className="container mx-auto px-4 py-8">
+            <CategoryGrid />
+          </section>
+        )}
+        {!hasActiveFilters && <PromoBanner />}
+        {!hasActiveFilters && (
+          <section className="container mx-auto px-4 py-6">
+            <CategoryHighlights />
+          </section>
+        )}
       </div>
-
-      {/* ═══ CATEGORY GRID ═══ */}
-      {!hasActiveFilters && (
-        <section className="container mx-auto px-3 md:px-4 py-4 md:py-8">
-          <CategoryGrid />
-        </section>
-      )}
-
-      {/* ═══ PROMO BANNER ═══ */}
-      {!hasActiveFilters && <PromoBanner />}
-
-      {/* ═══ CATEGORY HIGHLIGHTS ═══ */}
-      {!hasActiveFilters && (
-        <section className="container mx-auto px-3 md:px-4 py-3 md:py-6">
-          <CategoryHighlights />
-        </section>
-      )}
-
     </div>
   );
 };
