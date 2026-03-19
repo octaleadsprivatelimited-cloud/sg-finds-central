@@ -192,6 +192,9 @@ const BusinessDashboard = () => {
   const [editLogoUrl, setEditLogoUrl] = useState("");
   const [editHours, setEditHours] = useState<OperatingHours>(DEFAULT_OPERATING_HOURS);
   const [editSpecialHours, setEditSpecialHours] = useState<SpecialHours[]>([]);
+  const [editImageUrls, setEditImageUrls] = useState<string[]>([]);
+  const [editUploadingImages, setEditUploadingImages] = useState(false);
+  const editImageInputRef = useRef<HTMLInputElement>(null);
 
   const stats = useMemo(() => ({
     total: listings.length,
