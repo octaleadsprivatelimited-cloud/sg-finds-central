@@ -194,6 +194,39 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </div>
       </div>
 
+      {/* ═══ DISTANCE FILTER BAR ═══ */}
+      <div className="border-b border-border bg-card/80">
+        <div className="container mx-auto px-3 md:px-4">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1.5">
+            <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            <span className="text-xs text-muted-foreground shrink-0">Distance:</span>
+            {[
+              { label: "500m", value: 0.5 },
+              { label: "1 km", value: 1 },
+              { label: "2 km", value: 2 },
+              { label: "3 km", value: 3 },
+              { label: "5 km", value: 5 },
+              { label: "All SG", value: null as number | null },
+            ].map((opt) => (
+              <button
+                key={opt.label}
+                onClick={() => {
+                  setRadiusKm(opt.value);
+                  if (opt.value && !userLocation) handleDetectLocation();
+                }}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
+                  radiusKm === opt.value
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ═══ MAIN CONTENT ═══ */}
       <section className="container mx-auto px-3 md:px-4 pt-3 md:pt-5 pb-4 md:pb-8">
 
