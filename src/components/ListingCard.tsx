@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { MapPin, Clock, Heart, Globe, Phone, Navigation } from "lucide-react";
+import { MapPin, Clock, Heart, Globe, Phone, Navigation, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
@@ -225,6 +225,17 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border text-[11px] font-medium text-foreground active:scale-95 transition-transform"
               >
                 <Phone className="w-3 h-3" />Call
+              </a>
+            )}
+            {(listing.whatsapp || listing.phone) && (
+              <a
+                href={`https://wa.me/${(listing.whatsapp || listing.phone || "").replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-[11px] font-medium text-emerald-600 active:scale-95 transition-transform"
+              >
+                <MessageCircle className="w-3 h-3" />WhatsApp
               </a>
             )}
             {listing.lat && listing.lng && (
