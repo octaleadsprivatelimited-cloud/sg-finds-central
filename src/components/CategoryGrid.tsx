@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { toSlug } from "@/lib/url-helpers";
 
-import educationImg from "@/assets/categories/education.png";
-import foodImg from "@/assets/categories/food.png";
-import beautyImg from "@/assets/categories/beauty.png";
-import petImg from "@/assets/categories/pet.png";
-import eventsImg from "@/assets/categories/events.png";
-import cleaningImg from "@/assets/categories/cleaning.png";
-import homeImg from "@/assets/categories/home.png";
-import photographyImg from "@/assets/categories/photography.png";
+import educationImg from "@/assets/categories/education.webp";
+import foodImg from "@/assets/categories/food.webp";
+import beautyImg from "@/assets/categories/beauty.webp";
+import petImg from "@/assets/categories/pet.webp";
+import eventsImg from "@/assets/categories/events.webp";
+import cleaningImg from "@/assets/categories/cleaning.webp";
+import homeImg from "@/assets/categories/home.webp";
+import photographyImg from "@/assets/categories/photography.webp";
 
 const CATEGORIES = [
   { name: "Tuition", image: educationImg },
