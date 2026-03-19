@@ -277,35 +277,24 @@ const AddListing = () => {
   const handleImageUpload = async (files: FileList) => {
     if (!user) return;
     const remaining = 5 - imageUrls.length;
-    const filesToUpload = Array.from(files).slice(0, remaining);
-    if (filesToUpload.length === 0) {
-      toast.error("Maximum 5 images allowed");
-      return;
-    }
-
-    for (const file of filesToUpload) {
-      if (!file.type.startsWith("image/")) {
-        toast.error(`${file.name} is not an image`);
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name} exceeds 5MB limit`);
-        return;
-      }
-    }
+    if (remaining <= 0) { toast.error("Maximum 5 images allowed"); return; }
 
     setUploadingImages(true);
     try {
-      const urls: string[] = [];
-      for (const file of filesToUpload) {
-        const ext = file.name.split(".").pop() || "jpg";
-        const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        urls.push(url);
+      const { validFiles, errors } = await processImageFiles(Array.from(files), remaining);
+      errors.forEach(e => toast.error(e));
+
+      if (validFiles.length > 0) {
+        const urls: string[] = [];
+        for (const file of validFiles) {
+          const ext = file.name.split(".").pop() || "jpg";
+          const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
+          await uploadBytes(storageRef, file);
+          urls.push(await getDownloadURL(storageRef));
+        }
+        setImageUrls(prev => [...prev, ...urls]);
+        toast.success(`${urls.length} image(s) uploaded`);
       }
-      setImageUrls(prev => [...prev, ...urls]);
-      toast.success(`${urls.length} image(s) uploaded`);
     } catch (err: any) {
       toast.error(err.message || "Failed to upload images");
     }
