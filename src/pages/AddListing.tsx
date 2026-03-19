@@ -482,14 +482,17 @@ const AddListing = () => {
                   <div className="space-y-2">
                     <Label>Business Name *</Label>
                     <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Mary's Tuition Centre" />
+                    <FieldError show={showErrors && !name} message="Business name is required" />
                   </div>
                   <div className="space-y-2">
                     <Label>Owner Name *</Label>
                     <Input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="e.g. Mary Tan" />
+                    <FieldError show={showErrors && !ownerName} message="Owner name is required" />
                   </div>
                   <div className="space-y-2">
                     <Label>UEN *</Label>
                     <Input value={uen} onChange={e => setUen(e.target.value)} placeholder="e.g. 201912345A" />
+                    <FieldError show={showErrors && !uen} message="UEN is required" />
                   </div>
                 </div>
               )}
