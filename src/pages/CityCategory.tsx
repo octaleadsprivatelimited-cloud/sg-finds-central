@@ -103,7 +103,7 @@ const CityCategory = () => {
     if (!matchedCategory) return listings;
     let result = listings.filter((l) => l.category === matchedCategory);
     // Further filter by subcategory if selected
-    if (activeSub) {
+    if (activeSub && activeSub !== "all") {
       result = result.filter((l) => (l as any).subcategory === activeSub);
     }
     return result;
