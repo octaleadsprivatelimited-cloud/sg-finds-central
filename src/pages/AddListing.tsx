@@ -594,6 +594,72 @@ const AddListing = () => {
                       </div>
                     </>
                   )}
+
+                  {category === "Home Food" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Home Food Type</h2>
+                      <div className="space-y-2">
+                        <Label>Select cuisine type *</Label>
+                        <ChipSelect options={HOME_FOOD_SUBS} selected={homeFoodSubs} onChange={setHomeFoodSubs} allowOther otherValue={homeFoodOther} onOtherChange={setHomeFoodOther} />
+                        <FieldError show={showErrors && homeFoodSubs.length === 0 && !homeFoodOther} message="Please select at least one cuisine type" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Baking" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Baking Speciality</h2>
+                      <div className="space-y-2">
+                        <Label>Select baked goods *</Label>
+                        <ChipSelect options={BAKING_SUBS} selected={bakingSubs} onChange={setBakingSubs} allowOther otherValue={bakingOther} onOtherChange={setBakingOther} />
+                        <FieldError show={showErrors && bakingSubs.length === 0 && !bakingOther} message="Please select at least one type" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Photography / Videography" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Photography / Videography</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={PHOTOGRAPHY_SUBS} selected={photoSubs} onChange={setPhotoSubs} allowOther otherValue={photoOther} onOtherChange={setPhotoOther} />
+                        <FieldError show={showErrors && photoSubs.length === 0 && !photoOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Tailoring" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Tailoring Services</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={TAILORING_SUBS} selected={tailoringSubs} onChange={setTailoringSubs} allowOther otherValue={tailoringOther} onOtherChange={setTailoringOther} />
+                        <FieldError show={showErrors && tailoringSubs.length === 0 && !tailoringOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Event Services" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Event Services</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={EVENT_SERVICES_SUBS} selected={eventSubs} onChange={setEventSubs} allowOther otherValue={eventOther} onOtherChange={setEventOther} />
+                        <FieldError show={showErrors && eventSubs.length === 0 && !eventOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Cleaning" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Cleaning Services</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={CLEANING_SUBS} selected={cleaningSubs} onChange={setCleaningSubs} allowOther otherValue={cleaningOther} onOtherChange={setCleaningOther} />
+                        <FieldError show={showErrors && cleaningSubs.length === 0 && !cleaningOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
