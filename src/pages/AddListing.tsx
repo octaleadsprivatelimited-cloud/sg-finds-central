@@ -347,6 +347,12 @@ const AddListing = () => {
     if (category === "Beauty") return { subcategories: [...beautySubs, ...(beautyOther ? [beautyOther] : [])] };
     if (category === "Pet Services") return { subcategories: [...petSubs, ...(petOther ? [petOther] : [])] };
     if (category === "Handyman") return { subcategories: [...handymanSubs, ...(handymanOther ? [handymanOther] : [])] };
+    if (category === "Home Food") return { subcategories: [...homeFoodSubs, ...(homeFoodOther ? [homeFoodOther] : [])] };
+    if (category === "Baking") return { subcategories: [...bakingSubs, ...(bakingOther ? [bakingOther] : [])] };
+    if (category === "Photography / Videography") return { subcategories: [...photoSubs, ...(photoOther ? [photoOther] : [])] };
+    if (category === "Tailoring") return { subcategories: [...tailoringSubs, ...(tailoringOther ? [tailoringOther] : [])] };
+    if (category === "Event Services") return { subcategories: [...eventSubs, ...(eventOther ? [eventOther] : [])] };
+    if (category === "Cleaning") return { subcategories: [...cleaningSubs, ...(cleaningOther ? [cleaningOther] : [])] };
     return {};
   };
 
