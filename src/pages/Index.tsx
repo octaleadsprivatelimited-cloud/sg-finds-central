@@ -365,10 +365,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         )}
 
-        {/* Split layout: Listings + Map/Sidebar */}
+        {/* Split layout: Listings + Map */}
         <div className="flex gap-5 overflow-hidden">
-          {/* Listings column - Yellow Pages style stacked cards */}
-          <div className={`min-w-0 ${showMap ? "w-full lg:w-3/5" : "w-full"}`}>
+          {/* Listings column */}
+          <div className="min-w-0 w-full lg:w-3/5">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-muted-foreground">
                 {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
@@ -404,56 +404,36 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             </div>
           </div>
 
-          {/* Map / Sidebar column */}
-          {showMap && (
-            <div className="hidden lg:block lg:w-2/5">
-              <div className="sticky top-16">
-                <div className="bg-card border border-border rounded-lg overflow-hidden">
-                  <div className="h-[calc(100vh-200px)]">
-                    <MapView
-                      listings={sortedFiltered}
-                      selectedId={selectedListing?.id}
-                      hoveredId={hoveredListingId}
-                      onHoverListing={setHoveredListingId}
-                      onSelectListing={setSelectedListing}
-                      center={mapCenter}
-                      radiusKm={radiusKm}
-                    />
-                  </div>
-                </div>
-
-                {/* Sidebar CTA */}
-                <div className="mt-4 border border-border rounded-lg bg-card p-5 text-center">
-                  <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
-                  <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
-                  <Link to="/add-listing">
-                    <Button className="w-full bg-primary text-primary-foreground font-bold">
-                      Claim Your Listing
-                    </Button>
-                  </Link>
-                  <p className="text-[10px] text-muted-foreground mt-2">or email hello@nearly.sg</p>
+          {/* Map column - always visible on desktop */}
+          <div className="hidden lg:block lg:w-2/5">
+            <div className="sticky top-16">
+              <div className="bg-card border border-border rounded-lg overflow-hidden">
+                <div className="h-[calc(100vh-200px)]">
+                  <MapView
+                    listings={sortedFiltered}
+                    selectedId={selectedListing?.id}
+                    hoveredId={hoveredListingId}
+                    onHoverListing={setHoveredListingId}
+                    onSelectListing={setSelectedListing}
+                    center={mapCenter}
+                    radiusKm={radiusKm}
+                  />
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Sidebar when map is hidden */}
-          {!showMap && (
-            <div className="hidden lg:block lg:w-72 shrink-0">
-              <div className="sticky top-16 space-y-4">
-                <div className="border border-border rounded-lg bg-card p-5 text-center">
-                  <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
-                  <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
-                  <Link to="/add-listing">
-                    <Button className="w-full bg-primary text-primary-foreground font-bold">
-                      Claim Your Listing
-                    </Button>
-                  </Link>
-                  <p className="text-[10px] text-muted-foreground mt-2">or email hello@nearly.sg</p>
-                </div>
+              {/* Sidebar CTA */}
+              <div className="mt-4 border border-border rounded-lg bg-card p-5 text-center">
+                <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
+                <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
+                <Link to="/add-listing">
+                  <Button className="w-full bg-primary text-primary-foreground font-bold">
+                    Claim Your Listing
+                  </Button>
+                </Link>
+                <p className="text-[10px] text-muted-foreground mt-2">or email hello@nearly.sg</p>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </section>
 
