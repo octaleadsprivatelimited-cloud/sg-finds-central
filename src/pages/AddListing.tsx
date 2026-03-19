@@ -458,6 +458,7 @@ const AddListing = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FieldError show={showErrors && !category} message="Please select a category" />
                   </div>
                   <div className="space-y-2">
                     <Label>District *</Label>
@@ -469,6 +470,7 @@ const AddListing = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FieldError show={showErrors && !district} message="Please select a district" />
                   </div>
                 </div>
               )}
