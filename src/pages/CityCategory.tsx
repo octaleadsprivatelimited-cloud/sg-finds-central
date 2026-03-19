@@ -236,26 +236,26 @@ const CityCategory = () => {
 
             {/* Subcategory picker cards */}
             {showSubcategoryPicker ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {subcategories.map((sub) => {
                   const img = SUBCATEGORY_IMAGES[sub.value];
                   return (
                     <button
                       key={sub.value}
                       onClick={() => setSearchParams({ sub: sub.value })}
-                      className="relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-200 group active:scale-95"
+                      className="relative overflow-hidden rounded-lg border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 group active:scale-95"
                     >
-                      <div className="aspect-[4/3] overflow-hidden">
+                      <div className="aspect-square overflow-hidden">
                         {img ? (
                           <img src={img} alt={sub.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-muted to-secondary flex items-center justify-center">
-                            <Building2 className="w-8 h-8 text-muted-foreground" />
+                            <Building2 className="w-6 h-6 text-muted-foreground" />
                           </div>
                         )}
                       </div>
-                      <div className="p-2.5 text-center">
-                        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
+                      <div className="p-1.5 text-center">
+                        <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">{sub.label}</p>
                         <p className="text-[11px] text-muted-foreground mt-0.5">
                           {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
                         </p>
