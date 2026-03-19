@@ -17,7 +17,33 @@ import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
-// Fallback demo listings for when Firestore is unavailable
+// Icon map for subcategories
+const SUBCATEGORY_ICONS: Record<string, LucideIcon> = {
+  maths: Calculator, english: BookOpen, biology: Leaf, physics: Atom,
+  chemistry: FlaskConical, economics: TrendingUp,
+  hindi: Languages, chinese: Languages, spanish: Languages,
+  french: Languages, tamil: Languages, malay: Languages,
+  music: Music, art: Palette, craft: Scissors,
+  nails: Sparkles, lashes: Eye, brows: EyeOff, hair: Scissors, makeup: PaintBucket,
+  "dog-walking": Dog, "pet-sitting": Cat, "basic-grooming": Bath,
+  carpenter: Hammer, plumber: Wrench, "minor-electrical": Zap, "patching-painting": PaintRoller,
+};
+
+const SUBCATEGORY_COLORS: Record<string, string> = {
+  maths: "bg-blue-50 text-blue-600", english: "bg-amber-50 text-amber-600",
+  biology: "bg-green-50 text-green-600", physics: "bg-indigo-50 text-indigo-600",
+  chemistry: "bg-purple-50 text-purple-600", economics: "bg-teal-50 text-teal-600",
+  hindi: "bg-orange-50 text-orange-600", chinese: "bg-red-50 text-red-600",
+  spanish: "bg-yellow-50 text-yellow-600", french: "bg-sky-50 text-sky-600",
+  tamil: "bg-rose-50 text-rose-600", malay: "bg-emerald-50 text-emerald-600",
+  music: "bg-violet-50 text-violet-600", art: "bg-pink-50 text-pink-600", craft: "bg-amber-50 text-amber-600",
+  nails: "bg-pink-50 text-pink-600", lashes: "bg-purple-50 text-purple-600",
+  brows: "bg-rose-50 text-rose-600", hair: "bg-fuchsia-50 text-fuchsia-600", makeup: "bg-red-50 text-red-500",
+  "dog-walking": "bg-amber-50 text-amber-600", "pet-sitting": "bg-orange-50 text-orange-600",
+  "basic-grooming": "bg-cyan-50 text-cyan-600",
+  carpenter: "bg-yellow-50 text-yellow-700", plumber: "bg-blue-50 text-blue-600",
+  "minor-electrical": "bg-amber-50 text-amber-600", "patching-painting": "bg-lime-50 text-lime-600",
+};
 const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number })[] = [
   {
     id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
