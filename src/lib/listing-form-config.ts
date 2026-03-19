@@ -134,6 +134,12 @@ export function getSubcategoriesForCategory(category: string): MultiSelectOption
     case "Beauty": return BEAUTY_SUBS;
     case "Pet Services": return PET_SUBS;
     case "Handyman": return HANDYMAN_SUBS;
+    case "Home Food": return HOME_FOOD_SUBS;
+    case "Baking": return BAKING_SUBS;
+    case "Photography / Videography": return PHOTOGRAPHY_SUBS;
+    case "Tailoring": return TAILORING_SUBS;
+    case "Event Services": return EVENT_SERVICES_SUBS;
+    case "Cleaning": return CLEANING_SUBS;
     default: return null;
   }
 }
