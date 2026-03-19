@@ -425,13 +425,13 @@ const Admin = () => {
                         </div>
 
                         {/* Business Images Preview */}
-                        {(listing as any).imageUrls && (listing as any).imageUrls.length > 0 && (
+                        {listing.imageUrls && listing.imageUrls.length > 0 && (
                           <div className="mt-3 ml-[52px]">
                             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                              <Image className="w-3 h-3" />Business Images ({(listing as any).imageUrls.length})
+                              <Image className="w-3 h-3" />Business Images ({listing.imageUrls.length})
                             </p>
                             <div className="flex gap-1.5 overflow-x-auto">
-                              {((listing as any).imageUrls as string[]).map((url, i) => (
+                              {listing.imageUrls.map((url, i) => (
                                 <img key={i} src={url} alt={`${listing.name} ${i + 1}`}
                                   className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] shrink-0" />
                               ))}
