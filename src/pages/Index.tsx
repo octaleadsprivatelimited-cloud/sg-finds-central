@@ -168,8 +168,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     { value: "Photography / Videography", label: "Photo / Video" },
   ];
 
+  const mobileRevealRef = useScrollReveal<HTMLDivElement>();
+  const desktopRevealRef = useScrollReveal<HTMLDivElement>();
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" ref={mobileRevealRef}>
 
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
