@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMemo, useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCityBySlug, CITIES } from "@/lib/cities";
 import { BUSINESS_CATEGORIES } from "@/lib/districts";
+import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
@@ -56,11 +57,13 @@ const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating
 
 const CityCategory = () => {
   const { citySlug, categorySlug } = useParams<{ citySlug: string; categorySlug?: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
   const [loadingListings, setLoadingListings] = useState(true);
 
   const city = getCityBySlug(citySlug || "singapore");
+  const activeSub = searchParams.get("sub");
 
   // Fetch approved listings from Firestore
   useEffect(() => {
@@ -87,16 +90,34 @@ const CityCategory = () => {
     ) || null;
   }, [categorySlug]);
 
+  // Get subcategories for the matched category
+  const subcategories = useMemo(() => {
+    if (!matchedCategory) return null;
+    return getSubcategoriesForCategory(matchedCategory);
+  }, [matchedCategory]);
+
+  // Show subcategory selection if category has subs and none is selected yet
+  const showSubcategoryPicker = !!subcategories && !activeSub;
+
   const filtered = useMemo(() => {
     if (!matchedCategory) return listings;
-    return listings.filter((l) => l.category === matchedCategory);
-  }, [matchedCategory, listings]);
+    let result = listings.filter((l) => l.category === matchedCategory);
+    // Further filter by subcategory if selected
+    if (activeSub && activeSub !== "all") {
+      result = result.filter((l) => (l as any).subcategory === activeSub);
+    }
+    return result;
+  }, [matchedCategory, listings, activeSub]);
 
   const categories = BUSINESS_CATEGORIES.filter((c) => c !== "All Categories");
 
-  const pageTitle = matchedCategory
-    ? `${matchedCategory} in ${city?.name || "Singapore"}`
-    : `Businesses in ${city?.name || "Singapore"}`;
+  const subLabel = subcategories?.find((s) => s.value === activeSub)?.label;
+
+  const pageTitle = activeSub && subLabel
+    ? `${subLabel} — ${matchedCategory} in ${city?.name || "Singapore"}`
+    : matchedCategory
+      ? `${matchedCategory} in ${city?.name || "Singapore"}`
+      : `Businesses in ${city?.name || "Singapore"}`;
 
   const pageDescription = matchedCategory
     ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${city?.name || "Singapore"}. Browse verified listings, read reviews, and connect directly.`
@@ -114,7 +135,17 @@ const CityCategory = () => {
             {matchedCategory && (
               <>
                 <ChevronRight className="w-3 h-3" />
-                <span className="text-foreground">{matchedCategory}</span>
+                {activeSub ? (
+                  <Link to={`/${citySlug}/${categorySlug}`} className="hover:text-primary transition-colors">{matchedCategory}</Link>
+                ) : (
+                  <span className="text-foreground">{matchedCategory}</span>
+                )}
+              </>
+            )}
+            {activeSub && subLabel && (
+              <>
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-foreground">{subLabel}</span>
               </>
             )}
           </div>
@@ -152,21 +183,61 @@ const CityCategory = () => {
             </aside>
           )}
 
-          {/* Listings */}
+          {/* Listings or Subcategory Picker */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{filtered.length}</span> businesses found
-              </p>
-              {matchedCategory && (
-                <Button variant="outline" size="sm" onClick={() => navigate(`/${citySlug}`)}>
-                  <ArrowLeft className="w-4 h-4 mr-1" />
-                  All Categories
-                </Button>
+              {showSubcategoryPicker ? (
+                <p className="text-sm text-muted-foreground">
+                  Choose a <span className="font-medium text-foreground">{matchedCategory}</span> subcategory
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{filtered.length}</span> businesses found
+                </p>
               )}
+              <div className="flex gap-2">
+                {activeSub && (
+                  <Button variant="outline" size="sm" onClick={() => setSearchParams({})}>
+                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    All {matchedCategory}
+                  </Button>
+                )}
+                {matchedCategory && !activeSub && (
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/${citySlug}`)}>
+                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    All Categories
+                  </Button>
+                )}
+              </div>
             </div>
 
-            {filtered.length === 0 ? (
+            {/* Subcategory picker cards */}
+            {showSubcategoryPicker ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {subcategories.map((sub) => (
+                  <button
+                    key={sub.value}
+                    onClick={() => setSearchParams({ sub: sub.value })}
+                    className="p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-md transition-all text-center group"
+                  >
+                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{sub.label}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
+                    </p>
+                  </button>
+                ))}
+                {/* View all option */}
+                <button
+                  onClick={() => setSearchParams({ sub: "all" })}
+                  className="p-5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-md transition-all text-center"
+                >
+                  <p className="text-sm font-semibold text-primary">View All</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {listings.filter((l) => l.category === matchedCategory).length} listings
+                  </p>
+                </button>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-16">
                 <Building2 className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">No businesses found</p>
