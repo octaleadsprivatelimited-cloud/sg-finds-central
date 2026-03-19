@@ -637,6 +637,7 @@ const AddListing = () => {
                       className="resize-none"
                     />
                     <p className="text-xs text-muted-foreground text-right">{detailedDescription.length} characters</p>
+                    <FieldError show={showErrors && !detailedDescription.trim()} message="Detailed description is required" />
                   </div>
                 </div>
               )}
