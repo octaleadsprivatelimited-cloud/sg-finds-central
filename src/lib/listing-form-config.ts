@@ -71,6 +71,18 @@ export const HANDYMAN_SUBS: MultiSelectOption[] = [
   { label: "Patching / painting", value: "patching-painting" },
 ];
 
+// ── Helper: get subcategories for a category ──
+export function getSubcategoriesForCategory(category: string): MultiSelectOption[] | null {
+  switch (category) {
+    case "Tuition": return [...TUITION_SUBJECTS, ...TUITION_LANGUAGES];
+    case "Music / Art / Craft": return MUSIC_ART_CRAFT_SUBS;
+    case "Beauty": return BEAUTY_SUBS;
+    case "Pet Services": return PET_SUBS;
+    case "Handyman": return HANDYMAN_SUBS;
+    default: return null;
+  }
+}
+
 // ── Service location options (Screen 4) ──
 export const SERVICE_LOCATIONS: MultiSelectOption[] = [
   { label: "At my home (customers come to me)", value: "at-my-home" },
