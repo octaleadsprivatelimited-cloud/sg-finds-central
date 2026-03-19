@@ -266,14 +266,14 @@ const CityCategory = () => {
                 {/* View all option */}
                 <button
                   onClick={() => setSearchParams({ sub: "all" })}
-                  className="relative overflow-hidden rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-lg transition-all duration-200 active:scale-95"
+                  className="relative overflow-hidden rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:shadow-md transition-all duration-200 active:scale-95"
                 >
-                  <div className="aspect-[4/3] flex items-center justify-center bg-primary/10">
-                    <LayoutGrid className="w-8 h-8 text-primary" />
+                  <div className="aspect-square flex items-center justify-center bg-primary/10">
+                    <LayoutGrid className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="p-2.5 text-center">
-                    <p className="text-sm font-semibold text-primary">View All</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                  <div className="p-1.5 text-center">
+                    <p className="text-xs font-semibold text-primary">View All</p>
+                    <p className="text-[10px] text-muted-foreground">
                       {listings.filter((l) => l.category === matchedCategory).length} listings
                     </p>
                   </div>
