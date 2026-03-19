@@ -587,11 +587,13 @@ const AddListing = () => {
                   <div className="space-y-2">
                     <Label>Address *</Label>
                     <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. 391 Orchard Road, #B2-01" />
+                    <FieldError show={showErrors && !address} message="Address is required" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <Label>Postal Code *</Label>
                       <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 238872" maxLength={6} />
+                      <FieldError show={showErrors && !postalCode} message="Postal code is required" />
                     </div>
                     <div className="space-y-2">
                       <Label>Unit Number (private)</Label>
