@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } 
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import { processImageFiles } from "@/lib/image-utils";
 
 import LogoUpload from "@/components/LogoUpload";
 import { Button } from "@/components/ui/button";
