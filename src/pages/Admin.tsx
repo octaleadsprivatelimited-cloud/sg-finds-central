@@ -789,7 +789,7 @@ const Admin = () => {
           </DialogHeader>
           {viewingImages && (
             <div className="grid grid-cols-2 gap-3 py-2">
-              {((viewingImages.listing as any).imageUrls as string[] || []).map((url, i) => (
+              {(viewingImages.listing.imageUrls || []).map((url, i) => (
                 <img key={i} src={url} alt={`Image ${i + 1}`} className="w-full aspect-square rounded-lg object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]" />
               ))}
             </div>
