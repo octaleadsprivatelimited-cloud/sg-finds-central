@@ -534,9 +534,9 @@ const Admin = () => {
                           <p className="text-[11px] text-muted-foreground truncate">{l.category} · {l.district}</p>
                         </div>
                         <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${s.bg} ${s.text}`}>{s.label}</span>
-                        {(l as any).imageUrls?.length > 0 && (
+                        {l.imageUrls && l.imageUrls.length > 0 && (
                           <button onClick={() => setViewingImages({ listing: l })} className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition">
-                            <Image className="w-3 h-3" />{(l as any).imageUrls.length}
+                            <Image className="w-3 h-3" />{l.imageUrls.length}
                           </button>
                         )}
                         <Button size="sm" variant="ghost" onClick={() => openAdminEdit(l)}
