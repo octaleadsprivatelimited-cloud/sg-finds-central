@@ -12,7 +12,7 @@ import MapView from "@/components/MapView";
 import { Link } from "react-router-dom";
 import MobileFiltersMap from "@/components/MobileFiltersMap";
 import { DEMO_LISTINGS } from "@/lib/demo-listings";
-import { MapPin, SlidersHorizontal, Search } from "lucide-react";
+import { MapPin, SlidersHorizontal, Search, Map as MapIcon, ChevronRight, Clock, ArrowUpDown } from "lucide-react";
 import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { Button } from "@/components/ui/button";
 import {
