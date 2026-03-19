@@ -1,48 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { toSlug } from "@/lib/url-helpers";
 
-import foodImg from "@/assets/categories/food.png";
-import retailImg from "@/assets/categories/retail.png";
-import healthcareImg from "@/assets/categories/healthcare.png";
 import educationImg from "@/assets/categories/education.png";
-import professionalImg from "@/assets/categories/professional.png";
+import foodImg from "@/assets/categories/food.png";
 import beautyImg from "@/assets/categories/beauty.png";
-import homeImg from "@/assets/categories/home.png";
-import automotiveImg from "@/assets/categories/automotive.png";
-import technologyImg from "@/assets/categories/technology.png";
-import realestateImg from "@/assets/categories/realestate.png";
-import legalImg from "@/assets/categories/legal.png";
-import financialImg from "@/assets/categories/financial.png";
-import logisticsImg from "@/assets/categories/logistics.png";
-import eventsImg from "@/assets/categories/events.png";
-import constructionImg from "@/assets/categories/construction.png";
-import travelImg from "@/assets/categories/travel.png";
 import petImg from "@/assets/categories/pet.png";
-import fitnessImg from "@/assets/categories/fitness.png";
-import photographyImg from "@/assets/categories/photography.png";
+import eventsImg from "@/assets/categories/events.png";
 import cleaningImg from "@/assets/categories/cleaning.png";
+import homeImg from "@/assets/categories/home.png";
+import photographyImg from "@/assets/categories/photography.png";
 
 const CATEGORIES = [
-  { name: "Food & Beverage", image: foodImg },
-  { name: "Retail & Shopping", image: retailImg },
-  { name: "Healthcare & Medical", image: healthcareImg },
-  { name: "Education & Training", image: educationImg },
-  { name: "Professional Services", image: professionalImg },
-  { name: "Beauty & Wellness", image: beautyImg },
-  { name: "Home Services", image: homeImg },
-  { name: "Automotive", image: automotiveImg },
-  { name: "Technology & IT", image: technologyImg },
-  { name: "Real Estate", image: realestateImg },
-  { name: "Legal Services", image: legalImg },
-  { name: "Financial Services", image: financialImg },
-  { name: "Logistics & Transport", image: logisticsImg },
-  { name: "Events & Entertainment", image: eventsImg },
-  { name: "Construction & Renovation", image: constructionImg },
-  { name: "Travel & Tourism", image: travelImg },
+  { name: "Tuition", image: educationImg },
+  { name: "Baking", image: foodImg },
+  { name: "Music / Art / Craft", image: beautyImg },
+  { name: "Home Food", image: foodImg },
+  { name: "Beauty", image: beautyImg },
   { name: "Pet Services", image: petImg },
-  { name: "Fitness & Sports", image: fitnessImg },
-  { name: "Photography", image: photographyImg },
-  { name: "Cleaning Services", image: cleaningImg },
+  { name: "Event Services", image: eventsImg },
+  { name: "Tailoring", image: homeImg },
+  { name: "Cleaning", image: cleaningImg },
+  { name: "Handyman", image: homeImg },
+  { name: "Photography / Videography", image: photographyImg },
 ];
 
 const CategoryGrid = () => {

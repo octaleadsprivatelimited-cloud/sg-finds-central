@@ -7,32 +7,32 @@ import doctorsImg from "@/assets/highlights/doctors.png";
 
 const highlights = [
   {
-    title: "B2B",
-    subtitle: "Quick\nQuotes",
+    title: "TUITION",
+    subtitle: "Find Expert\nTutors",
     bg: "bg-blue-600",
     image: businessImg,
-    category: "Professional Services",
+    category: "Tuition",
   },
   {
-    title: "REPAIRS &\nSERVICES",
-    subtitle: "Get Nearest\nVendor",
+    title: "HOME\nFOOD",
+    subtitle: "Fresh\nHome-cooked",
     bg: "bg-indigo-800",
     image: repairsImg,
-    category: "Home Services",
+    category: "Home Food",
   },
   {
-    title: "REAL ESTATE",
-    subtitle: "Finest\nAgents",
+    title: "PET\nSERVICES",
+    subtitle: "Grooming &\nWalking",
     bg: "bg-purple-600",
     image: realestateImg,
-    category: "Real Estate",
+    category: "Pet Services",
   },
   {
-    title: "DOCTORS",
+    title: "BEAUTY",
     subtitle: "Book\nNow",
     bg: "bg-emerald-600",
     image: doctorsImg,
-    category: "Healthcare",
+    category: "Beauty",
   },
 ];
 
