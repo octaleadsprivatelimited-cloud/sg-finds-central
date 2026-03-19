@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 
 import LogoUpload from "@/components/LogoUpload";
@@ -24,6 +25,7 @@ import {
 import {
   ArrowLeft, ArrowRight, Check, Loader2, Building2, X,
   MapPin, FileText, Phone, Image, ShieldCheck, MessageCircle,
+  AlertTriangle, Clock, Upload, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -120,7 +122,9 @@ const getSteps = (category: string, serviceLocations: string[]) => {
   steps.push(
     { key: "service-location", label: "Service Location", icon: <MapPin className="w-4 h-4" /> },
     { key: "address", label: "Location", icon: <MapPin className="w-4 h-4" /> },
-    { key: "story", label: "Our Story", icon: <FileText className="w-4 h-4" /> },
+    { key: "description", label: "Description", icon: <FileText className="w-4 h-4" /> },
+    { key: "hours", label: "Working Hours", icon: <Clock className="w-4 h-4" /> },
+    { key: "images", label: "Images", icon: <Image className="w-4 h-4" /> },
     { key: "profile", label: "Profile Extras", icon: <Image className="w-4 h-4" /> },
   );
   if (needsComplianceScreen(category, serviceLocations)) {
@@ -129,6 +133,9 @@ const getSteps = (category: string, serviceLocations: string[]) => {
   steps.push({ key: "contact", label: "Contact", icon: <MessageCircle className="w-4 h-4" /> });
   return steps;
 };
+
+/* ── Days of the week ── */
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 const AddListing = () => {
   const { user } = useAuth();
@@ -144,6 +151,7 @@ const AddListing = () => {
 
   // ── Screen 2: Business Details ──
   const [name, setName] = useState("");
+  const [ownerName, setOwnerName] = useState("");
   const [uen, setUen] = useState("");
 
   // ── Screen 3: Subcategory data ──
@@ -173,24 +181,37 @@ const AddListing = () => {
   const [postalCode, setPostalCode] = useState("");
   const [unitNumber, setUnitNumber] = useState("");
 
-  // ── Screen 6: Story ──
-  const [story, setStory] = useState("");
+  // ── Screen 6: Description ──
+  const [shortDescription, setShortDescription] = useState("");
+  const [detailedDescription, setDetailedDescription] = useState("");
 
-  // ── Screen 7: Profile extras ──
+  // ── Screen 7: Working Hours ──
+  const [workingHours, setWorkingHours] = useState<Record<string, { open: string; close: string; closed: boolean }>>(
+    Object.fromEntries(DAYS.map(d => [d, { open: "09:00", close: "18:00", closed: false }]))
+  );
+
+  // ── Screen 8: Images ──
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  // ── Screen 9: Profile extras ──
   const [logoUrl, setLogoUrl] = useState("");
   const [shortDescriptor, setShortDescriptor] = useState("");
 
-  // ── Screen 8: Compliance ──
+  // ── Compliance ──
   const [complianceChecks, setComplianceChecks] = useState<Record<string, boolean>>({});
 
-  // ── Screen 9: Contact ──
+  // ── Contact ──
   const [primaryContact, setPrimaryContact] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("+65");
   const [whatsappMessage, setWhatsappMessage] = useState("");
   const [instagramHandle, setInstagramHandle] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
   const [secondaryContact, setSecondaryContact] = useState("");
   const [secondaryValue, setSecondaryValue] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   // Derived
   const steps = getSteps(category, serviceLocations);
@@ -213,16 +234,17 @@ const AddListing = () => {
     if (!user && !checkingExisting) navigate("/signup");
   }, [user, checkingExisting, navigate]);
 
-  // Clamp stepIndex if steps shrink
   useEffect(() => {
     if (stepIndex >= steps.length) setStepIndex(steps.length - 1);
   }, [steps.length, stepIndex]);
+
+  const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 
   const canProceed = (): boolean => {
     if (!currentStep) return false;
     switch (currentStep.key) {
       case "category": return !!category && !!district;
-      case "details": return !!name && !!uen;
+      case "details": return !!name && !!ownerName && !!uen;
       case "subcategory":
         if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
         if (category === "Music / Art / Craft") return !!musicArtSub || !!musicArtOther;
@@ -232,20 +254,66 @@ const AddListing = () => {
         return true;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode;
-      case "story": return !!story.trim();
-      case "profile": return true; // optional
+      case "description": return wordCount(shortDescription) >= 10 && !!detailedDescription.trim();
+      case "hours": return true;
+      case "images": return imageUrls.length >= 3;
+      case "profile": return true;
       case "compliance": {
         const gates = getComplianceGates(category, serviceLocations);
         return gates.every(g => complianceChecks[g.id] === true);
       }
       case "contact":
         if (!primaryContact) return false;
+        if (!contactEmail || !/\S+@\S+\.\S+/.test(contactEmail)) return false;
         if (primaryContact === "whatsapp" && (!whatsappNumber || whatsappNumber === "+65")) return false;
         if (primaryContact === "instagram" && !instagramHandle) return false;
         if (primaryContact === "website" && !websiteUrl) return false;
+        if (!agreeTerms) return false;
         return true;
       default: return true;
     }
+  };
+
+  const handleImageUpload = async (files: FileList) => {
+    if (!user) return;
+    const remaining = 5 - imageUrls.length;
+    const filesToUpload = Array.from(files).slice(0, remaining);
+    if (filesToUpload.length === 0) {
+      toast.error("Maximum 5 images allowed");
+      return;
+    }
+
+    for (const file of filesToUpload) {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} is not an image`);
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds 5MB limit`);
+        return;
+      }
+    }
+
+    setUploadingImages(true);
+    try {
+      const urls: string[] = [];
+      for (const file of filesToUpload) {
+        const ext = file.name.split(".").pop() || "jpg";
+        const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        urls.push(url);
+      }
+      setImageUrls(prev => [...prev, ...urls]);
+      toast.success(`${urls.length} image(s) uploaded`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload images");
+    }
+    setUploadingImages(false);
+  };
+
+  const removeImage = (index: number) => {
+    setImageUrls(prev => prev.filter((_, i) => i !== index));
   };
 
   const buildSubcategoryData = () => {
@@ -271,14 +339,18 @@ const AddListing = () => {
     setLoading(true);
     try {
       await addDoc(collection(db, "listings"), {
-        name, uen, category, district, address, postalCode, unitNumber,
-        description: story,
+        name, ownerName, uen, category, district, address, postalCode, unitNumber,
+        shortDescription,
+        description: detailedDescription,
         logoUrl, shortDescriptor,
+        imageUrls,
+        workingHours,
         serviceLocations,
         travelArea: serviceLocations.includes("at-customer-home") ? travelArea : "",
         subcategoryData: buildSubcategoryData(),
         complianceChecks,
         primaryContact,
+        contactEmail,
         contactDetails: {
           whatsapp: primaryContact === "whatsapp" ? whatsappNumber : "",
           whatsappMessage: primaryContact === "whatsapp" ? whatsappMessage : "",
@@ -309,12 +381,30 @@ const AddListing = () => {
           <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Directory
         </Button>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-4">
             <Building2 className="w-6 h-6 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Add Your Business</h1>
-          <p className="text-muted-foreground mt-1">List your home-based business in Singapore</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Please provide your business details clearly and accurately. Your listing will be reviewed by our admin team before it is published.
+          </p>
+        </div>
+
+        {/* Guidelines Banner */}
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p className="font-semibold text-foreground text-sm">Important Guidelines</p>
+              <ul className="list-disc list-inside space-y-0.5">
+                <li>Do not upload fake or copied content</li>
+                <li>Images must belong to your business</li>
+                <li>No blurry or unrelated images</li>
+                <li>Any changes after submission will require admin approval again</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {checkingExisting ? (
@@ -360,7 +450,8 @@ const AddListing = () => {
                 <div className="space-y-4 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">What do you do?</h2>
                   <div className="space-y-2">
-                    <Label>Category *</Label>
+                    <Label>Business Category *</Label>
+                    <p className="text-xs text-muted-foreground">e.g., Home Food, Beauty, Tuition, Services, etc.</p>
                     <Select value={category} onValueChange={setCategory}>
                       <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>
@@ -391,6 +482,10 @@ const AddListing = () => {
                   <div className="space-y-2">
                     <Label>Business Name *</Label>
                     <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Mary's Tuition Centre" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Owner Name *</Label>
+                    <Input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="e.g. Mary Tan" />
                   </div>
                   <div className="space-y-2">
                     <Label>UEN *</Label>
@@ -470,6 +565,7 @@ const AddListing = () => {
               {currentStep?.key === "service-location" && (
                 <div className="space-y-4 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">Where does your service happen?</h2>
+                  <p className="text-sm text-muted-foreground">Do you provide home service / delivery?</p>
                   <ChipSelect options={SERVICE_LOCATIONS} selected={serviceLocations} onChange={setServiceLocations} />
                   {serviceLocations.includes("at-customer-home") && (
                     <div className="space-y-2 pt-2">
@@ -484,6 +580,7 @@ const AddListing = () => {
               {currentStep?.key === "address" && (
                 <div className="space-y-4 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">Your Location</h2>
+                  <p className="text-sm text-muted-foreground">Area (Singapore locality)</p>
                   <div className="space-y-2">
                     <Label>Address *</Label>
                     <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. 391 Orchard Road, #B2-01" />
@@ -502,23 +599,146 @@ const AddListing = () => {
                 </div>
               )}
 
-              {/* SCREEN 6: Our Story */}
-              {currentStep?.key === "story" && (
-                <div className="space-y-4 animate-fade-in">
-                  <h2 className="text-lg font-semibold text-foreground">Our Story</h2>
-                  <p className="text-sm text-muted-foreground">Tell customers about yourself, your experience, and what makes you special.</p>
-                  <Textarea
-                    value={story}
-                    onChange={e => setStory(e.target.value)}
-                    placeholder="Share your story... How did you get started? What do you love about what you do?"
-                    rows={5}
-                    className="resize-none"
-                  />
-                  <p className="text-xs text-muted-foreground text-right">{story.length} characters</p>
+              {/* SCREEN 6: Description */}
+              {currentStep?.key === "description" && (
+                <div className="space-y-5 animate-fade-in">
+                  <h2 className="text-lg font-semibold text-foreground">Business Description</h2>
+
+                  <div className="space-y-2">
+                    <Label>Short Description (50–100 words) *</Label>
+                    <p className="text-xs text-muted-foreground">Explain what you offer and what makes your business unique.</p>
+                    <Textarea
+                      value={shortDescription}
+                      onChange={e => setShortDescription(e.target.value)}
+                      placeholder="e.g. We specialize in premium home-baked artisan cookies and cakes, made with high-quality ingredients. What sets us apart is our personalized approach — every order is customized to your taste preferences..."
+                      rows={4}
+                      className="resize-none"
+                    />
+                    <p className={`text-xs text-right ${wordCount(shortDescription) < 10 ? "text-destructive" : wordCount(shortDescription) > 100 ? "text-amber-500" : "text-muted-foreground"}`}>
+                      {wordCount(shortDescription)} / 50–100 words
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Detailed Description *</Label>
+                    <p className="text-xs text-muted-foreground">Services or products you provide, pricing (optional), experience or background.</p>
+                    <Textarea
+                      value={detailedDescription}
+                      onChange={e => setDetailedDescription(e.target.value)}
+                      placeholder="Share details about your services, products, pricing, and experience..."
+                      rows={6}
+                      className="resize-none"
+                    />
+                    <p className="text-xs text-muted-foreground text-right">{detailedDescription.length} characters</p>
+                  </div>
                 </div>
               )}
 
-              {/* SCREEN 7: Profile Extras */}
+              {/* SCREEN 7: Working Hours */}
+              {currentStep?.key === "hours" && (
+                <div className="space-y-4 animate-fade-in">
+                  <h2 className="text-lg font-semibold text-foreground">Working Hours</h2>
+                  <p className="text-sm text-muted-foreground">Set your available days and timings.</p>
+                  <div className="space-y-2">
+                    {DAYS.map(day => {
+                      const h = workingHours[day];
+                      return (
+                        <div key={day} className="flex items-center gap-2 p-2.5 rounded-lg border border-border bg-secondary/20">
+                          <Checkbox
+                            checked={!h.closed}
+                            onCheckedChange={(checked) =>
+                              setWorkingHours(prev => ({ ...prev, [day]: { ...prev[day], closed: !checked } }))
+                            }
+                          />
+                          <span className="text-sm font-medium w-20 shrink-0">{day.slice(0, 3)}</span>
+                          {h.closed ? (
+                            <span className="text-xs text-muted-foreground">Closed</span>
+                          ) : (
+                            <div className="flex items-center gap-1.5 flex-1">
+                              <Input
+                                type="time"
+                                value={h.open}
+                                onChange={e => setWorkingHours(prev => ({ ...prev, [day]: { ...prev[day], open: e.target.value } }))}
+                                className="h-8 text-xs w-auto"
+                              />
+                              <span className="text-xs text-muted-foreground">to</span>
+                              <Input
+                                type="time"
+                                value={h.close}
+                                onChange={e => setWorkingHours(prev => ({ ...prev, [day]: { ...prev[day], close: e.target.value } }))}
+                                className="h-8 text-xs w-auto"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* SCREEN 8: Images Upload */}
+              {currentStep?.key === "images" && (
+                <div className="space-y-4 animate-fade-in">
+                  <h2 className="text-lg font-semibold text-foreground">Business Images</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Upload 3–5 high-quality images of your business, products, or services. No blurry or unrelated images.
+                  </p>
+
+                  {/* Image grid */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {imageUrls.map((url, i) => (
+                      <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-border group">
+                        <img src={url} alt={`Business ${i + 1}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(i)}
+                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                    {imageUrls.length < 5 && (
+                      <button
+                        type="button"
+                        onClick={() => imageInputRef.current?.click()}
+                        disabled={uploadingImages}
+                        className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center gap-1 text-muted-foreground transition-colors"
+                      >
+                        {uploadingImages ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <>
+                            <Upload className="w-5 h-5" />
+                            <span className="text-[10px]">Upload</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    className="hidden"
+                    onChange={e => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        handleImageUpload(e.target.files);
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+
+                  <p className="text-xs text-muted-foreground">
+                    {imageUrls.length}/5 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
+                  </p>
+                </div>
+              )}
+
+              {/* SCREEN 9: Profile Extras */}
               {currentStep?.key === "profile" && (
                 <div className="space-y-5 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">Profile Extras</h2>
@@ -546,7 +766,7 @@ const AddListing = () => {
                 </div>
               )}
 
-              {/* SCREEN 8: Compliance */}
+              {/* Compliance */}
               {currentStep?.key === "compliance" && (
                 <div className="space-y-4 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">Compliance</h2>
@@ -571,13 +791,24 @@ const AddListing = () => {
                 </div>
               )}
 
-              {/* SCREEN 9: Contact */}
+              {/* Contact */}
               {currentStep?.key === "contact" && (
                 <div className="space-y-5 animate-fade-in">
-                  <h2 className="text-lg font-semibold text-foreground">Contact Links</h2>
+                  <h2 className="text-lg font-semibold text-foreground">Contact Details</h2>
+
+                  <div className="space-y-2">
+                    <Label>Email Address (Mandatory) *</Label>
+                    <Input
+                      type="email"
+                      value={contactEmail}
+                      onChange={e => setContactEmail(e.target.value)}
+                      placeholder="info@yourbusiness.com"
+                    />
+                  </div>
 
                   <div className="space-y-2">
                     <Label>Primary contact method *</Label>
+                    <p className="text-xs text-muted-foreground">Phone Number (WhatsApp preferred)</p>
                     <SingleChipSelect options={CONTACT_METHODS} selected={primaryContact} onChange={setPrimaryContact} />
                   </div>
 
@@ -610,8 +841,8 @@ const AddListing = () => {
 
                   <div className="pt-3 border-t border-border">
                     <div className="space-y-2">
-                      <Label>Secondary contact (optional)</Label>
-                      <p className="text-xs text-muted-foreground mb-2">Used for the "Book / Order" button. Falls back to primary if not set.</p>
+                      <Label>Social Media / Website (optional)</Label>
+                      <p className="text-xs text-muted-foreground mb-2">Instagram / Facebook / Website link. Used for the "Book / Order" button.</p>
                       <Select value={secondaryContact} onValueChange={setSecondaryContact}>
                         <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
                         <SelectContent>
@@ -638,6 +869,20 @@ const AddListing = () => {
                         />
                       </div>
                     )}
+                  </div>
+
+                  {/* Agreement */}
+                  <div className="pt-4 border-t border-border">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <Checkbox
+                        checked={agreeTerms}
+                        onCheckedChange={(checked) => setAgreeTerms(!!checked)}
+                        className="mt-0.5"
+                      />
+                      <span className="text-xs text-muted-foreground leading-relaxed">
+                        By submitting, I agree that my listing will be reviewed before going live and any updates will go through the approval process. I confirm all content and images belong to my business.
+                      </span>
+                    </label>
                   </div>
                 </div>
               )}
