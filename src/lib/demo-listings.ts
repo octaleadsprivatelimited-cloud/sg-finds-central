@@ -151,4 +151,13 @@ export const DEMO_LISTINGS: Listing[] = [
     rating: 4.4, reviewCount: 76, coverImage: professional1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "09:00", close: "18:00" }, Tuesday: { open: "09:00", close: "18:00" }, Wednesday: { open: "09:00", close: "18:00" }, Thursday: { open: "09:00", close: "18:00" }, Friday: { open: "09:00", close: "18:00" }, Saturday: { open: "09:00", close: "15:00" } },
   },
+  {
+    id: "12", name: "LensWork Photography", uen: "202311001L", category: "Photography / Videography",
+    district: "CBD / Raffles Place", address: "80 Robinson Road, #15-01, Singapore 068898", postalCode: "068898",
+    phone: "+65 8123 4012", email: "hello@lenswork.sg", website: "https://lenswork.sg",
+    description: "Professional photography and videography — weddings, events, portraits, and product shoots. Drone footage available.",
+    status: "approved", ownerId: "demo", lat: 1.2810, lng: 103.8500, verified: true,
+    rating: 4.8, reviewCount: 54, coverImage: education1,
+    operatingHours: DEFAULT_OPERATING_HOURS,
+  },
 ];
