@@ -506,6 +506,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Subjects taught *</Label>
                         <ChipSelect options={TUITION_SUBJECTS} selected={subjects} onChange={setSubjects} allowOther otherValue={subjectsOther} onOtherChange={setSubjectsOther} />
+                        <FieldError show={showErrors && subjects.length === 0} message="Please select at least one subject" />
                       </div>
                       <div className="space-y-2">
                         <Label>Languages</Label>
@@ -514,10 +515,12 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Levels supported *</Label>
                         <ChipSelect options={TUITION_LEVELS} selected={levels} onChange={setLevels} allowOther otherValue={levelsOther} onOtherChange={setLevelsOther} />
+                        <FieldError show={showErrors && levels.length === 0} message="Please select at least one level" />
                       </div>
                       <div className="space-y-2">
                         <Label>Syllabus supported *</Label>
                         <ChipSelect options={TUITION_SYLLABI} selected={syllabi} onChange={setSyllabi} allowOther otherValue={syllabiOther} onOtherChange={setSyllabiOther} />
+                        <FieldError show={showErrors && syllabi.length === 0} message="Please select at least one syllabus" />
                       </div>
                     </>
                   )}
@@ -528,6 +531,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select one *</Label>
                         <SingleChipSelect options={MUSIC_ART_CRAFT_SUBS} selected={musicArtSub} onChange={setMusicArtSub} allowOther otherValue={musicArtOther} onOtherChange={setMusicArtOther} />
+                        <FieldError show={showErrors && !musicArtSub && !musicArtOther} message="Please select or enter a subcategory" />
                       </div>
                     </>
                   )}
@@ -538,6 +542,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select services *</Label>
                         <ChipSelect options={BEAUTY_SUBS} selected={beautySubs} onChange={setBeautySubs} allowOther otherValue={beautyOther} onOtherChange={setBeautyOther} />
+                        <FieldError show={showErrors && beautySubs.length === 0 && !beautyOther} message="Please select at least one service" />
                       </div>
                     </>
                   )}
@@ -548,6 +553,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select services *</Label>
                         <ChipSelect options={PET_SUBS} selected={petSubs} onChange={setPetSubs} allowOther otherValue={petOther} onOtherChange={setPetOther} />
+                        <FieldError show={showErrors && petSubs.length === 0 && !petOther} message="Please select at least one service" />
                       </div>
                     </>
                   )}
@@ -558,6 +564,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select services *</Label>
                         <ChipSelect options={HANDYMAN_SUBS} selected={handymanSubs} onChange={setHandymanSubs} allowOther otherValue={handymanOther} onOtherChange={setHandymanOther} />
+                        <FieldError show={showErrors && handymanSubs.length === 0 && !handymanOther} message="Please select at least one service" />
                       </div>
                     </>
                   )}
