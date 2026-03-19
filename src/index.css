@@ -186,40 +186,29 @@ html {
   animation: announcement-scroll 30s linear infinite;
 }
 
-/* ── Scroll-triggered reveal animations ── */
-@keyframes reveal-up {
-  0% {
-    opacity: 0;
-    transform: translateY(32px) scale(0.98);
-    filter: blur(4px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
+/* Observer-driven reveal: hidden by default, animate on .is-visible */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px) scale(0.98);
+  filter: blur(3px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes reveal-scale {
-  0% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
 }
 
-.reveal-on-scroll {
-  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* Stagger children with data-reveal */
+[data-reveal-stagger] > [data-reveal] {
+  transition-delay: calc(var(--reveal-i, 0) * 70ms);
 }
 
-.reveal-scale-on-scroll {
-  animation: reveal-scale 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Stagger children — apply to parent container */
+/* CSS-only stagger animation (no JS needed) */
 .stagger-children > * {
   opacity: 0;
   animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -238,8 +227,12 @@ html {
 .stagger-children > *:nth-child(12) { animation-delay: 660ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-on-scroll,
-  .reveal-scale-on-scroll,
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
   .stagger-children > * {
     animation: none !important;
     opacity: 1 !important;
