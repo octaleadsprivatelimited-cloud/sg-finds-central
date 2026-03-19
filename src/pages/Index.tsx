@@ -405,10 +405,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
 
           {/* Map column - always visible on desktop */}
-          <div className="hidden lg:block lg:w-2/5">
-            <div className="sticky top-16">
-              <div className="bg-card border border-border rounded-lg overflow-hidden">
-                <div className="h-[calc(100vh-200px)]">
+          <div className="hidden lg:block lg:w-2/5 self-start sticky top-[72px] h-[calc(100vh-80px)]">
+            <div className="flex flex-col h-full gap-3">
+              <div className="bg-card border border-border rounded-lg overflow-hidden flex-1 min-h-0">
+                <div className="h-full">
                   <MapView
                     listings={sortedFiltered}
                     selectedId={selectedListing?.id}
@@ -422,7 +422,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </div>
 
               {/* Sidebar CTA */}
-              <div className="mt-4 border border-border rounded-lg bg-card p-5 text-center">
+              <div className="border border-border rounded-lg bg-card p-5 text-center shrink-0">
                 <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
                 <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
                 <Link to="/add-listing">
