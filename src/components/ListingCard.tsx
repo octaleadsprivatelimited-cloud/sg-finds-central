@@ -234,9 +234,10 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-[11px] font-medium text-emerald-600 active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold text-white active:scale-95 transition-transform"
+                style={{ backgroundColor: "#25D366" }}
               >
-                <MessageCircle className="w-3 h-3" />WhatsApp
+                <img src={whatsappIcon} alt="WhatsApp" className="w-3.5 h-3.5" />WhatsApp
               </a>
             )}
             {listing.lat && listing.lng && (
