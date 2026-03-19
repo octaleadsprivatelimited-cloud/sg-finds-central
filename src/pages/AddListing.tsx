@@ -564,6 +564,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Select services *</Label>
                         <ChipSelect options={HANDYMAN_SUBS} selected={handymanSubs} onChange={setHandymanSubs} allowOther otherValue={handymanOther} onOtherChange={setHandymanOther} />
+                        <FieldError show={showErrors && handymanSubs.length === 0 && !handymanOther} message="Please select at least one service" />
                       </div>
                     </>
                   )}
