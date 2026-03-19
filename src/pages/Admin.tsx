@@ -534,6 +534,15 @@ const Admin = () => {
                           <p className="text-[11px] text-muted-foreground truncate">{l.category} · {l.district}</p>
                         </div>
                         <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${s.bg} ${s.text}`}>{s.label}</span>
+                        {(l as any).imageUrls?.length > 0 && (
+                          <button onClick={() => setViewingImages({ listing: l })} className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition">
+                            <Image className="w-3 h-3" />{(l as any).imageUrls.length}
+                          </button>
+                        )}
+                        <Button size="sm" variant="ghost" onClick={() => openAdminEdit(l)}
+                          className="rounded-md h-7 w-7 p-0 text-muted-foreground hover:text-foreground">
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </Button>
                         <Button size="sm" variant="ghost" onClick={() => handleDelete(l.id)} disabled={actionLoading === l.id}
                           className="text-[hsl(354,70%,55%)] hover:bg-[hsl(354,70%,97%)] rounded-md h-7 w-7 p-0">
                           {actionLoading === l.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
