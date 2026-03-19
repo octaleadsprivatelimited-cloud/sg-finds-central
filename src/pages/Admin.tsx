@@ -81,6 +81,10 @@ const Admin = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [listingFilter, setListingFilter] = useState<"all" | "approved" | "pending_approval" | "rejected">("pending_approval");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [editingListing, setEditingListing] = useState<Listing | null>(null);
+  const [adminEditData, setAdminEditData] = useState<Record<string, any>>({});
+  const [adminSaving, setAdminSaving] = useState(false);
+  const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
 
   const [settings, setSettings] = useState({
     autoApprove: false,
