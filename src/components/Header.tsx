@@ -61,26 +61,24 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
             </span>
           </Link>
 
-          {/* Search + GPS + Map toggle — visible on homepage */}
-          {isHomePage && (
-            <div className="hidden md:flex items-center gap-2 ml-4 flex-1 max-w-xl">
-              <SearchWithSuggestions
-                placeholder="Search businesses, categories, or postal code..."
-                className="flex-1"
-              />
-              {onDetectLocation && (
-                <Button variant="outline" size="sm" className="h-9 px-4 text-sm shrink-0" onClick={onDetectLocation}>
-                  <MapPin className="w-4 h-4 mr-1.5" />GPS
-                </Button>
-              )}
-              {onToggleMap && (
-                <Button variant="outline" size="sm" className="h-9 px-4 text-sm shrink-0" onClick={onToggleMap}>
-                  {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
-                  {showMap ? "List" : "Map"}
-                </Button>
-              )}
-            </div>
-          )}
+          {/* Search + GPS + Map toggle */}
+          <div className="hidden md:flex items-center gap-2 ml-4 flex-1 max-w-xl">
+            <SearchWithSuggestions
+              placeholder="Search businesses, categories, or postal code..."
+              className="flex-1"
+            />
+            {onDetectLocation && (
+              <Button variant="outline" size="sm" className="h-9 px-4 text-sm shrink-0" onClick={onDetectLocation}>
+                <MapPin className="w-4 h-4 mr-1.5" />GPS
+              </Button>
+            )}
+            {onToggleMap && (
+              <Button variant="outline" size="sm" className="h-9 px-4 text-sm shrink-0" onClick={onToggleMap}>
+                {showMap ? <List className="w-4 h-4 mr-1.5" /> : <MapIcon className="w-4 h-4 mr-1.5" />}
+                {showMap ? "List" : "Map"}
+              </Button>
+            )}
+          </div>
 
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-2 ml-auto">
