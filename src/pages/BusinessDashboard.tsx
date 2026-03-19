@@ -240,7 +240,7 @@ const BusinessDashboard = () => {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
         customSlug: sanitizedSlug, logoUrl: editLogoUrl, operatingHours: editHours,
-        specialHours: editSpecialHours, status: "pending_approval",
+        specialHours: editSpecialHours, imageUrls: editImageUrls, status: "pending_approval",
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
