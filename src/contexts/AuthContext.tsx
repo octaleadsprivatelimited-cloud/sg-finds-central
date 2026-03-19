@@ -44,8 +44,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (adminDoc.exists()) {
               setRole("admin");
             } else {
-              // Check if they own any listings
-              setRole("business_owner");
+              // Check if they actually own any listings
+              const { getDocs, query, where, collection } = await import("firebase/firestore");
+              const listingsQuery = query(collection(db, "listings"), where("ownerId", "==", firebaseUser.uid));
+              const listingsSnap = await getDocs(listingsQuery);
+              setRole(listingsSnap.empty ? "user" : "business_owner");
             }
           }
         } catch {

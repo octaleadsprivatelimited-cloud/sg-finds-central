@@ -68,6 +68,9 @@ export interface Listing {
   operatingHours?: OperatingHours;
   specialHours?: SpecialHours[];
   priceRange?: string;
+  imageUrls?: string[];
+  ownerName?: string;
+  contactEmail?: string;
 }
 
 interface ListingCardProps {

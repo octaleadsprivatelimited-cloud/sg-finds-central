@@ -164,7 +164,7 @@ const Admin = () => {
       name: listing.name, category: listing.category, district: listing.district,
       address: listing.address, phone: listing.phone || "", email: listing.email || "",
       website: listing.website || "", description: listing.description || "",
-      imageUrls: (listing as any).imageUrls || [], logoUrl: listing.logoUrl || "",
+      imageUrls: listing.imageUrls || [], logoUrl: listing.logoUrl || "",
       status: listing.status,
     });
   };
@@ -425,13 +425,13 @@ const Admin = () => {
                         </div>
 
                         {/* Business Images Preview */}
-                        {(listing as any).imageUrls && (listing as any).imageUrls.length > 0 && (
+                        {listing.imageUrls && listing.imageUrls.length > 0 && (
                           <div className="mt-3 ml-[52px]">
                             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                              <Image className="w-3 h-3" />Business Images ({(listing as any).imageUrls.length})
+                              <Image className="w-3 h-3" />Business Images ({listing.imageUrls.length})
                             </p>
                             <div className="flex gap-1.5 overflow-x-auto">
-                              {((listing as any).imageUrls as string[]).map((url, i) => (
+                              {listing.imageUrls.map((url, i) => (
                                 <img key={i} src={url} alt={`${listing.name} ${i + 1}`}
                                   className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] shrink-0" />
                               ))}
@@ -534,9 +534,9 @@ const Admin = () => {
                           <p className="text-[11px] text-muted-foreground truncate">{l.category} · {l.district}</p>
                         </div>
                         <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${s.bg} ${s.text}`}>{s.label}</span>
-                        {(l as any).imageUrls?.length > 0 && (
+                        {l.imageUrls && l.imageUrls.length > 0 && (
                           <button onClick={() => setViewingImages({ listing: l })} className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition">
-                            <Image className="w-3 h-3" />{(l as any).imageUrls.length}
+                            <Image className="w-3 h-3" />{l.imageUrls.length}
                           </button>
                         )}
                         <Button size="sm" variant="ghost" onClick={() => openAdminEdit(l)}
@@ -789,7 +789,7 @@ const Admin = () => {
           </DialogHeader>
           {viewingImages && (
             <div className="grid grid-cols-2 gap-3 py-2">
-              {((viewingImages.listing as any).imageUrls as string[] || []).map((url, i) => (
+              {(viewingImages.listing.imageUrls || []).map((url, i) => (
                 <img key={i} src={url} alt={`Image ${i + 1}`} className="w-full aspect-square rounded-lg object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]" />
               ))}
             </div>
