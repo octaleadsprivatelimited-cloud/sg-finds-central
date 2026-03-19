@@ -571,6 +571,7 @@ const AddListing = () => {
                   <p className="text-sm text-muted-foreground">Do you provide home service / delivery?</p>
                   <ChipSelect options={SERVICE_LOCATIONS} selected={serviceLocations} onChange={setServiceLocations} />
                   <FieldError show={showErrors && serviceLocations.length === 0} message="Please select at least one service location" />
+                  {serviceLocations.includes("at-customer-home") && (
                     <div className="space-y-2 pt-2">
                       <Label>Travel area (optional)</Label>
                       <Input value={travelArea} onChange={e => setTravelArea(e.target.value)} placeholder="e.g. Within 10km of Tampines" />
