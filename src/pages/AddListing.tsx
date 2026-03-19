@@ -820,6 +820,7 @@ const AddListing = () => {
                     <Label>Primary contact method *</Label>
                     <p className="text-xs text-muted-foreground">Phone Number (WhatsApp preferred)</p>
                     <SingleChipSelect options={CONTACT_METHODS} selected={primaryContact} onChange={setPrimaryContact} />
+                    <FieldError show={showErrors && !primaryContact} message="Please select a contact method" />
                   </div>
 
                   {primaryContact === "whatsapp" && (
