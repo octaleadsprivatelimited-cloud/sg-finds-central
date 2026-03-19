@@ -894,6 +894,7 @@ const AddListing = () => {
                         By submitting, I agree that my listing will be reviewed before going live and any updates will go through the approval process. I confirm all content and images belong to my business.
                       </span>
                     </label>
+                    <FieldError show={showErrors && !agreeTerms} message="You must agree to the terms before submitting" />
                   </div>
                 </div>
               )}
