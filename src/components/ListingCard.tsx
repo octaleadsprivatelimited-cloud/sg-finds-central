@@ -179,86 +179,116 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   return (
     <div
       data-listing-id={listing.id}
-      className={`bg-card rounded-lg border border-border p-4 cursor-pointer transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] ${
+      className={`bg-card rounded-lg border border-border cursor-pointer transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] ${
         highlighted ? "ring-2 ring-primary shadow-[var(--shadow-card-hover)]" : "shadow-[var(--shadow-card)]"
       }`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
-      <div className="flex gap-4">
-        {/* Left: Image */}
-        <div className="w-[140px] h-[130px] md:w-[200px] md:h-[160px] shrink-0 rounded-md overflow-hidden bg-muted">
+      {/* ── MOBILE ── */}
+      <div className="flex gap-2.5 p-2.5 md:hidden">
+        {/* Compact image */}
+        <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted">
           {listing.logoUrl ? (
             <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
           ) : listing.coverImage ? (
             <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <span className="text-3xl md:text-4xl font-bold text-white/90">{listing.name.charAt(0)}</span>
+              <span className="text-lg font-bold text-white/90">{listing.name.charAt(0)}</span>
             </div>
           )}
         </div>
 
-        {/* Right: Info */}
+        {/* Info */}
         <div className="flex-1 min-w-0">
-          {/* Title */}
-          <h3 className="font-bold text-foreground text-base md:text-lg leading-tight">
+          <h3 className="font-semibold text-foreground text-sm leading-tight truncate">
+            {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
+            <span className="text-primary">{listing.name}</span>
+          </h3>
+
+          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
+            {distanceKm != null && (
+              <span>{distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}</span>
+            )}
+            {isOpen === true && <span className="text-[hsl(var(--success))] font-semibold">• Open</span>}
+            {isOpen === false && <span className="text-destructive font-medium">• Closed</span>}
+          </div>
+
+          {/* Actions row */}
+          <div className="flex items-center gap-2 mt-1.5">
+            {listing.phone && (
+              <a
+                href={`tel:${listing.phone}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border text-[11px] font-medium text-foreground active:scale-95 transition-transform"
+              >
+                <Phone className="w-3 h-3" />Call
+              </a>
+            )}
+            {listing.lat && listing.lng && (
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary text-primary-foreground text-[11px] font-semibold active:scale-95 transition-transform"
+              >
+                <Navigation className="w-3 h-3" />Directions
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── DESKTOP ── */}
+      <div className="hidden md:flex gap-4 p-4">
+        {/* Image */}
+        <div className="w-[200px] h-[160px] shrink-0 rounded-md overflow-hidden bg-muted">
+          {listing.logoUrl ? (
+            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+          ) : listing.coverImage ? (
+            <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+              <span className="text-4xl font-bold text-white/90">{listing.name.charAt(0)}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-foreground text-lg leading-tight">
             {index !== undefined && <span className="text-muted-foreground mr-1.5">{index}.</span>}
             <span className="text-primary hover:underline">{listing.name}</span>
           </h3>
 
-          {/* Location + Open status */}
           <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
             <MapPin className="w-3.5 h-3.5 shrink-0" />
             <span className="truncate">{listing.district}</span>
-            {listing.priceRange && (
-              <>
-                <span>•</span>
-                <span>{listing.priceRange}</span>
-              </>
-            )}
-            {isOpen === true && (
-              <>
-                <span>•</span>
-                <span className="text-[hsl(var(--success))] font-semibold">Open</span>
-              </>
-            )}
-            {isOpen === false && (
-              <>
-                <span>•</span>
-                <span className="text-destructive font-medium">{nextOpenInfo || "Closed"}</span>
-              </>
-            )}
+            {listing.priceRange && <><span>•</span><span>{listing.priceRange}</span></>}
+            {isOpen === true && <><span>•</span><span className="text-[hsl(var(--success))] font-semibold">Open</span></>}
+            {isOpen === false && <><span>•</span><span className="text-destructive font-medium">{nextOpenInfo || "Closed"}</span></>}
           </div>
 
-          {/* Distance */}
           {distanceKm != null && (
             <p className="text-xs text-muted-foreground mt-1">
               {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m away` : `${distanceKm.toFixed(1)} km away`}
             </p>
           )}
 
-          {/* Description */}
           {listing.description && (
-            <p className="text-sm text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
-              {listing.description}
-            </p>
+            <p className="text-sm text-muted-foreground mt-2 line-clamp-2 leading-relaxed">{listing.description}</p>
           )}
 
-          {/* Tags */}
           <div className="flex items-center gap-2 mt-3 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-md border border-border text-xs font-medium text-foreground bg-secondary">
-              {listing.category}
-            </span>
+            <span className="px-2.5 py-0.5 rounded-md border border-border text-xs font-medium text-foreground bg-secondary">{listing.category}</span>
             {listing.verified && (
-              <span className="px-2.5 py-0.5 rounded-md border border-[hsl(var(--success))]/30 text-xs font-medium text-[hsl(var(--success))] bg-[hsl(var(--success))]/10">
-                ✓ Verified
-              </span>
+              <span className="px-2.5 py-0.5 rounded-md border border-[hsl(var(--success))]/30 text-xs font-medium text-[hsl(var(--success))] bg-[hsl(var(--success))]/10">✓ Verified</span>
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center gap-3">
               {listing.website && (
@@ -280,8 +310,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
               >
-                <Navigation className="w-3.5 h-3.5" />
-                Get Directions
+                <Navigation className="w-3.5 h-3.5" />Get Directions
               </a>
             )}
           </div>
