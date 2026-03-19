@@ -57,11 +57,13 @@ const DEMO_LISTINGS: (Listing & { verified?: boolean; featured?: boolean; rating
 
 const CityCategory = () => {
   const { citySlug, categorySlug } = useParams<{ citySlug: string; categorySlug?: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
   const [loadingListings, setLoadingListings] = useState(true);
 
   const city = getCityBySlug(citySlug || "singapore");
+  const activeSub = searchParams.get("sub");
 
   // Fetch approved listings from Firestore
   useEffect(() => {
@@ -88,16 +90,34 @@ const CityCategory = () => {
     ) || null;
   }, [categorySlug]);
 
+  // Get subcategories for the matched category
+  const subcategories = useMemo(() => {
+    if (!matchedCategory) return null;
+    return getSubcategoriesForCategory(matchedCategory);
+  }, [matchedCategory]);
+
+  // Show subcategory selection if category has subs and none is selected yet
+  const showSubcategoryPicker = !!subcategories && !activeSub;
+
   const filtered = useMemo(() => {
     if (!matchedCategory) return listings;
-    return listings.filter((l) => l.category === matchedCategory);
-  }, [matchedCategory, listings]);
+    let result = listings.filter((l) => l.category === matchedCategory);
+    // Further filter by subcategory if selected
+    if (activeSub) {
+      result = result.filter((l) => (l as any).subcategory === activeSub);
+    }
+    return result;
+  }, [matchedCategory, listings, activeSub]);
 
   const categories = BUSINESS_CATEGORIES.filter((c) => c !== "All Categories");
 
-  const pageTitle = matchedCategory
-    ? `${matchedCategory} in ${city?.name || "Singapore"}`
-    : `Businesses in ${city?.name || "Singapore"}`;
+  const subLabel = subcategories?.find((s) => s.value === activeSub)?.label;
+
+  const pageTitle = activeSub && subLabel
+    ? `${subLabel} — ${matchedCategory} in ${city?.name || "Singapore"}`
+    : matchedCategory
+      ? `${matchedCategory} in ${city?.name || "Singapore"}`
+      : `Businesses in ${city?.name || "Singapore"}`;
 
   const pageDescription = matchedCategory
     ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${city?.name || "Singapore"}. Browse verified listings, read reviews, and connect directly.`
