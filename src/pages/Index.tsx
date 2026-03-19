@@ -156,14 +156,17 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   }, [filtered, sortBy]);
 
   const CATEGORY_NAV = [
-    { value: "Automotive", label: "Auto Services", emoji: "🚗" },
-    { value: "Beauty & Wellness", label: "Beauty", emoji: "💅" },
-    { value: "Home Services", label: "Home Services", emoji: "🏠" },
-    { value: "Financial Services", label: "Insurance", emoji: "🛡️" },
-    { value: "Legal Services", label: "Legal Services", emoji: "⚖️" },
-    { value: "Healthcare & Medical", label: "Medical Services", emoji: "🏥" },
-    { value: "Food & Beverage", label: "Restaurants", emoji: "🍽️" },
-    { value: "Retail & Shopping", label: "Retail", emoji: "🛍️" },
+    { value: "Tuition", label: "Tuition", emoji: "📚" },
+    { value: "Baking", label: "Baking", emoji: "🧁" },
+    { value: "Music / Art / Craft", label: "Music / Art", emoji: "🎵" },
+    { value: "Home Food", label: "Home Food", emoji: "🍱" },
+    { value: "Beauty", label: "Beauty", emoji: "💅" },
+    { value: "Pet Services", label: "Pet Services", emoji: "🐾" },
+    { value: "Event Services", label: "Events", emoji: "🎈" },
+    { value: "Tailoring", label: "Tailoring", emoji: "🧵" },
+    { value: "Cleaning", label: "Cleaning", emoji: "🧹" },
+    { value: "Handyman", label: "Handyman", emoji: "🔧" },
+    { value: "Photography / Videography", label: "Photo / Video", emoji: "📸" },
   ];
 
   return (
