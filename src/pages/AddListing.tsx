@@ -506,6 +506,7 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Subjects taught *</Label>
                         <ChipSelect options={TUITION_SUBJECTS} selected={subjects} onChange={setSubjects} allowOther otherValue={subjectsOther} onOtherChange={setSubjectsOther} />
+                        <FieldError show={showErrors && subjects.length === 0} message="Please select at least one subject" />
                       </div>
                       <div className="space-y-2">
                         <Label>Languages</Label>
@@ -514,10 +515,12 @@ const AddListing = () => {
                       <div className="space-y-2">
                         <Label>Levels supported *</Label>
                         <ChipSelect options={TUITION_LEVELS} selected={levels} onChange={setLevels} allowOther otherValue={levelsOther} onOtherChange={setLevelsOther} />
+                        <FieldError show={showErrors && levels.length === 0} message="Please select at least one level" />
                       </div>
                       <div className="space-y-2">
                         <Label>Syllabus supported *</Label>
                         <ChipSelect options={TUITION_SYLLABI} selected={syllabi} onChange={setSyllabi} allowOther otherValue={syllabiOther} onOtherChange={setSyllabiOther} />
+                        <FieldError show={showErrors && syllabi.length === 0} message="Please select at least one syllabus" />
                       </div>
                     </>
                   )}
