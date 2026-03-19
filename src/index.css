@@ -4,6 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Smooth scrolling with premium feel ── */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 97%;
