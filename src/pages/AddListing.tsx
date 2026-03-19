@@ -145,7 +145,8 @@ const AddListing = () => {
   const [loading, setLoading] = useState(false);
   const [hasExistingListing, setHasExistingListing] = useState(false);
   const [checkingExisting, setCheckingExisting] = useState(true);
-
+  const [showErrors, setShowErrors] = useState(false);
+  
   // ── Screen 1: Category ──
   const [category, setCategory] = useState("");
   const [district, setDistrict] = useState("");
@@ -241,6 +242,10 @@ const AddListing = () => {
 
   const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 
+  /* ── Inline error helper ── */
+  const FieldError = ({ show, message }: { show: boolean; message: string }) =>
+    show ? <p className="text-xs font-medium text-destructive mt-1">{message}</p> : null;
+
   const canProceed = (): boolean => {
     if (!currentStep) return false;
     switch (currentStep.key) {
@@ -255,7 +260,10 @@ const AddListing = () => {
         return true;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode;
-      case "description": return wordCount(shortDescription) >= 10 && !!detailedDescription.trim();
+      case "description": {
+        const wc = wordCount(shortDescription);
+        return wc >= 50 && wc <= 100 && !!detailedDescription.trim();
+      }
       case "hours": return true;
       case "images": return imageUrls.length >= 3;
       case "profile": return true;
@@ -450,6 +458,7 @@ const AddListing = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FieldError show={showErrors && !category} message="Please select a category" />
                   </div>
                   <div className="space-y-2">
                     <Label>District *</Label>
@@ -461,6 +470,7 @@ const AddListing = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FieldError show={showErrors && !district} message="Please select a district" />
                   </div>
                 </div>
               )}
@@ -472,14 +482,17 @@ const AddListing = () => {
                   <div className="space-y-2">
                     <Label>Business Name *</Label>
                     <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Mary's Tuition Centre" />
+                    <FieldError show={showErrors && !name} message="Business name is required" />
                   </div>
                   <div className="space-y-2">
                     <Label>Owner Name *</Label>
                     <Input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="e.g. Mary Tan" />
+                    <FieldError show={showErrors && !ownerName} message="Owner name is required" />
                   </div>
                   <div className="space-y-2">
                     <Label>UEN *</Label>
                     <Input value={uen} onChange={e => setUen(e.target.value)} placeholder="e.g. 201912345A" />
+                    <FieldError show={showErrors && !uen} message="UEN is required" />
                   </div>
                 </div>
               )}
@@ -557,6 +570,7 @@ const AddListing = () => {
                   <h2 className="text-lg font-semibold text-foreground">Where does your service happen?</h2>
                   <p className="text-sm text-muted-foreground">Do you provide home service / delivery?</p>
                   <ChipSelect options={SERVICE_LOCATIONS} selected={serviceLocations} onChange={setServiceLocations} />
+                  <FieldError show={showErrors && serviceLocations.length === 0} message="Please select at least one service location" />
                   {serviceLocations.includes("at-customer-home") && (
                     <div className="space-y-2 pt-2">
                       <Label>Travel area (optional)</Label>
@@ -574,11 +588,13 @@ const AddListing = () => {
                   <div className="space-y-2">
                     <Label>Address *</Label>
                     <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. 391 Orchard Road, #B2-01" />
+                    <FieldError show={showErrors && !address} message="Address is required" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <Label>Postal Code *</Label>
                       <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 238872" maxLength={6} />
+                      <FieldError show={showErrors && !postalCode} message="Postal code is required" />
                     </div>
                     <div className="space-y-2">
                       <Label>Unit Number (private)</Label>
@@ -604,9 +620,11 @@ const AddListing = () => {
                       rows={4}
                       className="resize-none"
                     />
-                    <p className={`text-xs text-right ${wordCount(shortDescription) < 10 ? "text-destructive" : wordCount(shortDescription) > 100 ? "text-amber-500" : "text-muted-foreground"}`}>
+                    <p className={`text-xs text-right ${wordCount(shortDescription) < 50 ? "text-destructive" : wordCount(shortDescription) > 100 ? "text-destructive" : "text-muted-foreground"}`}>
                       {wordCount(shortDescription)} / 50–100 words
                     </p>
+                    <FieldError show={showErrors && wordCount(shortDescription) < 50} message={`Need at least 50 words (currently ${wordCount(shortDescription)})`} />
+                    <FieldError show={showErrors && wordCount(shortDescription) > 100} message={`Maximum 100 words allowed (currently ${wordCount(shortDescription)})`} />
                   </div>
 
                   <div className="space-y-2">
@@ -620,6 +638,7 @@ const AddListing = () => {
                       className="resize-none"
                     />
                     <p className="text-xs text-muted-foreground text-right">{detailedDescription.length} characters</p>
+                    <FieldError show={showErrors && !detailedDescription.trim()} message="Detailed description is required" />
                   </div>
                 </div>
               )}
@@ -725,6 +744,7 @@ const AddListing = () => {
                   <p className="text-xs text-muted-foreground">
                     {imageUrls.length}/5 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
                   </p>
+                  <FieldError show={showErrors && imageUrls.length < 3} message={`Please upload at least 3 images (${imageUrls.length} uploaded)`} />
                 </div>
               )}
 
@@ -794,12 +814,14 @@ const AddListing = () => {
                       onChange={e => setContactEmail(e.target.value)}
                       placeholder="info@yourbusiness.com"
                     />
+                    <FieldError show={showErrors && (!contactEmail || !/\S+@\S+\.\S+/.test(contactEmail))} message="Valid email address is required" />
                   </div>
 
                   <div className="space-y-2">
                     <Label>Primary contact method *</Label>
                     <p className="text-xs text-muted-foreground">Phone Number (WhatsApp preferred)</p>
                     <SingleChipSelect options={CONTACT_METHODS} selected={primaryContact} onChange={setPrimaryContact} />
+                    <FieldError show={showErrors && !primaryContact} message="Please select a contact method" />
                   </div>
 
                   {primaryContact === "whatsapp" && (
@@ -873,21 +895,37 @@ const AddListing = () => {
                         By submitting, I agree that my listing will be reviewed before going live and any updates will go through the approval process. I confirm all content and images belong to my business.
                       </span>
                     </label>
+                    <FieldError show={showErrors && !agreeTerms} message="You must agree to the terms before submitting" />
                   </div>
                 </div>
               )}
 
               {/* ── Navigation ── */}
               <div className="flex justify-between mt-8 pt-6 border-t border-border">
-                <Button variant="outline" onClick={() => setStepIndex(i => i - 1)} disabled={stepIndex === 0}>
+                <Button variant="outline" onClick={() => { setShowErrors(false); setStepIndex(i => i - 1); }} disabled={stepIndex === 0}>
                   <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
                 </Button>
                 {!isLastStep ? (
-                  <Button onClick={() => setStepIndex(i => i + 1)} disabled={!canProceed()}>
+                  <Button onClick={() => {
+                    if (canProceed()) {
+                      setShowErrors(false);
+                      setStepIndex(i => i + 1);
+                    } else {
+                      setShowErrors(true);
+                      toast.error("Please fill in all required fields");
+                    }
+                  }}>
                     Next <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={loading || !canProceed()}>
+                  <Button onClick={() => {
+                    if (canProceed()) {
+                      handleSubmit();
+                    } else {
+                      setShowErrors(true);
+                      toast.error("Please fill in all required fields");
+                    }
+                  }} disabled={loading}>
                     {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Submit Listing
                   </Button>
