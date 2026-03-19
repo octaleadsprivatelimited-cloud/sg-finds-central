@@ -20,6 +20,8 @@ import {
   needsSubcategoryScreen, needsComplianceScreen, getComplianceGates,
   TUITION_SUBJECTS, TUITION_LANGUAGES, TUITION_LEVELS, TUITION_SYLLABI,
   MUSIC_ART_CRAFT_SUBS, BEAUTY_SUBS, PET_SUBS, HANDYMAN_SUBS,
+  HOME_FOOD_SUBS, BAKING_SUBS, PHOTOGRAPHY_SUBS, TAILORING_SUBS,
+  EVENT_SERVICES_SUBS, CLEANING_SUBS,
   SERVICE_LOCATIONS, CONTACT_METHODS,
   type MultiSelectOption,
 } from "@/lib/listing-form-config";
@@ -173,6 +175,18 @@ const AddListing = () => {
   const [petOther, setPetOther] = useState("");
   const [handymanSubs, setHandymanSubs] = useState<string[]>([]);
   const [handymanOther, setHandymanOther] = useState("");
+  const [homeFoodSubs, setHomeFoodSubs] = useState<string[]>([]);
+  const [homeFoodOther, setHomeFoodOther] = useState("");
+  const [bakingSubs, setBakingSubs] = useState<string[]>([]);
+  const [bakingOther, setBakingOther] = useState("");
+  const [photoSubs, setPhotoSubs] = useState<string[]>([]);
+  const [photoOther, setPhotoOther] = useState("");
+  const [tailoringSubs, setTailoringSubs] = useState<string[]>([]);
+  const [tailoringOther, setTailoringOther] = useState("");
+  const [eventSubs, setEventSubs] = useState<string[]>([]);
+  const [eventOther, setEventOther] = useState("");
+  const [cleaningSubs, setCleaningSubs] = useState<string[]>([]);
+  const [cleaningOther, setCleaningOther] = useState("");
 
   // ── Screen 4: Service location ──
   const [serviceLocations, setServiceLocations] = useState<string[]>([]);
@@ -257,7 +271,13 @@ const AddListing = () => {
         if (category === "Beauty") return beautySubs.length > 0 || !!beautyOther;
         if (category === "Pet Services") return petSubs.length > 0 || !!petOther;
         if (category === "Handyman") return handymanSubs.length > 0 || !!handymanOther;
-        return true;
+        if (category === "Home Food") return homeFoodSubs.length > 0 || !!homeFoodOther;
+        if (category === "Baking") return bakingSubs.length > 0 || !!bakingOther;
+        if (category === "Photography / Videography") return photoSubs.length > 0 || !!photoOther;
+        if (category === "Tailoring") return tailoringSubs.length > 0 || !!tailoringOther;
+        if (category === "Event Services") return eventSubs.length > 0 || !!eventOther;
+        if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
+        return false;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode;
       case "description": {
@@ -327,6 +347,12 @@ const AddListing = () => {
     if (category === "Beauty") return { subcategories: [...beautySubs, ...(beautyOther ? [beautyOther] : [])] };
     if (category === "Pet Services") return { subcategories: [...petSubs, ...(petOther ? [petOther] : [])] };
     if (category === "Handyman") return { subcategories: [...handymanSubs, ...(handymanOther ? [handymanOther] : [])] };
+    if (category === "Home Food") return { subcategories: [...homeFoodSubs, ...(homeFoodOther ? [homeFoodOther] : [])] };
+    if (category === "Baking") return { subcategories: [...bakingSubs, ...(bakingOther ? [bakingOther] : [])] };
+    if (category === "Photography / Videography") return { subcategories: [...photoSubs, ...(photoOther ? [photoOther] : [])] };
+    if (category === "Tailoring") return { subcategories: [...tailoringSubs, ...(tailoringOther ? [tailoringOther] : [])] };
+    if (category === "Event Services") return { subcategories: [...eventSubs, ...(eventOther ? [eventOther] : [])] };
+    if (category === "Cleaning") return { subcategories: [...cleaningSubs, ...(cleaningOther ? [cleaningOther] : [])] };
     return {};
   };
 
@@ -565,6 +591,72 @@ const AddListing = () => {
                         <Label>Select services *</Label>
                         <ChipSelect options={HANDYMAN_SUBS} selected={handymanSubs} onChange={setHandymanSubs} allowOther otherValue={handymanOther} onOtherChange={setHandymanOther} />
                         <FieldError show={showErrors && handymanSubs.length === 0 && !handymanOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Home Food" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Home Food Type</h2>
+                      <div className="space-y-2">
+                        <Label>Select cuisine type *</Label>
+                        <ChipSelect options={HOME_FOOD_SUBS} selected={homeFoodSubs} onChange={setHomeFoodSubs} allowOther otherValue={homeFoodOther} onOtherChange={setHomeFoodOther} />
+                        <FieldError show={showErrors && homeFoodSubs.length === 0 && !homeFoodOther} message="Please select at least one cuisine type" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Baking" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Baking Speciality</h2>
+                      <div className="space-y-2">
+                        <Label>Select baked goods *</Label>
+                        <ChipSelect options={BAKING_SUBS} selected={bakingSubs} onChange={setBakingSubs} allowOther otherValue={bakingOther} onOtherChange={setBakingOther} />
+                        <FieldError show={showErrors && bakingSubs.length === 0 && !bakingOther} message="Please select at least one type" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Photography / Videography" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Photography / Videography</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={PHOTOGRAPHY_SUBS} selected={photoSubs} onChange={setPhotoSubs} allowOther otherValue={photoOther} onOtherChange={setPhotoOther} />
+                        <FieldError show={showErrors && photoSubs.length === 0 && !photoOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Tailoring" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Tailoring Services</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={TAILORING_SUBS} selected={tailoringSubs} onChange={setTailoringSubs} allowOther otherValue={tailoringOther} onOtherChange={setTailoringOther} />
+                        <FieldError show={showErrors && tailoringSubs.length === 0 && !tailoringOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Event Services" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Event Services</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={EVENT_SERVICES_SUBS} selected={eventSubs} onChange={setEventSubs} allowOther otherValue={eventOther} onOtherChange={setEventOther} />
+                        <FieldError show={showErrors && eventSubs.length === 0 && !eventOther} message="Please select at least one service" />
+                      </div>
+                    </>
+                  )}
+
+                  {category === "Cleaning" && (
+                    <>
+                      <h2 className="text-lg font-semibold text-foreground">Cleaning Services</h2>
+                      <div className="space-y-2">
+                        <Label>Select services *</Label>
+                        <ChipSelect options={CLEANING_SUBS} selected={cleaningSubs} onChange={setCleaningSubs} allowOther otherValue={cleaningOther} onOtherChange={setCleaningOther} />
+                        <FieldError show={showErrors && cleaningSubs.length === 0 && !cleaningOther} message="Please select at least one service" />
                       </div>
                     </>
                   )}
