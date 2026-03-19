@@ -183,6 +183,7 @@ const Admin = () => {
     setAdminSaving(false);
   };
 
+  const stats = useMemo(() => ({
     total: allListings.length,
     pending: pendingListings.length,
     approved: allListings.filter((l) => l.status === "approved").length,
