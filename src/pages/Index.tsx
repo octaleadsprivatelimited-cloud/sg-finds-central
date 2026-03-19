@@ -406,23 +406,21 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
           {/* Map column - always visible on desktop */}
           <div className="hidden lg:block lg:w-2/5">
-            <div className="flex flex-col h-full gap-3">
-              <div className="bg-card border border-border rounded-lg overflow-hidden flex-1 min-h-0">
-                <div className="h-full">
-                  <MapView
-                    listings={sortedFiltered}
-                    selectedId={selectedListing?.id}
-                    hoveredId={hoveredListingId}
-                    onHoverListing={setHoveredListingId}
-                    onSelectListing={setSelectedListing}
-                    center={mapCenter}
-                    radiusKm={radiusKm}
-                  />
-                </div>
+            <div className="flex flex-col gap-3">
+              <div className="bg-card border border-border rounded-lg overflow-hidden h-[400px]">
+                <MapView
+                  listings={sortedFiltered}
+                  selectedId={selectedListing?.id}
+                  hoveredId={hoveredListingId}
+                  onHoverListing={setHoveredListingId}
+                  onSelectListing={setSelectedListing}
+                  center={mapCenter}
+                  radiusKm={radiusKm}
+                />
               </div>
 
               {/* Sidebar CTA */}
-              <div className="border border-border rounded-lg bg-card p-5 text-center shrink-0">
+              <div className="border border-border rounded-lg bg-card p-5 text-center">
                 <h3 className="text-base font-bold text-foreground mb-1">Manage your <span className="underline decoration-primary decoration-2">free</span> listing</h3>
                 <p className="text-xs text-muted-foreground mb-3">Update your business information in a few steps.</p>
                 <Link to="/add-listing">
