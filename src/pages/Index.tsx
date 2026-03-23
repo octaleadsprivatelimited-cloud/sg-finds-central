@@ -430,15 +430,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 </div>
               </div>
 
-              <h1 className="text-2xl font-bold text-foreground mb-1">
-                {category !== "All Categories" ? category : "All Results"}
-                {" "}
-                <span className="font-normal text-muted-foreground text-base">Near Singapore</span>
-              </h1>
-              <p className="text-sm text-muted-foreground mb-4">
-                {sortedFiltered.length} result{sortedFiltered.length !== 1 ? "s" : ""}
-                {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
-              </p>
 
               <div className="max-h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
