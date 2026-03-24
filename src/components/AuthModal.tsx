@@ -73,6 +73,7 @@ const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
 };
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
+  const { devLogin } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [method, setMethod] = useState<AuthMethod>("email");
   const [email, setEmail] = useState("");
