@@ -26,13 +26,17 @@ interface HeaderProps {
 }
 
 const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
-  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const { user, isAdmin, isSuperAdmin, isDevMode, devLogout, role } = useAuth();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isHomePage = location.pathname === "/";
 
   const handleSignOut = async () => {
+    if (isDevMode) {
+      devLogout();
+      return;
+    }
     await signOut(auth);
   };
 
