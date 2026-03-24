@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,6 +73,7 @@ const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
 };
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
+  const { devLogin } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [method, setMethod] = useState<AuthMethod>("email");
   const [email, setEmail] = useState("");
@@ -320,6 +322,27 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </button>
           </p>
         )}
+
+        {/* ── Dev Quick Login ── */}
+        <div className="border-t border-dashed border-muted pt-3 mt-2">
+          <p className="text-[10px] text-muted-foreground text-center mb-2 font-mono uppercase tracking-wider">Dev Quick Login</p>
+          <div className="grid grid-cols-2 gap-2">
+            {([
+              { role: "superadmin" as UserRole, label: "Super Admin", color: "bg-red-500 hover:bg-red-600" },
+              { role: "admin" as UserRole, label: "Admin", color: "bg-orange-500 hover:bg-orange-600" },
+              { role: "business_owner" as UserRole, label: "Business Owner", color: "bg-blue-500 hover:bg-blue-600" },
+              { role: "user" as UserRole, label: "Regular User", color: "bg-green-500 hover:bg-green-600" },
+            ]).map(({ role, label, color }) => (
+              <button
+                key={role}
+                onClick={() => { devLogin(role); onClose(); }}
+                className={`${color} text-white text-xs font-medium py-2 px-3 rounded-lg transition-colors`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

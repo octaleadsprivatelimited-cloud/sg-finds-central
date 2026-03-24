@@ -12,6 +12,10 @@ interface AuthContextType {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   isBusinessOwner: boolean;
+  // Dev bypass
+  devLogin: (role: UserRole) => void;
+  devLogout: () => void;
+  isDevMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,21 +25,59 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isSuperAdmin: false,
   isBusinessOwner: false,
+  devLogin: () => {},
+  devLogout: () => {},
+  isDevMode: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
+
+// Fake user object for dev bypass
+const createFakeUser = (role: UserRole): Partial<User> => ({
+  uid: `dev-${role}`,
+  email: `${role}@dev.local`,
+  displayName: role === "superadmin" ? "Super Admin" : role === "admin" ? "Admin" : role === "business_owner" ? "Business Owner" : "Test User",
+  emailVerified: true,
+});
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<UserRole>("user");
+  const [isDevMode, setIsDevMode] = useState(() => {
+    try { return localStorage.getItem("dev_auth_role") !== null; } catch { return false; }
+  });
 
+  const devLogin = (devRole: UserRole) => {
+    localStorage.setItem("dev_auth_role", devRole);
+    setRole(devRole);
+    setUser(createFakeUser(devRole) as User);
+    setIsDevMode(true);
+    setLoading(false);
+  };
+
+  const devLogout = () => {
+    localStorage.removeItem("dev_auth_role");
+    setRole("user");
+    setUser(null);
+    setIsDevMode(false);
+  };
+
+  // Restore dev session on mount
   useEffect(() => {
+    const savedRole = localStorage.getItem("dev_auth_role") as UserRole | null;
+    if (savedRole) {
+      setRole(savedRole);
+      setUser(createFakeUser(savedRole) as User);
+      setIsDevMode(true);
+      setLoading(false);
+      return; // skip firebase listener in dev mode
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
         try {
-          // Check superadmin first
           const superDoc = await getDoc(doc(db, "superadmins", firebaseUser.uid));
           if (superDoc.exists()) {
             setRole("superadmin");
@@ -44,7 +86,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (adminDoc.exists()) {
               setRole("admin");
             } else {
-              // Check if they actually own any listings
               const { getDocs, query, where, collection } = await import("firebase/firestore");
               const listingsQuery = query(collection(db, "listings"), where("ownerId", "==", firebaseUser.uid));
               const listingsSnap = await getDocs(listingsQuery);
@@ -67,7 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isBusinessOwner = role === "business_owner" || isAdmin;
 
   return (
-    <AuthContext.Provider value={{ user, loading, role, isAdmin, isSuperAdmin, isBusinessOwner }}>
+    <AuthContext.Provider value={{ user, loading, role, isAdmin, isSuperAdmin, isBusinessOwner, devLogin, devLogout, isDevMode }}>
       {children}
     </AuthContext.Provider>
   );
