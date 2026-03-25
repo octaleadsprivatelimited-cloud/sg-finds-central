@@ -127,10 +127,21 @@ const Admin = () => {
   const handleApprove = async (id: string) => {
     setActionLoading(id);
     try {
-      await updateDoc(doc(db, "listings", id), { status: "approved", rejectionReason: "" });
+      const listing = allListings.find(l => l.id === id);
+      const updates: Record<string, any> = { status: "approved", rejectionReason: "" };
+      // Auto-approve any pending images when listing is approved
+      if (listing?.pendingLogoUrl) {
+        updates.logoUrl = listing.pendingLogoUrl;
+        updates.pendingLogoUrl = "";
+      }
+      if (listing?.pendingImageUrls && listing.pendingImageUrls.length > 0) {
+        updates.imageUrls = listing.pendingImageUrls;
+        updates.pendingImageUrls = [];
+      }
+      await updateDoc(doc(db, "listings", id), updates);
       setPendingListings((prev) => prev.filter((l) => l.id !== id));
-      setAllListings((prev) => prev.map((l) => l.id === id ? { ...l, status: "approved" } : l));
-      toast.success("Listing approved");
+      setAllListings((prev) => prev.map((l) => l.id === id ? { ...l, ...updates } : l));
+      toast.success("Listing approved (including pending images)");
     } catch { toast.error("Failed to update listing"); }
     setActionLoading(null);
   };
@@ -428,13 +439,85 @@ const Admin = () => {
                         {listing.imageUrls && listing.imageUrls.length > 0 && (
                           <div className="mt-3 ml-[52px]">
                             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                              <Image className="w-3 h-3" />Business Images ({listing.imageUrls.length})
+                              <Image className="w-3 h-3" />Current Images ({listing.imageUrls.length})
                             </p>
                             <div className="flex gap-1.5 overflow-x-auto">
                               {listing.imageUrls.map((url, i) => (
                                 <img key={i} src={url} alt={`${listing.name} ${i + 1}`}
                                   className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] shrink-0" />
                               ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Pending Logo */}
+                        {listing.pendingLogoUrl && (
+                          <div className="mt-3 ml-[52px]">
+                            <p className="text-[11px] font-semibold text-[hsl(38,85%,40%)] uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                              <Clock className="w-3 h-3" />Pending Logo (Awaiting Approval)
+                            </p>
+                            <div className="flex items-center gap-3">
+                              <img src={listing.pendingLogoUrl} alt="Pending logo"
+                                className="w-16 h-16 rounded-md object-cover border-2 border-[hsl(38,85%,50%)] shrink-0" />
+                              <div className="flex gap-1.5">
+                                <Button size="sm" onClick={async () => {
+                                  try {
+                                    await updateDoc(doc(db, "listings", listing.id), { logoUrl: listing.pendingLogoUrl, pendingLogoUrl: "" });
+                                    setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, logoUrl: listing.pendingLogoUrl, pendingLogoUrl: "" } : l));
+                                    setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, logoUrl: listing.pendingLogoUrl, pendingLogoUrl: "" } : l));
+                                    toast.success("Logo approved");
+                                  } catch { toast.error("Failed to approve logo"); }
+                                }} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[10px] h-7 px-2 rounded">
+                                  <Check className="w-3 h-3 mr-1" />Approve
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={async () => {
+                                  try {
+                                    await updateDoc(doc(db, "listings", listing.id), { pendingLogoUrl: "" });
+                                    setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingLogoUrl: "" } : l));
+                                    setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingLogoUrl: "" } : l));
+                                    toast.success("Pending logo rejected");
+                                  } catch { toast.error("Failed"); }
+                                }} className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] text-[10px] h-7 px-2 rounded">
+                                  <X className="w-3 h-3 mr-1" />Reject
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Pending Images */}
+                        {listing.pendingImageUrls && listing.pendingImageUrls.length > 0 && (
+                          <div className="mt-3 ml-[52px]">
+                            <p className="text-[11px] font-semibold text-[hsl(38,85%,40%)] uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                              <Clock className="w-3 h-3" />Pending Images ({listing.pendingImageUrls.length}) — Awaiting Approval
+                            </p>
+                            <div className="flex gap-1.5 overflow-x-auto">
+                              {listing.pendingImageUrls.map((url, i) => (
+                                <img key={i} src={url} alt={`Pending ${i + 1}`}
+                                  className="w-16 h-16 rounded-md object-cover border-2 border-[hsl(38,85%,50%)] shrink-0" />
+                              ))}
+                            </div>
+                            <div className="flex gap-1.5 mt-2">
+                              <Button size="sm" onClick={async () => {
+                                try {
+                                  await updateDoc(doc(db, "listings", listing.id), { imageUrls: listing.pendingImageUrls, pendingImageUrls: [] });
+                                  setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, imageUrls: listing.pendingImageUrls, pendingImageUrls: [] } : l));
+                                  setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, imageUrls: listing.pendingImageUrls, pendingImageUrls: [] } : l));
+                                  toast.success("Images approved");
+                                } catch { toast.error("Failed to approve images"); }
+                              }} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[10px] h-7 px-2 rounded">
+                                <Check className="w-3 h-3 mr-1" />Approve All
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={async () => {
+                                try {
+                                  await updateDoc(doc(db, "listings", listing.id), { pendingImageUrls: [] });
+                                  setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l));
+                                  setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l));
+                                  toast.success("Pending images rejected");
+                                } catch { toast.error("Failed"); }
+                              }} className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] text-[10px] h-7 px-2 rounded">
+                                <X className="w-3 h-3 mr-1" />Reject All
+                              </Button>
                             </div>
                           </div>
                         )}

@@ -240,16 +240,39 @@ const BusinessDashboard = () => {
     const sanitizedSlug = toSlug(editCustomSlug || editName);
     setSaving(true);
     try {
+      // Determine if logo or images changed — route to pending fields
+      const logoChanged = editLogoUrl !== (editingListing.logoUrl || "");
+      const imagesChanged = JSON.stringify(editImageUrls) !== JSON.stringify(editingListing.imageUrls || []);
+
       const updates: Record<string, any> = {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
-        customSlug: sanitizedSlug, logoUrl: editLogoUrl, operatingHours: editHours,
-        specialHours: editSpecialHours, imageUrls: editImageUrls, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
+        customSlug: sanitizedSlug, operatingHours: editHours,
+        specialHours: editSpecialHours, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
       };
+
+      // Logo: if changed, save to pendingLogoUrl; keep existing logoUrl
+      if (logoChanged) {
+        updates.pendingLogoUrl = editLogoUrl;
+      } else {
+        updates.logoUrl = editLogoUrl;
+      }
+
+      // Images: if changed, save to pendingImageUrls; keep existing imageUrls
+      if (imagesChanged) {
+        updates.pendingImageUrls = editImageUrls;
+      } else {
+        updates.imageUrls = editImageUrls;
+      }
+
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
       setEditingListing(null);
-      toast.success("Listing updated — pending admin re-approval before going public");
+      if (logoChanged || imagesChanged) {
+        toast.success("Listing updated — logo/image changes pending admin approval.");
+      } else {
+        toast.success("Listing updated — pending admin re-approval before going public");
+      }
     } catch (err: any) { toast.error(err.message || "Failed to update listing"); }
     setSaving(false);
   };
@@ -486,6 +509,14 @@ const BusinessDashboard = () => {
                       </DropdownMenu>
                     </div>
 
+                    {(listing.pendingLogoUrl || (listing.pendingImageUrls && listing.pendingImageUrls.length > 0)) && (
+                      <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
+                        <div className="w-6 h-6 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
+                          <Image className="w-3.5 h-3.5" />
+                        </div>
+                        {listing.pendingLogoUrl && "Logo"}{listing.pendingLogoUrl && listing.pendingImageUrls?.length ? " & " : ""}{listing.pendingImageUrls?.length ? `${listing.pendingImageUrls.length} image(s)` : ""} pending admin approval.
+                      </div>
+                    )}
                     {listing.status === "pending_approval" && (
                       <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
                         <div className="w-6 h-6 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
@@ -1011,6 +1042,10 @@ const BusinessDashboard = () => {
                 <div className="pt-4 border-t border-border/40">
                   <LogoUpload currentUrl={editLogoUrl || undefined} userId={user.uid}
                     onUploaded={(url) => setEditLogoUrl(url)} onRemoved={() => setEditLogoUrl("")} />
+                  <p className="text-xs text-[hsl(var(--warning))] mt-2 flex items-center gap-1.5">
+                    <Clock className="w-3 h-3" />
+                    Logo and image changes require admin approval before going live.
+                  </p>
                 </div>
               )}
               <div className="flex gap-3 pt-4">
