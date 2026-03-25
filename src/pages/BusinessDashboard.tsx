@@ -6,7 +6,7 @@ import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
-  CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image,
+  CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image, BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +32,7 @@ import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, s
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
+import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
 import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
@@ -195,6 +196,7 @@ const BusinessDashboard = () => {
   const [editSpecialHours, setEditSpecialHours] = useState<SpecialHours[]>([]);
   const [editImageUrls, setEditImageUrls] = useState<string[]>([]);
   const [editUploadingImages, setEditUploadingImages] = useState(false);
+  const [editCatalogueEnabled, setEditCatalogueEnabled] = useState(true);
   const editImageInputRef = useRef<HTMLInputElement>(null);
 
   const stats = useMemo(() => ({
@@ -217,6 +219,7 @@ const BusinessDashboard = () => {
     setEditHours(listing.operatingHours || { ...DEFAULT_OPERATING_HOURS });
     setEditSpecialHours(listing.specialHours || []);
     setEditImageUrls(listing.imageUrls || []);
+    setEditCatalogueEnabled(listing.catalogueEnabled !== false);
   };
 
   const slugError = useMemo(() => {
@@ -241,7 +244,7 @@ const BusinessDashboard = () => {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
         customSlug: sanitizedSlug, logoUrl: editLogoUrl, operatingHours: editHours,
-        specialHours: editSpecialHours, imageUrls: editImageUrls, status: "pending_approval",
+        specialHours: editSpecialHours, imageUrls: editImageUrls, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
@@ -902,6 +905,17 @@ const BusinessDashboard = () => {
               <div className="space-y-2">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
                 <Textarea className="rounded-xl" value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
+              </div>
+              {/* Catalogue Toggle */}
+              <div className="flex items-center justify-between pt-4 border-t border-border/40">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <Label className="text-sm font-medium text-foreground">Show Catalogue</Label>
+                    <p className="text-xs text-muted-foreground">Display catalogue section on your business page</p>
+                  </div>
+                </div>
+                <Switch checked={editCatalogueEnabled} onCheckedChange={setEditCatalogueEnabled} />
               </div>
               {/* Operating Hours */}
               <div className="space-y-3 pt-4 border-t border-border/40">

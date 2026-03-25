@@ -71,6 +71,7 @@ export interface Listing {
   imageUrls?: string[];
   ownerName?: string;
   contactEmail?: string;
+  catalogueEnabled?: boolean;
 }
 
 interface ListingCardProps {
