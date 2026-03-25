@@ -266,23 +266,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="px-3 pt-3 pb-2 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">{sortedFiltered.length}</span> result{sortedFiltered.length !== 1 ? "s" : ""}
-            {radiusKm ? ` within ${radiusKm >= 1 ? radiusKm + ' km' : (radiusKm * 1000) + 'm'}` : ""}
-          </p>
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-            <SelectTrigger className="h-7 w-auto border-0 shadow-none text-xs font-semibold text-foreground p-0 gap-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="default">Recommended</SelectItem>
-              <SelectItem value="name">Name A–Z</SelectItem>
-              <SelectItem value="distance">Distance</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
         {/* Listings */}
         <div className="px-3 pb-6 space-y-3">
@@ -415,19 +398,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                     </>
                   )}
                 </nav>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <span>Sort:</span>
-                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                    <SelectTrigger className="h-8 w-auto border-0 shadow-none text-sm font-semibold text-foreground p-0 gap-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="default">Recommended</SelectItem>
-                      <SelectItem value="name">Name A–Z</SelectItem>
-                      <SelectItem value="distance">Distance</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
 
 
