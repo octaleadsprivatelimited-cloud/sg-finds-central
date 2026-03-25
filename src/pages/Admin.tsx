@@ -127,10 +127,21 @@ const Admin = () => {
   const handleApprove = async (id: string) => {
     setActionLoading(id);
     try {
-      await updateDoc(doc(db, "listings", id), { status: "approved", rejectionReason: "" });
+      const listing = allListings.find(l => l.id === id);
+      const updates: Record<string, any> = { status: "approved", rejectionReason: "" };
+      // Auto-approve any pending images when listing is approved
+      if (listing?.pendingLogoUrl) {
+        updates.logoUrl = listing.pendingLogoUrl;
+        updates.pendingLogoUrl = "";
+      }
+      if (listing?.pendingImageUrls && listing.pendingImageUrls.length > 0) {
+        updates.imageUrls = listing.pendingImageUrls;
+        updates.pendingImageUrls = [];
+      }
+      await updateDoc(doc(db, "listings", id), updates);
       setPendingListings((prev) => prev.filter((l) => l.id !== id));
-      setAllListings((prev) => prev.map((l) => l.id === id ? { ...l, status: "approved" } : l));
-      toast.success("Listing approved");
+      setAllListings((prev) => prev.map((l) => l.id === id ? { ...l, ...updates } : l));
+      toast.success("Listing approved (including pending images)");
     } catch { toast.error("Failed to update listing"); }
     setActionLoading(null);
   };
