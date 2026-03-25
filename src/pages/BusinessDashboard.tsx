@@ -4,7 +4,7 @@ import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 import { processImageFiles } from "@/lib/image-utils";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
-  ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
+  ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
   CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image, BookOpen,
 } from "lucide-react";
