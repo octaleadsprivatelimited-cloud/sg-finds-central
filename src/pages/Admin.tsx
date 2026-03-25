@@ -5,6 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { notifyImageApproval } from "@/lib/notify-image-approval";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -465,7 +466,10 @@ const Admin = () => {
                                     await updateDoc(doc(db, "listings", listing.id), { logoUrl: listing.pendingLogoUrl, pendingLogoUrl: "" });
                                     setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, logoUrl: listing.pendingLogoUrl, pendingLogoUrl: "" } : l));
                                     setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, logoUrl: listing.pendingLogoUrl, pendingLogoUrl: "" } : l));
-                                    toast.success("Logo approved");
+                                    if (listing.email || listing.ownerId) {
+                                      notifyImageApproval({ type: "image_approved", recipientEmail: listing.email || "", recipientName: listing.name, businessName: listing.name, imageType: "logo", listingId: listing.id, ownerId: listing.ownerId || "" }).catch(() => {});
+                                    }
+                                    toast.success("Logo approved — owner notified");
                                   } catch { toast.error("Failed to approve logo"); }
                                 }} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[10px] h-7 px-2 rounded">
                                   <Check className="w-3 h-3 mr-1" />Approve
@@ -475,7 +479,10 @@ const Admin = () => {
                                     await updateDoc(doc(db, "listings", listing.id), { pendingLogoUrl: "" });
                                     setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingLogoUrl: "" } : l));
                                     setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingLogoUrl: "" } : l));
-                                    toast.success("Pending logo rejected");
+                                    if (listing.email || listing.ownerId) {
+                                      notifyImageApproval({ type: "image_rejected", recipientEmail: listing.email || "", recipientName: listing.name, businessName: listing.name, imageType: "logo", listingId: listing.id, ownerId: listing.ownerId || "" }).catch(() => {});
+                                    }
+                                    toast.success("Pending logo rejected — owner notified");
                                   } catch { toast.error("Failed"); }
                                 }} className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] text-[10px] h-7 px-2 rounded">
                                   <X className="w-3 h-3 mr-1" />Reject
@@ -503,7 +510,10 @@ const Admin = () => {
                                   await updateDoc(doc(db, "listings", listing.id), { imageUrls: listing.pendingImageUrls, pendingImageUrls: [] });
                                   setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, imageUrls: listing.pendingImageUrls, pendingImageUrls: [] } : l));
                                   setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, imageUrls: listing.pendingImageUrls, pendingImageUrls: [] } : l));
-                                  toast.success("Images approved");
+                                  if (listing.email || listing.ownerId) {
+                                    notifyImageApproval({ type: "image_approved", recipientEmail: listing.email || "", recipientName: listing.name, businessName: listing.name, imageType: "photos", listingId: listing.id, ownerId: listing.ownerId || "" }).catch(() => {});
+                                  }
+                                  toast.success("Images approved — owner notified");
                                 } catch { toast.error("Failed to approve images"); }
                               }} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[10px] h-7 px-2 rounded">
                                 <Check className="w-3 h-3 mr-1" />Approve All
@@ -513,7 +523,10 @@ const Admin = () => {
                                   await updateDoc(doc(db, "listings", listing.id), { pendingImageUrls: [] });
                                   setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l));
                                   setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l));
-                                  toast.success("Pending images rejected");
+                                  if (listing.email || listing.ownerId) {
+                                    notifyImageApproval({ type: "image_rejected", recipientEmail: listing.email || "", recipientName: listing.name, businessName: listing.name, imageType: "photos", listingId: listing.id, ownerId: listing.ownerId || "" }).catch(() => {});
+                                  }
+                                  toast.success("Pending images rejected — owner notified");
                                 } catch { toast.error("Failed"); }
                               }} className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] text-[10px] h-7 px-2 rounded">
                                 <X className="w-3 h-3 mr-1" />Reject All
