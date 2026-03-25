@@ -5,7 +5,6 @@ import { Building2, Clock, CalendarDays, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OffersSection from "@/components/OffersSection";
-import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
 import { DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
@@ -230,9 +229,6 @@ const BusinessDetail = () => {
                 <PhotoGallery photos={galleryPhotos} businessName={listing.name} />
               </TabsContent>
 
-              <TabsContent value="reviews" className="mt-8">
-                <ReviewSection businessId={listing.id} reviews={[]} />
-              </TabsContent>
 
               <TabsContent value="offers" className="mt-8">
                 <OffersSection offers={listing.offers || []} />

@@ -224,12 +224,8 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                   <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4, color: "#1a1a1a" }}>
                     {activeListing.name}
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13, color: "#555" }}>
-                    <span style={{ color: "#f59e0b" }}>★</span>
-                    <span>{activeListing.rating?.toFixed(1) || "N/A"}</span>
-                    {activeListing.reviewCount != null && (
-                      <span style={{ color: "#999" }}>({activeListing.reviewCount})</span>
-                    )}
+                  <div style={{ fontSize: 13, color: "#555" }}>
+                    {activeListing.category}
                   </div>
                   <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
                     {activeListing.category}
