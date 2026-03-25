@@ -46,7 +46,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Contact Us" description="Get in touch with Nearly. We're here to help with questions, feedback, or business listing support." />
+      <SEOHead title="Contact Us" description="Get in touch with Nearbuy. We're here to help with questions, feedback, or business listing support." />
 
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-10">
@@ -58,7 +58,7 @@ const Contact = () => {
           <div className="bg-card border border-border rounded-xl p-5 text-center space-y-2">
             <Mail className="w-6 h-6 text-primary mx-auto" />
             <h3 className="font-semibold text-foreground text-sm">Email</h3>
-            <p className="text-xs text-muted-foreground">hello@nearly.sg</p>
+            <p className="text-xs text-muted-foreground">hello@nearbuy.sg</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-5 text-center space-y-2">
             <MapPin className="w-6 h-6 text-primary mx-auto" />

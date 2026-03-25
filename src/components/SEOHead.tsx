@@ -8,7 +8,7 @@ interface SEOHeadProps {
   type?: string;
 }
 
-const SITE_NAME = "Nearly";
+const SITE_NAME = "Nearbuy";
 const DEFAULT_DESC = "Discover top-rated local businesses in Singapore. Find restaurants, services, healthcare, and more — verified and trusted.";
 
 const SEOHead = ({

@@ -16,7 +16,7 @@ export interface PlatformUser {
 
 export const DEMO_USERS: PlatformUser[] = [
   {
-    id: "u1", email: "admin@nearly.sg", displayName: "Nearly Admin",
+    id: "u1", email: "admin@nearbuy.sg", displayName: "Nearbuy Admin",
     role: "superadmin", status: "active", joinedAt: "2024-01-15",
     listingsCount: 0, lastActive: "2026-03-08", phone: "+65 9000 0001",
   },
