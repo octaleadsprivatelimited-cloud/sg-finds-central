@@ -2,8 +2,8 @@
 // Extracted from index.css design system
 
 export const brand = {
-  name: "Nearly",
-  url: "https://nearly.sg",
+  name: "Nearbuy",
+  url: "https://nearbuy.sg",
   logo: "", // Add logo URL when available
   colors: {
     primary: "hsl(246, 80%, 60%)",
