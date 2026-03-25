@@ -70,6 +70,8 @@ export interface Listing {
   ownerName?: string;
   contactEmail?: string;
   catalogueEnabled?: boolean;
+  pendingLogoUrl?: string;
+  pendingImageUrls?: string[];
 }
 
 interface ListingCardProps {

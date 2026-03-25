@@ -1011,6 +1011,10 @@ const BusinessDashboard = () => {
                 <div className="pt-4 border-t border-border/40">
                   <LogoUpload currentUrl={editLogoUrl || undefined} userId={user.uid}
                     onUploaded={(url) => setEditLogoUrl(url)} onRemoved={() => setEditLogoUrl("")} />
+                  <p className="text-xs text-[hsl(var(--warning))] mt-2 flex items-center gap-1.5">
+                    <Clock className="w-3 h-3" />
+                    Logo and image changes require admin approval before going live.
+                  </p>
                 </div>
               )}
               <div className="flex gap-3 pt-4">
