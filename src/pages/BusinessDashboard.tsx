@@ -906,6 +906,17 @@ const BusinessDashboard = () => {
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
                 <Textarea className="rounded-xl" value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3} />
               </div>
+              {/* Catalogue Toggle */}
+              <div className="flex items-center justify-between pt-4 border-t border-border/40">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <Label className="text-sm font-medium text-foreground">Show Catalogue</Label>
+                    <p className="text-xs text-muted-foreground">Display catalogue section on your business page</p>
+                  </div>
+                </div>
+                <Switch checked={editCatalogueEnabled} onCheckedChange={setEditCatalogueEnabled} />
+              </div>
               {/* Operating Hours */}
               <div className="space-y-3 pt-4 border-t border-border/40">
                 <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
