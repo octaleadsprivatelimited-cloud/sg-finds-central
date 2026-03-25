@@ -565,12 +565,6 @@ const BusinessDashboard = () => {
                         <p className="font-bold text-foreground tabular-nums">—</p>
                         <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Clicks</p>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground flex items-center gap-1 justify-end">
-                          <Star className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />—
-                        </p>
-                        <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Rating</p>
-                      </div>
                     </div>
                   </div>
                 ))}
