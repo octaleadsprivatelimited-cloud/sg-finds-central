@@ -4,7 +4,7 @@ import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 import { processImageFiles } from "@/lib/image-utils";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
-  ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
+  ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
   CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image, BookOpen,
 } from "lucide-react";
@@ -564,12 +564,6 @@ const BusinessDashboard = () => {
                       <div className="text-right">
                         <p className="font-bold text-foreground tabular-nums">—</p>
                         <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Clicks</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground flex items-center gap-1 justify-end">
-                          <Star className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />—
-                        </p>
-                        <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Rating</p>
                       </div>
                     </div>
                   </div>

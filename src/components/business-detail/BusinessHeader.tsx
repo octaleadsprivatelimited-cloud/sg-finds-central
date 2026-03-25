@@ -7,7 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface BusinessHeaderProps {
-  listing: Listing & { verified?: boolean; featured?: boolean; rating?: number; reviewCount?: number };
+  listing: Listing & { verified?: boolean; featured?: boolean };
   shareUrl: string;
   viewCount?: number;
   liveViewers?: number;

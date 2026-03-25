@@ -4,7 +4,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { Building2, Clock, CalendarDays, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReviewSection from "@/components/ReviewSection";
 import OffersSection from "@/components/OffersSection";
 import MapView from "@/components/MapView";
 import type { Listing } from "@/components/ListingCard";
@@ -150,7 +149,6 @@ const BusinessDetail = () => {
                 )}
                 <TabsTrigger value="quick-info" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Info</TabsTrigger>
                 <TabsTrigger value="photos" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Photos</TabsTrigger>
-                <TabsTrigger value="reviews" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Reviews</TabsTrigger>
                 <TabsTrigger value="offers" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Offers</TabsTrigger>
               </TabsList>
 
@@ -231,9 +229,6 @@ const BusinessDetail = () => {
                 <PhotoGallery photos={galleryPhotos} businessName={listing.name} />
               </TabsContent>
 
-              <TabsContent value="reviews" className="mt-8">
-                <ReviewSection businessId={listing.id} reviews={[]} />
-              </TabsContent>
 
               <TabsContent value="offers" className="mt-8">
                 <OffersSection offers={listing.offers || []} />
