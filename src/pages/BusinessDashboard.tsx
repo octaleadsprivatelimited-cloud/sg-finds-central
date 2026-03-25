@@ -7,6 +7,8 @@ import {
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp, Star,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
   CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image,
+  BookOpen,
+  CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +34,7 @@ import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, s
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
+import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
 import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
@@ -195,6 +198,7 @@ const BusinessDashboard = () => {
   const [editSpecialHours, setEditSpecialHours] = useState<SpecialHours[]>([]);
   const [editImageUrls, setEditImageUrls] = useState<string[]>([]);
   const [editUploadingImages, setEditUploadingImages] = useState(false);
+  const [editCatalogueEnabled, setEditCatalogueEnabled] = useState(true);
   const editImageInputRef = useRef<HTMLInputElement>(null);
 
   const stats = useMemo(() => ({
@@ -217,6 +221,7 @@ const BusinessDashboard = () => {
     setEditHours(listing.operatingHours || { ...DEFAULT_OPERATING_HOURS });
     setEditSpecialHours(listing.specialHours || []);
     setEditImageUrls(listing.imageUrls || []);
+    setEditCatalogueEnabled(listing.catalogueEnabled !== false);
   };
 
   const slugError = useMemo(() => {
@@ -241,7 +246,7 @@ const BusinessDashboard = () => {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
         customSlug: sanitizedSlug, logoUrl: editLogoUrl, operatingHours: editHours,
-        specialHours: editSpecialHours, imageUrls: editImageUrls, status: "pending_approval",
+        specialHours: editSpecialHours, imageUrls: editImageUrls, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
       };
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
