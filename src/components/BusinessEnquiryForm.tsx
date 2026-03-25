@@ -24,11 +24,11 @@ const BusinessEnquiryForm = ({ listingId, listingName, ownerId }: BusinessEnquir
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      toast.error("Please fill in name, email, and message");
+    if (!name.trim() || !phone.trim()) {
+      toast.error("Please fill in name and mobile number");
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Please enter a valid email address");
       return;
     }
@@ -80,16 +80,16 @@ const BusinessEnquiryForm = ({ listingId, listingName, ownerId }: BusinessEnquir
           <Input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" className="h-9 text-sm" maxLength={100} />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Email *</Label>
-          <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="h-9 text-sm" maxLength={255} />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs">Phone</Label>
+          <Label className="text-xs">Mobile Number *</Label>
           <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+65 xxxx xxxx" className="h-9 text-sm" maxLength={20} />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Message *</Label>
-          <Textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="I'd like to enquire about..." rows={3} className="text-sm" maxLength={2000} />
+          <Label className="text-xs">Email</Label>
+          <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com (optional)" className="h-9 text-sm" maxLength={255} />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Message</Label>
+          <Textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="I'd like to enquire about... (optional)" rows={3} className="text-sm" maxLength={2000} />
         </div>
         <Button type="submit" className="w-full h-9 text-sm" disabled={sending}>
           <Send className="w-3.5 h-3.5 mr-1.5" />
