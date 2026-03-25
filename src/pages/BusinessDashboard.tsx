@@ -509,6 +509,14 @@ const BusinessDashboard = () => {
                       </DropdownMenu>
                     </div>
 
+                    {(listing.pendingLogoUrl || (listing.pendingImageUrls && listing.pendingImageUrls.length > 0)) && (
+                      <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
+                        <div className="w-6 h-6 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
+                          <Image className="w-3.5 h-3.5" />
+                        </div>
+                        {listing.pendingLogoUrl && "Logo"}{listing.pendingLogoUrl && listing.pendingImageUrls?.length ? " & " : ""}{listing.pendingImageUrls?.length ? `${listing.pendingImageUrls.length} image(s)` : ""} pending admin approval.
+                      </div>
+                    )}
                     {listing.status === "pending_approval" && (
                       <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
                         <div className="w-6 h-6 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
