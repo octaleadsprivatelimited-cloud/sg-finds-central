@@ -59,7 +59,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 8123 4001", email: "learn@mathwhiz.sg",
     description: "Expert home-based tuition for Primary to JC levels in Math, Science, and English. Small group and 1-to-1 sessions available.",
     status: "approved", ownerId: "demo", lat: 1.3508, lng: 103.8491, verified: true,
-    rating: 4.8, reviewCount: 135, coverImage: education1,
+    rating: 4.8, coverImage: education1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Saturday: { open: "09:00", close: "18:00" } },
   },
   {
@@ -67,7 +67,7 @@ export const DEMO_LISTINGS: Listing[] = [
     district: "Tampines", address: "1 Tampines Walk, #03-12, Singapore 528523", postalCode: "528523",
     phone: "+65 8123 4002", description: "MOE-aligned tuition for primary and secondary students. Proven results with experienced tutors.",
     status: "approved", ownerId: "demo", lat: 1.3530, lng: 103.9453,
-    rating: 4.6, reviewCount: 89, coverImage: education2,
+    rating: 4.6, coverImage: education2,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Saturday: { open: "09:00", close: "17:00" }, Sunday: { open: "09:00", close: "14:00", closed: false } },
   },
   {
@@ -76,7 +76,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 9234 5001", whatsapp: "+6592345001", email: "orders@sweetovenbakes.sg",
     description: "Home-based bakery specialising in custom cakes, cupcakes, and pastries for all occasions. Halal-certified ingredients.",
     status: "approved", ownerId: "demo", lat: 1.3236, lng: 103.9273, verified: true,
-    rating: 4.9, reviewCount: 210, coverImage: food1,
+    rating: 4.9, coverImage: food1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "09:00", close: "18:00" }, Tuesday: { open: "09:00", close: "18:00" }, Wednesday: { open: "09:00", close: "18:00" }, Thursday: { open: "09:00", close: "18:00" }, Friday: { open: "09:00", close: "18:00" }, Saturday: { open: "09:00", close: "15:00" } },
   },
   {
@@ -85,7 +85,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 8345 6001", email: "hello@melodystudio.sg",
     description: "Private music lessons — piano, guitar, violin, and ukulele. Art and craft workshops for kids and adults on weekends.",
     status: "approved", ownerId: "demo", lat: 1.3204, lng: 103.8447, verified: true,
-    rating: 4.7, reviewCount: 64, coverImage: beauty1,
+    rating: 4.7, coverImage: beauty1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "10:00", close: "20:00" }, Tuesday: { open: "10:00", close: "20:00" }, Wednesday: { open: "10:00", close: "20:00" }, Thursday: { open: "10:00", close: "20:00" }, Friday: { open: "10:00", close: "20:00" }, Saturday: { open: "10:00", close: "18:00" } },
   },
   {
@@ -94,7 +94,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 9456 7001", whatsapp: "+6594567001",
     description: "Home-cooked meals made fresh daily — nasi lemak, curry chicken, and bento sets. Order by 10am for same-day delivery.",
     status: "approved", ownerId: "demo", lat: 1.3691, lng: 103.8454,
-    rating: 4.8, reviewCount: 156, coverImage: food2,
+    rating: 4.8, coverImage: food2,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "07:00", close: "14:00" }, Tuesday: { open: "07:00", close: "14:00" }, Wednesday: { open: "07:00", close: "14:00" }, Thursday: { open: "07:00", close: "14:00" }, Friday: { open: "07:00", close: "14:00" } },
   },
   {
@@ -103,7 +103,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 8567 8001", email: "appointments@glowbeauty.sg",
     description: "Home-based beauty services — manicure, pedicure, lash extensions, and facial treatments. By appointment only.",
     status: "approved", ownerId: "demo", lat: 1.3048, lng: 103.8318, verified: true,
-    rating: 4.7, reviewCount: 88, coverImage: beauty2,
+    rating: 4.7, coverImage: beauty2,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "10:00", close: "20:00" }, Tuesday: { open: "10:00", close: "20:00" }, Wednesday: { open: "10:00", close: "20:00" }, Thursday: { open: "10:00", close: "20:00" }, Friday: { open: "10:00", close: "20:00" }, Saturday: { open: "10:00", close: "18:00" } },
   },
   {
@@ -112,7 +112,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 9678 9001", whatsapp: "+6596789001",
     description: "Pet grooming, pet sitting, and dog walking services. Gentle handling for all breeds. Home visits available.",
     status: "approved", ownerId: "demo", lat: 1.3150, lng: 103.7650, verified: true,
-    rating: 4.9, reviewCount: 112, coverImage: home1,
+    rating: 4.9, coverImage: home1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "08:00", close: "18:00" }, Tuesday: { open: "08:00", close: "18:00" }, Wednesday: { open: "08:00", close: "18:00" }, Thursday: { open: "08:00", close: "18:00" }, Friday: { open: "08:00", close: "18:00" }, Saturday: { open: "09:00", close: "17:00" } },
   },
   {
@@ -121,7 +121,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 8789 0001", email: "hello@partypop.sg", website: "https://partypop.sg",
     description: "Balloon decorations, party setups, and event styling for birthdays, weddings, and corporate events across Singapore.",
     status: "approved", ownerId: "demo", lat: 1.3045, lng: 103.8745, verified: true,
-    rating: 4.7, reviewCount: 83, coverImage: events1,
+    rating: 4.7, coverImage: events1,
     operatingHours: DEFAULT_OPERATING_HOURS,
   },
   {
@@ -130,7 +130,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 8890 1001",
     description: "Expert alterations and custom tailoring — suits, dresses, curtains, and traditional wear. Fast turnaround.",
     status: "approved", ownerId: "demo", lat: 1.2822, lng: 103.8441,
-    rating: 4.6, reviewCount: 67, coverImage: retail1,
+    rating: 4.6, coverImage: retail1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "09:00", close: "18:00" }, Tuesday: { open: "09:00", close: "18:00" }, Wednesday: { open: "09:00", close: "18:00" }, Thursday: { open: "09:00", close: "18:00" }, Friday: { open: "09:00", close: "18:00" }, Saturday: { open: "09:00", close: "15:00" } },
   },
   {
@@ -139,7 +139,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 9901 2001", whatsapp: "+6599012001",
     description: "Professional home cleaning for private residences — weekly, bi-weekly, or one-time deep cleaning. Eco-friendly products used.",
     status: "approved", ownerId: "demo", lat: 1.3329, lng: 103.7436,
-    rating: 4.5, reviewCount: 98, coverImage: home2,
+    rating: 4.5, coverImage: home2,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "08:00", close: "18:00" }, Tuesday: { open: "08:00", close: "18:00" }, Wednesday: { open: "08:00", close: "18:00" }, Thursday: { open: "08:00", close: "18:00" }, Friday: { open: "08:00", close: "18:00" }, Saturday: { open: "08:00", close: "14:00" } },
   },
   {
@@ -148,7 +148,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 9012 3001", whatsapp: "+6590123001",
     description: "Basic handyman services — furniture assembly, shelf mounting, minor plumbing, and electrical fixes. Affordable rates.",
     status: "approved", ownerId: "demo", lat: 1.3343, lng: 103.8500, verified: true,
-    rating: 4.4, reviewCount: 76, coverImage: professional1,
+    rating: 4.4, coverImage: professional1,
     operatingHours: { ...DEFAULT_OPERATING_HOURS, Monday: { open: "09:00", close: "18:00" }, Tuesday: { open: "09:00", close: "18:00" }, Wednesday: { open: "09:00", close: "18:00" }, Thursday: { open: "09:00", close: "18:00" }, Friday: { open: "09:00", close: "18:00" }, Saturday: { open: "09:00", close: "15:00" } },
   },
   {
@@ -157,7 +157,7 @@ export const DEMO_LISTINGS: Listing[] = [
     phone: "+65 8123 4012", email: "hello@lenswork.sg", website: "https://lenswork.sg",
     description: "Professional photography and videography — weddings, events, portraits, and product shoots. Drone footage available.",
     status: "approved", ownerId: "demo", lat: 1.2810, lng: 103.8500, verified: true,
-    rating: 4.8, reviewCount: 54, coverImage: education1,
+    rating: 4.8, coverImage: education1,
     operatingHours: DEFAULT_OPERATING_HOURS,
   },
 ];
