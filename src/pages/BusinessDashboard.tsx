@@ -240,16 +240,39 @@ const BusinessDashboard = () => {
     const sanitizedSlug = toSlug(editCustomSlug || editName);
     setSaving(true);
     try {
+      // Determine if logo or images changed — route to pending fields
+      const logoChanged = editLogoUrl !== (editingListing.logoUrl || "");
+      const imagesChanged = JSON.stringify(editImageUrls) !== JSON.stringify(editingListing.imageUrls || []);
+
       const updates: Record<string, any> = {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
-        customSlug: sanitizedSlug, logoUrl: editLogoUrl, operatingHours: editHours,
-        specialHours: editSpecialHours, imageUrls: editImageUrls, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
+        customSlug: sanitizedSlug, operatingHours: editHours,
+        specialHours: editSpecialHours, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
       };
+
+      // Logo: if changed, save to pendingLogoUrl; keep existing logoUrl
+      if (logoChanged) {
+        updates.pendingLogoUrl = editLogoUrl;
+      } else {
+        updates.logoUrl = editLogoUrl;
+      }
+
+      // Images: if changed, save to pendingImageUrls; keep existing imageUrls
+      if (imagesChanged) {
+        updates.pendingImageUrls = editImageUrls;
+      } else {
+        updates.imageUrls = editImageUrls;
+      }
+
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
       setEditingListing(null);
-      toast.success("Listing updated — pending admin re-approval before going public");
+      if (logoChanged || imagesChanged) {
+        toast.success("Listing updated — logo/image changes pending admin approval.");
+      } else {
+        toast.success("Listing updated — pending admin re-approval before going public");
+      }
     } catch (err: any) { toast.error(err.message || "Failed to update listing"); }
     setSaving(false);
   };
