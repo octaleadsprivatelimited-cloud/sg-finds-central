@@ -142,10 +142,12 @@ const BusinessDetail = () => {
             <Tabs defaultValue="overview">
               <TabsList className="bg-secondary/60 border border-border/40 w-full justify-start overflow-x-auto scrollbar-hide flex-nowrap rounded-full p-1 h-auto">
                 <TabsTrigger value="overview" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Overview</TabsTrigger>
-                <TabsTrigger value="catalogue" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm relative">
-                  Catalogue
-                  <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-primary inline-block" />
-                </TabsTrigger>
+                {listing.catalogueEnabled !== false && (
+                  <TabsTrigger value="catalogue" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm relative">
+                    Catalogue
+                    <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-primary inline-block" />
+                  </TabsTrigger>
+                )}
                 <TabsTrigger value="quick-info" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Info</TabsTrigger>
                 <TabsTrigger value="photos" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Photos</TabsTrigger>
                 <TabsTrigger value="reviews" className="rounded-full text-xs sm:text-sm px-4 py-2 data-[state=active]:shadow-sm">Reviews</TabsTrigger>
@@ -159,7 +161,7 @@ const BusinessDetail = () => {
                   <p className="text-[15px] text-muted-foreground leading-[1.7]">{listing.description}</p>
                 </div>
 
-                <CatalogueSection />
+                {listing.catalogueEnabled !== false && <CatalogueSection />}
 
                 {/* Operating Hours — Apple-style card */}
                 <div>
@@ -215,9 +217,11 @@ const BusinessDetail = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="catalogue" className="mt-8">
-                <CatalogueSection />
-              </TabsContent>
+              {listing.catalogueEnabled !== false && (
+                <TabsContent value="catalogue" className="mt-8">
+                  <CatalogueSection />
+                </TabsContent>
+              )}
 
               <TabsContent value="quick-info" className="mt-8">
                 <QuickInfo listing={listing} />
