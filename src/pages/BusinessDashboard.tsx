@@ -30,13 +30,63 @@ import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, auth as firebaseAuth } from "@/lib/firebase";
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import LogoUpload from "@/components/LogoUpload";
 import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
 import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
 import { motion, AnimatePresence } from "framer-motion";
+
+/* ─── Change Password Form ─── */
+const ChangePasswordForm = () => {
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = async () => {
+    if (!currentPw) { toast.error("Enter your current password"); return; }
+    if (newPw.length < 6) { toast.error("New password must be at least 6 characters"); return; }
+    if (newPw !== confirmPw) { toast.error("Passwords do not match"); return; }
+    const user = firebaseAuth.currentUser;
+    if (!user || !user.email) { toast.error("Not signed in"); return; }
+    setSaving(true);
+    try {
+      const cred = EmailAuthProvider.credential(user.email, currentPw);
+      await reauthenticateWithCredential(user, cred);
+      await updatePassword(user, newPw);
+      toast.success("Password updated successfully!");
+      setCurrentPw(""); setNewPw(""); setConfirmPw("");
+    } catch (err: any) {
+      const msg = err?.code === "auth/wrong-password" ? "Current password is incorrect" : err?.message || "Failed to update password";
+      toast.error(msg);
+    }
+    setSaving(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <Label className="text-xs">Current Password</Label>
+        <Input type="password" placeholder="••••••••" value={currentPw} onChange={e => setCurrentPw(e.target.value)} className="h-9 text-sm" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-xs">New Password</Label>
+        <Input type="password" placeholder="••••••••" value={newPw} onChange={e => setNewPw(e.target.value)} className="h-9 text-sm" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-xs">Confirm New Password</Label>
+        <Input type="password" placeholder="••••••••" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="h-9 text-sm" />
+      </div>
+      <Button onClick={handleChange} disabled={saving} className="h-9 text-sm">
+        {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        Update Password
+      </Button>
+    </div>
+  );
+};
 
 const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected"; label: string; dotColor: string }> = {
   approved: { variant: "approved", label: "Live", dotColor: "bg-emerald-500" },
