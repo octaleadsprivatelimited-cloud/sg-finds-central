@@ -537,7 +537,12 @@ const AddListing = () => {
         toast.success(`${urls.length} image(s) uploaded`);
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to upload images");
+      console.error("Image upload error:", err?.code, err?.message, err);
+      if (err?.code === "storage/unauthorized" || err?.message?.includes("not authorized")) {
+        toast.error("Storage permission denied. Please check Firebase Storage rules allow authenticated uploads.");
+      } else {
+        toast.error(err.message || "Failed to upload images");
+      }
     }
     setUploadingImages(false);
   };
