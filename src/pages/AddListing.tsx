@@ -259,6 +259,60 @@ const AddListing = () => {
     if (stepIndex >= steps.length) setStepIndex(steps.length - 1);
   }, [steps.length, stepIndex]);
 
+  // Auto-geocode postal code
+  const handlePostalCodeChange = useCallback(async (code: string) => {
+    setPostalCode(code);
+    if (code.length === 6) {
+      setGeocodingPostal(true);
+      const result = await geocodeSingaporePostalCode(code);
+      if (result) {
+        setLocationLat(result.lat);
+        setLocationLng(result.lng);
+        if (!address) setAddress(result.address);
+        toast.success(`Location found: ${result.address}`);
+      } else {
+        setLocationLat(null);
+        setLocationLng(null);
+        toast.error("Could not find location for this postal code");
+      }
+      setGeocodingPostal(false);
+    } else {
+      setLocationLat(null);
+      setLocationLng(null);
+    }
+  }, [address]);
+
+  // Detect device location via GPS
+  const handleDetectLocation = useCallback(() => {
+    if (!navigator.geolocation) { toast.error("Geolocation not supported by your browser"); return; }
+    setDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setLocationLat(lat);
+        setLocationLng(lng);
+        // Reverse geocode using OneMap
+        try {
+          const res = await fetch(`https://www.onemap.gov.sg/api/public/revgeocode?location=${lat},${lng}&buffer=200&addressType=All`);
+          const data = await res.json();
+          if (data.GeocodeInfo && data.GeocodeInfo.length > 0) {
+            const info = data.GeocodeInfo[0];
+            const addr = info.BUILDINGNAME !== "NIL" ? `${info.BUILDINGNAME}, ${info.ROAD}` : info.ROAD;
+            if (!address) setAddress(addr || "");
+            if (!postalCode && info.POSTALCODE && info.POSTALCODE !== "NIL") setPostalCode(info.POSTALCODE);
+          }
+        } catch {}
+        toast.success("Location detected successfully");
+        setDetectingLocation(false);
+      },
+      () => {
+        toast.error("Unable to detect location — please enable location access");
+        setDetectingLocation(false);
+      }
+    );
+  }, [address, postalCode]);
+
   const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 
   /* ── Inline error helper ── */
