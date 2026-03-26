@@ -774,6 +774,17 @@ const Admin = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Seed Demo Data */}
+              <div className="bg-white dark:bg-[hsl(250,15%,12%)] border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)] rounded-lg px-5 py-4">
+                <h3 className="text-sm font-semibold text-foreground mb-1">Demo Data</h3>
+                <p className="text-xs text-muted-foreground mb-3">Seed 110 demo businesses (10 per category) to Firestore. Existing demo entries will be overwritten.</p>
+                <Button onClick={handleSeedDemoData} disabled={seeding}
+                  className="bg-[hsl(250,50%,55%)] hover:bg-[hsl(250,50%,48%)] text-white rounded-md text-xs">
+                  {seeding ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Database className="w-4 h-4 mr-1.5" />}
+                  {seeding ? "Seeding..." : "Seed 110 Demo Listings"}
+                </Button>
+              </div>
             </div>
           )}
 
