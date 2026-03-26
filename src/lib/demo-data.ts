@@ -187,6 +187,64 @@ const photography: BizTemplate[] = [
   { name: "Photo Booth Fun SG", desc: "Instant photo booth rental with props, backdrops, and custom prints.", phone: "+65 9100 1010" },
 ];
 
+// Subcategory assignments per category — each business gets relevant subcategories
+const CATEGORY_SUBCATEGORIES: Record<string, string[][]> = {
+  "Tuition": [
+    ["maths", "english"], ["maths", "english"], ["maths", "physics"], ["english", "maths"],
+    ["maths", "english"], ["maths"], ["chemistry", "biology"], ["maths", "english"],
+    ["maths", "english", "physics"], ["maths", "english"],
+  ],
+  "Baking": [
+    ["cakes", "cupcakes"], ["bread", "pastries"], ["cakes", "custom-cakes"], ["cookies"],
+    ["pastries", "cakes"], ["bread"], ["cakes", "custom-cakes"], ["pastries", "bread"],
+    ["cakes", "pastries"], ["pastries", "custom-cakes"],
+  ],
+  "Music / Art / Craft": [
+    ["music"], ["art", "craft"], ["music"], ["art"], ["music"],
+    ["craft"], ["music"], ["craft", "art"], ["music"], ["art"],
+  ],
+  "Home Food": [
+    ["malay-cuisine"], ["malay-cuisine", "indian-cuisine", "chinese-cuisine"], ["vegetarian-vegan", "meal-prep"],
+    ["malay-cuisine"], ["meal-prep"], ["indian-cuisine"], ["chinese-cuisine"],
+    ["vegetarian-vegan"], ["chinese-cuisine"], ["malay-cuisine", "chinese-cuisine"],
+  ],
+  "Beauty": [
+    ["nails", "lashes"], ["lashes", "brows"], ["nails"], ["makeup"],
+    ["brows", "makeup"], ["nails", "lashes"], ["nails"], ["hair"],
+    ["nails", "lashes"], ["makeup", "hair"],
+  ],
+  "Pet Services": [
+    ["basic-grooming", "pet-sitting"], ["basic-grooming"], ["pet-sitting"], ["dog-walking"],
+    ["basic-grooming"], ["pet-sitting"], ["dog-walking"], ["pet-sitting"],
+    ["pet-sitting"], ["basic-grooming"],
+  ],
+  "Event Services": [
+    ["balloon-decoration"], ["party-planning", "catering-coordination"], ["balloon-decoration", "floral"],
+    ["party-planning"], ["party-planning"], ["party-planning"], ["party-planning", "floral"],
+    ["party-planning"], ["party-planning", "catering-coordination"], ["party-planning"],
+  ],
+  "Tailoring": [
+    ["alterations"], ["alterations"], ["custom-clothing"], ["curtains"],
+    ["alterations"], ["traditional-wear"], ["custom-clothing"], ["alterations"],
+    ["traditional-wear", "custom-clothing"], ["alterations"],
+  ],
+  "Cleaning": [
+    ["regular-cleaning", "deep-cleaning"], ["regular-cleaning"], ["deep-cleaning", "move-in-out"],
+    ["regular-cleaning"], ["deep-cleaning"], ["regular-cleaning"], ["regular-cleaning"],
+    ["regular-cleaning"], ["regular-cleaning"], ["deep-cleaning"],
+  ],
+  "Handyman": [
+    ["carpenter", "plumber"], ["carpenter"], ["plumber"], ["minor-electrical"],
+    ["carpenter"], ["patching-painting"], ["minor-electrical"], ["carpenter"],
+    ["plumber", "patching-painting"], ["carpenter"],
+  ],
+  "Photography / Videography": [
+    ["event-wedding", "drone"], ["portrait"], ["videography", "event-wedding"], ["product"],
+    ["portrait"], ["event-wedding"], ["portrait"], ["product"],
+    ["drone", "videography"], ["event-wedding"],
+  ],
+};
+
 const categoryMap: Record<string, BizTemplate[]> = {
   "Tuition": tuition,
   "Baking": baking,
@@ -297,10 +355,17 @@ const allDemoListings: Listing[] = [];
 
 Object.entries(categoryMap).forEach(([category, templates]) => {
   const logos = CATEGORY_LOGOS[category] || [];
+  const subs = CATEGORY_SUBCATEGORIES[category] || [];
   templates.forEach((t, i) => {
     const district = pick(districts, idCounter);
     const coords = coord(district);
     const postalCode = String(100000 + idCounter * 137).slice(0, 6);
+    const subcats = subs[i] || subs[0] || [];
+    const subcategoryData: Record<string, any> = category === "Tuition"
+      ? { subjects: subcats, levels: ["secondary"], syllabi: ["moe"] }
+      : category === "Music / Art / Craft"
+        ? { subcategory: subcats[0] || "music" }
+        : { subcategories: subcats };
     allDemoListings.push({
       id: `demo-${idCounter}`,
       name: t.name,
@@ -316,6 +381,7 @@ Object.entries(categoryMap).forEach(([category, templates]) => {
       status: "approved",
       ownerId: "demo",
       logoUrl: logos[i % logos.length],
+      subcategoryData,
       lat: coords.lat + (Math.random() - 0.5) * 0.005,
       lng: coords.lng + (Math.random() - 0.5) * 0.005,
     });
