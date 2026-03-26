@@ -464,6 +464,9 @@ const Admin = () => {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => activeTab === "enquiries" ? exportEnquiries() : exportListings()} className="h-8 rounded-lg text-xs border-[hsl(220,15%,88%)] text-[hsl(220,10%,40%)] hover:bg-[hsl(220,20%,96%)]">
+              <Download className="w-3.5 h-3.5 mr-1.5" />Export CSV
+            </Button>
             <Button variant="outline" size="sm" onClick={fetchData} className="h-8 rounded-lg text-xs border-[hsl(220,15%,88%)] text-[hsl(220,10%,40%)] hover:bg-[hsl(220,20%,96%)]">
               <RefreshCw className="w-3.5 h-3.5 mr-1.5" />Refresh
             </Button>
