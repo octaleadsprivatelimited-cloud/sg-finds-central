@@ -59,10 +59,19 @@ const RailIcon = forwardRef<HTMLButtonElement, { icon: any; label: string; activ
 RailIcon.displayName = "RailIcon";
 
 /* ── Enquiry interface ──────────────────────────────────── */
+type EnquiryStatus = "unread" | "contacted" | "qualified" | "not_qualified" | "converted" | "spam";
+const ENQUIRY_STATUSES: { key: EnquiryStatus; label: string; color: string; dot: string }[] = [
+  { key: "unread", label: "New", color: "bg-[hsl(250,50%,93%)] text-[hsl(250,50%,45%)]", dot: "bg-[hsl(250,50%,55%)]" },
+  { key: "contacted", label: "Contacted", color: "bg-[hsl(210,70%,92%)] text-[hsl(210,70%,40%)]", dot: "bg-[hsl(210,70%,50%)]" },
+  { key: "qualified", label: "Qualified", color: "bg-[hsl(152,50%,92%)] text-[hsl(152,69%,35%)]", dot: "bg-[hsl(152,69%,40%)]" },
+  { key: "not_qualified", label: "Not Qualified", color: "bg-[hsl(38,70%,92%)] text-[hsl(38,80%,35%)]", dot: "bg-[hsl(38,85%,50%)]" },
+  { key: "converted", label: "Converted", color: "bg-[hsl(152,60%,88%)] text-[hsl(152,80%,28%)]", dot: "bg-[hsl(152,80%,35%)]" },
+  { key: "spam", label: "Spam", color: "bg-[hsl(0,60%,94%)] text-[hsl(0,70%,45%)]", dot: "bg-[hsl(0,70%,50%)]" },
+];
 interface Enquiry {
   id: string; listingId: string; listingName: string;
   name: string; email: string; phone?: string; message: string;
-  status: "unread" | "read" | "replied"; createdAt: any;
+  status: EnquiryStatus; createdAt: any;
 }
 
 /* ═══════════════════════════════════════════════════════════
