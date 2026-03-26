@@ -146,10 +146,10 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
               </Button>
             </a>
           )}
-          {listing.whatsapp && (
-            <a href={`https://wa.me/${listing.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
-              <Button className="w-full h-[52px] rounded-2xl bg-card hover:bg-secondary border border-border text-foreground gap-1.5 font-bold text-[13px] shadow-lg transition-all active:scale-95">
-                <MessageCircle className="w-5 h-5 shrink-0 text-emerald-500" />
+          {(listing.whatsapp || (listing as any).contactDetails?.whatsapp || listing.phone) && (
+            <a href={`https://wa.me/${((listing as any).contactDetails?.whatsapp || listing.whatsapp || listing.phone || "").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="min-w-0">
+              <Button className="w-full h-[52px] rounded-2xl gap-1.5 font-bold text-[13px] shadow-lg shadow-emerald-500/20 transition-all active:scale-95 text-white" style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}>
+                <MessageCircle className="w-5 h-5 shrink-0" />
                 WhatsApp
               </Button>
             </a>
