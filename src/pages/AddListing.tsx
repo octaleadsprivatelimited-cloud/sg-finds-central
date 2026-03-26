@@ -613,6 +613,11 @@ const AddListing = () => {
           <p className="text-muted-foreground mt-1 text-sm">
             Please provide your business details clearly and accurately. Your listing will be reviewed by our admin team before it is published.
           </p>
+          {draftSavedShow && (
+            <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Draft saved
+            </div>
+          )}
         </div>
 
         {/* Guidelines Banner */}
