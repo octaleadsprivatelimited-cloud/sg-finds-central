@@ -63,20 +63,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsDevMode(false);
   };
 
-  // Restore dev session on mount
+  // Restore dev session on mount, but always allow real Firebase auth to take over
   useEffect(() => {
-    const savedRole = localStorage.getItem("dev_auth_role") as UserRole | null;
-    if (savedRole) {
-      setRole(savedRole);
-      setUser(createFakeUser(savedRole) as User);
-      setIsDevMode(true);
-      setLoading(false);
-      return; // skip firebase listener in dev mode
-    }
+    const getSavedDevRole = (): UserRole | null => {
+      try {
+        return localStorage.getItem("dev_auth_role") as UserRole | null;
+      } catch {
+        return null;
+      }
+    };
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
       if (firebaseUser) {
+        try {
+          localStorage.removeItem("dev_auth_role");
+        } catch {}
+
+        setIsDevMode(false);
+        setUser(firebaseUser);
+
         try {
           const superDoc = await getDoc(doc(db, "superadmins", firebaseUser.uid));
           if (superDoc.exists()) {
@@ -95,11 +100,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch {
           setRole("user");
         }
+
+        setLoading(false);
+        return;
+      }
+
+      const savedRole = getSavedDevRole();
+      if (savedRole) {
+        setRole(savedRole);
+        setUser(createFakeUser(savedRole) as User);
+        setIsDevMode(true);
       } else {
         setRole("user");
+        setUser(null);
+        setIsDevMode(false);
       }
+
       setLoading(false);
     });
+
     return unsubscribe;
   }, []);
 

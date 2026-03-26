@@ -68,7 +68,7 @@ interface Enquiry {
    MAIN ADMIN PAGE — TEAMS LAYOUT
    ═══════════════════════════════════════════════════════════ */
 const Admin = () => {
-  const { user, isSuperAdmin, loading: authLoading } = useAuth();
+  const { user, isSuperAdmin, loading: authLoading, isDevMode, devLogout } = useAuth();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<AdminTab>("listings");
