@@ -913,6 +913,34 @@ const BusinessDashboard = () => {
                       <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
                       <Textarea className="rounded-xl" value={catDescription} onChange={e => setCatDescription(e.target.value)} placeholder="Brief description of this item..." rows={2} />
                     </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Image</Label>
+                      <div className="flex items-center gap-3">
+                        {catImage && (
+                          <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0">
+                            <img src={catImage} alt="Preview" className="w-full h-full object-cover" />
+                            <button onClick={() => setCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                        <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-dashed border-border cursor-pointer hover:bg-secondary/50 transition-colors text-sm text-muted-foreground">
+                          <Upload className="w-4 h-4" />
+                          {catImage ? "Change" : "Upload image"}
+                          <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const results = await processImageFiles([file]);
+                            if (results[0]?.valid && results[0].base64) {
+                              setCatImage(results[0].base64);
+                            } else {
+                              toast.error(results[0]?.error || "Failed to process image");
+                            }
+                            e.target.value = "";
+                          }} />
+                        </label>
+                      </div>
+                    </div>
                     <Button
                       className="rounded-xl"
                       disabled={catSaving || !catListingId || !catTitle.trim()}
@@ -921,11 +949,11 @@ const BusinessDashboard = () => {
                         try {
                           const listing = listings.find(l => l.id === catListingId);
                           const existing = listing?.catalogueItems || [];
-                          const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim() };
+                          const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim(), image: catImage || undefined };
                           const updated = [...existing, newItem];
                           await updateDoc(doc(db, "listings", catListingId), { catalogueItems: updated });
                           setListings(prev => prev.map(l => l.id === catListingId ? { ...l, catalogueItems: updated } : l));
-                          setCatTitle(""); setCatDescription(""); setCatPrice("");
+                          setCatTitle(""); setCatDescription(""); setCatPrice(""); setCatImage("");
                           toast.success("Catalogue item added!");
                         } catch (err: any) { toast.error(err.message || "Failed to add item"); }
                         setCatSaving(false);
