@@ -1169,6 +1169,153 @@ const Admin = () => {
             </motion.div>
           )}
 
+          {/* ═══ ANALYTICS ══════════════════════════════════ */}
+          {activeTab === "analytics" && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+              <div>
+                <h1 className="text-lg font-semibold text-[hsl(220,15%,15%)]">Analytics</h1>
+                <p className="text-xs text-[hsl(220,10%,55%)] mt-0.5">Platform performance insights and data breakdown</p>
+              </div>
+
+              {/* KPI Row */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: "Approval Rate", value: `${stats.total ? Math.round((stats.approved / stats.total) * 100) : 0}%`, sub: "of total listings", icon: TrendingUp, color: "hsl(152,69%,40%)" },
+                  { label: "Enquiry Rate", value: `${stats.total ? (stats.enquiries / stats.total).toFixed(1) : 0}`, sub: "per listing avg", icon: Target, color: "hsl(220,70%,50%)" },
+                  { label: "Response Rate", value: `${enquiryConversion.contacted}%`, sub: "enquiries contacted", icon: MessageSquare, color: "hsl(200,70%,50%)" },
+                  { label: "Conversion", value: `${enquiryConversion.converted}%`, sub: "enquiries converted", icon: Sparkles, color: "hsl(38,85%,50%)" },
+                ].map((k) => (
+                  <div key={k.label} className="bg-white rounded-xl border border-[hsl(220,15%,90%)] p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <k.icon className="w-4 h-4" style={{ color: k.color }} />
+                      <span className="text-[11px] font-medium text-[hsl(220,10%,50%)]">{k.label}</span>
+                    </div>
+                    <p className="text-3xl font-bold text-[hsl(220,15%,12%)] tabular-nums">{k.value}</p>
+                    <p className="text-[10px] text-[hsl(220,10%,55%)] mt-1">{k.sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Category + District breakdown side by side */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Category */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Layers className="w-4 h-4 text-[hsl(280,60%,55%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Listings by Category</h3>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {categoryBreakdown.length === 0 ? (
+                      <p className="text-xs text-center py-8 text-[hsl(220,10%,55%)]">No data</p>
+                    ) : categoryBreakdown.map(([cat, count], i) => {
+                      const max = categoryBreakdown[0][1];
+                      const colors = ["hsl(220,70%,55%)", "hsl(152,69%,45%)", "hsl(38,85%,50%)", "hsl(280,60%,55%)", "hsl(354,70%,55%)", "hsl(200,70%,50%)", "hsl(170,60%,45%)", "hsl(320,60%,55%)"];
+                      return (
+                        <div key={cat} className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
+                          <span className="text-xs font-medium text-[hsl(220,15%,20%)] flex-1 truncate">{cat}</span>
+                          <div className="w-32 h-2 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden shrink-0">
+                            <div className="h-full rounded-full" style={{ width: `${(count / max) * 100}%`, backgroundColor: colors[i % colors.length] }} />
+                          </div>
+                          <span className="text-[11px] font-bold text-[hsl(220,15%,15%)] tabular-nums w-8 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* District */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Globe className="w-4 h-4 text-[hsl(200,70%,50%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Listings by District</h3>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {districtBreakdown.length === 0 ? (
+                      <p className="text-xs text-center py-8 text-[hsl(220,10%,55%)]">No data</p>
+                    ) : districtBreakdown.map(([dist, count], i) => {
+                      const max = districtBreakdown[0][1];
+                      return (
+                        <div key={dist} className="flex items-center gap-3">
+                          <MapPin className="w-3.5 h-3.5 text-[hsl(220,10%,55%)] shrink-0" />
+                          <span className="text-xs font-medium text-[hsl(220,15%,20%)] flex-1 truncate">{dist}</span>
+                          <div className="w-32 h-2 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden shrink-0">
+                            <div className="h-full rounded-full bg-[hsl(220,70%,55%)]" style={{ width: `${(count / max) * 100}%` }} />
+                          </div>
+                          <span className="text-[11px] font-bold text-[hsl(220,15%,15%)] tabular-nums w-8 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Enquiry Status Distribution */}
+              <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                  <BarChart3 className="w-4 h-4 text-[hsl(220,70%,50%)]" />
+                  <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Enquiry Status Distribution</h3>
+                </div>
+                <div className="p-5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {ENQUIRY_STATUSES.map((s) => {
+                      const count = enquiryStatusCounts[s.key] || 0;
+                      return (
+                        <div key={s.key} className={`rounded-xl p-4 text-center ${s.color}`}>
+                          <p className="text-2xl font-bold tabular-nums">{count}</p>
+                          <p className="text-[10px] font-semibold mt-1">{s.label}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ═══ ACTIVITY LOG ═════════════════════════════════ */}
+          {activeTab === "activity" && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              <div>
+                <h1 className="text-lg font-semibold text-[hsl(220,15%,15%)]">Activity Log</h1>
+                <p className="text-xs text-[hsl(220,10%,55%)] mt-0.5">Recent platform events and actions</p>
+              </div>
+
+              <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                {activityLog.length === 0 ? (
+                  <div className="text-center py-16">
+                    <Activity className="w-8 h-8 mx-auto mb-2 text-[hsl(220,10%,60%)]" />
+                    <p className="font-medium text-[hsl(220,15%,15%)] text-sm">No recent activity</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[hsl(220,15%,94%)]">
+                    {activityLog.map((item, i) => (
+                      <div key={item.id} className="flex items-start gap-4 px-5 py-4 hover:bg-[hsl(220,20%,99%)] transition-colors">
+                        <div className="relative">
+                          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: `${item.color}15` }}>
+                            <item.icon className="w-4 h-4" style={{ color: item.color }} />
+                          </div>
+                          {i < activityLog.length - 1 && (
+                            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-px h-6 bg-[hsl(220,15%,90%)]" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 pt-1">
+                          <p className="text-sm text-[hsl(220,15%,20%)]">{item.text}</p>
+                          <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5">{item.time}</p>
+                        </div>
+                        <span className={`shrink-0 px-2 py-0.5 rounded-md text-[10px] font-semibold ${
+                          item.type === "enquiry" ? "bg-[hsl(220,70%,95%)] text-[hsl(220,70%,40%)]" : "bg-[hsl(38,90%,93%)] text-[hsl(38,85%,35%)]"
+                        }`}>
+                          {item.type === "enquiry" ? "Enquiry" : "Listing"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
           {/* ═══ SETTINGS ═════════════════════════════════════ */}
           {activeTab === "settings" && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5 max-w-2xl">
