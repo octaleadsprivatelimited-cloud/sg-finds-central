@@ -366,6 +366,11 @@ Object.entries(categoryMap).forEach(([category, templates]) => {
       : category === "Music / Art / Craft"
         ? { subcategory: subcats[0] || "music" }
         : { subcategories: subcats };
+    const subcategoryList: string[] = category === "Tuition"
+      ? subcats
+      : category === "Music / Art / Craft"
+        ? [subcats[0] || "music"]
+        : subcats;
     allDemoListings.push({
       id: `demo-${idCounter}`,
       name: t.name,
@@ -382,6 +387,7 @@ Object.entries(categoryMap).forEach(([category, templates]) => {
       ownerId: "demo",
       logoUrl: logos[i % logos.length],
       subcategoryData,
+      subcategoryList,
       lat: coords.lat + (Math.random() - 0.5) * 0.005,
       lng: coords.lng + (Math.random() - 0.5) * 0.005,
     });
