@@ -147,6 +147,16 @@ const Admin = () => {
     return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
   };
 
+  const handleEnquiryStatus = async (enquiryId: string, newStatus: EnquiryStatus) => {
+    try {
+      await updateDoc(doc(db, "enquiries", enquiryId), { status: newStatus });
+      setEnquiries((prev) => prev.map((e) => e.id === enquiryId ? { ...e, status: newStatus } : e));
+      toast.success(`Marked as ${ENQUIRY_STATUSES.find(s => s.key === newStatus)?.label}`);
+    } catch {
+      toast.error("Failed to update status");
+    }
+  };
+
   useEffect(() => {
     if (!authLoading && (!user || !isSuperAdmin)) {
       navigate("/");
