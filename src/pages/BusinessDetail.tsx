@@ -99,7 +99,9 @@ const BusinessDetail = () => {
   }
 
   const shareUrl = `${window.location.origin}/${areaSlug}/${categorySlug}/${businessSlug}`;
-  const galleryPhotos = GALLERY_MAP[listing.id] || [];
+  const galleryPhotos = listing.imageUrls?.length
+    ? listing.imageUrls
+    : GALLERY_MAP[listing.id] || [];
 
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
