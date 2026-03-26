@@ -930,11 +930,11 @@ const BusinessDashboard = () => {
                           <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (!file) return;
-                            const results = await processImageFiles([file]);
-                            if (results[0]?.valid && results[0].base64) {
-                              setCatImage(results[0].base64);
+                            const base64 = await compressFileToBase64(file);
+                            if (base64) {
+                              setCatImage(base64);
                             } else {
-                              toast.error(results[0]?.error || "Failed to process image");
+                              toast.error("Failed to process image");
                             }
                             e.target.value = "";
                           }} />
