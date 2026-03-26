@@ -513,7 +513,7 @@ const Admin = () => {
         <header className="sticky top-0 z-30 bg-white border-b border-[hsl(220,15%,90%)] px-6 h-14 flex items-center gap-4 shadow-[0_1px_3px_hsl(220,15%,90%)]">
           <div className="flex items-center gap-3">
             <h1 className="text-[15px] font-semibold text-[hsl(220,15%,15%)]">
-              {activeTab === "dashboard" ? "Dashboard" : activeTab === "listings" ? "Listings" : activeTab === "enquiries" ? "Enquiries" : "Settings"}
+              {{ dashboard: "Dashboard", listings: "Listings", enquiries: "Enquiries", analytics: "Analytics", activity: "Activity Log", settings: "Settings" }[activeTab]}
             </h1>
             {stats.pending > 0 && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[hsl(38,90%,94%)] text-[hsl(38,85%,30%)] text-[11px] font-semibold">
