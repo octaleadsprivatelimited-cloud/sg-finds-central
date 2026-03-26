@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, forwardRef } from "react";
-import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
+import { DEMO_ALL_LISTINGS } from "@/lib/demo-data";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -22,7 +23,7 @@ import {
   Loader2, AlertTriangle, LayoutDashboard, Inbox, Settings,
   LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
   MessageSquare, Mail, Phone, Menu, MoreHorizontal,
-  ChevronRight, Activity, Users,
+  ChevronRight, Activity, Users, Database,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -88,6 +89,24 @@ const Admin = () => {
   const [adminEditData, setAdminEditData] = useState<Record<string, any>>({});
   const [adminSaving, setAdminSaving] = useState(false);
   const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
+  const [seeding, setSeeding] = useState(false);
+
+  const handleSeedDemoData = async () => {
+    setSeeding(true);
+    try {
+      let count = 0;
+      for (const listing of DEMO_ALL_LISTINGS) {
+        const { id, ...data } = listing;
+        await setDoc(doc(db, "listings", id), data);
+        count++;
+      }
+      toast.success(`Seeded ${count} demo listings to Firestore`);
+      await fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to seed demo data");
+    }
+    setSeeding(false);
+  };
 
   const [settings, setSettings] = useState({
     autoApprove: false,
@@ -114,15 +133,8 @@ const Admin = () => {
         setEnquiries(eSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Enquiry)));
       } catch {}
     } catch {
-      const demo: Listing[] = [{
-        id: "pending-1", name: "New Café SG", uen: "202399999F",
-        category: "Food & Beverage", district: "Tiong Bahru",
-        address: "78 Yong Siak Street, Singapore 163078", postalCode: "163078",
-        phone: "+65 6111 2222", status: "pending_approval", ownerId: "demo",
-        documentsUrl: ["https://example.com/doc.pdf"],
-      }];
-      setAllListings(demo);
-      setPendingListings(demo);
+      setAllListings(DEMO_ALL_LISTINGS);
+      setPendingListings(DEMO_ALL_LISTINGS.filter((l) => l.status === "pending_approval"));
     }
     setLoading(false);
   };
@@ -761,6 +773,17 @@ const Admin = () => {
                     </Badge>
                   </div>
                 </div>
+              </div>
+
+              {/* Seed Demo Data */}
+              <div className="bg-white dark:bg-[hsl(250,15%,12%)] border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)] rounded-lg px-5 py-4">
+                <h3 className="text-sm font-semibold text-foreground mb-1">Demo Data</h3>
+                <p className="text-xs text-muted-foreground mb-3">Seed 110 demo businesses (10 per category) to Firestore. Existing demo entries will be overwritten.</p>
+                <Button onClick={handleSeedDemoData} disabled={seeding}
+                  className="bg-[hsl(250,50%,55%)] hover:bg-[hsl(250,50%,48%)] text-white rounded-md text-xs">
+                  {seeding ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Database className="w-4 h-4 mr-1.5" />}
+                  {seeding ? "Seeding..." : "Seed 110 Demo Listings"}
+                </Button>
               </div>
             </div>
           )}
