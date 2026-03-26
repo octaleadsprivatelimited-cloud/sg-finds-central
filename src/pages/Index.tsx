@@ -156,6 +156,15 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     return arr;
   }, [filtered, sortBy]);
 
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [searchQuery, category, district, radiusKm, openNow, sortBy]);
+
+  const totalPages = Math.ceil(sortedFiltered.length / ITEMS_PER_PAGE);
+  const paginatedListings = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return sortedFiltered.slice(start, start + ITEMS_PER_PAGE);
+  }, [sortedFiltered, currentPage, ITEMS_PER_PAGE]);
+
   const CATEGORY_NAV = [
     { value: "Tuition", label: "Tuition" },
     { value: "Baking", label: "Baking" },
