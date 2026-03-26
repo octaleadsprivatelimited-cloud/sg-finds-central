@@ -20,7 +20,7 @@ import {
   Shield, Check, X, ExternalLink, FileText, Building2, Clock,
   Loader2, AlertTriangle, LayoutDashboard, Inbox, Settings,
   LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
-  MessageSquare, Mail, Phone, Menu, MoreHorizontal,
+  MessageSquare, MessageCircle, Mail, Phone, Menu, MoreHorizontal,
   ChevronRight, Activity, Users, Database,
 } from "lucide-react";
 import { toast } from "sonner";
