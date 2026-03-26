@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Listing, ListingOffer, OperatingHours, SpecialHours, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
@@ -137,6 +138,12 @@ const BusinessDashboard = () => {
 
   // Recent enquiries for analytics
   const [recentEnquiries, setRecentEnquiries] = useState<{ name: string; message: string; time: string; listing: string }[]>([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [seenEnquiryCount, setSeenEnquiryCount] = useState<number>(() => {
+    const stored = localStorage.getItem("dash_seen_enquiry_count");
+    return stored ? parseInt(stored, 10) : 0;
+  });
+  const unreadCount = Math.max(0, recentEnquiries.length - seenEnquiryCount);
 
   // Offers state
   const [offerListingId, setOfferListingId] = useState("");
@@ -479,14 +486,76 @@ const BusinessDashboard = () => {
             <button className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-colors relative">
               <Mail className="w-4 h-4 text-muted-foreground" />
             </button>
-            <button className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-colors relative">
-              <Bell className="w-4 h-4 text-muted-foreground" />
-              {recentEnquiries.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[hsl(var(--primary))] text-primary-foreground text-[9px] font-bold flex items-center justify-center">
-                  {recentEnquiries.length}
-                </span>
-              )}
-            </button>
+            <Popover open={notifOpen} onOpenChange={(open) => {
+              setNotifOpen(open);
+              if (open) {
+                setSeenEnquiryCount(recentEnquiries.length);
+                localStorage.setItem("dash_seen_enquiry_count", String(recentEnquiries.length));
+              }
+            }}>
+              <PopoverTrigger asChild>
+                <button className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-colors relative">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-80 p-0 rounded-xl overflow-hidden">
+                <div className="p-3 border-b border-border bg-card">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold text-foreground">Notifications</h4>
+                    {recentEnquiries.length > 0 && (
+                      <Badge variant="secondary" className="text-[10px] rounded-md">{recentEnquiries.length}</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {recentEnquiries.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <Bell className="w-8 h-8 text-muted-foreground/20 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No notifications yet</p>
+                      <p className="text-xs text-muted-foreground/70 mt-0.5">Enquiries will show up here</p>
+                    </div>
+                  ) : (
+                    recentEnquiries.slice(0, 10).map((eq, i) => {
+                      const isNew = i >= seenEnquiryCount - recentEnquiries.length + unreadCount && i < unreadCount;
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => { setNotifOpen(false); setActiveTab("enquiries"); }}
+                          className={`w-full text-left px-3 py-3 border-b border-border/30 last:border-0 hover:bg-muted/50 transition-colors flex items-start gap-3 ${isNew ? "bg-[hsl(var(--primary)/0.03)]" : ""}`}
+                        >
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isNew ? "bg-[hsl(var(--primary)/0.12)]" : "bg-muted"}`}>
+                            <MessageSquare className={`w-3.5 h-3.5 ${isNew ? "text-[hsl(var(--primary))]" : "text-muted-foreground"}`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground truncate">{eq.name}</span>
+                              {isNew && <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--primary))] shrink-0" />}
+                            </div>
+                            <p className="text-xs text-muted-foreground truncate">{eq.message || `Enquiry for ${eq.listing}`}</p>
+                            <p className="text-[10px] text-muted-foreground/60 mt-0.5">{eq.time}</p>
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+                {recentEnquiries.length > 0 && (
+                  <div className="p-2 border-t border-border bg-card">
+                    <button
+                      onClick={() => { setNotifOpen(false); setActiveTab("enquiries"); }}
+                      className="w-full text-center text-xs font-medium text-[hsl(var(--primary))] hover:underline py-1.5 rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      View all enquiries
+                    </button>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
             {/* User avatar */}
             <div className="flex items-center gap-3 ml-2 pl-3 border-l border-border">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary)/0.2)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center">
