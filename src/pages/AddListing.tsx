@@ -267,10 +267,11 @@ const AddListing = () => {
     verificationDocUrl,
   ]);
 
-  // Save draft (debounced)
+  // Save draft (debounced) with indicator
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const [draftSavedShow, setDraftSavedShow] = useState(false);
+  const draftFadeRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
-    // Don't save empty drafts
     if (!category && !name) return;
     clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
@@ -280,6 +281,9 @@ const AddListing = () => {
           expiresAt: Date.now() + DRAFT_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
         };
         localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+        setDraftSavedShow(true);
+        clearTimeout(draftFadeRef.current);
+        draftFadeRef.current = setTimeout(() => setDraftSavedShow(false), 2500);
       } catch {}
     }, 1000);
     return () => clearTimeout(saveTimerRef.current);
