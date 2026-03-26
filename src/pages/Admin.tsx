@@ -89,6 +89,24 @@ const Admin = () => {
   const [adminEditData, setAdminEditData] = useState<Record<string, any>>({});
   const [adminSaving, setAdminSaving] = useState(false);
   const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
+  const [seeding, setSeeding] = useState(false);
+
+  const handleSeedDemoData = async () => {
+    setSeeding(true);
+    try {
+      let count = 0;
+      for (const listing of DEMO_ALL_LISTINGS) {
+        const { id, ...data } = listing;
+        await setDoc(doc(db, "listings", id), data);
+        count++;
+      }
+      toast.success(`Seeded ${count} demo listings to Firestore`);
+      await fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to seed demo data");
+    }
+    setSeeding(false);
+  };
 
   const [settings, setSettings] = useState({
     autoApprove: false,
@@ -115,15 +133,8 @@ const Admin = () => {
         setEnquiries(eSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Enquiry)));
       } catch {}
     } catch {
-      const demo: Listing[] = [{
-        id: "pending-1", name: "New Café SG", uen: "202399999F",
-        category: "Food & Beverage", district: "Tiong Bahru",
-        address: "78 Yong Siak Street, Singapore 163078", postalCode: "163078",
-        phone: "+65 6111 2222", status: "pending_approval", ownerId: "demo",
-        documentsUrl: ["https://example.com/doc.pdf"],
-      }];
-      setAllListings(demo);
-      setPendingListings(demo);
+      setAllListings(DEMO_ALL_LISTINGS);
+      setPendingListings(DEMO_ALL_LISTINGS.filter((l) => l.status === "pending_approval"));
     }
     setLoading(false);
   };
