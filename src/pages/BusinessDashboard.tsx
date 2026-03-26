@@ -1393,34 +1393,44 @@ const BusinessDashboard = () => {
                       </div>
                     </div>
 
-                    {/* Per-listing breakdown */}
-                    {listings.map(listing => (
-                      <div key={listing.id} className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
-                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-40" />
-                        <div className="p-5">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              {listing.logoUrl ? (
-                                <img src={listing.logoUrl} alt="" className="w-9 h-9 rounded-lg object-cover border border-border/50" />
-                              ) : (
-                                <div className="w-9 h-9 rounded-lg bg-[hsl(var(--primary)/0.08)] flex items-center justify-center">
-                                  <Store className="w-4 h-4 text-[hsl(var(--primary))]" />
+                    {/* Chart */}
+                    <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-40" />
+                      <div className="p-5">
+                        <ViewAnalyticsChart listings={listings} userId={user?.uid || ""} />
+                      </div>
+                    </div>
+
+                    {/* Per-listing view counts */}
+                    <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--success))] opacity-40" />
+                      <div className="p-5">
+                        <h3 className="font-semibold text-foreground text-sm mb-4">Views by Listing</h3>
+                        <div className="space-y-3">
+                          {listings.map(listing => (
+                            <div key={listing.id} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
+                              <div className="flex items-center gap-3">
+                                {listing.logoUrl ? (
+                                  <img src={listing.logoUrl} alt="" className="w-8 h-8 rounded-lg object-cover border border-border/50" />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.08)] flex items-center justify-center">
+                                    <Store className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+                                  </div>
+                                )}
+                                <div>
+                                  <p className="text-sm font-medium text-foreground">{listing.name}</p>
+                                  <p className="text-xs text-muted-foreground">{listing.category}</p>
                                 </div>
-                              )}
-                              <div>
-                                <h3 className="font-semibold text-foreground text-sm">{listing.name}</h3>
-                                <p className="text-xs text-muted-foreground">{listing.category} · {listing.district}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+                                <span className="text-sm font-semibold text-foreground tabular-nums">{(viewCounts[listing.id] || 0).toLocaleString()}</span>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="text-2xl font-semibold text-foreground tabular-nums">{(viewCounts[listing.id] || 0).toLocaleString()}</p>
-                              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">views</p>
-                            </div>
-                          </div>
-                          <ViewAnalyticsChart listingId={listing.id} />
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 )}
               </motion.div>
