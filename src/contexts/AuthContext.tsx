@@ -5,6 +5,9 @@ import { auth, db } from "@/lib/firebase";
 
 export type UserRole = "superadmin" | "admin" | "business_owner" | "user";
 
+const DEV_AUTH_KEY = "dev_auth_role";
+const DEV_BYPASS_ENABLED = import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -44,12 +47,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<UserRole>("user");
-  const [isDevMode, setIsDevMode] = useState(() => {
-    try { return localStorage.getItem("dev_auth_role") !== null; } catch { return false; }
-  });
+  const [isDevMode, setIsDevMode] = useState(false);
 
   const devLogin = (devRole: UserRole) => {
-    localStorage.setItem("dev_auth_role", devRole);
+    if (!DEV_BYPASS_ENABLED) return;
+    localStorage.setItem(DEV_AUTH_KEY, devRole);
     setRole(devRole);
     setUser(createFakeUser(devRole) as User);
     setIsDevMode(true);
@@ -57,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const devLogout = () => {
-    localStorage.removeItem("dev_auth_role");
+    localStorage.removeItem(DEV_AUTH_KEY);
     setRole("user");
     setUser(null);
     setIsDevMode(false);
@@ -65,9 +67,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Restore dev session on mount, but always allow real Firebase auth to take over
   useEffect(() => {
-    const getSavedDevRole = (): UserRole | null => {
+    if (!DEV_BYPASS_ENABLED) {
       try {
-        return localStorage.getItem("dev_auth_role") as UserRole | null;
+        localStorage.removeItem(DEV_AUTH_KEY);
+      } catch {}
+    }
+
+    const getSavedDevRole = (): UserRole | null => {
+      if (!DEV_BYPASS_ENABLED) return null;
+      try {
+        return localStorage.getItem(DEV_AUTH_KEY) as UserRole | null;
       } catch {
         return null;
       }
@@ -76,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          localStorage.removeItem("dev_auth_role");
+          localStorage.removeItem(DEV_AUTH_KEY);
         } catch {}
 
         setIsDevMode(false);
