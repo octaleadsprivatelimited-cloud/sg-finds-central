@@ -29,7 +29,7 @@ import {
 import {
   ArrowLeft, ArrowRight, Check, Loader2, Building2, X,
   MapPin, FileText, Phone, Image, ShieldCheck, MessageCircle,
-  AlertTriangle, Clock, Upload, Trash2,
+  AlertTriangle, Clock, Upload, Trash2, CloudOff, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
