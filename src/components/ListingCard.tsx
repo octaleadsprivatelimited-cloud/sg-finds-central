@@ -73,6 +73,7 @@ export interface Listing {
   pendingLogoUrl?: string;
   pendingImageUrls?: string[];
   subcategoryData?: Record<string, any>;
+  subcategoryList?: string[];
 }
 
 interface ListingCardProps {

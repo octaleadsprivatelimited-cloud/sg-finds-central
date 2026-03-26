@@ -204,7 +204,16 @@ const CityCategory = () => {
     let result = listings.filter((l) => l.category === matchedCategory);
     // Further filter by subcategory if selected
     if (activeSub && activeSub !== "all") {
-      result = result.filter((l) => (l as any).subcategory === activeSub);
+      result = result.filter((l) => {
+        const data = (l as any).subcategoryData;
+        const flatList: string[] = (l as any).subcategoryList || [];
+        // Check flat list first, then nested data
+        if (flatList.includes(activeSub)) return true;
+        if (data?.subcategory === activeSub) return true;
+        if (data?.subcategories?.includes(activeSub)) return true;
+        if (data?.subjects?.includes(activeSub)) return true;
+        return false;
+      });
     }
     return result;
   }, [matchedCategory, listings, activeSub]);
@@ -330,7 +339,12 @@ const CityCategory = () => {
                       <div className="p-1.5 text-center">
                         <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">{sub.label}</p>
                         <p className="text-[11px] text-muted-foreground mt-0.5">
-                          {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
+                          {listings.filter((l) => {
+                            if (l.category !== matchedCategory) return false;
+                            const list: string[] = (l as any).subcategoryList || [];
+                            const data = (l as any).subcategoryData;
+                            return list.includes(sub.value) || data?.subcategory === sub.value || data?.subcategories?.includes(sub.value) || data?.subjects?.includes(sub.value);
+                          }).length} listings
                         </p>
                       </div>
                     </button>
