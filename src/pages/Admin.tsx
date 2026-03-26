@@ -295,6 +295,17 @@ const Admin = () => {
     return matchSearch && matchFilter;
   });
 
+  const notifications = useMemo(() => {
+    const items: { id: string; icon: any; text: string; time: string; color: string; action?: () => void }[] = [];
+    if (stats.pending > 0) items.push({ id: "n-pending", icon: Clock, text: `${stats.pending} listing${stats.pending > 1 ? "s" : ""} awaiting approval`, time: "Action required", color: "hsl(38,85%,50%)", action: () => { setActiveTab("dashboard"); setNotifOpen(false); } });
+    if (stats.unreadEnquiries > 0) items.push({ id: "n-unread", icon: MessageSquare, text: `${stats.unreadEnquiries} new enquir${stats.unreadEnquiries > 1 ? "ies" : "y"} received`, time: "Unread", color: "hsl(220,70%,50%)", action: () => { setActiveTab("enquiries"); setEnquiryFilter("unread"); setNotifOpen(false); } });
+    pendingListings.filter(l => l.pendingLogoUrl).forEach(l => items.push({ id: `n-logo-${l.id}`, icon: Image, text: `${l.name} uploaded a new logo`, time: "Needs review", color: "hsl(280,60%,55%)", action: () => { setActiveTab("dashboard"); setNotifOpen(false); } }));
+    pendingListings.filter(l => l.pendingImageUrls && l.pendingImageUrls.length > 0).forEach(l => items.push({ id: `n-img-${l.id}`, icon: Image, text: `${l.name} uploaded ${l.pendingImageUrls!.length} new photo${l.pendingImageUrls!.length > 1 ? "s" : ""}`, time: "Needs review", color: "hsl(200,70%,50%)", action: () => { setActiveTab("dashboard"); setNotifOpen(false); } }));
+    pendingListings.filter(l => (l as any).previousApproved && Object.keys((l as any).previousApproved).length > 0).forEach(l => items.push({ id: `n-edit-${l.id}`, icon: Edit3, text: `${l.name} edited ${Object.keys((l as any).previousApproved).length} field(s)`, time: "Review changes", color: "hsl(354,70%,54%)", action: () => { setActiveTab("dashboard"); setNotifOpen(false); } }));
+    enquiries.filter(e => e.status === "unread").slice(0, 5).forEach(e => items.push({ id: `n-enq-${e.id}`, icon: Mail, text: `${e.name} enquired about ${e.listingName}`, time: e.createdAt?.toDate ? e.createdAt.toDate().toLocaleDateString() : "Recently", color: "hsl(152,69%,40%)", action: () => { setActiveTab("enquiries"); setNotifOpen(false); } }));
+    return items;
+  }, [stats, pendingListings, enquiries]);
+
   const enquiryStatusCounts = useMemo(() => {
     const counts: Record<string, number> = { all: enquiries.length };
     ENQUIRY_STATUSES.forEach(s => { counts[s.key] = enquiries.filter(e => e.status === s.key).length; });
