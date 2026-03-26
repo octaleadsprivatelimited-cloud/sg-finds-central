@@ -217,7 +217,7 @@ const Admin = () => {
     setActionLoading(id);
     try {
       const listing = allListings.find(l => l.id === id);
-      const updates: Record<string, any> = { status: "approved", rejectionReason: "" };
+      const updates: Record<string, any> = { status: "approved", rejectionReason: "", previousApproved: {} };
       // Auto-approve any pending images when listing is approved
       if (listing?.pendingLogoUrl) {
         updates.logoUrl = listing.pendingLogoUrl;
