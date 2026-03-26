@@ -95,7 +95,7 @@ const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected
   rejected: { variant: "rejected", label: "Rejected", dotColor: "bg-red-500" },
 };
 
-type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "catalogue" | "featured" | "hours" | "settings";
+type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "catalogue" | "featured" | "hours" | "analytics" | "settings";
 
 /* ─── Sidebar Nav Item ─── */
 const SidebarItem = ({ icon: Icon, label, active, badge, onClick }: {
@@ -407,6 +407,7 @@ const BusinessDashboard = () => {
     { key: "catalogue", icon: BookOpen, label: "Catalogue" },
     { key: "featured", icon: Sparkles, label: "Featured" },
     { key: "hours", icon: Clock, label: "Hours" },
+    { key: "analytics", icon: BarChart3, label: "View Analytics" },
   ];
 
   if (loadingListings) {
