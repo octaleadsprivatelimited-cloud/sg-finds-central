@@ -529,6 +529,12 @@ const Admin = () => {
                             <div className="flex items-center gap-2 mb-0.5">
                               <h4 className="font-semibold text-sm text-foreground truncate">{listing.name}</h4>
                               <Badge className="bg-[hsl(38,85%,92%)] text-[hsl(38,85%,30%)] border-0 text-[10px] px-2 py-0 rounded font-medium">Pending</Badge>
+                              {(listing as any).previousApproved && Object.keys((listing as any).previousApproved).length > 0 && (
+                                <Badge className="bg-[hsl(280,60%,93%)] text-[hsl(280,60%,40%)] border-0 text-[10px] px-2 py-0 rounded font-medium flex items-center gap-1">
+                                  <Edit3 className="w-2.5 h-2.5" />
+                                  {Object.keys((listing as any).previousApproved).length} changed
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-xs text-muted-foreground truncate">{listing.address}</p>
                             <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
