@@ -484,7 +484,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       {totalPages > 1 && (
                         <div className="flex items-center justify-center gap-1.5 pt-4">
                           <button
-                            onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); setTimeout(() => listingsScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }), 50); }}
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
                             className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                           >
@@ -503,7 +503,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                               ) : (
                                 <button
                                   key={p}
-                                  onClick={() => { setCurrentPage(p as number); setTimeout(() => listingsScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }), 50); }}
+                                  onClick={() => setCurrentPage(p as number)}
                                   className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${
                                     currentPage === p
                                       ? "bg-primary text-primary-foreground shadow-sm"
@@ -515,7 +515,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                               )
                             )}
                           <button
-                            onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); setTimeout(() => listingsScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }), 50); }}
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages}
                             className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                           >
