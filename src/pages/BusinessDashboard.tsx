@@ -834,7 +834,7 @@ const BusinessDashboard = () => {
 
       {/* View Listing Dialog */}
       <Dialog open={!!viewingListing} onOpenChange={() => setViewingListing(null)}>
-        <DialogContent className="sm:max-w-lg rounded-2xl">
+        <DialogContent className="sm:max-w-lg rounded-2xl" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="text-xl tracking-tight">Listing Details</DialogTitle>
           </DialogHeader>
@@ -869,7 +869,7 @@ const BusinessDashboard = () => {
 
       {/* Edit Listing Dialog */}
       <Dialog open={!!editingListing} onOpenChange={() => setEditingListing(null)}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="text-xl tracking-tight">Edit Listing</DialogTitle>
           </DialogHeader>

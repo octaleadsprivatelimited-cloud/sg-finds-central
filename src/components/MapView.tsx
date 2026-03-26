@@ -1,4 +1,4 @@
-import { GoogleMap, MarkerF, InfoWindowF } from "@react-google-maps/api";
+import { GoogleMap, MarkerF, InfoWindowF, useJsApiLoader } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
 import { getBusinessUrl } from "@/lib/url-helpers";
 import { Loader2, Star } from "lucide-react";
@@ -185,7 +185,6 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
             onClick={() => {
               setActiveMarker(listing.id);
               onSelectListing?.(listing);
-              // Scroll to the listing card in the list
               const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
               if (card) {
                 card.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -193,11 +192,9 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
             }}
             onMouseOver={() => onHoverListing?.(listing.id)}
             onMouseOut={() => onHoverListing?.(null)}
-            opacity={hoveredId === listing.id || selectedId === listing.id ? 1 : 0.7}
-            icon={hoveredId === listing.id ? {
-              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-              scaledSize: (window as any).google?.maps ? new (window as any).google.maps.Size(44, 44) : undefined,
-            } : undefined}
+            options={{
+              opacity: hoveredId === listing.id || selectedId === listing.id ? 1 : 0.7,
+            }}
           >
             {activeMarker === listing.id && activeListing && (
               <InfoWindowF

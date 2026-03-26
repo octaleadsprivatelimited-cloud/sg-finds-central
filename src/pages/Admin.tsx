@@ -760,7 +760,7 @@ const Admin = () => {
 
       {/* ── Rejection Dialog ─────────────────────────────── */}
       <Dialog open={!!rejectingId} onOpenChange={(open) => { if (!open) { setRejectingId(null); setRejectionReason(""); } }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground">
               <X className="w-5 h-5 text-[hsl(354,70%,54%)]" />Reject Listing
@@ -788,7 +788,7 @@ const Admin = () => {
 
       {/* ── Admin Edit Dialog ───────────────────────────── */}
       <Dialog open={!!editingListing} onOpenChange={(open) => { if (!open) setEditingListing(null); }}>
-        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground">
               <Edit3 className="w-5 h-5 text-[hsl(250,50%,55%)]" />Edit Listing (Admin)
@@ -878,7 +878,7 @@ const Admin = () => {
 
       {/* ── Image Viewer Dialog ─────────────────────────── */}
       <Dialog open={!!viewingImages} onOpenChange={(open) => { if (!open) setViewingImages(null); }}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground">
               <Image className="w-5 h-5 text-[hsl(250,50%,55%)]" />
