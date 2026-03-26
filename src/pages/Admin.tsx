@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { DEMO_ALL_LISTINGS } from "@/lib/demo-data";
@@ -102,6 +102,55 @@ const Admin = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [notifOpen, setNotifOpen] = useState(false);
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission>(
+    typeof Notification !== "undefined" ? Notification.permission : "default"
+  );
+  const prevEnquiryCountRef = useRef<number | null>(null);
+  const prevPendingCountRef = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Create audio element for notification sound (Web Audio API beep)
+  const playNotifSound = useCallback(() => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+      // Second beep
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(1100, ctx.currentTime + 0.15);
+      gain2.gain.setValueAtTime(0.3, ctx.currentTime + 0.15);
+      gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+      osc2.start(ctx.currentTime + 0.15);
+      osc2.stop(ctx.currentTime + 0.6);
+    } catch {}
+  }, []);
+
+  const requestNotifPermission = useCallback(async () => {
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+      const result = await Notification.requestPermission();
+      setNotifPermission(result);
+    }
+  }, []);
+
+  const sendBrowserNotif = useCallback((title: string, body: string) => {
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+      try {
+        new Notification(title, { body, icon: "/favicon.ico", badge: "/favicon.ico", tag: "admin-notif" });
+      } catch {}
+    }
+  }, []);
 
   const [settings, setSettings] = useState({
     autoApprove: false,
@@ -204,6 +253,37 @@ const Admin = () => {
     }
     setLoading(false);
   };
+
+  // Request notification permission on mount
+  useEffect(() => { requestNotifPermission(); }, [requestNotifPermission]);
+
+  // Detect new enquiries/pending and alert
+  useEffect(() => {
+    const enquiryCount = enquiries.filter(e => e.status === "unread").length;
+    const pendingCount = pendingListings.length;
+
+    if (prevEnquiryCountRef.current !== null && enquiryCount > prevEnquiryCountRef.current) {
+      const diff = enquiryCount - prevEnquiryCountRef.current;
+      playNotifSound();
+      sendBrowserNotif("New Enquiry", `${diff} new enquir${diff > 1 ? "ies" : "y"} received`);
+      toast.info(`🔔 ${diff} new enquir${diff > 1 ? "ies" : "y"} received!`);
+    }
+    if (prevPendingCountRef.current !== null && pendingCount > prevPendingCountRef.current) {
+      const diff = pendingCount - prevPendingCountRef.current;
+      playNotifSound();
+      sendBrowserNotif("New Listing", `${diff} listing${diff > 1 ? "s" : ""} pending approval`);
+      toast.info(`🔔 ${diff} new listing${diff > 1 ? "s" : ""} pending review!`);
+    }
+
+    prevEnquiryCountRef.current = enquiryCount;
+    prevPendingCountRef.current = pendingCount;
+  }, [enquiries, pendingListings, playNotifSound, sendBrowserNotif]);
+
+  // Auto-refresh every 30s to detect new data
+  useEffect(() => {
+    const interval = setInterval(() => { fetchData(); }, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleApprove = async (id: string) => {
     setActionLoading(id);
@@ -1405,6 +1485,36 @@ const Admin = () => {
                     <Switch checked={settings[s.key]} onCheckedChange={() => setSettings((prev) => ({ ...prev, [s.key]: !prev[s.key] }))} />
                   </div>
                 ))}
+
+                {/* Browser Push Notifications */}
+                <div className="flex items-center justify-between px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-[hsl(220,15%,97%)] flex items-center justify-center">
+                      <Bell className="w-4 h-4 text-[hsl(220,10%,45%)]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[hsl(220,15%,15%)]">Browser push notifications</p>
+                      <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5">
+                        {notifPermission === "granted" ? "Enabled — you'll receive alerts for new enquiries & listings" :
+                         notifPermission === "denied" ? "Blocked — enable in browser settings" :
+                         "Click to enable desktop alerts"}
+                      </p>
+                    </div>
+                  </div>
+                  {notifPermission === "granted" ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[hsl(152,50%,93%)] text-[hsl(152,69%,35%)] text-[11px] font-semibold">
+                      <Check className="w-3 h-3" />Active
+                    </span>
+                  ) : notifPermission === "denied" ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[hsl(354,70%,95%)] text-[hsl(354,70%,45%)] text-[11px] font-semibold">
+                      <X className="w-3 h-3" />Blocked
+                    </span>
+                  ) : (
+                    <Button size="sm" onClick={requestNotifPermission} className="bg-[hsl(220,70%,50%)] hover:bg-[hsl(220,70%,45%)] text-white rounded-lg text-xs h-8">
+                      <Bell className="w-3.5 h-3.5 mr-1.5" />Enable
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl px-5 py-4">
