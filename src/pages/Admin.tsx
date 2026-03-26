@@ -101,6 +101,7 @@ const Admin = () => {
   const [enquiryFilter, setEnquiryFilter] = useState<"all" | EnquiryStatus>("all");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const [settings, setSettings] = useState({
     autoApprove: false,
