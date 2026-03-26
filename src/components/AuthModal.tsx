@@ -175,12 +175,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md gap-3">
+      <DialogContent className="sm:max-w-md gap-3" aria-describedby="auth-modal-desc">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl font-semibold">
             {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
           </DialogTitle>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p id="auth-modal-desc" className="text-xs sm:text-sm text-muted-foreground">
             {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your business listings"}
           </p>
         </DialogHeader>

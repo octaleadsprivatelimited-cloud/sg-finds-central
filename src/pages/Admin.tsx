@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, forwardRef } from "react";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -33,29 +33,31 @@ import { toast } from "sonner";
 type AdminTab = "dashboard" | "listings" | "enquiries" | "settings";
 
 /* ── Icon Rail Item (far-left vertical bar like Teams) ──── */
-const RailIcon = ({
-  icon: Icon, label, active, badge, onClick,
-}: { icon: any; label: string; active?: boolean; badge?: number; onClick?: () => void }) => (
-  <button
-    onClick={onClick}
-    title={label}
-    className={`relative flex flex-col items-center gap-1 w-full py-3 transition-all group
-      ${active
-        ? "text-white before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:bg-white before:rounded-r-full"
-        : "text-[hsl(250,20%,65%)] hover:text-white hover:bg-white/5"
-      }`}
-  >
-    <div className="relative">
-      <Icon className="w-5 h-5" />
-      {badge !== undefined && badge > 0 && (
-        <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[hsl(354,70%,54%)] text-white text-[9px] font-bold flex items-center justify-center">
-          {badge > 99 ? "99+" : badge}
-        </span>
-      )}
-    </div>
-    <span className="text-[10px] font-medium leading-tight">{label}</span>
-  </button>
+const RailIcon = forwardRef<HTMLButtonElement, { icon: any; label: string; active?: boolean; badge?: number; onClick?: () => void }>(
+  ({ icon: Icon, label, active, badge, onClick }, ref) => (
+    <button
+      ref={ref}
+      onClick={onClick}
+      title={label}
+      className={`relative flex flex-col items-center gap-1 w-full py-3 transition-all group
+        ${active
+          ? "text-white before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:bg-white before:rounded-r-full"
+          : "text-[hsl(250,20%,65%)] hover:text-white hover:bg-white/5"
+        }`}
+    >
+      <div className="relative">
+        <Icon className="w-5 h-5" />
+        {badge !== undefined && badge > 0 && (
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[hsl(354,70%,54%)] text-white text-[9px] font-bold flex items-center justify-center">
+            {badge > 99 ? "99+" : badge}
+          </span>
+        )}
+      </div>
+      <span className="text-[10px] font-medium leading-tight">{label}</span>
+    </button>
+  )
 );
+RailIcon.displayName = "RailIcon";
 
 /* ── Enquiry interface ──────────────────────────────────── */
 interface Enquiry {
