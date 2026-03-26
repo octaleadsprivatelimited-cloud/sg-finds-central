@@ -118,9 +118,6 @@ const getSteps = (category: string, serviceLocations: string[]) => {
   const steps: { key: string; label: string; icon: React.ReactNode }[] = [
     { key: "category", label: "Category", icon: <Building2 className="w-4 h-4" /> },
   ];
-  if (needsSubcategoryScreen(category)) {
-    steps.push({ key: "subcategory", label: "Subcategory", icon: <FileText className="w-4 h-4" /> });
-  }
   steps.push(
     { key: "details", label: "Business Details", icon: <FileText className="w-4 h-4" /> },
   );
@@ -460,21 +457,26 @@ const AddListing = () => {
   const canProceed = (): boolean => {
     if (!currentStep) return false;
     switch (currentStep.key) {
-      case "category": return !!category && !!district;
+      case "category": {
+        if (!category || !district) return false;
+        // Subcategory validation inline
+        if (needsSubcategoryScreen(category)) {
+          if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
+          if (category === "Music / Art / Craft") return !!musicArtSub || !!musicArtOther;
+          if (category === "Beauty") return beautySubs.length > 0 || !!beautyOther;
+          if (category === "Pet Services") return petSubs.length > 0 || !!petOther;
+          if (category === "Handyman") return handymanSubs.length > 0 || !!handymanOther;
+          if (category === "Home Food") return homeFoodSubs.length > 0 || !!homeFoodOther;
+          if (category === "Baking") return bakingSubs.length > 0 || !!bakingOther;
+          if (category === "Photography / Videography") return photoSubs.length > 0 || !!photoOther;
+          if (category === "Tailoring") return tailoringSubs.length > 0 || !!tailoringOther;
+          if (category === "Event Services") return eventSubs.length > 0 || !!eventOther;
+          if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
+          return false;
+        }
+        return true;
+      }
       case "details": return !!name && !!ownerName;
-      case "subcategory":
-        if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
-        if (category === "Music / Art / Craft") return !!musicArtSub || !!musicArtOther;
-        if (category === "Beauty") return beautySubs.length > 0 || !!beautyOther;
-        if (category === "Pet Services") return petSubs.length > 0 || !!petOther;
-        if (category === "Handyman") return handymanSubs.length > 0 || !!handymanOther;
-        if (category === "Home Food") return homeFoodSubs.length > 0 || !!homeFoodOther;
-        if (category === "Baking") return bakingSubs.length > 0 || !!bakingOther;
-        if (category === "Photography / Videography") return photoSubs.length > 0 || !!photoOther;
-        if (category === "Tailoring") return tailoringSubs.length > 0 || !!tailoringOther;
-        if (category === "Event Services") return eventSubs.length > 0 || !!eventOther;
-        if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
-        return false;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode && locationLat !== null && locationLng !== null;
       case "description": {
