@@ -610,22 +610,37 @@ const Admin = () => {
                             <p className="text-[11px] font-semibold text-[hsl(38,85%,40%)] uppercase tracking-wider mb-1.5 flex items-center gap-1">
                               <Clock className="w-3 h-3" />Pending Images ({listing.pendingImageUrls.length}) — Awaiting Approval
                             </p>
-                            <div className="flex gap-1.5 overflow-x-auto">
+                            <div className="flex gap-2 overflow-x-auto">
                               {listing.pendingImageUrls.map((url, i) => (
-                                <img key={i} src={url} alt={`Pending ${i + 1}`}
-                                  className="w-16 h-16 rounded-md object-cover border-2 border-[hsl(38,85%,50%)] shrink-0" />
+                                <div key={i} className="relative shrink-0 group">
+                                  <img src={url} alt={`Pending ${i + 1}`}
+                                    onClick={() => setPreviewImage(url)}
+                                    className="w-16 h-16 rounded-md object-cover border-2 border-[hsl(38,85%,50%)] cursor-pointer hover:opacity-80 transition" />
+                                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onClick={() => handleApproveSinglePendingImage(listing.id, i)}
+                                      className="w-5 h-5 rounded-full bg-[hsl(152,69%,40%)] text-white flex items-center justify-center shadow-md" title="Approve">
+                                      <Check className="w-3 h-3" />
+                                    </button>
+                                    <button onClick={() => handleDeleteSingleImage(listing.id, i, "pendingImageUrls")}
+                                      className="w-5 h-5 rounded-full bg-[hsl(354,70%,54%)] text-white flex items-center justify-center shadow-md" title="Reject">
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                </div>
                               ))}
                             </div>
                             <div className="flex gap-1.5 mt-2">
                               <Button size="sm" onClick={async () => {
                                 try {
-                                  await updateDoc(doc(db, "listings", listing.id), { imageUrls: listing.pendingImageUrls, pendingImageUrls: [] });
-                                  setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, imageUrls: listing.pendingImageUrls, pendingImageUrls: [] } : l));
-                                  setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, imageUrls: listing.pendingImageUrls, pendingImageUrls: [] } : l));
+                                  const merged = [...(listing.imageUrls || []), ...(listing.pendingImageUrls || [])];
+                                  await updateDoc(doc(db, "listings", listing.id), { imageUrls: merged, pendingImageUrls: [] });
+                                  const updater = (l: Listing) => l.id === listing.id ? { ...l, imageUrls: merged, pendingImageUrls: [] } : l;
+                                  setAllListings(prev => prev.map(updater));
+                                  setPendingListings(prev => prev.map(updater));
                                   if (listing.email || listing.ownerId) {
                                     notifyImageApproval({ type: "image_approved", recipientEmail: listing.email || "", recipientName: listing.name, businessName: listing.name, imageType: "photos", listingId: listing.id, ownerId: listing.ownerId || "" }).catch(() => {});
                                   }
-                                  toast.success("Images approved — owner notified");
+                                  toast.success("All images approved");
                                 } catch { toast.error("Failed to approve images"); }
                               }} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[10px] h-7 px-2 rounded">
                                 <Check className="w-3 h-3 mr-1" />Approve All
@@ -633,12 +648,13 @@ const Admin = () => {
                               <Button size="sm" variant="outline" onClick={async () => {
                                 try {
                                   await updateDoc(doc(db, "listings", listing.id), { pendingImageUrls: [] });
-                                  setAllListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l));
-                                  setPendingListings(prev => prev.map(l => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l));
+                                  const updater = (l: Listing) => l.id === listing.id ? { ...l, pendingImageUrls: [] } : l;
+                                  setAllListings(prev => prev.map(updater));
+                                  setPendingListings(prev => prev.map(updater));
                                   if (listing.email || listing.ownerId) {
                                     notifyImageApproval({ type: "image_rejected", recipientEmail: listing.email || "", recipientName: listing.name, businessName: listing.name, imageType: "photos", listingId: listing.id, ownerId: listing.ownerId || "" }).catch(() => {});
                                   }
-                                  toast.success("Pending images rejected — owner notified");
+                                  toast.success("All pending images rejected");
                                 } catch { toast.error("Failed"); }
                               }} className="border-[hsl(354,50%,80%)] text-[hsl(354,70%,50%)] text-[10px] h-7 px-2 rounded">
                                 <X className="w-3 h-3 mr-1" />Reject All
