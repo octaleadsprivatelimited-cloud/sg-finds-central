@@ -1098,13 +1098,6 @@ const BusinessDashboard = () => {
               </div>
             </div>
 
-            {/* Analytics Chart */}
-            {user && listings.length > 0 && (
-              <div className="rounded-2xl border border-border p-4">
-                <h4 className="text-sm font-semibold text-foreground mb-3">View Analytics</h4>
-                <ViewAnalyticsChart listings={listings} userId={user.uid} />
-              </div>
-            )}
 
             {/* Recent Enquiries compact */}
             <div className="rounded-2xl border border-border p-4 space-y-3">
