@@ -1103,10 +1103,35 @@ const Admin = () => {
           {viewingImages && (
             <div className="grid grid-cols-2 gap-3 py-2">
               {(viewingImages.listing.imageUrls || []).map((url, i) => (
-                <img key={i} src={url} alt={`Image ${i + 1}`} className="w-full aspect-square rounded-lg object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)]" />
+                <div key={i} className="relative group">
+                  <img src={url} alt={`Image ${i + 1}`}
+                    onClick={() => setPreviewImage(url)}
+                    className="w-full aspect-square rounded-lg object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] cursor-pointer hover:opacity-80 transition" />
+                  <button onClick={() => handleDeleteSingleImage(viewingImages.listing.id, i, "imageUrls")}
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-[hsl(354,70%,54%)] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                    title="Delete this image">
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
               ))}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Full-Screen Image Preview ───────────────────── */}
+      <Dialog open={!!previewImage} onOpenChange={(open) => { if (!open) setPreviewImage(null); }}>
+        <DialogContent className="max-w-[95vw] sm:max-w-4xl p-0 bg-black/95 border-none rounded-2xl overflow-hidden [&>button:last-child]:hidden" aria-describedby={undefined}>
+          <div className="relative flex items-center justify-center min-h-[50vh] sm:min-h-[70vh]">
+            {previewImage && (
+              <img src={previewImage} alt="Preview" className="w-full max-h-[85vh] object-contain" />
+            )}
+            <button
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 flex items-center justify-center transition-colors z-10"
+              onClick={() => setPreviewImage(null)}>
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
