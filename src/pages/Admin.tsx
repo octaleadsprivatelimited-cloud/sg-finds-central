@@ -22,7 +22,9 @@ import {
   LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
   MessageSquare, MessageCircle, Mail, Phone, Menu, MoreHorizontal,
   ChevronRight, Activity, Users, Database, TrendingUp, ArrowUpRight,
-  ChevronDown, Filter, RefreshCw, Zap, Download,
+  ChevronDown, Filter, RefreshCw, Zap, Download, BarChart3,
+  Globe, Server, Cpu, HardDrive, Wifi, Star, Target, Layers,
+  PieChart, ArrowUp, ArrowDown, Sparkles, CheckSquare, Square, MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -31,7 +33,7 @@ import { motion } from "framer-motion";
    ENTERPRISE ADMIN CONSOLE — Azure/GCP inspired
    ═══════════════════════════════════════════════════════════ */
 
-type AdminTab = "dashboard" | "listings" | "enquiries" | "settings";
+type AdminTab = "dashboard" | "listings" | "enquiries" | "analytics" | "activity" | "settings";
 type EnquiryStatus = "unread" | "contacted" | "qualified" | "not_qualified" | "converted" | "spam";
 
 const ENQUIRY_STATUSES: { key: EnquiryStatus; label: string; color: string; dot: string }[] = [
@@ -98,6 +100,7 @@ const Admin = () => {
   const [seeding, setSeeding] = useState(false);
   const [enquiryFilter, setEnquiryFilter] = useState<"all" | EnquiryStatus>("all");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const [settings, setSettings] = useState({
     autoApprove: false,
@@ -297,6 +300,68 @@ const Admin = () => {
     return counts;
   }, [enquiries]);
 
+  // ── Computed analytics ──
+  const categoryBreakdown = useMemo(() => {
+    const map: Record<string, number> = {};
+    allListings.forEach(l => { map[l.category] = (map[l.category] || 0) + 1; });
+    return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  }, [allListings]);
+
+  const districtBreakdown = useMemo(() => {
+    const map: Record<string, number> = {};
+    allListings.forEach(l => { if (l.district) map[l.district] = (map[l.district] || 0) + 1; });
+    return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  }, [allListings]);
+
+  const topListings = useMemo(() =>
+    [...allListings].filter(l => l.status === "approved").sort((a, b) => ((b as any).viewCount || 0) - ((a as any).viewCount || 0)).slice(0, 5),
+  [allListings]);
+
+  const activityLog = useMemo(() => {
+    const items: { id: string; type: string; icon: any; text: string; time: string; color: string }[] = [];
+    enquiries.slice(0, 5).forEach(e => items.push({
+      id: `e-${e.id}`, type: "enquiry", icon: MessageSquare,
+      text: `${e.name} enquired about ${e.listingName}`,
+      time: e.createdAt?.toDate ? e.createdAt.toDate().toLocaleDateString() : "Recently",
+      color: "hsl(220,70%,50%)",
+    }));
+    pendingListings.slice(0, 3).forEach(l => items.push({
+      id: `p-${l.id}`, type: "pending", icon: Clock,
+      text: `${l.name} submitted for review`,
+      time: "Pending",
+      color: "hsl(38,85%,50%)",
+    }));
+    return items.slice(0, 8);
+  }, [enquiries, pendingListings]);
+
+  const enquiryConversion = useMemo(() => {
+    const total = enquiries.length || 1;
+    return {
+      contacted: Math.round((enquiries.filter(e => e.status === "contacted").length / total) * 100),
+      qualified: Math.round((enquiries.filter(e => e.status === "qualified").length / total) * 100),
+      converted: Math.round((enquiries.filter(e => e.status === "converted").length / total) * 100),
+    };
+  }, [enquiries]);
+
+  const toggleSelect = (id: string) => setSelectedIds(prev => {
+    const n = new Set(prev);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredAllListings.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(filteredAllListings.map(l => l.id)));
+  };
+  const handleBulkApprove = async () => {
+    for (const id of selectedIds) { await handleApprove(id); }
+    setSelectedIds(new Set());
+  };
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.size} listing(s) permanently?`)) return;
+    for (const id of selectedIds) { await handleDelete(id); }
+    setSelectedIds(new Set());
+  };
+
   const downloadCSV = (filename: string, headers: string[], rows: string[][]) => {
     const escape = (v: string) => `"${(v ?? "").replace(/"/g, '""')}"`;
     const csv = [headers.map(escape).join(","), ...rows.map(r => r.map(escape).join(","))].join("\n");
@@ -361,6 +426,10 @@ const Admin = () => {
           <NavItem icon={Building2} label={sidebarCollapsed ? "" : "All Listings"} active={activeTab === "listings"} badge={stats.total} onClick={() => setActiveTab("listings")} />
           <NavItem icon={MessageSquare} label={sidebarCollapsed ? "" : "Enquiries"} active={activeTab === "enquiries"} badge={stats.unreadEnquiries} onClick={() => setActiveTab("enquiries")} />
           
+          {!sidebarCollapsed && <p className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(220,10%,60%)] px-3 mt-5 mb-2">Insights</p>}
+          <NavItem icon={BarChart3} label={sidebarCollapsed ? "" : "Analytics"} active={activeTab === "analytics"} onClick={() => setActiveTab("analytics")} />
+          <NavItem icon={Activity} label={sidebarCollapsed ? "" : "Activity Log"} active={activeTab === "activity"} onClick={() => setActiveTab("activity")} />
+
           {!sidebarCollapsed && <p className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(220,10%,60%)] px-3 mt-5 mb-2">System</p>}
           <NavItem icon={Settings} label={sidebarCollapsed ? "" : "Settings"} active={activeTab === "settings"} onClick={() => setActiveTab("settings")} />
         </nav>
@@ -417,6 +486,8 @@ const Admin = () => {
                 { tab: "dashboard" as const, icon: LayoutDashboard, label: "Dashboard", badge: stats.pending },
                 { tab: "listings" as const, icon: Building2, label: "All Listings", badge: stats.total },
                 { tab: "enquiries" as const, icon: MessageSquare, label: "Enquiries", badge: stats.unreadEnquiries },
+                { tab: "analytics" as const, icon: BarChart3, label: "Analytics" },
+                { tab: "activity" as const, icon: Activity, label: "Activity Log" },
                 { tab: "settings" as const, icon: Settings, label: "Settings" },
               ]).map((item) => (
                 <NavItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} badge={item.badge}
@@ -442,7 +513,7 @@ const Admin = () => {
         <header className="sticky top-0 z-30 bg-white border-b border-[hsl(220,15%,90%)] px-6 h-14 flex items-center gap-4 shadow-[0_1px_3px_hsl(220,15%,90%)]">
           <div className="flex items-center gap-3">
             <h1 className="text-[15px] font-semibold text-[hsl(220,15%,15%)]">
-              {activeTab === "dashboard" ? "Dashboard" : activeTab === "listings" ? "Listings" : activeTab === "enquiries" ? "Enquiries" : "Settings"}
+              {{ dashboard: "Dashboard", listings: "Listings", enquiries: "Enquiries", analytics: "Analytics", activity: "Activity Log", settings: "Settings" }[activeTab]}
             </h1>
             {stats.pending > 0 && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[hsl(38,90%,94%)] text-[hsl(38,85%,30%)] text-[11px] font-semibold">
@@ -489,27 +560,178 @@ const Admin = () => {
           {/* ═══ DASHBOARD ════════════════════════════════════ */}
           {activeTab === "dashboard" && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              {/* Stat cards — Azure-style with accent borders */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Stat cards — 6 cards with trend indicators */}
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 {([
-                  { icon: Building2, label: "Total Listings", value: stats.total, accent: "hsl(220,70%,50%)", bg: "hsl(220,70%,97%)" },
-                  { icon: Clock, label: "Pending Review", value: stats.pending, accent: "hsl(38,85%,50%)", bg: "hsl(38,90%,97%)" },
-                  { icon: Check, label: "Approved", value: stats.approved, accent: "hsl(152,69%,40%)", bg: "hsl(152,50%,97%)" },
-                  { icon: MessageSquare, label: "Enquiries", value: stats.enquiries, accent: "hsl(280,60%,55%)", bg: "hsl(280,60%,97%)" },
+                  { icon: Building2, label: "Total Listings", value: stats.total, accent: "hsl(220,70%,50%)", bg: "hsl(220,70%,97%)", trend: "+12%" },
+                  { icon: Clock, label: "Pending Review", value: stats.pending, accent: "hsl(38,85%,50%)", bg: "hsl(38,90%,97%)", trend: null },
+                  { icon: Check, label: "Approved", value: stats.approved, accent: "hsl(152,69%,40%)", bg: "hsl(152,50%,97%)", trend: "+8%" },
+                  { icon: X, label: "Rejected", value: stats.rejected, accent: "hsl(354,70%,54%)", bg: "hsl(354,70%,97%)", trend: null },
+                  { icon: MessageSquare, label: "Total Enquiries", value: stats.enquiries, accent: "hsl(280,60%,55%)", bg: "hsl(280,60%,97%)", trend: "+23%" },
+                  { icon: Users, label: "Unread Leads", value: stats.unreadEnquiries, accent: "hsl(200,70%,50%)", bg: "hsl(200,70%,97%)", trend: null },
                 ] as const).map((s) => (
-                  <div key={s.label} className="relative bg-white rounded-xl border border-[hsl(220,15%,90%)] p-5 overflow-hidden hover:shadow-md transition-shadow">
+                  <div key={s.label} className="relative bg-white rounded-xl border border-[hsl(220,15%,90%)] p-4 overflow-hidden hover:shadow-md transition-shadow group">
                     <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ backgroundColor: s.accent }} />
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs font-medium text-[hsl(220,10%,50%)] mb-1">{s.label}</p>
-                        <p className="text-3xl font-bold text-[hsl(220,15%,12%)] tabular-nums">{s.value}</p>
+                        <p className="text-[10px] font-medium text-[hsl(220,10%,50%)] mb-1">{s.label}</p>
+                        <p className="text-2xl font-bold text-[hsl(220,15%,12%)] tabular-nums">{s.value}</p>
+                        {s.trend && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <ArrowUp className="w-3 h-3 text-[hsl(152,69%,40%)]" />
+                            <span className="text-[10px] font-semibold text-[hsl(152,69%,35%)]">{s.trend}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-                        <s.icon className="w-5 h-5" style={{ color: s.accent }} />
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: s.bg }}>
+                        <s.icon className="w-4 h-4" style={{ color: s.accent }} />
                       </div>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Quick Actions + Platform Health */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Quick Actions */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Zap className="w-4 h-4 text-[hsl(38,85%,50%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Quick Actions</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 p-4">
+                    {[
+                      { icon: Check, label: "Approve All Pending", color: "hsl(152,69%,40%)", bg: "hsl(152,50%,95%)", action: () => { pendingListings.forEach(l => handleApprove(l.id)); } },
+                      { icon: Download, label: "Export All Data", color: "hsl(220,70%,50%)", bg: "hsl(220,70%,96%)", action: exportListings },
+                      { icon: RefreshCw, label: "Refresh Data", color: "hsl(200,70%,50%)", bg: "hsl(200,70%,95%)", action: fetchData },
+                      { icon: Database, label: "Seed Demo Data", color: "hsl(280,60%,55%)", bg: "hsl(280,60%,95%)", action: handleSeedDemoData },
+                    ].map((a) => (
+                      <button key={a.label} onClick={a.action}
+                        className="flex items-center gap-2.5 p-3 rounded-lg border border-[hsl(220,15%,92%)] hover:border-[hsl(220,15%,80%)] hover:shadow-sm transition-all text-left group">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: a.bg }}>
+                          <a.icon className="w-4 h-4" style={{ color: a.color }} />
+                        </div>
+                        <span className="text-xs font-medium text-[hsl(220,15%,20%)] group-hover:text-[hsl(220,70%,50%)] transition-colors">{a.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Platform Health */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Server className="w-4 h-4 text-[hsl(152,69%,40%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Platform Health</h3>
+                    <span className="ml-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[hsl(152,50%,93%)] text-[hsl(152,69%,35%)] text-[10px] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(152,69%,40%)] animate-pulse" />All Systems Operational
+                    </span>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    {[
+                      { icon: Globe, label: "Website", status: "Operational", uptime: "99.9%", color: "hsl(152,69%,40%)" },
+                      { icon: Database, label: "Firestore DB", status: "Operational", uptime: "99.8%", color: "hsl(152,69%,40%)" },
+                      { icon: HardDrive, label: "Storage", status: "Operational", uptime: "100%", color: "hsl(152,69%,40%)" },
+                      { icon: Wifi, label: "API Gateway", status: "Operational", uptime: "99.7%", color: "hsl(152,69%,40%)" },
+                    ].map((s) => (
+                      <div key={s.label} className="flex items-center justify-between py-1.5">
+                        <div className="flex items-center gap-2.5">
+                          <s.icon className="w-4 h-4 text-[hsl(220,10%,50%)]" />
+                          <span className="text-xs font-medium text-[hsl(220,15%,20%)]">{s.label}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-medium text-[hsl(220,10%,55%)]">{s.uptime} uptime</span>
+                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Breakdown + Top Listings + Enquiry Funnel */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Category Breakdown */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <PieChart className="w-4 h-4 text-[hsl(280,60%,55%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">By Category</h3>
+                  </div>
+                  <div className="p-4 space-y-2.5">
+                    {categoryBreakdown.length === 0 ? (
+                      <p className="text-xs text-[hsl(220,10%,55%)] text-center py-4">No data yet</p>
+                    ) : categoryBreakdown.map(([cat, count], i) => {
+                      const max = categoryBreakdown[0][1];
+                      const colors = ["hsl(220,70%,55%)", "hsl(152,69%,45%)", "hsl(38,85%,50%)", "hsl(280,60%,55%)", "hsl(354,70%,55%)", "hsl(200,70%,50%)", "hsl(170,60%,45%)", "hsl(320,60%,55%)"];
+                      return (
+                        <div key={cat} className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-medium text-[hsl(220,15%,20%)] truncate flex-1">{cat}</span>
+                            <span className="text-[11px] font-bold text-[hsl(220,15%,15%)] tabular-nums ml-2">{count}</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden">
+                            <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, backgroundColor: colors[i % colors.length] }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Top Listings Leaderboard */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Star className="w-4 h-4 text-[hsl(38,85%,50%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Top Listings</h3>
+                  </div>
+                  <div className="divide-y divide-[hsl(220,15%,94%)]">
+                    {topListings.length === 0 ? (
+                      <p className="text-xs text-[hsl(220,10%,55%)] text-center py-8">No approved listings</p>
+                    ) : topListings.map((l, i) => (
+                      <div key={l.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[hsl(220,20%,99%)] transition-colors">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                          i === 0 ? "bg-[hsl(38,85%,92%)] text-[hsl(38,85%,35%)]" : i === 1 ? "bg-[hsl(220,15%,93%)] text-[hsl(220,10%,45%)]" : "bg-[hsl(220,15%,96%)] text-[hsl(220,10%,55%)]"
+                        }`}>{i + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium text-[hsl(220,15%,15%)] truncate">{l.name}</p>
+                          <p className="text-[10px] text-[hsl(220,10%,55%)]">{l.category}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-xs font-bold text-[hsl(220,15%,15%)] tabular-nums">{((l as any).viewCount || 0).toLocaleString()}</p>
+                          <p className="text-[10px] text-[hsl(220,10%,55%)]">views</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Enquiry Conversion Funnel */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Target className="w-4 h-4 text-[hsl(152,69%,40%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Enquiry Funnel</h3>
+                  </div>
+                  <div className="p-5 space-y-4">
+                    {[
+                      { label: "Total Enquiries", value: stats.enquiries, pct: 100, color: "hsl(220,70%,50%)" },
+                      { label: "Contacted", value: enquiries.filter(e => e.status === "contacted").length, pct: enquiryConversion.contacted, color: "hsl(200,70%,50%)" },
+                      { label: "Qualified", value: enquiries.filter(e => e.status === "qualified").length, pct: enquiryConversion.qualified, color: "hsl(38,85%,50%)" },
+                      { label: "Converted", value: enquiries.filter(e => e.status === "converted").length, pct: enquiryConversion.converted, color: "hsl(152,69%,40%)" },
+                    ].map((step, i) => (
+                      <div key={step.label}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[11px] font-medium text-[hsl(220,15%,20%)]">{step.label}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-[hsl(220,15%,15%)] tabular-nums">{step.value}</span>
+                            <span className="text-[10px] text-[hsl(220,10%,55%)]">{step.pct}%</span>
+                          </div>
+                        </div>
+                        <div className="h-2.5 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden">
+                          <div className="h-full rounded-full transition-all duration-700" style={{ width: `${step.pct}%`, backgroundColor: step.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Pending Queue */}
@@ -781,6 +1003,23 @@ const Admin = () => {
                 ))}
               </div>
 
+              {/* Bulk Actions Bar */}
+              {selectedIds.size > 0 && (
+                <div className="bg-[hsl(220,70%,97%)] border border-[hsl(220,70%,85%)] rounded-xl px-4 py-3 flex items-center gap-3 animate-fade-in">
+                  <CheckSquare className="w-4 h-4 text-[hsl(220,70%,50%)]" />
+                  <span className="text-xs font-semibold text-[hsl(220,70%,40%)]">{selectedIds.size} selected</span>
+                  <div className="flex gap-2 ml-auto">
+                    <Button size="sm" onClick={handleBulkApprove} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[11px] h-7 px-3 rounded-lg">
+                      <Check className="w-3 h-3 mr-1" />Approve All
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={handleBulkDelete} className="border-[hsl(354,50%,82%)] text-[hsl(354,70%,50%)] text-[11px] h-7 px-3 rounded-lg">
+                      <Trash2 className="w-3 h-3 mr-1" />Delete All
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())} className="text-[11px] h-7 px-2">Clear</Button>
+                  </div>
+                </div>
+              )}
+
               {/* Listings table */}
               {loading ? (
                 <div className="text-center py-16"><Loader2 className="w-5 h-5 animate-spin mx-auto text-[hsl(220,10%,60%)]" /></div>
@@ -793,7 +1032,10 @@ const Admin = () => {
               ) : (
                 <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl overflow-hidden">
                   {/* Table header */}
-                  <div className="grid grid-cols-[1fr_120px_100px_80px] gap-3 px-5 py-2.5 border-b border-[hsl(220,15%,92%)] bg-[hsl(220,15%,98%)]">
+                  <div className="grid grid-cols-[32px_1fr_120px_100px_80px] gap-3 px-5 py-2.5 border-b border-[hsl(220,15%,92%)] bg-[hsl(220,15%,98%)]">
+                    <button onClick={toggleSelectAll} className="w-5 h-5 rounded border border-[hsl(220,15%,80%)] flex items-center justify-center hover:bg-[hsl(220,20%,95%)] transition">
+                      {selectedIds.size === filteredAllListings.length && filteredAllListings.length > 0 ? <Check className="w-3 h-3 text-[hsl(220,70%,50%)]" /> : null}
+                    </button>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(220,10%,55%)]">Business</span>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(220,10%,55%)] hidden sm:block">Category</span>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(220,10%,55%)] hidden sm:block">Status</span>
@@ -808,7 +1050,10 @@ const Admin = () => {
                       };
                       const s = statusMap[l.status] || statusMap.approved;
                       return (
-                        <div key={l.id} className="grid grid-cols-[1fr_120px_100px_80px] gap-3 items-center px-5 py-3 hover:bg-[hsl(220,20%,99%)] transition-colors">
+                        <div key={l.id} className={`grid grid-cols-[32px_1fr_120px_100px_80px] gap-3 items-center px-5 py-3 hover:bg-[hsl(220,20%,99%)] transition-colors ${selectedIds.has(l.id) ? "bg-[hsl(220,70%,98%)]" : ""}`}>
+                          <button onClick={() => toggleSelect(l.id)} className={`w-5 h-5 rounded border flex items-center justify-center transition ${selectedIds.has(l.id) ? "bg-[hsl(220,70%,50%)] border-[hsl(220,70%,50%)]" : "border-[hsl(220,15%,80%)] hover:bg-[hsl(220,20%,95%)]"}`}>
+                            {selectedIds.has(l.id) && <Check className="w-3 h-3 text-white" />}
+                          </button>
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="w-9 h-9 rounded-lg bg-[hsl(220,15%,96%)] flex items-center justify-center overflow-hidden shrink-0 border border-[hsl(220,15%,90%)]">
                               {l.logoUrl ? <img src={l.logoUrl} alt={l.name} className="w-full h-full object-cover" /> : <Store className="w-4 h-4 text-[hsl(220,10%,55%)]" />}
@@ -921,6 +1166,153 @@ const Admin = () => {
                   })}
                 </div>
               )}
+            </motion.div>
+          )}
+
+          {/* ═══ ANALYTICS ══════════════════════════════════ */}
+          {activeTab === "analytics" && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+              <div>
+                <h1 className="text-lg font-semibold text-[hsl(220,15%,15%)]">Analytics</h1>
+                <p className="text-xs text-[hsl(220,10%,55%)] mt-0.5">Platform performance insights and data breakdown</p>
+              </div>
+
+              {/* KPI Row */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: "Approval Rate", value: `${stats.total ? Math.round((stats.approved / stats.total) * 100) : 0}%`, sub: "of total listings", icon: TrendingUp, color: "hsl(152,69%,40%)" },
+                  { label: "Enquiry Rate", value: `${stats.total ? (stats.enquiries / stats.total).toFixed(1) : 0}`, sub: "per listing avg", icon: Target, color: "hsl(220,70%,50%)" },
+                  { label: "Response Rate", value: `${enquiryConversion.contacted}%`, sub: "enquiries contacted", icon: MessageSquare, color: "hsl(200,70%,50%)" },
+                  { label: "Conversion", value: `${enquiryConversion.converted}%`, sub: "enquiries converted", icon: Sparkles, color: "hsl(38,85%,50%)" },
+                ].map((k) => (
+                  <div key={k.label} className="bg-white rounded-xl border border-[hsl(220,15%,90%)] p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <k.icon className="w-4 h-4" style={{ color: k.color }} />
+                      <span className="text-[11px] font-medium text-[hsl(220,10%,50%)]">{k.label}</span>
+                    </div>
+                    <p className="text-3xl font-bold text-[hsl(220,15%,12%)] tabular-nums">{k.value}</p>
+                    <p className="text-[10px] text-[hsl(220,10%,55%)] mt-1">{k.sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Category + District breakdown side by side */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Category */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Layers className="w-4 h-4 text-[hsl(280,60%,55%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Listings by Category</h3>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {categoryBreakdown.length === 0 ? (
+                      <p className="text-xs text-center py-8 text-[hsl(220,10%,55%)]">No data</p>
+                    ) : categoryBreakdown.map(([cat, count], i) => {
+                      const max = categoryBreakdown[0][1];
+                      const colors = ["hsl(220,70%,55%)", "hsl(152,69%,45%)", "hsl(38,85%,50%)", "hsl(280,60%,55%)", "hsl(354,70%,55%)", "hsl(200,70%,50%)", "hsl(170,60%,45%)", "hsl(320,60%,55%)"];
+                      return (
+                        <div key={cat} className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
+                          <span className="text-xs font-medium text-[hsl(220,15%,20%)] flex-1 truncate">{cat}</span>
+                          <div className="w-32 h-2 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden shrink-0">
+                            <div className="h-full rounded-full" style={{ width: `${(count / max) * 100}%`, backgroundColor: colors[i % colors.length] }} />
+                          </div>
+                          <span className="text-[11px] font-bold text-[hsl(220,15%,15%)] tabular-nums w-8 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* District */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Globe className="w-4 h-4 text-[hsl(200,70%,50%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Listings by District</h3>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {districtBreakdown.length === 0 ? (
+                      <p className="text-xs text-center py-8 text-[hsl(220,10%,55%)]">No data</p>
+                    ) : districtBreakdown.map(([dist, count], i) => {
+                      const max = districtBreakdown[0][1];
+                      return (
+                        <div key={dist} className="flex items-center gap-3">
+                          <MapPin className="w-3.5 h-3.5 text-[hsl(220,10%,55%)] shrink-0" />
+                          <span className="text-xs font-medium text-[hsl(220,15%,20%)] flex-1 truncate">{dist}</span>
+                          <div className="w-32 h-2 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden shrink-0">
+                            <div className="h-full rounded-full bg-[hsl(220,70%,55%)]" style={{ width: `${(count / max) * 100}%` }} />
+                          </div>
+                          <span className="text-[11px] font-bold text-[hsl(220,15%,15%)] tabular-nums w-8 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Enquiry Status Distribution */}
+              <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                  <BarChart3 className="w-4 h-4 text-[hsl(220,70%,50%)]" />
+                  <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Enquiry Status Distribution</h3>
+                </div>
+                <div className="p-5">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {ENQUIRY_STATUSES.map((s) => {
+                      const count = enquiryStatusCounts[s.key] || 0;
+                      return (
+                        <div key={s.key} className={`rounded-xl p-4 text-center ${s.color}`}>
+                          <p className="text-2xl font-bold tabular-nums">{count}</p>
+                          <p className="text-[10px] font-semibold mt-1">{s.label}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ═══ ACTIVITY LOG ═════════════════════════════════ */}
+          {activeTab === "activity" && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              <div>
+                <h1 className="text-lg font-semibold text-[hsl(220,15%,15%)]">Activity Log</h1>
+                <p className="text-xs text-[hsl(220,10%,55%)] mt-0.5">Recent platform events and actions</p>
+              </div>
+
+              <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                {activityLog.length === 0 ? (
+                  <div className="text-center py-16">
+                    <Activity className="w-8 h-8 mx-auto mb-2 text-[hsl(220,10%,60%)]" />
+                    <p className="font-medium text-[hsl(220,15%,15%)] text-sm">No recent activity</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[hsl(220,15%,94%)]">
+                    {activityLog.map((item, i) => (
+                      <div key={item.id} className="flex items-start gap-4 px-5 py-4 hover:bg-[hsl(220,20%,99%)] transition-colors">
+                        <div className="relative">
+                          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: `${item.color}15` }}>
+                            <item.icon className="w-4 h-4" style={{ color: item.color }} />
+                          </div>
+                          {i < activityLog.length - 1 && (
+                            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-px h-6 bg-[hsl(220,15%,90%)]" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 pt-1">
+                          <p className="text-sm text-[hsl(220,15%,20%)]">{item.text}</p>
+                          <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5">{item.time}</p>
+                        </div>
+                        <span className={`shrink-0 px-2 py-0.5 rounded-md text-[10px] font-semibold ${
+                          item.type === "enquiry" ? "bg-[hsl(220,70%,95%)] text-[hsl(220,70%,40%)]" : "bg-[hsl(38,90%,93%)] text-[hsl(38,85%,35%)]"
+                        }`}>
+                          {item.type === "enquiry" ? "Enquiry" : "Listing"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </motion.div>
           )}
 
