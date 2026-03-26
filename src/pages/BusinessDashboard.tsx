@@ -713,7 +713,7 @@ const BusinessDashboard = () => {
             {activeTab === "enquiries" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Enquiries</h2>
-                {user && <EnquiryInbox userId={user.uid} />}
+                {user && <EnquiryInbox />}
               </motion.div>
             )}
 
