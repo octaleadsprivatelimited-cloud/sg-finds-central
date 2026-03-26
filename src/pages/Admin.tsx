@@ -351,7 +351,15 @@ const Admin = () => {
 
         {/* ── Teams-style top toolbar ─────────────────────── */}
         <header className="sticky top-0 z-30 bg-white dark:bg-[hsl(250,15%,12%)] border-b border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,18%)] px-5 sm:px-6 h-12 flex items-center gap-3">
-          <h2 className="text-sm font-semibold text-foreground mr-4">{tabTitles[activeTab]}</h2>
+          <h2 className="text-sm font-semibold text-foreground mr-4 flex items-center gap-2">
+            {tabTitles[activeTab]}
+            {stats.pending > 0 && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[hsl(38,85%,92%)] dark:bg-[hsl(38,60%,18%)] text-[hsl(38,85%,30%)] dark:text-[hsl(38,85%,70%)] text-[11px] font-bold">
+                <Clock className="w-3 h-3" />
+                {stats.pending} pending
+              </span>
+            )}
+          </h2>
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
