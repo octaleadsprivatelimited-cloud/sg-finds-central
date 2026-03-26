@@ -461,7 +461,7 @@ const AddListing = () => {
     if (!currentStep) return false;
     switch (currentStep.key) {
       case "category": return !!category && !!district;
-      case "details": return !!name && !!ownerName && !!uen;
+      case "details": return !!name && !!ownerName;
       case "subcategory":
         if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
         if (category === "Music / Art / Craft") return !!musicArtSub || !!musicArtOther;
@@ -741,9 +741,8 @@ const AddListing = () => {
                     <FieldError show={showErrors && !ownerName} message="Owner name is required" />
                   </div>
                   <div className="space-y-2">
-                    <Label>UEN *</Label>
+                    <Label>UEN <span className="text-muted-foreground text-xs">(optional)</span></Label>
                     <Input value={uen} onChange={e => setUen(e.target.value)} placeholder="e.g. 201912345A" />
-                    <FieldError show={showErrors && !uen} message="UEN is required" />
                   </div>
                 </div>
               )}
