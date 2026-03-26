@@ -443,7 +443,9 @@ const AddListing = () => {
         },
         status: "pending_approval",
         ownerId: user.uid,
-        location: new GeoPoint(1.3521, 103.8198),
+        location: new GeoPoint(locationLat || 1.3521, locationLng || 103.8198),
+        lat: locationLat,
+        lng: locationLng,
         createdAt: serverTimestamp(),
       });
       toast.success("Listing submitted for approval!");
