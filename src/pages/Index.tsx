@@ -50,10 +50,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const listingsScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (listingsScrollRef.current) {
-      listingsScrollRef.current.scrollTo({ top: 0, behavior: 'instant' });
-      listingsScrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    requestAnimationFrame(() => {
+      if (listingsScrollRef.current) {
+        listingsScrollRef.current.scrollTop = 0;
+        listingsScrollRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+    });
   }, [currentPage]);
 
   const handlePincodeSearch = useCallback(async (code: string) => {
