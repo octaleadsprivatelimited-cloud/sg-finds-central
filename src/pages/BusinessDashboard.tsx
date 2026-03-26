@@ -1479,16 +1479,24 @@ const BusinessDashboard = () => {
 const QuickStatCard = ({ icon, label, value, color }: {
   icon: React.ReactNode; label: string; value: number; color: string;
 }) => (
-  <div className="rounded-2xl border border-border bg-card p-5 hover:shadow-sm transition-shadow">
-    <div className="flex items-center justify-between mb-3">
-      <div className={`w-10 h-10 rounded-xl bg-[hsl(var(--${color})/0.1)] flex items-center justify-center text-[hsl(var(--${color}))]`}>
+  <motion.div
+    whileHover={{ y: -2, boxShadow: "0 8px 30px -12px hsl(var(--foreground) / 0.12)" }}
+    transition={{ duration: 0.2 }}
+    className="group relative overflow-hidden rounded-xl bg-card border border-border/60 p-6 cursor-default"
+  >
+    {/* Subtle top accent bar */}
+    <div className={`absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--${color}))] opacity-80`} />
+
+    <div className="flex items-start justify-between">
+      <div className="space-y-3">
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="text-4xl font-semibold tracking-tight text-foreground tabular-nums">{value.toLocaleString()}</p>
+      </div>
+      <div className={`w-11 h-11 rounded-lg bg-[hsl(var(--${color})/0.08)] flex items-center justify-center text-[hsl(var(--${color}))] group-hover:bg-[hsl(var(--${color})/0.14)] transition-colors`}>
         {icon}
       </div>
-      <Activity className="w-4 h-4 text-muted-foreground/30" />
     </div>
-    <p className="text-3xl font-bold tracking-tight text-foreground tabular-nums">{value.toLocaleString()}</p>
-    <p className="text-xs text-muted-foreground mt-1 font-medium uppercase tracking-wider">{label}</p>
-  </div>
+  </motion.div>
 );
 
 const DAYS_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
