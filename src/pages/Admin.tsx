@@ -100,6 +100,7 @@ const Admin = () => {
   const [seeding, setSeeding] = useState(false);
   const [enquiryFilter, setEnquiryFilter] = useState<"all" | EnquiryStatus>("all");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const [settings, setSettings] = useState({
     autoApprove: false,
