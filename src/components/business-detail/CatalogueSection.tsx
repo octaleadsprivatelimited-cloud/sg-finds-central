@@ -6,6 +6,7 @@ interface CatalogueItem {
   title: string;
   description: string;
   price: string;
+  image?: string;
 }
 
 const DEMO_CATALOGUE: CatalogueItem[] = [
