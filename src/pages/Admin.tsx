@@ -554,10 +554,60 @@ const Admin = () => {
               <RefreshCw className="w-3.5 h-3.5 mr-1.5" />Refresh
             </Button>
             <div className="w-px h-6 bg-[hsl(220,15%,90%)] mx-1" />
-            <button className="relative w-9 h-9 rounded-lg hover:bg-[hsl(220,20%,96%)] flex items-center justify-center transition">
-              <Bell className="w-[18px] h-[18px] text-[hsl(220,10%,45%)]" />
-              {stats.pending > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[hsl(354,70%,54%)] ring-2 ring-white" />}
-            </button>
+            <div className="relative">
+              <button onClick={() => setNotifOpen(!notifOpen)} className="relative w-9 h-9 rounded-lg hover:bg-[hsl(220,20%,96%)] flex items-center justify-center transition">
+                <Bell className="w-[18px] h-[18px] text-[hsl(220,10%,45%)]" />
+                {notifications.length > 0 && (
+                  <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-[hsl(354,70%,54%)] text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
+                    {notifications.length > 9 ? "9+" : notifications.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
+              {notifOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setNotifOpen(false)} />
+                  <div className="absolute right-0 top-11 z-50 w-[380px] bg-white rounded-xl border border-[hsl(220,15%,88%)] shadow-xl overflow-hidden animate-fade-in">
+                    <div className="px-4 py-3 border-b border-[hsl(220,15%,92%)] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Notifications</h3>
+                        {notifications.length > 0 && (
+                          <span className="px-1.5 py-0.5 rounded-full bg-[hsl(354,70%,94%)] text-[hsl(354,70%,45%)] text-[10px] font-bold">{notifications.length}</span>
+                        )}
+                      </div>
+                      <button onClick={() => setNotifOpen(false)} className="w-7 h-7 rounded-md hover:bg-[hsl(220,20%,96%)] flex items-center justify-center">
+                        <X className="w-4 h-4 text-[hsl(220,10%,55%)]" />
+                      </button>
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="text-center py-10">
+                          <Bell className="w-8 h-8 mx-auto mb-2 text-[hsl(220,10%,75%)]" />
+                          <p className="text-sm font-medium text-[hsl(220,15%,15%)]">All clear!</p>
+                          <p className="text-xs text-[hsl(220,10%,55%)] mt-0.5">No new notifications</p>
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-[hsl(220,15%,95%)]">
+                          {notifications.map((n) => (
+                            <button key={n.id} onClick={n.action} className="w-full flex items-start gap-3 px-4 py-3.5 hover:bg-[hsl(220,20%,98%)] transition-colors text-left">
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${n.color}12` }}>
+                                <n.icon className="w-4 h-4" style={{ color: n.color }} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] text-[hsl(220,15%,15%)] leading-snug">{n.text}</p>
+                                <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5 font-medium">{n.time}</p>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-[hsl(220,10%,70%)] shrink-0 mt-1" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
             <div className="hidden sm:flex items-center gap-2 pl-3 ml-1 border-l border-[hsl(220,15%,90%)]">
               <div className="w-8 h-8 rounded-full bg-[hsl(220,70%,50%)] flex items-center justify-center text-white text-[11px] font-bold">
                 {user?.displayName?.[0] || user?.email?.[0]?.toUpperCase() || "A"}
