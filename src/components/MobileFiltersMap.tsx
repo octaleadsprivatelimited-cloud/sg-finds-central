@@ -117,16 +117,16 @@ const MobileFiltersMap = ({
               ))}
             </div>
 
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-0.5 shrink-0">
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className={`px-2 py-1 rounded-full text-[11px] font-medium border transition-all whitespace-nowrap flex items-center gap-0.5 active:scale-95 ${
+                className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium border transition-all whitespace-nowrap flex items-center gap-0.5 active:scale-95 ${
                   filtersOpen || hasActiveFilters
                     ? "bg-foreground text-background border-foreground shadow-sm"
                     : "bg-background text-foreground border-border hover:bg-muted"
                 }`}
               >
-                <SlidersHorizontal className="w-3 h-3" />
+                <SlidersHorizontal className="w-2.5 h-2.5" />
                 {activeFilterCount > 0 ? activeFilterCount : ""}
               </button>
             </div>
