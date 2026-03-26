@@ -59,10 +59,19 @@ const RailIcon = forwardRef<HTMLButtonElement, { icon: any; label: string; activ
 RailIcon.displayName = "RailIcon";
 
 /* ── Enquiry interface ──────────────────────────────────── */
+type EnquiryStatus = "unread" | "contacted" | "qualified" | "not_qualified" | "converted" | "spam";
+const ENQUIRY_STATUSES: { key: EnquiryStatus; label: string; color: string; dot: string }[] = [
+  { key: "unread", label: "New", color: "bg-[hsl(250,50%,93%)] text-[hsl(250,50%,45%)]", dot: "bg-[hsl(250,50%,55%)]" },
+  { key: "contacted", label: "Contacted", color: "bg-[hsl(210,70%,92%)] text-[hsl(210,70%,40%)]", dot: "bg-[hsl(210,70%,50%)]" },
+  { key: "qualified", label: "Qualified", color: "bg-[hsl(152,50%,92%)] text-[hsl(152,69%,35%)]", dot: "bg-[hsl(152,69%,40%)]" },
+  { key: "not_qualified", label: "Not Qualified", color: "bg-[hsl(38,70%,92%)] text-[hsl(38,80%,35%)]", dot: "bg-[hsl(38,85%,50%)]" },
+  { key: "converted", label: "Converted", color: "bg-[hsl(152,60%,88%)] text-[hsl(152,80%,28%)]", dot: "bg-[hsl(152,80%,35%)]" },
+  { key: "spam", label: "Spam", color: "bg-[hsl(0,60%,94%)] text-[hsl(0,70%,45%)]", dot: "bg-[hsl(0,70%,50%)]" },
+];
 interface Enquiry {
   id: string; listingId: string; listingName: string;
   name: string; email: string; phone?: string; message: string;
-  status: "unread" | "read" | "replied"; createdAt: any;
+  status: EnquiryStatus; createdAt: any;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -88,6 +97,7 @@ const Admin = () => {
   const [adminSaving, setAdminSaving] = useState(false);
   const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
   const [seeding, setSeeding] = useState(false);
+  const [enquiryFilter, setEnquiryFilter] = useState<"all" | EnquiryStatus>("all");
 
   const handleSeedDemoData = async () => {
     setSeeding(true);
@@ -135,6 +145,16 @@ const Admin = () => {
       .replace("{{name}}", enquiry.name)
       .replace("{{business}}", enquiry.listingName);
     return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  };
+
+  const handleEnquiryStatus = async (enquiryId: string, newStatus: EnquiryStatus) => {
+    try {
+      await updateDoc(doc(db, "enquiries", enquiryId), { status: newStatus });
+      setEnquiries((prev) => prev.map((e) => e.id === enquiryId ? { ...e, status: newStatus } : e));
+      toast.success(`Marked as ${ENQUIRY_STATUSES.find(s => s.key === newStatus)?.label}`);
+    } catch {
+      toast.error("Failed to update status");
+    }
   };
 
   useEffect(() => {
@@ -255,10 +275,18 @@ const Admin = () => {
     l.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredEnquiries = enquiries.filter((e) =>
-    e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    e.listingName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredEnquiries = enquiries.filter((e) => {
+    const matchSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.listingName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchFilter = enquiryFilter === "all" || e.status === enquiryFilter;
+    return matchSearch && matchFilter;
+  });
+
+  const enquiryStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: enquiries.length };
+    ENQUIRY_STATUSES.forEach(s => { counts[s.key] = enquiries.filter(e => e.status === s.key).length; });
+    return counts;
+  }, [enquiries]);
 
   if (authLoading) {
     return (
@@ -711,7 +739,21 @@ const Admin = () => {
             <div className="space-y-4 max-w-5xl">
               <div>
                 <h1 className="text-lg font-semibold text-foreground">Enquiries</h1>
-                <p className="text-xs text-muted-foreground mt-0.5">{stats.unreadEnquiries} unread · {stats.enquiries} total</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{stats.unreadEnquiries} new · {stats.enquiries} total</p>
+              </div>
+
+              {/* Filter pills */}
+              <div className="flex gap-1.5 flex-wrap">
+                {[{ key: "all" as const, label: "All" }, ...ENQUIRY_STATUSES].map((f) => (
+                  <button key={f.key} onClick={() => setEnquiryFilter(f.key)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition border
+                      ${enquiryFilter === f.key
+                        ? "bg-[hsl(250,40%,16%)] text-white border-transparent"
+                        : "bg-white dark:bg-[hsl(250,15%,12%)] text-muted-foreground border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,18%)] hover:border-[hsl(250,30%,70%)]"
+                      }`}>
+                    {f.label} ({enquiryStatusCounts[f.key] || 0})
+                  </button>
+                ))}
               </div>
 
               {loading ? (
@@ -719,28 +761,33 @@ const Admin = () => {
               ) : filteredEnquiries.length === 0 ? (
                 <div className="text-center py-12 bg-white dark:bg-[hsl(250,15%,12%)] rounded-lg border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)]">
                   <Inbox className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="font-medium text-foreground text-sm">No enquiries yet</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Enquiries from listings will appear here</p>
+                  <p className="font-medium text-foreground text-sm">No enquiries found</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Try adjusting your search or filter</p>
                 </div>
               ) : (
                 <div className="bg-white dark:bg-[hsl(250,15%,12%)] border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)] rounded-lg overflow-hidden divide-y divide-[hsl(0,0%,93%)] dark:divide-[hsl(250,15%,18%)]">
                   {filteredEnquiries.map((e) => {
-                    const dotColor = e.status === "unread"
-                      ? "bg-[hsl(250,50%,55%)]"
-                      : e.status === "replied"
-                        ? "bg-[hsl(152,69%,40%)]"
-                        : "bg-[hsl(0,0%,75%)]";
+                    const statusInfo = ENQUIRY_STATUSES.find(s => s.key === e.status) || ENQUIRY_STATUSES[0];
                     return (
                       <div key={e.id} className="flex items-start gap-3 px-4 py-3.5 hover:bg-[hsl(0,0%,98%)] dark:hover:bg-[hsl(250,15%,14%)] transition-colors">
                         <div className="w-9 h-9 rounded-full bg-[hsl(250,30%,94%)] dark:bg-[hsl(250,20%,18%)] flex items-center justify-center shrink-0 text-xs font-bold text-[hsl(250,50%,50%)]">
                           {e.name[0]?.toUpperCase() || "?"}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-0.5">
+                          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                             <p className="font-medium text-sm text-foreground">{e.name}</p>
-                            <div className={`w-2 h-2 rounded-full ${dotColor} shrink-0`} />
+                            <select
+                              value={e.status}
+                              onChange={(ev) => handleEnquiryStatus(e.id, ev.target.value as EnquiryStatus)}
+                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border-0 cursor-pointer outline-none ${statusInfo.color}`}
+                            >
+                              {ENQUIRY_STATUSES.map(s => (
+                                <option key={s.key} value={s.key}>{s.label}</option>
+                              ))}
+                            </select>
                           </div>
                           <p className="text-[11px] text-muted-foreground mb-1">{e.listingName}</p>
+                          {e.phone && <p className="text-[11px] text-muted-foreground mb-0.5">{e.phone}</p>}
                           <p className="text-xs text-foreground/80 line-clamp-2">{e.message}</p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
