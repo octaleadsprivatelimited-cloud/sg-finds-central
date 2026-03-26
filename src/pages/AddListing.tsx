@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
+import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -195,6 +196,10 @@ const AddListing = () => {
   // ── Screen 5: Address ──
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [locationLat, setLocationLat] = useState<number | null>(null);
+  const [locationLng, setLocationLng] = useState<number | null>(null);
+  const [geocodingPostal, setGeocodingPostal] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false);
   const [unitNumber, setUnitNumber] = useState("");
 
   // ── Screen 6: Description ──
@@ -254,6 +259,60 @@ const AddListing = () => {
     if (stepIndex >= steps.length) setStepIndex(steps.length - 1);
   }, [steps.length, stepIndex]);
 
+  // Auto-geocode postal code
+  const handlePostalCodeChange = useCallback(async (code: string) => {
+    setPostalCode(code);
+    if (code.length === 6) {
+      setGeocodingPostal(true);
+      const result = await geocodeSingaporePostalCode(code);
+      if (result) {
+        setLocationLat(result.lat);
+        setLocationLng(result.lng);
+        if (!address) setAddress(result.address);
+        toast.success(`Location found: ${result.address}`);
+      } else {
+        setLocationLat(null);
+        setLocationLng(null);
+        toast.error("Could not find location for this postal code");
+      }
+      setGeocodingPostal(false);
+    } else {
+      setLocationLat(null);
+      setLocationLng(null);
+    }
+  }, [address]);
+
+  // Detect device location via GPS
+  const handleDetectLocation = useCallback(() => {
+    if (!navigator.geolocation) { toast.error("Geolocation not supported by your browser"); return; }
+    setDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setLocationLat(lat);
+        setLocationLng(lng);
+        // Reverse geocode using OneMap
+        try {
+          const res = await fetch(`https://www.onemap.gov.sg/api/public/revgeocode?location=${lat},${lng}&buffer=200&addressType=All`);
+          const data = await res.json();
+          if (data.GeocodeInfo && data.GeocodeInfo.length > 0) {
+            const info = data.GeocodeInfo[0];
+            const addr = info.BUILDINGNAME !== "NIL" ? `${info.BUILDINGNAME}, ${info.ROAD}` : info.ROAD;
+            if (!address) setAddress(addr || "");
+            if (!postalCode && info.POSTALCODE && info.POSTALCODE !== "NIL") setPostalCode(info.POSTALCODE);
+          }
+        } catch {}
+        toast.success("Location detected successfully");
+        setDetectingLocation(false);
+      },
+      () => {
+        toast.error("Unable to detect location — please enable location access");
+        setDetectingLocation(false);
+      }
+    );
+  }, [address, postalCode]);
+
   const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 
   /* ── Inline error helper ── */
@@ -279,7 +338,7 @@ const AddListing = () => {
         if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
         return false;
       case "service-location": return serviceLocations.length > 0;
-      case "address": return !!address && !!postalCode;
+      case "address": return !!address && !!postalCode && locationLat !== null && locationLng !== null;
       case "description": {
         const wc = wordCount(shortDescription);
         return wc >= 50 && wc <= 100 && !!detailedDescription.trim();
@@ -384,7 +443,9 @@ const AddListing = () => {
         },
         status: "pending_approval",
         ownerId: user.uid,
-        location: new GeoPoint(1.3521, 103.8198),
+        location: new GeoPoint(locationLat || 1.3521, locationLng || 103.8198),
+        lat: locationLat,
+        lng: locationLng,
         createdAt: serverTimestamp(),
       });
       toast.success("Listing submitted for approval!");
@@ -683,7 +744,24 @@ const AddListing = () => {
               {currentStep?.key === "address" && (
                 <div className="space-y-4 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">Your Location</h2>
-                  <p className="text-sm text-muted-foreground">Area (Singapore locality)</p>
+                  <p className="text-sm text-muted-foreground">We'll pin your business on the map for customers to find you easily.</p>
+                  
+                  {/* Detect Location Button */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleDetectLocation}
+                    disabled={detectingLocation}
+                  >
+                    {detectingLocation ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <MapPin className="w-4 h-4 mr-2" />
+                    )}
+                    {detectingLocation ? "Detecting location..." : "Detect My Location"}
+                  </Button>
+
                   <div className="space-y-2">
                     <Label>Address *</Label>
                     <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. 391 Orchard Road, #B2-01" />
@@ -692,7 +770,13 @@ const AddListing = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <Label>Postal Code *</Label>
-                      <Input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g. 238872" maxLength={6} />
+                      <Input
+                        value={postalCode}
+                        onChange={e => handlePostalCodeChange(e.target.value)}
+                        placeholder="e.g. 238872"
+                        maxLength={6}
+                      />
+                      {geocodingPostal && <p className="text-xs text-muted-foreground flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Looking up location...</p>}
                       <FieldError show={showErrors && !postalCode} message="Postal code is required" />
                     </div>
                     <div className="space-y-2">
@@ -701,6 +785,39 @@ const AddListing = () => {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">Unit number is kept private and won't be shown publicly.</p>
+
+                  {/* Location status */}
+                  {locationLat !== null && locationLng !== null ? (
+                    <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Location pinned</p>
+                        <p className="text-xs text-muted-foreground">Lat: {locationLat.toFixed(4)}, Lng: {locationLng.toFixed(4)}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 flex items-center gap-3">
+                      <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                      <p className="text-xs text-muted-foreground">Enter a valid 6-digit postal code or use "Detect My Location" to pin your business on the map.</p>
+                    </div>
+                  )}
+                  <FieldError show={showErrors && (locationLat === null || locationLng === null)} message="Location is required — enter postal code or detect your location" />
+
+                  {/* Map preview */}
+                  {locationLat !== null && locationLng !== null && (
+                    <div className="rounded-lg overflow-hidden border border-border h-[200px]">
+                      <iframe
+                        title="Business Location"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        src={`https://www.google.com/maps?q=${locationLat},${locationLng}&z=16&output=embed`}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
