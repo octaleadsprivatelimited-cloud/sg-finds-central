@@ -30,7 +30,7 @@ const CategoryGrid = () => {
   return (
     <section>
       <h2 className="hidden md:block text-lg font-bold text-foreground mb-4">Browse by Category</h2>
-      <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-1.5 md:gap-3">
+      <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-1.5 md:gap-3">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.name}
