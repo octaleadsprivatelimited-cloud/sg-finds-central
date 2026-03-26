@@ -103,6 +103,10 @@ const BusinessDashboard = () => {
   const [catDescription, setCatDescription] = useState("");
   const [catPrice, setCatPrice] = useState("");
   const [catSaving, setCatSaving] = useState(false);
+  const [editingCatItem, setEditingCatItem] = useState<{ listingId: string; itemId: string } | null>(null);
+  const [editCatTitle, setEditCatTitle] = useState("");
+  const [editCatDescription, setEditCatDescription] = useState("");
+  const [editCatPrice, setEditCatPrice] = useState("");
 
   // Load user's listings from Firestore
   useEffect(() => {
@@ -897,29 +901,62 @@ const BusinessDashboard = () => {
                           <Badge variant="outline" className="ml-auto text-xs">{listing.catalogueItems!.length} items</Badge>
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {listing.catalogueItems!.map(item => (
+                          {listing.catalogueItems!.map(item => {
+                            const isEditing = editingCatItem?.listingId === listing.id && editingCatItem?.itemId === item.id;
+                            return (
                             <div key={item.id} className="rounded-xl border border-border/60 bg-background p-4 space-y-2 group">
-                              <div className="flex items-start justify-between gap-2">
-                                <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
-                                <Button
-                                  variant="ghost" size="icon"
-                                  className="w-7 h-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                                  onClick={async () => {
-                                    try {
-                                      const updated = listing.catalogueItems!.filter(c => c.id !== item.id);
-                                      await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
-                                      setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
-                                      toast.success("Item removed");
-                                    } catch (err: any) { toast.error(err.message || "Failed to remove item"); }
-                                  }}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </Button>
-                              </div>
-                              {item.description && <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>}
-                              {item.price && <p className="text-sm font-semibold text-foreground">{item.price}</p>}
+                              {isEditing ? (
+                                <div className="space-y-3">
+                                  <Input className="rounded-lg text-sm" value={editCatTitle} onChange={e => setEditCatTitle(e.target.value)} placeholder="Title" />
+                                  <Input className="rounded-lg text-sm" value={editCatPrice} onChange={e => setEditCatPrice(e.target.value)} placeholder="Price" />
+                                  <Textarea className="rounded-lg text-sm" value={editCatDescription} onChange={e => setEditCatDescription(e.target.value)} placeholder="Description" rows={2} />
+                                  <div className="flex gap-2">
+                                    <Button size="sm" className="rounded-lg text-xs" disabled={!editCatTitle.trim()}
+                                      onClick={async () => {
+                                        try {
+                                          const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim() } : c);
+                                          await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
+                                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
+                                          setEditingCatItem(null);
+                                          toast.success("Item updated!");
+                                        } catch (err: any) { toast.error(err.message || "Failed to update"); }
+                                      }}>
+                                      <Check className="w-3 h-3 mr-1" /> Save
+                                    </Button>
+                                    <Button size="sm" variant="ghost" className="rounded-lg text-xs" onClick={() => setEditingCatItem(null)}>
+                                      <X className="w-3 h-3 mr-1" /> Cancel
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="flex items-start justify-between gap-2">
+                                    <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
+                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                      <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-foreground"
+                                        onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); }}>
+                                        <Edit3 className="w-3.5 h-3.5" />
+                                      </Button>
+                                      <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive"
+                                        onClick={async () => {
+                                          try {
+                                            const updated = listing.catalogueItems!.filter(c => c.id !== item.id);
+                                            await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
+                                            setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
+                                            toast.success("Item removed");
+                                          } catch (err: any) { toast.error(err.message || "Failed to remove item"); }
+                                        }}>
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  {item.description && <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>}
+                                  {item.price && <p className="text-sm font-semibold text-foreground">{item.price}</p>}
+                                </>
+                              )}
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     ))}
