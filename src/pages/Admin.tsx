@@ -22,7 +22,7 @@ import {
   LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
   MessageSquare, MessageCircle, Mail, Phone, Menu, MoreHorizontal,
   ChevronRight, Activity, Users, Database, TrendingUp, ArrowUpRight,
-  ChevronDown, Filter, RefreshCw, Zap,
+  ChevronDown, Filter, RefreshCw, Zap, Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
