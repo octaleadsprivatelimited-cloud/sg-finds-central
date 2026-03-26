@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Facebook, Instagram, Twitter, Linkedin, Mail, Heart } from "lucide-react";
+import { toSlug } from "@/lib/url-helpers";
 
 const Footer = () => {
   return (
@@ -54,15 +55,22 @@ Singapore's trusted business directory. Discover, connect, and grow with local b
           <div>
             <h4 className="font-semibold text-sm text-foreground mb-4">Top Categories</h4>
             <ul className="space-y-2.5">
-              {["Food & Beverage", "Healthcare & Medical", "Home Services", "Technology & IT", "Beauty & Wellness"].map(
-                (cat) => (
-                  <li key={cat}>
-                    <span className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">
-                      {cat}
-                    </span>
-                  </li>
-                )
-              )}
+              {[
+                "Tuition",
+                "Beauty",
+                "Music / Art / Craft",
+                "Home Food",
+                "Baking",
+                "Pet Services",
+                "Event Services",
+                "Cleaning",
+              ].map((cat) => (
+                <li key={cat}>
+                  <Link to={`/singapore/${toSlug(cat)}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    {cat}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
