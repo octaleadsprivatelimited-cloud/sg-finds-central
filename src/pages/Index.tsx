@@ -465,20 +465,64 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
                     </div>
                   ) : (
-                    sortedFiltered.map((listing, idx) => (
-                      <ListingCard
-                        key={listing.id}
-                        listing={listing}
-                        index={idx + 1}
-                        highlighted={hoveredListingId === listing.id}
-                        onHover={setHoveredListingId}
-                        distanceKm={getListingDistance(listing)}
-                        onSelect={(l) => {
-                          setSelectedListing(l);
-                          if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
-                        }}
-                      />
-                    ))
+                    <>
+                      {paginatedListings.map((listing, idx) => (
+                        <ListingCard
+                          key={listing.id}
+                          listing={listing}
+                          index={(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}
+                          highlighted={hoveredListingId === listing.id}
+                          onHover={setHoveredListingId}
+                          distanceKm={getListingDistance(listing)}
+                          onSelect={(l) => {
+                            setSelectedListing(l);
+                            if (l.lat && l.lng) setMapCenter({ lat: l.lat, lng: l.lng });
+                          }}
+                        />
+                      ))}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-1.5 pt-4">
+                          <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
+                          >
+                            ‹ Prev
+                          </button>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                            .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                              if (i > 0 && p - (arr[i - 1]) > 1) acc.push("...");
+                              acc.push(p);
+                              return acc;
+                            }, [])
+                            .map((p, i) =>
+                              p === "..." ? (
+                                <span key={`dots-${i}`} className="px-1 text-sm text-muted-foreground">…</span>
+                              ) : (
+                                <button
+                                  key={p}
+                                  onClick={() => setCurrentPage(p as number)}
+                                  className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${
+                                    currentPage === p
+                                      ? "bg-primary text-primary-foreground shadow-sm"
+                                      : "border border-border bg-card text-foreground hover:bg-secondary"
+                                  }`}
+                                >
+                                  {p}
+                                </button>
+                              )
+                            )}
+                          <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
+                          >
+                            Next ›
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
