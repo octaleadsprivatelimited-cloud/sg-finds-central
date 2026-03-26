@@ -868,7 +868,28 @@ const AddListing = () => {
                 </div>
               )}
 
-              {/* SCREEN 4: Service Location */}
+              {/* SCREEN 2: Business Details */}
+              {currentStep?.key === "details" && (
+                <div className="space-y-4 animate-fade-in">
+                  <h2 className="text-lg font-semibold text-foreground">Business Details</h2>
+                  <div className="space-y-2">
+                    <Label>Business Name *</Label>
+                    <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Mary's Home Kitchen" />
+                    <FieldError show={showErrors && !name} message="Business name is required" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Owner Name *</Label>
+                    <Input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="e.g. Mary Tan" />
+                    <FieldError show={showErrors && !ownerName} message="Owner name is required" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>UEN <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                    <Input value={uen} onChange={e => setUen(e.target.value)} placeholder="e.g. 201912345A" />
+                  </div>
+                </div>
+              )}
+
+              {/* SCREEN 3: Service Location */}
               {currentStep?.key === "service-location" && (
                 <div className="space-y-4 animate-fade-in">
                   <h2 className="text-lg font-semibold text-foreground">Where does your service happen?</h2>
