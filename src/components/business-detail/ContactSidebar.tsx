@@ -1,4 +1,4 @@
-import { Phone, Mail, Globe, MapPin, Building2, ExternalLink, Copy, Navigation } from "lucide-react";
+import { Phone, Mail, Globe, MapPin, Building2, ExternalLink, Copy, Navigation, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -9,6 +9,11 @@ interface ContactSidebarProps {
     website?: string;
     address: string;
     uen: string;
+    whatsapp?: string;
+    contactDetails?: {
+      whatsapp?: string;
+      whatsappMessage?: string;
+    };
   };
 }
 
@@ -20,6 +25,16 @@ const ContactSidebar = ({ listing }: ContactSidebarProps) => {
 
   const getDirections = () => {
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(listing.address)}`, "_blank");
+  };
+
+  const whatsappNumber = listing.contactDetails?.whatsapp || listing.whatsapp;
+  const whatsappMessage = listing.contactDetails?.whatsappMessage || "";
+
+  const openWhatsApp = () => {
+    if (!whatsappNumber) return;
+    const cleaned = whatsappNumber.replace(/[^0-9]/g, "");
+    const msgParam = whatsappMessage ? `&text=${encodeURIComponent(whatsappMessage)}` : "";
+    window.open(`https://wa.me/${cleaned}?${msgParam}`, "_blank");
   };
 
   return (
@@ -35,6 +50,14 @@ const ContactSidebar = ({ listing }: ContactSidebarProps) => {
               </div>
               <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{listing.phone}</span>
             </a>
+          )}
+          {whatsappNumber && (
+            <button onClick={openWhatsApp} className="flex items-center gap-3.5 group w-full text-left">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/20 transition-colors">
+                <MessageCircle className="w-4 h-4 text-emerald-600 group-hover:text-emerald-700 transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-emerald-600 group-hover:text-emerald-700 transition-colors">WhatsApp</span>
+            </button>
           )}
           {listing.email && (
             <a href={`mailto:${listing.email}`} className="flex items-center gap-3.5 group">
