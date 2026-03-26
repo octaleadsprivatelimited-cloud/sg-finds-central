@@ -22,7 +22,7 @@ import {
   LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
   MessageSquare, MessageCircle, Mail, Phone, Menu, MoreHorizontal,
   ChevronRight, Activity, Users, Database, TrendingUp, ArrowUpRight,
-  ChevronDown, Filter, RefreshCw, Zap,
+  ChevronDown, Filter, RefreshCw, Zap, Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -297,6 +297,35 @@ const Admin = () => {
     return counts;
   }, [enquiries]);
 
+  const downloadCSV = (filename: string, headers: string[], rows: string[][]) => {
+    const escape = (v: string) => `"${(v ?? "").replace(/"/g, '""')}"`;
+    const csv = [headers.map(escape).join(","), ...rows.map(r => r.map(escape).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} records to ${filename}`);
+  };
+
+  const exportListings = () => {
+    const headers = ["Name", "Category", "District", "Status", "Phone", "Email", "Address", "Verified", "Featured"];
+    const rows = filteredAllListings.map(l => [
+      l.name, l.category, l.district || "", l.status || "", l.phone || "", l.email || "",
+      l.address || "", l.verified ? "Yes" : "No", l.featured ? "Yes" : "No",
+    ]);
+    downloadCSV(`listings_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+  };
+
+  const exportEnquiries = () => {
+    const headers = ["Name", "Email", "Phone", "Business", "Message", "Status", "Date"];
+    const rows = filteredEnquiries.map(e => [
+      e.name, e.email, e.phone || "", e.listingName, e.message, e.status,
+      e.createdAt?.toDate ? e.createdAt.toDate().toLocaleDateString() : "",
+    ]);
+    downloadCSV(`enquiries_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[hsl(220,15%,97%)]">
@@ -435,6 +464,9 @@ const Admin = () => {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => activeTab === "enquiries" ? exportEnquiries() : exportListings()} className="h-8 rounded-lg text-xs border-[hsl(220,15%,88%)] text-[hsl(220,10%,40%)] hover:bg-[hsl(220,20%,96%)]">
+              <Download className="w-3.5 h-3.5 mr-1.5" />Export CSV
+            </Button>
             <Button variant="outline" size="sm" onClick={fetchData} className="h-8 rounded-lg text-xs border-[hsl(220,15%,88%)] text-[hsl(220,10%,40%)] hover:bg-[hsl(220,20%,96%)]">
               <RefreshCw className="w-3.5 h-3.5 mr-1.5" />Refresh
             </Button>
