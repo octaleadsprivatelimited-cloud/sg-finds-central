@@ -41,6 +41,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
+  const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
   const navigate = useNavigate();
@@ -162,6 +163,9 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   }
 
   const activeListing = listings.find((l) => l.id === activeMarker);
+  const hoveredListing = listings.find((l) => l.id === hoveredMarker);
+  const previewListing = activeListing || hoveredListing;
+  const previewMarkerId = activeMarker || hoveredMarker;
 
   return (
     <GoogleMap
@@ -174,60 +178,79 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
         disableDefaultUI: true,
         zoomControl: true,
       }}
-      onClick={() => setActiveMarker(null)}
+      onClick={() => { setActiveMarker(null); setHoveredMarker(null); }}
     >
       {listings.map((listing) => {
         if (!listing.lat || !listing.lng) return null;
+        const isActive = listing.id === previewMarkerId;
         return (
           <MarkerF
             key={listing.id}
             position={{ lat: listing.lat, lng: listing.lng }}
             onClick={() => {
               setActiveMarker(listing.id);
+              setHoveredMarker(null);
               onSelectListing?.(listing);
               const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
               if (card) {
                 card.scrollIntoView({ behavior: "smooth", block: "center" });
               }
             }}
-            onMouseOver={() => onHoverListing?.(listing.id)}
-            onMouseOut={() => onHoverListing?.(null)}
+            onMouseOver={() => {
+              if (!activeMarker) setHoveredMarker(listing.id);
+              onHoverListing?.(listing.id);
+            }}
+            onMouseOut={() => {
+              if (!activeMarker) setHoveredMarker(null);
+              onHoverListing?.(null);
+            }}
             options={{
-              opacity: hoveredId === listing.id || selectedId === listing.id ? 1 : 0.7,
+              opacity: hoveredId === listing.id || selectedId === listing.id || isActive ? 1 : 0.7,
             }}
           >
-            {activeMarker === listing.id && activeListing && (
+            {isActive && previewListing && (
               <InfoWindowF
                 position={{ lat: listing.lat, lng: listing.lng }}
-                onCloseClick={() => setActiveMarker(null)}
+                onCloseClick={() => { setActiveMarker(null); setHoveredMarker(null); }}
               >
                 <div
-                  style={{ maxWidth: 220, cursor: "pointer" }}
-                  onClick={() => navigate(getBusinessUrl(activeListing))}
+                  style={{ maxWidth: 230, cursor: "pointer", padding: 0 }}
+                  onClick={() => navigate(getBusinessUrl(previewListing))}
                 >
-                  {activeListing.coverImage && (
+                  {(previewListing.coverImage || previewListing.logoUrl || (previewListing.imageUrls && previewListing.imageUrls[0])) && (
                     <img
-                      src={activeListing.coverImage}
-                      alt={activeListing.name}
+                      src={previewListing.coverImage || previewListing.logoUrl || previewListing.imageUrls?.[0]}
+                      alt={previewListing.name}
                       style={{
                         width: "100%",
-                        height: 100,
+                        height: 110,
                         objectFit: "cover",
-                        borderRadius: 6,
+                        borderRadius: 8,
                         marginBottom: 8,
                       }}
                     />
                   )}
-                  <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4, color: "#1a1a1a" }}>
-                    {activeListing.name}
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#1a1a1a", lineHeight: 1.3 }}>
+                    {previewListing.name}
                   </div>
-                  <div style={{ fontSize: 13, color: "#555" }}>
-                    {activeListing.category}
+                  <div style={{ fontSize: 12, color: "#666", marginBottom: 2 }}>
+                    {previewListing.category}
                   </div>
-                  <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
-                    {activeListing.category}
-                  </div>
-                  <div style={{ fontSize: 12, color: "#3b82f6", marginTop: 6, fontWeight: 600 }}>
+                  {previewListing.district && (
+                    <div style={{ fontSize: 11, color: "#999", display: "flex", alignItems: "center", gap: 3 }}>
+                      📍 {previewListing.district}
+                    </div>
+                  )}
+                  {(previewListing as any).rating && (
+                    <div style={{ fontSize: 12, color: "#f59e0b", marginTop: 4, display: "flex", alignItems: "center", gap: 3 }}>
+                      <Star className="w-3 h-3 fill-current" />
+                      {(previewListing as any).rating}
+                      {(previewListing as any).reviewCount && (
+                        <span style={{ color: "#999", fontSize: 11 }}>({(previewListing as any).reviewCount})</span>
+                      )}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 11, color: "#3b82f6", marginTop: 6, fontWeight: 600 }}>
                     View Details →
                   </div>
                 </div>
