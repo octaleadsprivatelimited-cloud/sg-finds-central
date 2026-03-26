@@ -24,7 +24,7 @@ import {
   ChevronRight, Activity, Users, Database, TrendingUp, ArrowUpRight,
   ChevronDown, Filter, RefreshCw, Zap, Download, BarChart3,
   Globe, Server, Cpu, HardDrive, Wifi, Star, Target, Layers,
-  PieChart, ArrowUp, ArrowDown, Sparkles, CheckSquare, Square,
+  PieChart, ArrowUp, ArrowDown, Sparkles, CheckSquare, Square, MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
