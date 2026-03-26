@@ -601,9 +601,17 @@ const AddListing = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
-        <Button variant="ghost" size="sm" className="mb-6" onClick={() => navigate("/")}>
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Directory
-        </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Directory
+          </Button>
+          {(category || name) && (
+            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={() => { clearDraft(); window.location.reload(); }}>
+              <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Clear Draft
+            </Button>
+          )}
+        </div>
 
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-4">
