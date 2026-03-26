@@ -297,6 +297,35 @@ const Admin = () => {
     return counts;
   }, [enquiries]);
 
+  const downloadCSV = (filename: string, headers: string[], rows: string[][]) => {
+    const escape = (v: string) => `"${(v ?? "").replace(/"/g, '""')}"`;
+    const csv = [headers.map(escape).join(","), ...rows.map(r => r.map(escape).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} records to ${filename}`);
+  };
+
+  const exportListings = () => {
+    const headers = ["Name", "Category", "District", "Status", "Phone", "Email", "Address", "Verified", "Featured"];
+    const rows = filteredAllListings.map(l => [
+      l.name, l.category, l.district || "", l.status || "", l.phone || "", l.email || "",
+      l.address || "", l.verified ? "Yes" : "No", l.featured ? "Yes" : "No",
+    ]);
+    downloadCSV(`listings_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+  };
+
+  const exportEnquiries = () => {
+    const headers = ["Name", "Email", "Phone", "Business", "Message", "Status", "Date"];
+    const rows = filteredEnquiries.map(e => [
+      e.name, e.email, e.phone || "", e.listingName, e.message, e.status,
+      e.createdAt?.toDate ? e.createdAt.toDate().toLocaleDateString() : "",
+    ]);
+    downloadCSV(`enquiries_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[hsl(220,15%,97%)]">
