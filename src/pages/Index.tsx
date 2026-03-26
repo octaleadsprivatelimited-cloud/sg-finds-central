@@ -49,6 +49,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const ITEMS_PER_PAGE = 10;
   const listingsScrollRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (listingsScrollRef.current) {
+      listingsScrollRef.current.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [currentPage]);
+
   const handlePincodeSearch = useCallback(async (code: string) => {
     setPincode(code);
     if (code.length !== 6) { setPincodeAddress(""); return; }
