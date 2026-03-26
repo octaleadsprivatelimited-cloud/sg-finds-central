@@ -929,197 +929,267 @@ const BusinessDashboard = () => {
                 </div>
               </motion.div>
             )}
-
             {/* ─── CATALOGUE TAB ─── */}
             {activeTab === "catalogue" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                <h2 className="text-xl font-bold text-foreground tracking-tight">Catalogue Management</h2>
+                {/* Header with stats */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-foreground tracking-tight">Catalogue Management</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Manage your products and services across all listings</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--info)/0.06)] border border-[hsl(var(--info)/0.12)]">
+                      <BookOpen className="w-3.5 h-3.5 text-[hsl(var(--info))]" />
+                      <span className="text-xs font-semibold text-[hsl(var(--info))]">
+                        {listings.reduce((sum, l) => sum + (l.catalogueItems?.length || 0), 0)} items
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Summary stat cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: "Total Items", value: listings.reduce((s, l) => s + (l.catalogueItems?.length || 0), 0), icon: <Tag className="w-4 h-4" />, color: "primary" },
+                    { label: "Listings with Catalogue", value: listings.filter(l => l.catalogueItems?.length).length, icon: <Store className="w-4 h-4" />, color: "success" },
+                    { label: "With Images", value: listings.reduce((s, l) => s + (l.catalogueItems?.filter(c => c.image)?.length || 0), 0), icon: <Image className="w-4 h-4" />, color: "info" },
+                  ].map(stat => (
+                    <div key={stat.label} className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                      <div className={`absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--${stat.color}))] opacity-80`} />
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground">{stat.label}</p>
+                          <p className="text-2xl font-semibold text-foreground mt-1 tabular-nums">{stat.value}</p>
+                        </div>
+                        <div className={`w-9 h-9 rounded-lg bg-[hsl(var(--${stat.color})/0.08)] flex items-center justify-center text-[hsl(var(--${stat.color}))]`}>
+                          {stat.icon}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Add Item Form */}
-                <div className="rounded-2xl border border-border bg-card p-6">
-                  <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
-                      <Plus className="w-4 h-4 text-[hsl(var(--primary))]" />
-                    </div>
-                    Add Catalogue Item
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
-                      <Select value={catListingId} onValueChange={setCatListingId}>
-                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
-                        <SelectContent>
-                          {listings.map(l => (
-                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Title *</Label>
-                        <Input className="rounded-xl" value={catTitle} onChange={e => setCatTitle(e.target.value)} placeholder="e.g. Premium Haircut" />
+                <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-60" />
+                  <div className="p-6">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-9 h-9 rounded-lg bg-[hsl(var(--primary)/0.08)] flex items-center justify-center">
+                        <Plus className="w-4.5 h-4.5 text-[hsl(var(--primary))]" />
                       </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Price</Label>
-                        <Input className="rounded-xl" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="e.g. $50 onwards" />
+                      <div>
+                        <h3 className="font-semibold text-foreground text-sm">Add New Item</h3>
+                        <p className="text-xs text-muted-foreground">Add a product or service to your catalogue</p>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
-                      <Textarea className="rounded-xl" value={catDescription} onChange={e => setCatDescription(e.target.value)} placeholder="Brief description of this item..." rows={2} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Image</Label>
-                      <div className="flex items-center gap-3">
-                        {catImage && (
-                          <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0">
-                            <img src={catImage} alt="Preview" className="w-full h-full object-cover" />
-                            <button onClick={() => setCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )}
-                        <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-dashed border-border cursor-pointer hover:bg-secondary/50 transition-colors text-sm text-muted-foreground">
-                          <Upload className="w-4 h-4" />
-                          {catImage ? "Change" : "Upload image"}
-                          <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            const base64 = await compressFileToBase64(file);
-                            if (base64) {
-                              setCatImage(base64);
-                            } else {
-                              toast.error("Failed to process image");
-                            }
-                            e.target.value = "";
-                          }} />
-                        </label>
+
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-medium text-muted-foreground">Listing</Label>
+                        <Select value={catListingId} onValueChange={setCatListingId}>
+                          <SelectTrigger className="rounded-lg h-10"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
+                          <SelectContent>
+                            {listings.map(l => (
+                              <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Item Title *</Label>
+                          <Input className="rounded-lg h-10" value={catTitle} onChange={e => setCatTitle(e.target.value)} placeholder="e.g. Premium Haircut" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Price</Label>
+                          <Input className="rounded-lg h-10" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="e.g. $50 onwards" />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-medium text-muted-foreground">Description</Label>
+                        <Textarea className="rounded-lg" value={catDescription} onChange={e => setCatDescription(e.target.value)} placeholder="Brief description of this item..." rows={2} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-medium text-muted-foreground">Image</Label>
+                        <div className="flex items-center gap-3">
+                          {catImage && (
+                            <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0">
+                              <img src={catImage} alt="Preview" className="w-full h-full object-cover" />
+                              <button onClick={() => setCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                          <label className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-border cursor-pointer hover:bg-muted/50 transition-colors text-sm text-muted-foreground">
+                            <Upload className="w-4 h-4" />
+                            {catImage ? "Change image" : "Upload image"}
+                            <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const base64 = await compressFileToBase64(file);
+                              if (base64) { setCatImage(base64); } else { toast.error("Failed to process image"); }
+                              e.target.value = "";
+                            }} />
+                          </label>
+                        </div>
+                      </div>
+                      <div className="pt-2">
+                        <Button
+                          className="rounded-lg h-10"
+                          disabled={catSaving || !catListingId || !catTitle.trim()}
+                          onClick={async () => {
+                            setCatSaving(true);
+                            try {
+                              const listing = listings.find(l => l.id === catListingId);
+                              const existing = listing?.catalogueItems || [];
+                              const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim(), image: catImage || undefined };
+                              const updated = [...existing, newItem];
+                              await updateDoc(doc(db, "listings", catListingId), { catalogueItems: updated });
+                              setListings(prev => prev.map(l => l.id === catListingId ? { ...l, catalogueItems: updated } : l));
+                              setCatTitle(""); setCatDescription(""); setCatPrice(""); setCatImage("");
+                              toast.success("Catalogue item added!");
+                            } catch (err: any) { toast.error(err.message || "Failed to add item"); }
+                            setCatSaving(false);
+                          }}
+                        >
+                          {catSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                          <Plus className="w-4 h-4 mr-2" /> Add Item
+                        </Button>
                       </div>
                     </div>
-                    <Button
-                      className="rounded-xl"
-                      disabled={catSaving || !catListingId || !catTitle.trim()}
-                      onClick={async () => {
-                        setCatSaving(true);
-                        try {
-                          const listing = listings.find(l => l.id === catListingId);
-                          const existing = listing?.catalogueItems || [];
-                          const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim(), image: catImage || undefined };
-                          const updated = [...existing, newItem];
-                          await updateDoc(doc(db, "listings", catListingId), { catalogueItems: updated });
-                          setListings(prev => prev.map(l => l.id === catListingId ? { ...l, catalogueItems: updated } : l));
-                          setCatTitle(""); setCatDescription(""); setCatPrice(""); setCatImage("");
-                          toast.success("Catalogue item added!");
-                        } catch (err: any) { toast.error(err.message || "Failed to add item"); }
-                        setCatSaving(false);
-                      }}
-                    >
-                      {catSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      <Plus className="w-4 h-4 mr-2" /> Add Item
-                    </Button>
                   </div>
                 </div>
 
                 {/* Existing Items per Listing */}
                 {listings.filter(l => l.catalogueItems && l.catalogueItems.length > 0).length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                    <p className="text-sm">No catalogue items yet. Add your first item above.</p>
+                  <div className="rounded-xl border border-dashed border-border bg-card p-16 text-center">
+                    <div className="w-14 h-14 rounded-xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                      <BookOpen className="w-7 h-7 text-muted-foreground/40" />
+                    </div>
+                    <p className="font-semibold text-foreground">No catalogue items yet</p>
+                    <p className="text-sm text-muted-foreground mt-1">Add your first item above to showcase your products</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {listings.filter(l => l.catalogueItems && l.catalogueItems.length > 0).map(listing => (
-                      <div key={listing.id} className="rounded-2xl border border-border bg-card p-5">
-                        <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                          <Store className="w-4 h-4 text-muted-foreground" />
-                          {listing.name}
-                          <Badge variant="outline" className="ml-auto text-xs">{listing.catalogueItems!.length} items</Badge>
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {listing.catalogueItems!.map(item => {
-                            const isEditing = editingCatItem?.listingId === listing.id && editingCatItem?.itemId === item.id;
-                            return (
-                            <div key={item.id} className="rounded-xl border border-border/60 bg-background p-4 space-y-2 group">
-                              {isEditing ? (
-                                <div className="space-y-3">
-                                  <Input className="rounded-lg text-sm" value={editCatTitle} onChange={e => setEditCatTitle(e.target.value)} placeholder="Title" />
-                                  <Input className="rounded-lg text-sm" value={editCatPrice} onChange={e => setEditCatPrice(e.target.value)} placeholder="Price" />
-                                  <Textarea className="rounded-lg text-sm" value={editCatDescription} onChange={e => setEditCatDescription(e.target.value)} placeholder="Description" rows={2} />
-                                  <div className="flex items-center gap-2">
-                                    {editCatImage && (
-                                      <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-border shrink-0">
-                                        <img src={editCatImage} alt="Preview" className="w-full h-full object-cover" />
-                                        <button onClick={() => setEditCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
-                                          <X className="w-2.5 h-2.5" />
-                                        </button>
-                                      </div>
-                                    )}
-                                    <label className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-dashed border-border cursor-pointer hover:bg-secondary/50 transition-colors text-xs text-muted-foreground">
-                                      <Upload className="w-3 h-3" />
-                                      {editCatImage ? "Change" : "Add image"}
-                                      <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
-                                        const file = e.target.files?.[0];
-                                        if (!file) return;
-                                        const base64 = await compressFileToBase64(file);
-                                        if (base64) setEditCatImage(base64);
-                                        else toast.error("Failed to process image");
-                                        e.target.value = "";
-                                      }} />
-                                    </label>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <Button size="sm" className="rounded-lg text-xs" disabled={!editCatTitle.trim()}
-                                      onClick={async () => {
-                                        try {
-                                          const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim(), image: editCatImage || undefined } : c);
-                                          await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
-                                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
-                                          setEditingCatItem(null);
-                                          toast.success("Item updated!");
-                                        } catch (err: any) { toast.error(err.message || "Failed to update"); }
-                                      }}>
-                                      <Check className="w-3 h-3 mr-1" /> Save
-                                    </Button>
-                                    <Button size="sm" variant="ghost" className="rounded-lg text-xs" onClick={() => setEditingCatItem(null)}>
-                                      <X className="w-3 h-3 mr-1" /> Cancel
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  {item.image && (
-                                    <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-2 bg-muted">
-                                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                                    </div>
-                                  )}
-                                  <div className="flex items-start justify-between gap-2">
-                                    <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                                      <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-foreground"
-                                        onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); setEditCatImage(item.image || ""); }}>
-                                        <Edit3 className="w-3.5 h-3.5" />
-                                      </Button>
-                                      <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive"
-                                        onClick={async () => {
-                                          try {
-                                            const updated = listing.catalogueItems!.filter(c => c.id !== item.id);
-                                            await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
-                                            setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
-                                            toast.success("Item removed");
-                                          } catch (err: any) { toast.error(err.message || "Failed to remove item"); }
-                                        }}>
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  {item.description && <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>}
-                                  {item.price && <p className="text-sm font-semibold text-foreground">{item.price}</p>}
-                                </>
-                              )}
+                      <div key={listing.id} className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--success))] opacity-60" />
+                        <div className="p-5">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-lg bg-[hsl(var(--success)/0.08)] flex items-center justify-center">
+                                <Store className="w-4 h-4 text-[hsl(var(--success))]" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-foreground text-sm">{listing.name}</h3>
+                                <p className="text-xs text-muted-foreground">{listing.catalogueItems!.length} item{listing.catalogueItems!.length !== 1 ? "s" : ""}</p>
+                              </div>
                             </div>
-                            );
-                          })}
+                            <Badge variant="outline" className="text-xs font-medium rounded-md">{listing.category}</Badge>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {listing.catalogueItems!.map(item => {
+                              const isEditing = editingCatItem?.listingId === listing.id && editingCatItem?.itemId === item.id;
+                              return (
+                                <motion.div
+                                  key={item.id}
+                                  layout
+                                  className="rounded-lg border border-border/50 bg-background overflow-hidden group hover:shadow-sm transition-shadow"
+                                >
+                                  {isEditing ? (
+                                    <div className="p-4 space-y-3">
+                                      <Input className="rounded-lg h-9 text-sm" value={editCatTitle} onChange={e => setEditCatTitle(e.target.value)} placeholder="Title" />
+                                      <Input className="rounded-lg h-9 text-sm" value={editCatPrice} onChange={e => setEditCatPrice(e.target.value)} placeholder="Price" />
+                                      <Textarea className="rounded-lg text-sm" value={editCatDescription} onChange={e => setEditCatDescription(e.target.value)} placeholder="Description" rows={2} />
+                                      <div className="flex items-center gap-2">
+                                        {editCatImage && (
+                                          <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-border shrink-0">
+                                            <img src={editCatImage} alt="Preview" className="w-full h-full object-cover" />
+                                            <button onClick={() => setEditCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
+                                              <X className="w-2.5 h-2.5" />
+                                            </button>
+                                          </div>
+                                        )}
+                                        <label className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-dashed border-border cursor-pointer hover:bg-muted/50 transition-colors text-xs text-muted-foreground">
+                                          <Upload className="w-3 h-3" />
+                                          {editCatImage ? "Change" : "Add image"}
+                                          <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            const base64 = await compressFileToBase64(file);
+                                            if (base64) setEditCatImage(base64);
+                                            else toast.error("Failed to process image");
+                                            e.target.value = "";
+                                          }} />
+                                        </label>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <Button size="sm" className="rounded-lg text-xs h-8" disabled={!editCatTitle.trim()}
+                                          onClick={async () => {
+                                            try {
+                                              const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim(), image: editCatImage || undefined } : c);
+                                              await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
+                                              setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
+                                              setEditingCatItem(null);
+                                              toast.success("Item updated!");
+                                            } catch (err: any) { toast.error(err.message || "Failed to update"); }
+                                          }}>
+                                          <Check className="w-3 h-3 mr-1" /> Save
+                                        </Button>
+                                        <Button size="sm" variant="ghost" className="rounded-lg text-xs h-8" onClick={() => setEditingCatItem(null)}>
+                                          Cancel
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      {item.image ? (
+                                        <div className="aspect-[16/10] overflow-hidden bg-muted">
+                                          <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+                                        </div>
+                                      ) : (
+                                        <div className="aspect-[16/10] bg-muted/30 flex items-center justify-center">
+                                          <Image className="w-8 h-8 text-muted-foreground/20" />
+                                        </div>
+                                      )}
+                                      <div className="p-3.5">
+                                        <div className="flex items-start justify-between gap-2">
+                                          <div className="min-w-0 flex-1">
+                                            <h4 className="text-sm font-semibold text-foreground truncate">{item.title}</h4>
+                                            {item.description && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{item.description}</p>}
+                                          </div>
+                                          <div className="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-foreground"
+                                              onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); setEditCatImage(item.image || ""); }}>
+                                              <Edit3 className="w-3.5 h-3.5" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive"
+                                              onClick={async () => {
+                                                try {
+                                                  const updated = listing.catalogueItems!.filter(c => c.id !== item.id);
+                                                  await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
+                                                  setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
+                                                  toast.success("Item removed");
+                                                } catch (err: any) { toast.error(err.message || "Failed to remove item"); }
+                                              }}>
+                                              <Trash2 className="w-3.5 h-3.5" />
+                                            </Button>
+                                          </div>
+                                        </div>
+                                        {item.price && (
+                                          <div className="mt-2 pt-2 border-t border-border/40">
+                                            <span className="text-sm font-semibold text-foreground">{item.price}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </motion.div>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     ))}
