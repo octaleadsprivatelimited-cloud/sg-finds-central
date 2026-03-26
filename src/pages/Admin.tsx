@@ -97,6 +97,7 @@ const Admin = () => {
   const [adminSaving, setAdminSaving] = useState(false);
   const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
   const [seeding, setSeeding] = useState(false);
+  const [enquiryFilter, setEnquiryFilter] = useState<"all" | EnquiryStatus>("all");
 
   const handleSeedDemoData = async () => {
     setSeeding(true);
