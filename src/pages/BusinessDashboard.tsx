@@ -1036,7 +1036,7 @@ const BusinessDashboard = () => {
                                     <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                                       <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-foreground"
-                                        onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); }}>
+                                        onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); setEditCatImage(item.image || ""); }}>
                                         <Edit3 className="w-3.5 h-3.5" />
                                       </Button>
                                       <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive"
