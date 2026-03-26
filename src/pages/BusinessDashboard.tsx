@@ -152,11 +152,13 @@ const BusinessDashboard = () => {
   const [catTitle, setCatTitle] = useState("");
   const [catDescription, setCatDescription] = useState("");
   const [catPrice, setCatPrice] = useState("");
+  const [catImage, setCatImage] = useState<string>("");
   const [catSaving, setCatSaving] = useState(false);
   const [editingCatItem, setEditingCatItem] = useState<{ listingId: string; itemId: string } | null>(null);
   const [editCatTitle, setEditCatTitle] = useState("");
   const [editCatDescription, setEditCatDescription] = useState("");
   const [editCatPrice, setEditCatPrice] = useState("");
+  const [editCatImage, setEditCatImage] = useState<string>("");
 
   // Load user's listings from Firestore
   useEffect(() => {
