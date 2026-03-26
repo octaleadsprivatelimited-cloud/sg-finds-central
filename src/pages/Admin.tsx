@@ -217,7 +217,7 @@ const Admin = () => {
     setActionLoading(id);
     try {
       const listing = allListings.find(l => l.id === id);
-      const updates: Record<string, any> = { status: "approved", rejectionReason: "" };
+      const updates: Record<string, any> = { status: "approved", rejectionReason: "", previousApproved: {} };
       // Auto-approve any pending images when listing is approved
       if (listing?.pendingLogoUrl) {
         updates.logoUrl = listing.pendingLogoUrl;
@@ -665,6 +665,44 @@ const Admin = () => {
 
                         {listing.description && (
                           <p className="text-xs text-muted-foreground mt-2 line-clamp-2 ml-[52px]">{listing.description}</p>
+                        )}
+
+                        {/* ── Changed Fields Highlight ── */}
+                        {(listing as any).previousApproved && Object.keys((listing as any).previousApproved).length > 0 && (
+                          <div className="mt-3 ml-[52px] rounded-md border border-[hsl(38,85%,75%)] bg-[hsl(38,90%,97%)] dark:bg-[hsl(38,30%,12%)] dark:border-[hsl(38,40%,30%)] p-3">
+                            <p className="text-[11px] font-semibold text-[hsl(38,85%,35%)] dark:text-[hsl(38,85%,60%)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                              <AlertTriangle className="w-3 h-3" />
+                              Owner Changed {Object.keys((listing as any).previousApproved).length} Field{Object.keys((listing as any).previousApproved).length !== 1 ? "s" : ""}
+                            </p>
+                            <div className="space-y-2">
+                              {Object.entries((listing as any).previousApproved).map(([field, oldValue]) => {
+                                const newValue = (listing as any)[field];
+                                const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1");
+                                const oldStr = typeof oldValue === "object" ? JSON.stringify(oldValue) : String(oldValue || "—");
+                                const newStr = typeof newValue === "object" ? JSON.stringify(newValue) : String(newValue || "—");
+                                if (field === "operatingHours") return (
+                                  <div key={field} className="text-xs">
+                                    <span className="font-semibold text-foreground">{label}:</span>
+                                    <span className="ml-1 text-[hsl(38,85%,35%)] dark:text-[hsl(38,85%,60%)] italic">Hours were modified</span>
+                                  </div>
+                                );
+                                return (
+                                  <div key={field} className="text-xs">
+                                    <span className="font-semibold text-foreground">{label}:</span>
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 mt-0.5">
+                                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[hsl(354,70%,95%)] dark:bg-[hsl(354,30%,15%)] text-[hsl(354,70%,45%)] line-through text-[11px] max-w-[200px] truncate">
+                                        {oldStr}
+                                      </span>
+                                      <ChevronRight className="w-3 h-3 text-muted-foreground hidden sm:block shrink-0" />
+                                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[hsl(152,50%,92%)] dark:bg-[hsl(152,30%,15%)] text-[hsl(152,69%,30%)] font-medium text-[11px] max-w-[200px] truncate">
+                                        {newStr}
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         )}
 
                         {listing.documentsUrl && listing.documentsUrl.length > 0 && (
