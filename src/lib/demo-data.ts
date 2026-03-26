@@ -1,4 +1,5 @@
 import { Listing } from "@/components/ListingCard";
+import { DISTRICT_COORDINATES } from "@/lib/districts";
 
 // Demo users for the platform
 export interface PlatformUser {
@@ -15,102 +16,218 @@ export interface PlatformUser {
 }
 
 export const DEMO_USERS: PlatformUser[] = [
-  {
-    id: "u1", email: "admin@nearbuy.sg", displayName: "Nearbuy Admin",
-    role: "superadmin", status: "active", joinedAt: "2024-01-15",
-    listingsCount: 0, lastActive: "2026-03-08", phone: "+65 9000 0001",
-  },
-  {
-    id: "u2", email: "john.tan@gmail.com", displayName: "John Tan",
-    role: "business_owner", status: "active", joinedAt: "2024-06-20",
-    listingsCount: 3, lastActive: "2026-03-07", phone: "+65 9123 4567",
-  },
-  {
-    id: "u3", email: "sarah.lim@outlook.com", displayName: "Sarah Lim",
-    role: "business_owner", status: "active", joinedAt: "2024-09-10",
-    listingsCount: 1, lastActive: "2026-03-06", phone: "+65 9234 5678",
-  },
-  {
-    id: "u4", email: "david.wong@hotmail.com", displayName: "David Wong",
-    role: "user", status: "active", joinedAt: "2025-01-05",
-    listingsCount: 0, lastActive: "2026-03-05",
-  },
-  {
-    id: "u5", email: "mei.chen@yahoo.com", displayName: "Mei Chen",
-    role: "business_owner", status: "suspended", joinedAt: "2025-02-14",
-    listingsCount: 2, lastActive: "2026-02-28", phone: "+65 9345 6789",
-  },
-  {
-    id: "u6", email: "rajesh.kumar@gmail.com", displayName: "Rajesh Kumar",
-    role: "admin", status: "active", joinedAt: "2024-03-22",
-    listingsCount: 0, lastActive: "2026-03-08", phone: "+65 9456 7890",
-  },
-  {
-    id: "u7", email: "lisa.ng@gmail.com", displayName: "Lisa Ng",
-    role: "business_owner", status: "active", joinedAt: "2025-05-10",
-    listingsCount: 1, lastActive: "2026-03-04", phone: "+65 9567 8901",
-  },
-  {
-    id: "u8", email: "spam.user@temp.com", displayName: "Spam User",
-    role: "user", status: "banned", joinedAt: "2025-11-01",
-    listingsCount: 0, lastActive: "2025-12-01",
-  },
+  { id: "u1", email: "admin@nearbuy.sg", displayName: "Nearbuy Admin", role: "superadmin", status: "active", joinedAt: "2024-01-15", listingsCount: 0, lastActive: "2026-03-08", phone: "+65 9000 0001" },
+  { id: "u2", email: "john.tan@gmail.com", displayName: "John Tan", role: "business_owner", status: "active", joinedAt: "2024-06-20", listingsCount: 3, lastActive: "2026-03-07", phone: "+65 9123 4567" },
+  { id: "u3", email: "sarah.lim@outlook.com", displayName: "Sarah Lim", role: "business_owner", status: "active", joinedAt: "2024-09-10", listingsCount: 1, lastActive: "2026-03-06", phone: "+65 9234 5678" },
+  { id: "u4", email: "david.wong@hotmail.com", displayName: "David Wong", role: "user", status: "active", joinedAt: "2025-01-05", listingsCount: 0, lastActive: "2026-03-05" },
+  { id: "u5", email: "mei.chen@yahoo.com", displayName: "Mei Chen", role: "business_owner", status: "suspended", joinedAt: "2025-02-14", listingsCount: 2, lastActive: "2026-02-28", phone: "+65 9345 6789" },
+  { id: "u6", email: "rajesh.kumar@gmail.com", displayName: "Rajesh Kumar", role: "admin", status: "active", joinedAt: "2024-03-22", listingsCount: 0, lastActive: "2026-03-08", phone: "+65 9456 7890" },
+  { id: "u7", email: "lisa.ng@gmail.com", displayName: "Lisa Ng", role: "business_owner", status: "active", joinedAt: "2025-05-10", listingsCount: 1, lastActive: "2026-03-04", phone: "+65 9567 8901" },
+  { id: "u8", email: "spam.user@temp.com", displayName: "Spam User", role: "user", status: "banned", joinedAt: "2025-11-01", listingsCount: 0, lastActive: "2025-12-01" },
 ];
 
-export const DEMO_ALL_LISTINGS: Listing[] = [
-  {
-    id: "1", name: "Singapore Delights Pte Ltd", uen: "201912345A",
-    category: "Food & Beverage", district: "Orchard", address: "391 Orchard Road, #B2-01, Singapore 238872",
-    postalCode: "238872", phone: "+65 6234 5678", website: "https://sgdelights.com",
-    description: "Award-winning local cuisine serving traditional Peranakan dishes with a modern twist.",
-    status: "approved", ownerId: "u2", lat: 1.3048, lng: 103.8318,
-  },
-  {
-    id: "2", name: "TechHub Solutions", uen: "202301234B",
-    category: "Technology & IT", district: "CBD / Raffles Place", address: "1 Raffles Place, #30-01, Singapore 048616",
-    postalCode: "048616", phone: "+65 6789 0123", website: "https://techhub.sg",
-    description: "Full-service IT consultancy specializing in cloud infrastructure and cybersecurity.",
-    status: "approved", ownerId: "u2", lat: 1.2840, lng: 103.8510,
-  },
-  {
-    id: "3", name: "Glow Aesthetics Clinic", uen: "202212345C",
-    category: "Beauty & Wellness", district: "Novena", address: "10 Sinaran Drive, #10-05, Singapore 307506",
-    postalCode: "307506", phone: "+65 6345 6789",
-    description: "Premium aesthetic treatments using FDA-approved technology.",
-    status: "approved", ownerId: "u3", lat: 1.3204, lng: 103.8447,
-  },
-  {
-    id: "4", name: "LearnSG Academy", uen: "201854321D",
-    category: "Education & Training", district: "Tampines", address: "1 Tampines Walk, #03-12, Singapore 528523",
-    postalCode: "528523", phone: "+65 6456 7890",
-    description: "Enrichment centre offering coding, robotics, and STEM courses for ages 5–16.",
-    status: "approved", ownerId: "u2", lat: 1.3530, lng: 103.9453,
-  },
-  {
-    id: "5", name: "HomeFixSG Services", uen: "202098765E",
-    category: "Home Services", district: "Jurong East", address: "21 Jurong East St 31, Singapore 609517",
-    postalCode: "609517", phone: "+65 6567 8901",
-    description: "Reliable plumbing, electrical, and aircon servicing across Singapore.",
-    status: "approved", ownerId: "u7", lat: 1.3329, lng: 103.7436,
-  },
-  {
-    id: "p1", name: "New Café SG", uen: "202399999F",
-    category: "Food & Beverage", district: "Tiong Bahru",
-    address: "78 Yong Siak Street, Singapore 163078", postalCode: "163078",
-    phone: "+65 6111 2222", status: "pending_approval", ownerId: "u5",
-    documentsUrl: ["https://example.com/doc1.pdf"],
-  },
-  {
-    id: "p2", name: "FastTrack Logistics", uen: "202455555G",
-    category: "Logistics & Transport", district: "Changi",
-    address: "5 Changi Business Park Ave 1, Singapore 486038", postalCode: "486038",
-    phone: "+65 6222 3333", status: "pending_approval", ownerId: "u5",
-    documentsUrl: ["https://example.com/doc2.pdf", "https://example.com/doc3.pdf"],
-  },
-  {
-    id: "r1", name: "Suspicious Business Co", uen: "199900001H",
-    category: "Financial Services", district: "Woodlands",
-    address: "123 Woodlands Ave 6, Singapore 738999", postalCode: "738999",
-    phone: "+65 6333 4444", status: "rejected", ownerId: "u8",
-  },
+/* ═══════════════════════════════════════════════════════════
+   110 DEMO LISTINGS — 10 per category
+   ═══════════════════════════════════════════════════════════ */
+
+const districts = [
+  "Ang Mo Kio", "Bedok", "Bishan", "Bukit Batok", "Bukit Merah",
+  "Bukit Timah", "Clementi", "Geylang", "Hougang", "Jurong East",
+  "Jurong West", "Kallang", "Novena", "Orchard", "Pasir Ris",
+  "Punggol", "Queenstown", "Sembawang", "Sengkang", "Serangoon",
+  "Tampines", "Toa Payoh", "Woodlands", "Yishun", "CBD / Raffles Place",
+  "Chinatown", "Marina Bay", "Changi",
 ];
+
+const pick = (arr: string[], i: number) => arr[i % arr.length];
+const coord = (d: string) => DISTRICT_COORDINATES[d] || { lat: 1.35, lng: 103.82 };
+
+interface BizTemplate { name: string; desc: string; phone: string; email?: string; website?: string; }
+
+const tuition: BizTemplate[] = [
+  { name: "MathWhiz Tuition Centre", desc: "Expert tuition for Primary to JC levels in Math, Science, and English.", phone: "+65 8100 1001", email: "learn@mathwhiz.sg" },
+  { name: "BrightStar Learning Hub", desc: "MOE-aligned tuition with proven results for primary and secondary students.", phone: "+65 8100 1002" },
+  { name: "AcePro Tuition", desc: "Small group and 1-to-1 A-level tuition specialising in H2 Math and Physics.", phone: "+65 8100 1003", email: "info@acepro.sg" },
+  { name: "SmartKids Education", desc: "Fun and interactive enrichment classes for K1 to P6 in English and Math.", phone: "+65 8100 1004" },
+  { name: "EduBridge Academy", desc: "PSLE and O-level intensive crash courses with experienced ex-MOE teachers.", phone: "+65 8100 1005", email: "hello@edubridge.sg" },
+  { name: "LearnSG Tutors", desc: "Coding, robotics, and STEM enrichment for ages 5–16.", phone: "+65 8100 1006", website: "https://learnsg.sg" },
+  { name: "TopGrade Tuition", desc: "Specialised Chemistry and Biology tuition for JC and IP students.", phone: "+65 8100 1007" },
+  { name: "SurePass Learning", desc: "Affordable group tuition for N-level and O-level students with free notes.", phone: "+65 8100 1008", email: "surepass@gmail.com" },
+  { name: "HomeTutor SG", desc: "Experienced home tutors dispatched island-wide for all subjects.", phone: "+65 8100 1009", website: "https://hometutorsg.com" },
+  { name: "The Study Room", desc: "Self-study space with on-demand tutoring support for secondary and JC students.", phone: "+65 8100 1010" },
+];
+
+const baking: BizTemplate[] = [
+  { name: "Sweet Oven Bakes", desc: "Custom cakes, cupcakes, and pastries for all occasions. Halal-certified.", phone: "+65 8200 2001", email: "orders@sweetoven.sg" },
+  { name: "Butter & Bloom", desc: "Artisan sourdough bread and butter croissants baked fresh daily.", phone: "+65 8200 2002" },
+  { name: "CakeCraft SG", desc: "Fondant and buttercream birthday cakes with 3D designs and free delivery.", phone: "+65 8200 2003", email: "hello@cakecraft.sg" },
+  { name: "The Cookie Jar", desc: "Premium cookies in 20+ flavours — corporate gifts and party packs available.", phone: "+65 8200 2004", website: "https://cookiejar.sg" },
+  { name: "Bake My Day", desc: "Home-baked brownies, tarts, and dessert boxes for gifting and events.", phone: "+65 8200 2005" },
+  { name: "Flour & Fold", desc: "Handmade pasta, pizza dough, and artisan bakes for the home cook.", phone: "+65 8200 2006" },
+  { name: "Sugar Rush Bakery", desc: "Customised wedding cakes and dessert tables for weddings and engagements.", phone: "+65 8200 2007", email: "weddings@sugarrush.sg" },
+  { name: "Kneadful Things", desc: "Gluten-free and vegan baked goods — muffins, banana bread, and granola.", phone: "+65 8200 2008" },
+  { name: "Whisk & Roll", desc: "Swiss rolls, chiffon cakes, and traditional kuehs for festive seasons.", phone: "+65 8200 2009" },
+  { name: "PastryPal SG", desc: "French pastry workshop and custom patisserie orders for special events.", phone: "+65 8200 2010", website: "https://pastrypal.sg" },
+];
+
+const musicArtCraft: BizTemplate[] = [
+  { name: "Melody Music Studio", desc: "Private lessons — piano, guitar, violin, and ukulele for all ages.", phone: "+65 8300 3001", email: "hello@melodystudio.sg" },
+  { name: "Canvas & Clay", desc: "Art jamming, pottery, and craft workshops for kids and adults.", phone: "+65 8300 3002" },
+  { name: "Harmony Piano School", desc: "ABRSM and Trinity graded piano lessons with experienced concert pianists.", phone: "+65 8300 3003", website: "https://harmonypiano.sg" },
+  { name: "The Art Loft", desc: "Oil painting, watercolour, and sketching classes in a cozy loft studio.", phone: "+65 8300 3004" },
+  { name: "BeatBox Drums SG", desc: "Drumming and percussion lessons — cajon, djembe, and drum kit.", phone: "+65 8300 3005", email: "drums@beatbox.sg" },
+  { name: "Stitch & Create", desc: "Sewing, embroidery, and macramé workshops for beginners and hobbyists.", phone: "+65 8300 3006" },
+  { name: "Vocal Edge Academy", desc: "Vocal coaching and singing lessons for pop, jazz, and classical genres.", phone: "+65 8300 3007" },
+  { name: "Crafty Hands Studio", desc: "Resin art, candle making, and terrarium workshops — great for team-building.", phone: "+65 8300 3008", website: "https://craftyhands.sg" },
+  { name: "String Theory Music", desc: "Guitar, bass, and ukulele lessons with performance opportunities.", phone: "+65 8300 3009" },
+  { name: "Little Picasso Art", desc: "Creative art enrichment for children aged 3–12 using Montessori methods.", phone: "+65 8300 3010" },
+];
+
+const homeFood: BizTemplate[] = [
+  { name: "Aunty Mei's Kitchen", desc: "Home-cooked nasi lemak, curry chicken, and bento sets. Order by 10am.", phone: "+65 8400 4001" },
+  { name: "Makan@Home", desc: "Daily changing menu of Malay, Chinese, and Indian home-cooked meals.", phone: "+65 8400 4002", email: "order@makanathome.sg" },
+  { name: "FreshBowl SG", desc: "Healthy poke bowls and salad jars prepared fresh daily and delivered.", phone: "+65 8400 4003", website: "https://freshbowl.sg" },
+  { name: "Nasi Padang Mama", desc: "Authentic Padang cuisine — rendang, sambal goreng, and ayam pop.", phone: "+65 8400 4004" },
+  { name: "The Bento Box", desc: "Japanese-inspired bento boxes with onigiri, tamagoyaki, and karaage.", phone: "+65 8400 4005" },
+  { name: "Curry House SG", desc: "Home-style fish head curry, mutton curry, and biryani for gatherings.", phone: "+65 8400 4006" },
+  { name: "Uncle Wong's BBQ", desc: "Char siew, roast duck, and soy sauce chicken — catering available.", phone: "+65 8400 4007", email: "bbq@unclewong.sg" },
+  { name: "Green Plate Kitchen", desc: "Plant-based home meals — tofu steak, mushroom rendang, and tempeh bowls.", phone: "+65 8400 4008" },
+  { name: "Dumpling House SG", desc: "Handmade dumplings, bao, and wonton in 12 different fillings.", phone: "+65 8400 4009" },
+  { name: "Kampong Flavours", desc: "Traditional Peranakan recipes — laksa, ayam buah keluak, and kueh pie tee.", phone: "+65 8400 4010", website: "https://kampongflavours.sg" },
+];
+
+const beauty: BizTemplate[] = [
+  { name: "Glow Beauty Studio", desc: "Manicure, pedicure, lash extensions, and facials. By appointment only.", phone: "+65 8500 5001", email: "book@glowbeauty.sg" },
+  { name: "Lash & Brow Bar", desc: "Eyelash extensions, brow embroidery, and lash lift specialists.", phone: "+65 8500 5002" },
+  { name: "Nail It! SG", desc: "Gel manicure, nail art, and pedicure in a cozy home-based salon.", phone: "+65 8500 5003" },
+  { name: "Skin Glow Aesthetics", desc: "Facial treatments, LED therapy, and microneedling for radiant skin.", phone: "+65 8500 5004", website: "https://skinglow.sg" },
+  { name: "Brow Studio SG", desc: "Microblading, brow shaping, and lip blush — semi-permanent makeup.", phone: "+65 8500 5005", email: "info@browstudio.sg" },
+  { name: "Zen Spa & Wellness", desc: "Full body massage, aromatherapy, and hot stone treatments at home.", phone: "+65 8500 5006" },
+  { name: "Pretty Nails Express", desc: "Express manicure and pedicure services — walk-ins welcome.", phone: "+65 8500 5007" },
+  { name: "HairDo Studio", desc: "Hair styling, rebonding, colouring, and keratin treatments.", phone: "+65 8500 5008" },
+  { name: "The Wax Room", desc: "Professional waxing services — Brazilian, full body, and facial waxing.", phone: "+65 8500 5009", email: "book@waxroom.sg" },
+  { name: "Aura Beauty Lounge", desc: "Bridal makeup, event styling, and personal colour analysis consultations.", phone: "+65 8500 5010" },
+];
+
+const petServices: BizTemplate[] = [
+  { name: "Pawfect Care", desc: "Pet grooming, sitting, and dog walking. Home visits available.", phone: "+65 8600 6001" },
+  { name: "Fluffy Tails Grooming", desc: "Professional grooming for dogs and cats — bath, trim, and nail clipping.", phone: "+65 8600 6002", email: "book@fluffytails.sg" },
+  { name: "Happy Paws Boarding", desc: "Home-based pet boarding with 24/7 care and daily photo updates.", phone: "+65 8600 6003" },
+  { name: "WalkieDog SG", desc: "Reliable daily dog walking services in your neighbourhood.", phone: "+65 8600 6004", website: "https://walkiedog.sg" },
+  { name: "Pet Salon Express", desc: "Quick grooming sessions — 1-hour bath and blow dry for small breeds.", phone: "+65 8600 6005" },
+  { name: "Purrfect Sitters", desc: "Cat sitting and home visits for cats, rabbits, and small pets.", phone: "+65 8600 6006" },
+  { name: "K9 Training SG", desc: "Obedience training, puppy socialisation, and behaviour modification.", phone: "+65 8600 6007", email: "train@k9sg.com" },
+  { name: "The Pet Pantry", desc: "Homemade dog treats, raw food prep, and pet nutrition consultations.", phone: "+65 8600 6008" },
+  { name: "Aqua Pets SG", desc: "Aquarium setup, fish care, and tank maintenance services.", phone: "+65 8600 6009" },
+  { name: "Bark Avenue Grooming", desc: "Luxury grooming with organic shampoo, teeth cleaning, and spa packages.", phone: "+65 8600 6010", website: "https://barkavenue.sg" },
+];
+
+const eventServices: BizTemplate[] = [
+  { name: "PartyPop Decor", desc: "Balloon decorations and party setups for birthdays, weddings, and corporate events.", phone: "+65 8700 7001", email: "hello@partypop.sg" },
+  { name: "Eventful SG", desc: "Full event planning — venue sourcing, catering coordination, and day-of management.", phone: "+65 8700 7002", website: "https://eventful.sg" },
+  { name: "Balloon Bliss", desc: "Custom balloon garlands, arches, and centrepieces for all celebrations.", phone: "+65 8700 7003" },
+  { name: "SG Party Rentals", desc: "Tables, chairs, tentage, and AV equipment rental for outdoor events.", phone: "+65 8700 7004" },
+  { name: "KidsFest Entertainment", desc: "Magic shows, face painting, and mascot appearances for children's parties.", phone: "+65 8700 7005", email: "fun@kidsfest.sg" },
+  { name: "Sound & Light Pro", desc: "Professional DJ, sound system, and lighting setup for events and weddings.", phone: "+65 8700 7006" },
+  { name: "Wedding Bells SG", desc: "Wedding planning, bridal styling, and reception coordination.", phone: "+65 8700 7007", website: "https://weddingbells.sg" },
+  { name: "Flash Mob SG", desc: "Surprise flash mob performances, proposal setups, and themed events.", phone: "+65 8700 7008" },
+  { name: "Corporate Events Plus", desc: "Team-building activities, D&D planning, and corporate retreat coordination.", phone: "+65 8700 7009", email: "events@corpplus.sg" },
+  { name: "Candy Cart SG", desc: "Dessert table styling with cotton candy, popcorn, and candy cart hire.", phone: "+65 8700 7010" },
+];
+
+const tailoring: BizTemplate[] = [
+  { name: "Stitch & Style Tailoring", desc: "Expert alterations — suits, dresses, curtains, and traditional wear.", phone: "+65 8800 8001" },
+  { name: "Perfect Fit Alterations", desc: "Quick and affordable clothing alterations — hems, zips, and resizing.", phone: "+65 8800 8002" },
+  { name: "Bespoke Tailor SG", desc: "Custom-made suits, shirts, and cheongsam with premium fabrics.", phone: "+65 8800 8003", email: "measure@bespoke.sg" },
+  { name: "Madam Sew", desc: "Home-based seamstress for curtains, cushion covers, and soft furnishings.", phone: "+65 8800 8004" },
+  { name: "The Hem Bar", desc: "Same-day hemming and minor alterations at affordable prices.", phone: "+65 8800 8005" },
+  { name: "Kebaya Queen", desc: "Traditional Malay and Peranakan kebaya tailoring and alterations.", phone: "+65 8800 8006", website: "https://kebayaqueen.sg" },
+  { name: "Suit Up SG", desc: "Wedding suits, tuxedos, and formal wear — tailored to perfection.", phone: "+65 8800 8007" },
+  { name: "Patchy's Repairs", desc: "Clothing repairs, patching, darning, and invisible mending services.", phone: "+65 8800 8008" },
+  { name: "Sari & Salwar Studio", desc: "Indian ethnic wear tailoring — blouses, salwar kameez, and lehengas.", phone: "+65 8800 8009" },
+  { name: "Quick Stitch Express", desc: "Express alterations in 2 hours — buttons, zips, and trouser hems.", phone: "+65 8800 8010", email: "express@quickstitch.sg" },
+];
+
+const cleaning: BizTemplate[] = [
+  { name: "SparkleClean SG", desc: "Professional home cleaning — weekly, bi-weekly, or deep cleaning. Eco-friendly products.", phone: "+65 8900 9001" },
+  { name: "Maid-To-Shine", desc: "Part-time and ad-hoc cleaning services for HDB and condo units.", phone: "+65 8900 9002", email: "book@maidtoshine.sg" },
+  { name: "Deep Clean Pro", desc: "Move-in/move-out deep cleaning, spring cleaning, and post-renovation clean-up.", phone: "+65 8900 9003" },
+  { name: "AirCon Clean SG", desc: "Aircon servicing, chemical wash, and gas top-up for all brands.", phone: "+65 8900 9004", website: "https://airconclean.sg" },
+  { name: "Sofa & Mattress Cleaners", desc: "Professional upholstery cleaning — sofas, mattresses, and carpets.", phone: "+65 8900 9005" },
+  { name: "Office Sparkle", desc: "Commercial cleaning for offices, co-working spaces, and retail shops.", phone: "+65 8900 9006" },
+  { name: "Green Clean SG", desc: "100% eco-friendly cleaning using plant-based and non-toxic products.", phone: "+65 8900 9007", email: "hello@greenclean.sg" },
+  { name: "Window Wizards", desc: "Exterior and interior window cleaning for landed and high-rise units.", phone: "+65 8900 9008" },
+  { name: "Laundry Express SG", desc: "Wash, dry, and fold laundry service with free pickup and delivery.", phone: "+65 8900 9009" },
+  { name: "Kitchen Blitz Cleaners", desc: "Kitchen deep cleaning — hood, hob, oven, and exhaust degreasing.", phone: "+65 8900 9010", website: "https://kitchenblitz.sg" },
+];
+
+const handyman: BizTemplate[] = [
+  { name: "FixIt Handyman", desc: "Furniture assembly, shelf mounting, minor plumbing, and electrical fixes.", phone: "+65 9000 0001" },
+  { name: "Mr Drill SG", desc: "Wall drilling, TV bracket mounting, and curtain rod installation.", phone: "+65 9000 0002", email: "drill@mrdrill.sg" },
+  { name: "Plumber On Call", desc: "24/7 emergency plumbing — leaks, chokes, and pipe replacement.", phone: "+65 9000 0003" },
+  { name: "Sparky Electrical", desc: "Licensed electrician for wiring, power point installation, and DB box servicing.", phone: "+65 9000 0004", website: "https://sparky.sg" },
+  { name: "Door & Lock Pro", desc: "Door repair, lock replacement, and digital lock installation.", phone: "+65 9000 0005" },
+  { name: "Paint Perfect SG", desc: "HDB and condo painting services — interior, exterior, and feature walls.", phone: "+65 9000 0006" },
+  { name: "AC Repair Express", desc: "Fast aircon repair, gas top-up, and compressor replacement.", phone: "+65 9000 0007", email: "fix@acrepair.sg" },
+  { name: "FloorFix SG", desc: "Vinyl flooring, parquet repair, and tile replacement services.", phone: "+65 9000 0008" },
+  { name: "Roof & Waterproof SG", desc: "Roof leak repair, waterproofing, and ceiling crack fixing.", phone: "+65 9000 0009" },
+  { name: "IKEA Assembly SG", desc: "Professional IKEA furniture assembly — wardrobes, desks, and shelving.", phone: "+65 9000 0010", website: "https://ikeaassembly.sg" },
+];
+
+const photography: BizTemplate[] = [
+  { name: "LensWork Photography", desc: "Weddings, events, portraits, and product shoots. Drone footage available.", phone: "+65 9100 1001", email: "hello@lenswork.sg", website: "https://lenswork.sg" },
+  { name: "SnapShot Studio", desc: "Professional passport photos, family portraits, and graduation shoots.", phone: "+65 9100 1002" },
+  { name: "Cinematic Weddings SG", desc: "Cinematic wedding videography with same-day edits and drone coverage.", phone: "+65 9100 1003", website: "https://cinematicweddings.sg" },
+  { name: "Product Shots SG", desc: "E-commerce product photography — flat lay, lifestyle, and 360° shots.", phone: "+65 9100 1004", email: "shoot@productshots.sg" },
+  { name: "NewBorn Bliss Photo", desc: "Newborn and maternity photography in a warm, comfortable studio.", phone: "+65 9100 1005" },
+  { name: "Event Lens SG", desc: "Corporate event photography — conferences, launches, and gala dinners.", phone: "+65 9100 1006" },
+  { name: "Pet Portrait Studio", desc: "Professional pet photography — studio and outdoor shoots for your fur babies.", phone: "+65 9100 1007" },
+  { name: "Food Stylist & Photographer", desc: "Menu shoots, food styling, and restaurant photography for F&B brands.", phone: "+65 9100 1008", email: "food@stylist.sg" },
+  { name: "Drone View SG", desc: "Aerial photography and videography for real estate, events, and marketing.", phone: "+65 9100 1009", website: "https://droneview.sg" },
+  { name: "Photo Booth Fun SG", desc: "Instant photo booth rental with props, backdrops, and custom prints.", phone: "+65 9100 1010" },
+];
+
+const categoryMap: Record<string, BizTemplate[]> = {
+  "Tuition": tuition,
+  "Baking": baking,
+  "Music / Art / Craft": musicArtCraft,
+  "Home Food": homeFood,
+  "Beauty": beauty,
+  "Pet Services": petServices,
+  "Event Services": eventServices,
+  "Tailoring": tailoring,
+  "Cleaning": cleaning,
+  "Handyman": handyman,
+  "Photography / Videography": photography,
+};
+
+let idCounter = 1;
+const allDemoListings: Listing[] = [];
+
+Object.entries(categoryMap).forEach(([category, templates]) => {
+  templates.forEach((t, i) => {
+    const district = pick(districts, idCounter);
+    const coords = coord(district);
+    const postalCode = String(100000 + idCounter * 137).slice(0, 6);
+    allDemoListings.push({
+      id: `demo-${idCounter}`,
+      name: t.name,
+      uen: `2023${String(idCounter).padStart(5, "0")}${String.fromCharCode(65 + (idCounter % 26))}`,
+      category,
+      district,
+      address: `Blk ${100 + i} ${district} Street ${1 + (i % 5)}, Singapore ${postalCode}`,
+      postalCode,
+      phone: t.phone,
+      email: t.email,
+      website: t.website,
+      description: t.desc,
+      status: "approved",
+      ownerId: "demo",
+      lat: coords.lat + (Math.random() - 0.5) * 0.005,
+      lng: coords.lng + (Math.random() - 0.5) * 0.005,
+    });
+    idCounter++;
+  });
+});
+
+export const DEMO_ALL_LISTINGS: Listing[] = allDemoListings;
