@@ -96,6 +96,7 @@ const Admin = () => {
   const [adminEditData, setAdminEditData] = useState<Record<string, any>>({});
   const [adminSaving, setAdminSaving] = useState(false);
   const [viewingImages, setViewingImages] = useState<{ listing: Listing } | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [seeding, setSeeding] = useState(false);
   const [enquiryFilter, setEnquiryFilter] = useState<"all" | EnquiryStatus>("all");
 
