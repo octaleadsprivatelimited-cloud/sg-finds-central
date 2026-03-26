@@ -33,7 +33,7 @@ import { motion } from "framer-motion";
    ENTERPRISE ADMIN CONSOLE — Azure/GCP inspired
    ═══════════════════════════════════════════════════════════ */
 
-type AdminTab = "dashboard" | "listings" | "enquiries" | "settings";
+type AdminTab = "dashboard" | "listings" | "enquiries" | "analytics" | "activity" | "settings";
 type EnquiryStatus = "unread" | "contacted" | "qualified" | "not_qualified" | "converted" | "spam";
 
 const ENQUIRY_STATUSES: { key: EnquiryStatus; label: string; color: string; dot: string }[] = [
