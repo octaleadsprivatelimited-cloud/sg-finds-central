@@ -338,7 +338,7 @@ const AddListing = () => {
         if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
         return false;
       case "service-location": return serviceLocations.length > 0;
-      case "address": return !!address && !!postalCode;
+      case "address": return !!address && !!postalCode && locationLat !== null && locationLng !== null;
       case "description": {
         const wc = wordCount(shortDescription);
         return wc >= 50 && wc <= 100 && !!detailedDescription.trim();
