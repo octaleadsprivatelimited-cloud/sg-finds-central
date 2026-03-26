@@ -755,31 +755,39 @@ const Admin = () => {
                   </button>
                 ))}
               </div>
+
+              {loading ? (
+                <div className="text-center py-16"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></div>
               ) : filteredEnquiries.length === 0 ? (
                 <div className="text-center py-12 bg-white dark:bg-[hsl(250,15%,12%)] rounded-lg border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)]">
                   <Inbox className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="font-medium text-foreground text-sm">No enquiries yet</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Enquiries from listings will appear here</p>
+                  <p className="font-medium text-foreground text-sm">No enquiries found</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Try adjusting your search or filter</p>
                 </div>
               ) : (
                 <div className="bg-white dark:bg-[hsl(250,15%,12%)] border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)] rounded-lg overflow-hidden divide-y divide-[hsl(0,0%,93%)] dark:divide-[hsl(250,15%,18%)]">
                   {filteredEnquiries.map((e) => {
-                    const dotColor = e.status === "unread"
-                      ? "bg-[hsl(250,50%,55%)]"
-                      : e.status === "replied"
-                        ? "bg-[hsl(152,69%,40%)]"
-                        : "bg-[hsl(0,0%,75%)]";
+                    const statusInfo = ENQUIRY_STATUSES.find(s => s.key === e.status) || ENQUIRY_STATUSES[0];
                     return (
                       <div key={e.id} className="flex items-start gap-3 px-4 py-3.5 hover:bg-[hsl(0,0%,98%)] dark:hover:bg-[hsl(250,15%,14%)] transition-colors">
                         <div className="w-9 h-9 rounded-full bg-[hsl(250,30%,94%)] dark:bg-[hsl(250,20%,18%)] flex items-center justify-center shrink-0 text-xs font-bold text-[hsl(250,50%,50%)]">
                           {e.name[0]?.toUpperCase() || "?"}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-0.5">
+                          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                             <p className="font-medium text-sm text-foreground">{e.name}</p>
-                            <div className={`w-2 h-2 rounded-full ${dotColor} shrink-0`} />
+                            <select
+                              value={e.status}
+                              onChange={(ev) => handleEnquiryStatus(e.id, ev.target.value as EnquiryStatus)}
+                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border-0 cursor-pointer outline-none ${statusInfo.color}`}
+                            >
+                              {ENQUIRY_STATUSES.map(s => (
+                                <option key={s.key} value={s.key}>{s.label}</option>
+                              ))}
+                            </select>
                           </div>
                           <p className="text-[11px] text-muted-foreground mb-1">{e.listingName}</p>
+                          {e.phone && <p className="text-[11px] text-muted-foreground mb-0.5">{e.phone}</p>}
                           <p className="text-xs text-foreground/80 line-clamp-2">{e.message}</p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
