@@ -632,6 +632,16 @@ const Admin = () => {
                           <p className="text-[11px] text-muted-foreground truncate">{l.category} · {l.district}</p>
                         </div>
                         <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${s.bg} ${s.text}`}>{s.label}</span>
+                        {l.documentsUrl && l.documentsUrl.length > 0 && (
+                          <div className="hidden sm:flex items-center gap-1">
+                            {l.documentsUrl.map((url, i) => (
+                              <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center gap-0.5 text-[10px] text-[hsl(250,50%,55%)] hover:underline bg-[hsl(250,30%,96%)] dark:bg-[hsl(250,20%,16%)] px-1.5 py-0.5 rounded">
+                                <FileText className="w-3 h-3" />Doc<ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
                         {l.imageUrls && l.imageUrls.length > 0 && (
                           <button onClick={() => setViewingImages({ listing: l })} className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition">
                             <Image className="w-3 h-3" />{l.imageUrls.length}
@@ -842,6 +852,25 @@ const Admin = () => {
                   <option value="rejected">Rejected</option>
                 </select>
               </div>
+
+              {/* Verification Documents */}
+              {editingListing.documentsUrl && editingListing.documentsUrl.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,18%)]">
+                  <Label className="text-foreground text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />Verification Documents
+                  </Label>
+                  <div className="space-y-1.5">
+                    {editingListing.documentsUrl.map((url, i) => (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-[hsl(250,50%,55%)] hover:underline bg-[hsl(250,30%,96%)] dark:bg-[hsl(250,20%,16%)] px-3 py-2 rounded-md">
+                        <FileText className="w-4 h-4 shrink-0" />
+                        <span className="truncate flex-1">{url}</span>
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Images Review */}
               {adminEditData.imageUrls && adminEditData.imageUrls.length > 0 && (

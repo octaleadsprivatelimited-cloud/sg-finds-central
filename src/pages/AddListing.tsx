@@ -233,6 +233,7 @@ const AddListing = () => {
   const [secondaryContact, setSecondaryContact] = useState("");
   const [secondaryValue, setSecondaryValue] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [verificationDocUrl, setVerificationDocUrl] = useState("");
 
   // Derived
   const steps = getSteps(category, serviceLocations);
@@ -441,6 +442,7 @@ const AddListing = () => {
           website: primaryContact === "website" ? websiteUrl : "",
           secondary: secondaryContact ? { method: secondaryContact, value: secondaryValue } : null,
         },
+        documentsUrl: verificationDocUrl ? [verificationDocUrl] : [],
         status: "pending_approval",
         ownerId: user.uid,
         location: new GeoPoint(locationLat || 1.3521, locationLng || 103.8198),
@@ -1096,6 +1098,23 @@ const AddListing = () => {
                           }
                         />
                       </div>
+                    )}
+                  </div>
+
+                  {/* Verification Document URL */}
+                  <div className="pt-3 border-t border-border space-y-2">
+                    <Label>Verification Document URL (optional)</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Share a Google Drive, Dropbox, or OneDrive link to your ACRA business profile, license, or property ownership documents for faster verification. 
+                      <strong className="text-foreground"> Make sure the link is set to "Anyone with the link can view".</strong>
+                    </p>
+                    <Input
+                      value={verificationDocUrl}
+                      onChange={e => setVerificationDocUrl(e.target.value)}
+                      placeholder="https://drive.google.com/file/d/... or https://www.dropbox.com/..."
+                    />
+                    {verificationDocUrl && !/^https?:\/\/.+/.test(verificationDocUrl) && (
+                      <p className="text-xs text-destructive">Please enter a valid URL starting with https://</p>
                     )}
                   </div>
 
