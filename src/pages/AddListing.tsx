@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
 import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
@@ -235,6 +235,138 @@ const AddListing = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [verificationDocUrl, setVerificationDocUrl] = useState("");
 
+  // ═══ AUTO-SAVE DRAFT (60 days) ═══
+  const DRAFT_KEY = "listing_draft";
+  const DRAFT_EXPIRY_DAYS = 60;
+
+  const draftState = useMemo(() => ({
+    stepIndex, category, district, name, ownerName, uen,
+    subjects, subjectsOther, languages, languagesOther, levels, levelsOther,
+    syllabi, syllabiOther, musicArtSub, musicArtOther, beautySubs, beautyOther,
+    petSubs, petOther, handymanSubs, handymanOther, homeFoodSubs, homeFoodOther,
+    bakingSubs, bakingOther, photoSubs, photoOther, tailoringSubs, tailoringOther,
+    eventSubs, eventOther, cleaningSubs, cleaningOther,
+    serviceLocations, travelArea, address, postalCode, unitNumber,
+    locationLat, locationLng, shortDescription, detailedDescription,
+    workingHours, imageUrls, logoUrl, shortDescriptor,
+    complianceChecks, primaryContact, whatsappNumber, whatsappMessage,
+    instagramHandle, websiteUrl, contactEmail, secondaryContact, secondaryValue,
+    verificationDocUrl,
+  }), [
+    stepIndex, category, district, name, ownerName, uen,
+    subjects, subjectsOther, languages, languagesOther, levels, levelsOther,
+    syllabi, syllabiOther, musicArtSub, musicArtOther, beautySubs, beautyOther,
+    petSubs, petOther, handymanSubs, handymanOther, homeFoodSubs, homeFoodOther,
+    bakingSubs, bakingOther, photoSubs, photoOther, tailoringSubs, tailoringOther,
+    eventSubs, eventOther, cleaningSubs, cleaningOther,
+    serviceLocations, travelArea, address, postalCode, unitNumber,
+    locationLat, locationLng, shortDescription, detailedDescription,
+    workingHours, imageUrls, logoUrl, shortDescriptor,
+    complianceChecks, primaryContact, whatsappNumber, whatsappMessage,
+    instagramHandle, websiteUrl, contactEmail, secondaryContact, secondaryValue,
+    verificationDocUrl,
+  ]);
+
+  // Save draft (debounced)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    // Don't save empty drafts
+    if (!category && !name) return;
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      try {
+        const payload = {
+          data: draftState,
+          expiresAt: Date.now() + DRAFT_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+      } catch {}
+    }, 1000);
+    return () => clearTimeout(saveTimerRef.current);
+  }, [draftState]);
+
+  // Restore draft on mount
+  const [draftRestored, setDraftRestored] = useState(false);
+  useEffect(() => {
+    if (draftRestored) return;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) { setDraftRestored(true); return; }
+      const { data, expiresAt } = JSON.parse(raw);
+      if (Date.now() > expiresAt) {
+        localStorage.removeItem(DRAFT_KEY);
+        setDraftRestored(true);
+        return;
+      }
+      // Restore all fields
+      if (data.stepIndex != null) setStepIndex(data.stepIndex);
+      if (data.category) setCategory(data.category);
+      if (data.district) setDistrict(data.district);
+      if (data.name) setName(data.name);
+      if (data.ownerName) setOwnerName(data.ownerName);
+      if (data.uen) setUen(data.uen);
+      if (data.subjects) setSubjects(data.subjects);
+      if (data.subjectsOther) setSubjectsOther(data.subjectsOther);
+      if (data.languages) setLanguages(data.languages);
+      if (data.languagesOther) setLanguagesOther(data.languagesOther);
+      if (data.levels) setLevels(data.levels);
+      if (data.levelsOther) setLevelsOther(data.levelsOther);
+      if (data.syllabi) setSyllabi(data.syllabi);
+      if (data.syllabiOther) setSyllabiOther(data.syllabiOther);
+      if (data.musicArtSub) setMusicArtSub(data.musicArtSub);
+      if (data.musicArtOther) setMusicArtOther(data.musicArtOther);
+      if (data.beautySubs) setBeautySubs(data.beautySubs);
+      if (data.beautyOther) setBeautyOther(data.beautyOther);
+      if (data.petSubs) setPetSubs(data.petSubs);
+      if (data.petOther) setPetOther(data.petOther);
+      if (data.handymanSubs) setHandymanSubs(data.handymanSubs);
+      if (data.handymanOther) setHandymanOther(data.handymanOther);
+      if (data.homeFoodSubs) setHomeFoodSubs(data.homeFoodSubs);
+      if (data.homeFoodOther) setHomeFoodOther(data.homeFoodOther);
+      if (data.bakingSubs) setBakingSubs(data.bakingSubs);
+      if (data.bakingOther) setBakingOther(data.bakingOther);
+      if (data.photoSubs) setPhotoSubs(data.photoSubs);
+      if (data.photoOther) setPhotoOther(data.photoOther);
+      if (data.tailoringSubs) setTailoringSubs(data.tailoringSubs);
+      if (data.tailoringOther) setTailoringOther(data.tailoringOther);
+      if (data.eventSubs) setEventSubs(data.eventSubs);
+      if (data.eventOther) setEventOther(data.eventOther);
+      if (data.cleaningSubs) setCleaningSubs(data.cleaningSubs);
+      if (data.cleaningOther) setCleaningOther(data.cleaningOther);
+      if (data.serviceLocations) setServiceLocations(data.serviceLocations);
+      if (data.travelArea) setTravelArea(data.travelArea);
+      if (data.address) setAddress(data.address);
+      if (data.postalCode) setPostalCode(data.postalCode);
+      if (data.unitNumber) setUnitNumber(data.unitNumber);
+      if (data.locationLat != null) setLocationLat(data.locationLat);
+      if (data.locationLng != null) setLocationLng(data.locationLng);
+      if (data.shortDescription) setShortDescription(data.shortDescription);
+      if (data.detailedDescription) setDetailedDescription(data.detailedDescription);
+      if (data.workingHours) setWorkingHours(data.workingHours);
+      if (data.imageUrls?.length) setImageUrls(data.imageUrls);
+      if (data.logoUrl) setLogoUrl(data.logoUrl);
+      if (data.shortDescriptor) setShortDescriptor(data.shortDescriptor);
+      if (data.complianceChecks) setComplianceChecks(data.complianceChecks);
+      if (data.primaryContact) setPrimaryContact(data.primaryContact);
+      if (data.whatsappNumber) setWhatsappNumber(data.whatsappNumber);
+      if (data.whatsappMessage) setWhatsappMessage(data.whatsappMessage);
+      if (data.instagramHandle) setInstagramHandle(data.instagramHandle);
+      if (data.websiteUrl) setWebsiteUrl(data.websiteUrl);
+      if (data.contactEmail) setContactEmail(data.contactEmail);
+      if (data.secondaryContact) setSecondaryContact(data.secondaryContact);
+      if (data.secondaryValue) setSecondaryValue(data.secondaryValue);
+      if (data.verificationDocUrl) setVerificationDocUrl(data.verificationDocUrl);
+      toast.info("Draft restored — continue where you left off!", { duration: 4000 });
+    } catch {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+    setDraftRestored(true);
+  }, [draftRestored]);
+
+  const clearDraft = () => {
+    try { localStorage.removeItem(DRAFT_KEY); } catch {}
+  };
+
   // Derived
   const steps = getSteps(category, serviceLocations);
   const currentStep = steps[stepIndex];
@@ -450,6 +582,7 @@ const AddListing = () => {
         lng: locationLng,
         createdAt: serverTimestamp(),
       });
+      clearDraft();
       toast.success("Listing submitted for approval!");
       navigate("/");
     } catch (err: any) {
