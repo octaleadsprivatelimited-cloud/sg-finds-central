@@ -545,6 +545,22 @@ const AddListing = () => {
     return {};
   };
 
+  // Build a flat array of all selected subcategory values for easy filtering
+  const buildSubcategoryList = (): string[] => {
+    if (category === "Tuition") return [...subjects, ...(subjectsOther ? [subjectsOther] : []), ...languages, ...(languagesOther ? [languagesOther] : [])];
+    if (category === "Music / Art / Craft") return [musicArtOther || musicArtSub].filter(Boolean);
+    if (category === "Beauty") return [...beautySubs, ...(beautyOther ? [beautyOther] : [])];
+    if (category === "Pet Services") return [...petSubs, ...(petOther ? [petOther] : [])];
+    if (category === "Handyman") return [...handymanSubs, ...(handymanOther ? [handymanOther] : [])];
+    if (category === "Home Food") return [...homeFoodSubs, ...(homeFoodOther ? [homeFoodOther] : [])];
+    if (category === "Baking") return [...bakingSubs, ...(bakingOther ? [bakingOther] : [])];
+    if (category === "Photography / Videography") return [...photoSubs, ...(photoOther ? [photoOther] : [])];
+    if (category === "Tailoring") return [...tailoringSubs, ...(tailoringOther ? [tailoringOther] : [])];
+    if (category === "Event Services") return [...eventSubs, ...(eventOther ? [eventOther] : [])];
+    if (category === "Cleaning") return [...cleaningSubs, ...(cleaningOther ? [cleaningOther] : [])];
+    return [];
+  };
+
   const handleSubmit = async () => {
     if (!user) { toast.error("Please sign in"); return; }
     if (hasExistingListing) { toast.error("One business per account"); return; }
