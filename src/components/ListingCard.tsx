@@ -214,17 +214,17 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   return (
     <div
       data-listing-id={listing.id}
-      className={`bg-card rounded-lg border border-border cursor-pointer transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] ${
+      className={`rounded-xl border border-border/60 cursor-pointer transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] ${
         highlighted ? "ring-2 ring-primary shadow-[var(--shadow-card-hover)]" : "shadow-[var(--shadow-card)]"
-      }`}
+      } md:bg-card md:rounded-lg md:border-border`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
       {/* ── MOBILE ── */}
-      <div className="flex gap-2.5 p-2.5 md:hidden">
+      <div className={`flex gap-3 p-3 md:hidden rounded-xl border-l-[3px] ${catBorder} ${catBg}`}>
         {/* Compact image */}
-        <div className="w-16 h-16 shrink-0 rounded-md overflow-hidden bg-muted">
+        <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-muted shadow-sm">
           {listing.logoUrl ? (
             <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
           ) : listing.coverImage ? (
