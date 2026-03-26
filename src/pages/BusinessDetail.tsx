@@ -161,7 +161,7 @@ const BusinessDetail = () => {
                   <p className="text-[15px] text-muted-foreground leading-[1.7]">{listing.description}</p>
                 </div>
 
-                {listing.catalogueEnabled !== false && <CatalogueSection />}
+                {listing.catalogueEnabled !== false && <CatalogueSection items={listing.catalogueItems} />}
 
                 {/* Operating Hours — Apple-style card */}
                 <div>
@@ -219,7 +219,7 @@ const BusinessDetail = () => {
 
               {listing.catalogueEnabled !== false && (
                 <TabsContent value="catalogue" className="mt-8">
-                  <CatalogueSection />
+                  <CatalogueSection items={listing.catalogueItems} />
                 </TabsContent>
               )}
 

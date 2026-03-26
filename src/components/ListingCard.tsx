@@ -70,6 +70,7 @@ export interface Listing {
   ownerName?: string;
   contactEmail?: string;
   catalogueEnabled?: boolean;
+  catalogueItems?: { id: string; title: string; description: string; price: string }[];
   pendingLogoUrl?: string;
   pendingImageUrls?: string[];
   subcategoryData?: Record<string, any>;
