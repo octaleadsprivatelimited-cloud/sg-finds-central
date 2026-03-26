@@ -117,11 +117,13 @@ const SingleChipSelect = ({
 const getSteps = (category: string, serviceLocations: string[]) => {
   const steps: { key: string; label: string; icon: React.ReactNode }[] = [
     { key: "category", label: "Category", icon: <Building2 className="w-4 h-4" /> },
-    { key: "details", label: "Business Details", icon: <FileText className="w-4 h-4" /> },
   ];
   if (needsSubcategoryScreen(category)) {
     steps.push({ key: "subcategory", label: "Subcategory", icon: <FileText className="w-4 h-4" /> });
   }
+  steps.push(
+    { key: "details", label: "Business Details", icon: <FileText className="w-4 h-4" /> },
+  );
   steps.push(
     { key: "service-location", label: "Service Location", icon: <MapPin className="w-4 h-4" /> },
     { key: "address", label: "Location", icon: <MapPin className="w-4 h-4" /> },
