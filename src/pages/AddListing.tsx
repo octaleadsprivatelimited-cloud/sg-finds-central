@@ -577,6 +577,7 @@ const AddListing = () => {
         serviceLocations,
         travelArea: serviceLocations.includes("at-customer-home") ? travelArea : "",
         subcategoryData: buildSubcategoryData(),
+        subcategoryList: buildSubcategoryList(),
         complianceChecks,
         primaryContact,
         contactEmail,

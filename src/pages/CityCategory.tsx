@@ -204,7 +204,16 @@ const CityCategory = () => {
     let result = listings.filter((l) => l.category === matchedCategory);
     // Further filter by subcategory if selected
     if (activeSub && activeSub !== "all") {
-      result = result.filter((l) => (l as any).subcategory === activeSub);
+      result = result.filter((l) => {
+        const data = (l as any).subcategoryData;
+        const flatList: string[] = (l as any).subcategoryList || [];
+        // Check flat list first, then nested data
+        if (flatList.includes(activeSub)) return true;
+        if (data?.subcategory === activeSub) return true;
+        if (data?.subcategories?.includes(activeSub)) return true;
+        if (data?.subjects?.includes(activeSub)) return true;
+        return false;
+      });
     }
     return result;
   }, [matchedCategory, listings, activeSub]);
