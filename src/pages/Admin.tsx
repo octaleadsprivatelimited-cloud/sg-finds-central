@@ -300,6 +300,68 @@ const Admin = () => {
     return counts;
   }, [enquiries]);
 
+  // ── Computed analytics ──
+  const categoryBreakdown = useMemo(() => {
+    const map: Record<string, number> = {};
+    allListings.forEach(l => { map[l.category] = (map[l.category] || 0) + 1; });
+    return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  }, [allListings]);
+
+  const districtBreakdown = useMemo(() => {
+    const map: Record<string, number> = {};
+    allListings.forEach(l => { if (l.district) map[l.district] = (map[l.district] || 0) + 1; });
+    return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  }, [allListings]);
+
+  const topListings = useMemo(() =>
+    [...allListings].filter(l => l.status === "approved").sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0)).slice(0, 5),
+  [allListings]);
+
+  const activityLog = useMemo(() => {
+    const items: { id: string; type: string; icon: any; text: string; time: string; color: string }[] = [];
+    enquiries.slice(0, 5).forEach(e => items.push({
+      id: `e-${e.id}`, type: "enquiry", icon: MessageSquare,
+      text: `${e.name} enquired about ${e.listingName}`,
+      time: e.createdAt?.toDate ? e.createdAt.toDate().toLocaleDateString() : "Recently",
+      color: "hsl(220,70%,50%)",
+    }));
+    pendingListings.slice(0, 3).forEach(l => items.push({
+      id: `p-${l.id}`, type: "pending", icon: Clock,
+      text: `${l.name} submitted for review`,
+      time: "Pending",
+      color: "hsl(38,85%,50%)",
+    }));
+    return items.slice(0, 8);
+  }, [enquiries, pendingListings]);
+
+  const enquiryConversion = useMemo(() => {
+    const total = enquiries.length || 1;
+    return {
+      contacted: Math.round((enquiries.filter(e => e.status === "contacted").length / total) * 100),
+      qualified: Math.round((enquiries.filter(e => e.status === "qualified").length / total) * 100),
+      converted: Math.round((enquiries.filter(e => e.status === "converted").length / total) * 100),
+    };
+  }, [enquiries]);
+
+  const toggleSelect = (id: string) => setSelectedIds(prev => {
+    const n = new Set(prev);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredAllListings.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(filteredAllListings.map(l => l.id)));
+  };
+  const handleBulkApprove = async () => {
+    for (const id of selectedIds) { await handleApprove(id); }
+    setSelectedIds(new Set());
+  };
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.size} listing(s) permanently?`)) return;
+    for (const id of selectedIds) { await handleDelete(id); }
+    setSelectedIds(new Set());
+  };
+
   const downloadCSV = (filename: string, headers: string[], rows: string[][]) => {
     const escape = (v: string) => `"${(v ?? "").replace(/"/g, '""')}"`;
     const csv = [headers.map(escape).join(","), ...rows.map(r => r.map(escape).join(","))].join("\n");
