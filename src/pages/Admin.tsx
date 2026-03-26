@@ -112,7 +112,30 @@ const Admin = () => {
     autoApprove: false,
     emailNotifications: true,
     documentRequired: true,
+    whatsappPrefill: "Hi {{name}}, thanks for your enquiry about {{business}}. ",
   });
+
+  const handleDeleteEnquiry = async (enquiryId: string) => {
+    if (!confirm("Delete this enquiry permanently?")) return;
+    setActionLoading(enquiryId);
+    try {
+      await deleteDoc(doc(db, "enquiries", enquiryId));
+      setEnquiries((prev) => prev.filter((e) => e.id !== enquiryId));
+      toast.success("Enquiry deleted");
+    } catch {
+      toast.error("Failed to delete enquiry");
+    }
+    setActionLoading(null);
+  };
+
+  const getWhatsAppUrl = (enquiry: Enquiry) => {
+    const phone = (enquiry.phone || "").replace(/[^0-9]/g, "");
+    if (!phone) return null;
+    const msg = settings.whatsappPrefill
+      .replace("{{name}}", enquiry.name)
+      .replace("{{business}}", enquiry.listingName);
+    return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  };
 
   useEffect(() => {
     if (!authLoading && (!user || !isSuperAdmin)) {
