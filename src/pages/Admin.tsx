@@ -158,6 +158,36 @@ const Admin = () => {
     }
   };
 
+  const handleDeleteSingleImage = async (listingId: string, imageIndex: number, field: "imageUrls" | "pendingImageUrls") => {
+    const listing = allListings.find(l => l.id === listingId) || pendingListings.find(l => l.id === listingId);
+    if (!listing) return;
+    const images = [...(listing[field] || [])];
+    images.splice(imageIndex, 1);
+    try {
+      await updateDoc(doc(db, "listings", listingId), { [field]: images });
+      const updater = (l: Listing) => l.id === listingId ? { ...l, [field]: images } : l;
+      setAllListings(prev => prev.map(updater));
+      setPendingListings(prev => prev.map(updater));
+      toast.success("Image removed");
+    } catch { toast.error("Failed to remove image"); }
+  };
+
+  const handleApproveSinglePendingImage = async (listingId: string, imageIndex: number) => {
+    const listing = allListings.find(l => l.id === listingId) || pendingListings.find(l => l.id === listingId);
+    if (!listing) return;
+    const pending = [...(listing.pendingImageUrls || [])];
+    const approved = [...(listing.imageUrls || [])];
+    const [img] = pending.splice(imageIndex, 1);
+    approved.push(img);
+    try {
+      await updateDoc(doc(db, "listings", listingId), { imageUrls: approved, pendingImageUrls: pending });
+      const updater = (l: Listing) => l.id === listingId ? { ...l, imageUrls: approved, pendingImageUrls: pending } : l;
+      setAllListings(prev => prev.map(updater));
+      setPendingListings(prev => prev.map(updater));
+      toast.success("Image approved");
+    } catch { toast.error("Failed to approve image"); }
+  };
+
   useEffect(() => {
     if (!authLoading && (!user || !isSuperAdmin)) {
       navigate("/");
