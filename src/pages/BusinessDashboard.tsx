@@ -737,7 +737,7 @@ const BusinessDashboard = () => {
                       <Select value={offerListingId} onValueChange={setOfferListingId}>
                         <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
                         <SelectContent>
-                          {listings.filter(l => l.status === "approved").map(l => (
+                          {listings.map(l => (
                             <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
                           ))}
                         </SelectContent>
