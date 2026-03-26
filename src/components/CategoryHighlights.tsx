@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toSlug } from "@/lib/url-helpers";
 import foodImg from "@/assets/highlights/food.png";
 import beautyImg from "@/assets/highlights/beauty.png";
 import cleaningImg from "@/assets/highlights/cleaning.png";
