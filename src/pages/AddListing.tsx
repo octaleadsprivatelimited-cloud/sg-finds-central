@@ -511,14 +511,29 @@ const AddListing = () => {
       errors.forEach(e => toast.error(e));
 
       if (validFiles.length > 0) {
+        setUploadProgress({});
         const uploadPromises = validFiles.map(async (file) => {
           const ext = file.name.split(".").pop() || "jpg";
-          const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
-          await uploadBytes(storageRef, file);
-          return getDownloadURL(storageRef);
+          const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const storageRef = ref(storage, `listings/${user.uid}/${fileName}`);
+          return new Promise<string>((resolve, reject) => {
+            const task = uploadBytesResumable(storageRef, file);
+            task.on("state_changed",
+              (snap) => {
+                const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                setUploadProgress(prev => ({ ...prev, [file.name]: pct }));
+              },
+              (err) => reject(err),
+              async () => {
+                const url = await getDownloadURL(task.snapshot.ref);
+                resolve(url);
+              }
+            );
+          });
         });
         const urls = await Promise.all(uploadPromises);
         setImageUrls(prev => [...prev, ...urls]);
+        setUploadProgress({});
         toast.success(`${urls.length} image(s) uploaded`);
       }
     } catch (err: any) {
