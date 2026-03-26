@@ -258,18 +258,6 @@ const categoryMap: Record<string, BizTemplate[]> = {
   "Handyman": handyman,
   "Photography / Videography": photography,
 };
-  "Tuition": tuition,
-  "Baking": baking,
-  "Music / Art / Craft": musicArtCraft,
-  "Home Food": homeFood,
-  "Beauty": beauty,
-  "Pet Services": petServices,
-  "Event Services": eventServices,
-  "Tailoring": tailoring,
-  "Cleaning": cleaning,
-  "Handyman": handyman,
-  "Photography / Videography": photography,
-};
 
 const CATEGORY_LOGOS: Record<string, string[]> = {
   "Tuition": [
