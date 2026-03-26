@@ -336,11 +336,27 @@ const BusinessDashboard = () => {
     try {
       const logoChanged = editLogoUrl !== (editingListing.logoUrl || "");
       const imagesChanged = JSON.stringify(editImageUrls) !== JSON.stringify(editingListing.imageUrls || []);
-      const updates: Record<string, any> = {
+
+      // Build a snapshot of the previous approved values for changed fields
+      const trackFields = ["name", "category", "district", "address", "phone", "website", "email", "description", "customSlug", "operatingHours"] as const;
+      const previousApproved: Record<string, any> = { ...(editingListing as any).previousApproved || {} };
+      const newValues: Record<string, any> = {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
         customSlug: sanitizedSlug, operatingHours: editHours,
+      };
+      for (const f of trackFields) {
+        const oldVal = (editingListing as any)[f];
+        const newVal = newValues[f];
+        if (JSON.stringify(oldVal) !== JSON.stringify(newVal) && !(f in previousApproved)) {
+          previousApproved[f] = oldVal ?? "";
+        }
+      }
+
+      const updates: Record<string, any> = {
+        ...newValues,
         specialHours: editSpecialHours, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
+        previousApproved,
       };
       if (logoChanged) { updates.pendingLogoUrl = editLogoUrl; } else { updates.logoUrl = editLogoUrl; }
       if (imagesChanged) { updates.pendingImageUrls = editImageUrls; } else { updates.imageUrls = editImageUrls; }
