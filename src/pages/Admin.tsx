@@ -254,6 +254,37 @@ const Admin = () => {
     setLoading(false);
   };
 
+  // Request notification permission on mount
+  useEffect(() => { requestNotifPermission(); }, [requestNotifPermission]);
+
+  // Detect new enquiries/pending and alert
+  useEffect(() => {
+    const enquiryCount = enquiries.filter(e => e.status === "unread").length;
+    const pendingCount = pendingListings.length;
+
+    if (prevEnquiryCountRef.current !== null && enquiryCount > prevEnquiryCountRef.current) {
+      const diff = enquiryCount - prevEnquiryCountRef.current;
+      playNotifSound();
+      sendBrowserNotif("New Enquiry", `${diff} new enquir${diff > 1 ? "ies" : "y"} received`);
+      toast.info(`🔔 ${diff} new enquir${diff > 1 ? "ies" : "y"} received!`);
+    }
+    if (prevPendingCountRef.current !== null && pendingCount > prevPendingCountRef.current) {
+      const diff = pendingCount - prevPendingCountRef.current;
+      playNotifSound();
+      sendBrowserNotif("New Listing", `${diff} listing${diff > 1 ? "s" : ""} pending approval`);
+      toast.info(`🔔 ${diff} new listing${diff > 1 ? "s" : ""} pending review!`);
+    }
+
+    prevEnquiryCountRef.current = enquiryCount;
+    prevPendingCountRef.current = pendingCount;
+  }, [enquiries, pendingListings, playNotifSound, sendBrowserNotif]);
+
+  // Auto-refresh every 30s to detect new data
+  useEffect(() => {
+    const interval = setInterval(() => { fetchData(); }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleApprove = async (id: string) => {
     setActionLoading(id);
     try {
