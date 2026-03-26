@@ -97,7 +97,9 @@ const Admin = () => {
       let count = 0;
       for (const listing of DEMO_ALL_LISTINGS) {
         const { id, ...data } = listing;
-        await setDoc(doc(db, "listings", id), data);
+        // Remove undefined fields — Firestore rejects them
+        const cleanData = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
+        await setDoc(doc(db, "listings", id), cleanData);
         count++;
       }
       toast.success(`Seeded ${count} demo listings to Firestore`);
