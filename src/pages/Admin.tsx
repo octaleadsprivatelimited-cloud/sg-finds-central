@@ -1032,7 +1032,10 @@ const Admin = () => {
               ) : (
                 <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl overflow-hidden">
                   {/* Table header */}
-                  <div className="grid grid-cols-[1fr_120px_100px_80px] gap-3 px-5 py-2.5 border-b border-[hsl(220,15%,92%)] bg-[hsl(220,15%,98%)]">
+                  <div className="grid grid-cols-[32px_1fr_120px_100px_80px] gap-3 px-5 py-2.5 border-b border-[hsl(220,15%,92%)] bg-[hsl(220,15%,98%)]">
+                    <button onClick={toggleSelectAll} className="w-5 h-5 rounded border border-[hsl(220,15%,80%)] flex items-center justify-center hover:bg-[hsl(220,20%,95%)] transition">
+                      {selectedIds.size === filteredAllListings.length && filteredAllListings.length > 0 ? <Check className="w-3 h-3 text-[hsl(220,70%,50%)]" /> : null}
+                    </button>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(220,10%,55%)]">Business</span>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(220,10%,55%)] hidden sm:block">Category</span>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(220,10%,55%)] hidden sm:block">Status</span>
