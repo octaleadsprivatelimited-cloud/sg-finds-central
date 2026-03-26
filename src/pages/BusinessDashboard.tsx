@@ -97,6 +97,13 @@ const BusinessDashboard = () => {
   const [offerCode, setOfferCode] = useState("");
   const [offerSaving, setOfferSaving] = useState(false);
 
+  // Catalogue state
+  const [catListingId, setCatListingId] = useState("");
+  const [catTitle, setCatTitle] = useState("");
+  const [catDescription, setCatDescription] = useState("");
+  const [catPrice, setCatPrice] = useState("");
+  const [catSaving, setCatSaving] = useState(false);
+
   // Load user's listings from Firestore
   useEffect(() => {
     const fetchMyListings = async () => {
