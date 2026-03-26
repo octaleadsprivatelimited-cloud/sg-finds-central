@@ -94,7 +94,18 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       }
       onClose();
     } catch (err: any) {
-      toast.error(err.message || "Authentication failed");
+      const code = err?.code || "";
+      const friendlyMessages: Record<string, string> = {
+        "auth/wrong-password": "Incorrect password. Please try again.",
+        "auth/invalid-credential": "Incorrect email or password. Please try again.",
+        "auth/user-not-found": "No account found with this email.",
+        "auth/email-already-in-use": "An account with this email already exists.",
+        "auth/weak-password": "Password is too weak. Use at least 6 characters.",
+        "auth/invalid-email": "Please enter a valid email address.",
+        "auth/too-many-requests": "Too many attempts. Please try again later.",
+        "auth/network-request-failed": "Network error. Please check your connection.",
+      };
+      toast.error(friendlyMessages[code] || "Authentication failed. Please try again.");
     }
     setLoading(false);
   };
