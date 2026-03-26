@@ -70,14 +70,6 @@ Singapore's trusted business directory. Discover, connect, and grow with local b
           <div>
             <h4 className="font-semibold text-sm text-foreground mb-4">Contact Us</h4>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
-                <span>71 Ayer Rajah Crescent, Singapore 139951</span>
-              </li>
-              <li className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                <Phone className="w-4 h-4 shrink-0 text-primary" />
-                <span>+65 6100 0000</span>
-              </li>
               <li className="flex items-center gap-2.5 text-sm text-muted-foreground">
                 <Mail className="w-4 h-4 shrink-0 text-primary" />
                 <span>hello@nearbuy.sg</span>
