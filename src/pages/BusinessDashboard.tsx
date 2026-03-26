@@ -1032,6 +1032,11 @@ const BusinessDashboard = () => {
                                 </div>
                               ) : (
                                 <>
+                                  {item.image && (
+                                    <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-2 bg-muted">
+                                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
                                   <div className="flex items-start justify-between gap-2">
                                     <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
