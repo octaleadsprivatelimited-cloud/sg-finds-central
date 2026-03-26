@@ -90,20 +90,20 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
 
       {/* Lightbox */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-5xl p-0 bg-black/95 backdrop-blur-2xl border-none rounded-2xl overflow-hidden [&>button:last-child]:hidden" aria-describedby={undefined}>
-          <div className="relative flex items-center justify-center min-h-[50vh] sm:min-h-[70vh]">
+        <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] p-0 bg-black/95 backdrop-blur-2xl border-none rounded-none [&>button:last-child]:hidden" aria-describedby={undefined}>
+          <div className="relative flex items-center justify-center w-full h-full">
             <img
               src={allPhotos[activeIndex]}
               alt={`${businessName} photo`}
-              className="w-full max-h-[85vh] object-contain"
+              className="max-w-[85vw] max-h-[85vh] object-contain"
             />
             {/* Counter */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-medium">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white/15 backdrop-blur-md text-white text-sm font-medium z-20">
               {activeIndex + 1} / {allPhotos.length}
             </div>
             {/* Close */}
             <button
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 flex items-center justify-center transition-colors z-10"
+              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 flex items-center justify-center transition-colors z-20"
               onClick={() => setLightboxOpen(false)}
               aria-label="Close"
             >
@@ -112,30 +112,30 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
             {/* Prev */}
             {activeIndex > 0 && (
               <button
-                className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/35 active:scale-95 transition-all z-10 shadow-lg"
+                className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/25 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 active:scale-95 transition-all z-20 shadow-xl border border-white/10"
                 onClick={goPrev}
                 aria-label="Previous photo"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-7 h-7" />
               </button>
             )}
             {/* Next */}
             {activeIndex < allPhotos.length - 1 && (
               <button
-                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/35 active:scale-95 transition-all z-10 shadow-lg"
+                className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/25 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 active:scale-95 transition-all z-20 shadow-xl border border-white/10"
                 onClick={goNext}
                 aria-label="Next photo"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-7 h-7" />
               </button>
             )}
             {/* Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
               {allPhotos.map((_, idx) => (
                 <button
                   key={idx}
                   aria-label={`Go to photo ${idx + 1}`}
-                  className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-6 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"}`}
+                  className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-7 h-2 bg-white" : "w-2 h-2 bg-white/40 hover:bg-white/60"}`}
                   onClick={() => setActiveIndex(idx)}
                 />
               ))}
