@@ -990,11 +990,33 @@ const BusinessDashboard = () => {
                                   <Input className="rounded-lg text-sm" value={editCatTitle} onChange={e => setEditCatTitle(e.target.value)} placeholder="Title" />
                                   <Input className="rounded-lg text-sm" value={editCatPrice} onChange={e => setEditCatPrice(e.target.value)} placeholder="Price" />
                                   <Textarea className="rounded-lg text-sm" value={editCatDescription} onChange={e => setEditCatDescription(e.target.value)} placeholder="Description" rows={2} />
+                                  <div className="flex items-center gap-2">
+                                    {editCatImage && (
+                                      <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-border shrink-0">
+                                        <img src={editCatImage} alt="Preview" className="w-full h-full object-cover" />
+                                        <button onClick={() => setEditCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
+                                          <X className="w-2.5 h-2.5" />
+                                        </button>
+                                      </div>
+                                    )}
+                                    <label className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-dashed border-border cursor-pointer hover:bg-secondary/50 transition-colors text-xs text-muted-foreground">
+                                      <Upload className="w-3 h-3" />
+                                      {editCatImage ? "Change" : "Add image"}
+                                      <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        const base64 = await compressFileToBase64(file);
+                                        if (base64) setEditCatImage(base64);
+                                        else toast.error("Failed to process image");
+                                        e.target.value = "";
+                                      }} />
+                                    </label>
+                                  </div>
                                   <div className="flex gap-2">
                                     <Button size="sm" className="rounded-lg text-xs" disabled={!editCatTitle.trim()}
                                       onClick={async () => {
                                         try {
-                                          const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim() } : c);
+                                          const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim(), image: editCatImage || undefined } : c);
                                           await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
                                           setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
                                           setEditingCatItem(null);
