@@ -187,7 +187,77 @@ const photography: BizTemplate[] = [
   { name: "Photo Booth Fun SG", desc: "Instant photo booth rental with props, backdrops, and custom prints.", phone: "+65 9100 1010" },
 ];
 
+// Subcategory assignments per category — each business gets relevant subcategories
+const CATEGORY_SUBCATEGORIES: Record<string, string[][]> = {
+  "Tuition": [
+    ["maths", "english"], ["maths", "english"], ["maths", "physics"], ["english", "maths"],
+    ["maths", "english"], ["maths"], ["chemistry", "biology"], ["maths", "english"],
+    ["maths", "english", "physics"], ["maths", "english"],
+  ],
+  "Baking": [
+    ["cakes", "cupcakes"], ["bread", "pastries"], ["cakes", "custom-cakes"], ["cookies"],
+    ["pastries", "cakes"], ["bread"], ["cakes", "custom-cakes"], ["pastries", "bread"],
+    ["cakes", "pastries"], ["pastries", "custom-cakes"],
+  ],
+  "Music / Art / Craft": [
+    ["music"], ["art", "craft"], ["music"], ["art"], ["music"],
+    ["craft"], ["music"], ["craft", "art"], ["music"], ["art"],
+  ],
+  "Home Food": [
+    ["malay-cuisine"], ["malay-cuisine", "indian-cuisine", "chinese-cuisine"], ["vegetarian-vegan", "meal-prep"],
+    ["malay-cuisine"], ["meal-prep"], ["indian-cuisine"], ["chinese-cuisine"],
+    ["vegetarian-vegan"], ["chinese-cuisine"], ["malay-cuisine", "chinese-cuisine"],
+  ],
+  "Beauty": [
+    ["nails", "lashes"], ["lashes", "brows"], ["nails"], ["makeup"],
+    ["brows", "makeup"], ["nails", "lashes"], ["nails"], ["hair"],
+    ["nails", "lashes"], ["makeup", "hair"],
+  ],
+  "Pet Services": [
+    ["basic-grooming", "pet-sitting"], ["basic-grooming"], ["pet-sitting"], ["dog-walking"],
+    ["basic-grooming"], ["pet-sitting"], ["dog-walking"], ["pet-sitting"],
+    ["pet-sitting"], ["basic-grooming"],
+  ],
+  "Event Services": [
+    ["balloon-decoration"], ["party-planning", "catering-coordination"], ["balloon-decoration", "floral"],
+    ["party-planning"], ["party-planning"], ["party-planning"], ["party-planning", "floral"],
+    ["party-planning"], ["party-planning", "catering-coordination"], ["party-planning"],
+  ],
+  "Tailoring": [
+    ["alterations"], ["alterations"], ["custom-clothing"], ["curtains"],
+    ["alterations"], ["traditional-wear"], ["custom-clothing"], ["alterations"],
+    ["traditional-wear", "custom-clothing"], ["alterations"],
+  ],
+  "Cleaning": [
+    ["regular-cleaning", "deep-cleaning"], ["regular-cleaning"], ["deep-cleaning", "move-in-out"],
+    ["regular-cleaning"], ["deep-cleaning"], ["regular-cleaning"], ["regular-cleaning"],
+    ["regular-cleaning"], ["regular-cleaning"], ["deep-cleaning"],
+  ],
+  "Handyman": [
+    ["carpenter", "plumber"], ["carpenter"], ["plumber"], ["minor-electrical"],
+    ["carpenter"], ["patching-painting"], ["minor-electrical"], ["carpenter"],
+    ["plumber", "patching-painting"], ["carpenter"],
+  ],
+  "Photography / Videography": [
+    ["event-wedding", "drone"], ["portrait"], ["videography", "event-wedding"], ["product"],
+    ["portrait"], ["event-wedding"], ["portrait"], ["product"],
+    ["drone", "videography"], ["event-wedding"],
+  ],
+};
+
 const categoryMap: Record<string, BizTemplate[]> = {
+  "Tuition": tuition,
+  "Baking": baking,
+  "Music / Art / Craft": musicArtCraft,
+  "Home Food": homeFood,
+  "Beauty": beauty,
+  "Pet Services": petServices,
+  "Event Services": eventServices,
+  "Tailoring": tailoring,
+  "Cleaning": cleaning,
+  "Handyman": handyman,
+  "Photography / Videography": photography,
+};
   "Tuition": tuition,
   "Baking": baking,
   "Music / Art / Craft": musicArtCraft,
