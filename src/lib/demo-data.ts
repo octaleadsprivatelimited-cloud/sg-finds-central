@@ -355,10 +355,17 @@ const allDemoListings: Listing[] = [];
 
 Object.entries(categoryMap).forEach(([category, templates]) => {
   const logos = CATEGORY_LOGOS[category] || [];
+  const subs = CATEGORY_SUBCATEGORIES[category] || [];
   templates.forEach((t, i) => {
     const district = pick(districts, idCounter);
     const coords = coord(district);
     const postalCode = String(100000 + idCounter * 137).slice(0, 6);
+    const subcats = subs[i] || subs[0] || [];
+    const subcategoryData: Record<string, any> = category === "Tuition"
+      ? { subjects: subcats, levels: ["secondary"], syllabi: ["moe"] }
+      : category === "Music / Art / Craft"
+        ? { subcategory: subcats[0] || "music" }
+        : { subcategories: subcats };
     allDemoListings.push({
       id: `demo-${idCounter}`,
       name: t.name,
@@ -374,6 +381,7 @@ Object.entries(categoryMap).forEach(([category, templates]) => {
       status: "approved",
       ownerId: "demo",
       logoUrl: logos[i % logos.length],
+      subcategoryData,
       lat: coords.lat + (Math.random() - 0.5) * 0.005,
       lng: coords.lng + (Math.random() - 0.5) * 0.005,
     });
