@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, forwardRef } from "react";
-import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
+import { DEMO_ALL_LISTINGS } from "@/lib/demo-data";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
