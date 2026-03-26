@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
+import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -195,6 +196,10 @@ const AddListing = () => {
   // ── Screen 5: Address ──
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [locationLat, setLocationLat] = useState<number | null>(null);
+  const [locationLng, setLocationLng] = useState<number | null>(null);
+  const [geocodingPostal, setGeocodingPostal] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false);
   const [unitNumber, setUnitNumber] = useState("");
 
   // ── Screen 6: Description ──
