@@ -137,6 +137,12 @@ const BusinessDashboard = () => {
 
   // Recent enquiries for analytics
   const [recentEnquiries, setRecentEnquiries] = useState<{ name: string; message: string; time: string; listing: string }[]>([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [seenEnquiryCount, setSeenEnquiryCount] = useState<number>(() => {
+    const stored = localStorage.getItem("dash_seen_enquiry_count");
+    return stored ? parseInt(stored, 10) : 0;
+  });
+  const unreadCount = Math.max(0, recentEnquiries.length - seenEnquiryCount);
 
   // Offers state
   const [offerListingId, setOfferListingId] = useState("");
