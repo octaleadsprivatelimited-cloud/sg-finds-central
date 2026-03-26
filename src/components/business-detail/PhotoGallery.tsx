@@ -75,7 +75,7 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
 
       {/* Lightbox — Apple-style minimal */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-5xl p-0 bg-black/95 backdrop-blur-2xl border-none rounded-2xl overflow-hidden">
+        <DialogContent className="max-w-[95vw] sm:max-w-5xl p-0 bg-black/95 backdrop-blur-2xl border-none rounded-2xl overflow-hidden" aria-describedby={undefined}>
           <div className="relative flex items-center justify-center min-h-[50vh] sm:min-h-[70vh]">
             <img
               src={allPhotos[activeIndex]}
