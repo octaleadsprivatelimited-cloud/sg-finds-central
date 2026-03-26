@@ -321,7 +321,7 @@ const BusinessDashboard = () => {
     setResubmitting(null);
   };
 
-  const userName = user?.displayName || user?.email?.split("@")[0] || "User";
+  const userName = listings[0]?.ownerName || user?.displayName || user?.email?.split("@")[0] || "User";
   const greeting = (() => {
     const h = new Date().getHours();
     if (h < 12) return "Good Morning";
