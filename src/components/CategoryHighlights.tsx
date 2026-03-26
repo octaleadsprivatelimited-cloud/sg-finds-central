@@ -8,25 +8,25 @@ import petservicesImg from "@/assets/highlights/petservices.png";
 
 const highlights = [
   {
-    title: "FOOD",
-    subtitle: "Delicious\nMeals Nearby",
+    title: "HOME\nFOOD",
+    subtitle: "Fresh\nHome-cooked",
     bg: "bg-blue-600",
     image: foodImg,
-    category: "Food & Beverage",
+    category: "Home Food",
   },
   {
     title: "BEAUTY",
     subtitle: "Book\nNow",
     bg: "bg-emerald-600",
     image: beautyImg,
-    category: "Beauty & Wellness",
+    category: "Beauty",
   },
   {
     title: "CLEANING",
     subtitle: "Professional\nServices",
     bg: "bg-purple-600",
     image: cleaningImg,
-    category: "Home Services",
+    category: "Cleaning",
   },
   {
     title: "PET\nSERVICES",
