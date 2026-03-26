@@ -1374,16 +1374,6 @@ const Admin = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl px-5 py-4">
-                <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)] mb-1">Demo Data</h3>
-                <p className="text-[11px] text-[hsl(220,10%,55%)] mb-3">Seed 110 demo businesses to Firestore.</p>
-                <Button onClick={handleSeedDemoData} disabled={seeding}
-                  className="bg-[hsl(220,70%,50%)] hover:bg-[hsl(220,70%,45%)] text-white rounded-lg text-xs">
-                  {seeding ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Database className="w-4 h-4 mr-1.5" />}
-                  {seeding ? "Seeding..." : "Seed 110 Demo Listings"}
-                </Button>
-              </div>
             </motion.div>
           )}
 
