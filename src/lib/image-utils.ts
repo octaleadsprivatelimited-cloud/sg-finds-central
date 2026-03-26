@@ -1,20 +1,23 @@
 /**
- * Image validation & auto-compression utility.
+ * Image validation, auto-compression & base64 conversion utility.
  * – Validates type, size, and minimum dimensions.
- * – Auto-compresses images larger than MAX_DIMENSION or MAX_FILE_SIZE
- *   using an off-screen canvas with JPEG encoding.
+ * – Auto-compresses images using an off-screen canvas with JPEG encoding.
+ * – Converts to base64 data URLs for Firestore storage (no Firebase Storage needed).
+ *
+ * ⚠ Firestore doc limit is ~1MB. With 5 images we target ~150KB each compressed.
  */
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const MAX_DIMENSION = 1600; // px – resize if wider/taller
+const MAX_DIMENSION = 800; // px – aggressive resize for Firestore
 const MIN_DIMENSION = 200; // px – reject if smaller
-const COMPRESS_QUALITY = 0.75;
+const COMPRESS_QUALITY = 0.55; // aggressive JPEG compression
+const MAX_BASE64_SIZE = 200 * 1024; // 200KB per image base64
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export interface ImageValidationResult {
   valid: boolean;
   error?: string;
   file: File; // original or compressed
+  base64?: string; // data URL for Firestore
 }
 
 /** Load an image element from a File */
@@ -26,11 +29,11 @@ const loadImage = (file: File): Promise<HTMLImageElement> =>
     img.src = URL.createObjectURL(file);
   });
 
-/** Resize / compress via canvas, returns a new File */
-const compressImage = async (
-  file: File,
-  img: HTMLImageElement
-): Promise<File> => {
+/** Compress via canvas and return base64 data URL */
+const compressToBase64 = (
+  img: HTMLImageElement,
+  quality: number = COMPRESS_QUALITY
+): string => {
   let { naturalWidth: w, naturalHeight: h } = img;
 
   // Scale down if exceeds MAX_DIMENSION
@@ -46,17 +49,12 @@ const compressImage = async (
   const ctx = canvas.getContext("2d")!;
   ctx.drawImage(img, 0, 0, w, h);
 
-  const blob: Blob = await new Promise((resolve) =>
-    canvas.toBlob((b) => resolve(b!), "image/jpeg", COMPRESS_QUALITY)
-  );
-
-  const ext = file.name.replace(/\.[^.]+$/, "");
-  return new File([blob], `${ext}.jpg`, { type: "image/jpeg" });
+  return canvas.toDataURL("image/jpeg", quality);
 };
 
 /**
- * Validate and optionally auto-compress a single image file.
- * Returns { valid, error?, file } where file may be the compressed version.
+ * Validate and compress a single image file to base64.
+ * Returns { valid, error?, file, base64 }
  */
 export const validateAndCompressImage = async (
   file: File
@@ -90,49 +88,59 @@ export const validateAndCompressImage = async (
     };
   }
 
-  // Determine if compression is needed
-  const needsResize = w > MAX_DIMENSION || h > MAX_DIMENSION;
-  const needsCompress = file.size > MAX_FILE_SIZE;
+  // Compress to base64
+  let base64 = compressToBase64(img, COMPRESS_QUALITY);
 
-  let outputFile = file;
-  if (needsResize || needsCompress) {
-    outputFile = await compressImage(file, img);
+  // If still too large, reduce quality further
+  if (base64.length > MAX_BASE64_SIZE) {
+    base64 = compressToBase64(img, 0.4);
+  }
+  if (base64.length > MAX_BASE64_SIZE) {
+    base64 = compressToBase64(img, 0.3);
   }
 
   URL.revokeObjectURL(img.src);
 
-  // Final size check after compression
-  if (outputFile.size > MAX_FILE_SIZE) {
+  // Final size check
+  if (base64.length > MAX_BASE64_SIZE * 1.5) {
     return {
       valid: false,
-      error: `"${file.name}" is still too large after compression (${(outputFile.size / 1024 / 1024).toFixed(1)}MB). Use a smaller image.`,
-      file: outputFile,
+      error: `"${file.name}" is still too large after compression. Use a smaller image.`,
+      file,
     };
   }
 
-  return { valid: true, file: outputFile };
+  return { valid: true, file, base64 };
 };
 
 /**
- * Process multiple files: validate, compress, and return results.
+ * Process multiple files: validate, compress to base64, and return results.
  */
 export const processImageFiles = async (
   files: File[],
   maxCount: number
-): Promise<{ validFiles: File[]; errors: string[] }> => {
+): Promise<{ validBase64: string[]; errors: string[] }> => {
   const sliced = files.slice(0, maxCount);
   const results = await Promise.all(sliced.map(validateAndCompressImage));
 
-  const validFiles: File[] = [];
+  const validBase64: string[] = [];
   const errors: string[] = [];
 
   for (const r of results) {
-    if (r.valid) {
-      validFiles.push(r.file);
-    } else {
+    if (r.valid && r.base64) {
+      validBase64.push(r.base64);
+    } else if (!r.valid) {
       errors.push(r.error!);
     }
   }
 
-  return { validFiles, errors };
+  return { validBase64, errors };
+};
+
+/**
+ * Compress a single file to base64 (for logo upload).
+ */
+export const compressFileToBase64 = async (file: File): Promise<string | null> => {
+  const result = await validateAndCompressImage(file);
+  return result.valid ? result.base64 || null : null;
 };

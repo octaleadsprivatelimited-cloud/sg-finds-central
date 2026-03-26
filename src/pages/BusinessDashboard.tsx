@@ -29,8 +29,7 @@ import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import LogoUpload from "@/components/LogoUpload";
 import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
@@ -292,21 +291,14 @@ const BusinessDashboard = () => {
 
     setEditUploadingImages(true);
     try {
-      const { validFiles, errors } = await processImageFiles(Array.from(files), remaining);
+      const { validBase64, errors } = await processImageFiles(Array.from(files), remaining);
       errors.forEach(e => toast.error(e));
 
-      if (validFiles.length > 0) {
-        const uploadPromises = validFiles.map(async (file) => {
-          const ext = file.name.split(".").pop() || "jpg";
-          const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
-          await uploadBytes(storageRef, file);
-          return getDownloadURL(storageRef);
-        });
-        const urls = await Promise.all(uploadPromises);
-        setEditImageUrls(prev => [...prev, ...urls]);
-        toast.success(`${urls.length} image(s) uploaded`);
+      if (validBase64.length > 0) {
+        setEditImageUrls(prev => [...prev, ...validBase64]);
+        toast.success(`${validBase64.length} image(s) added`);
       }
-    } catch (err: any) { toast.error(err.message || "Failed to upload images"); }
+    } catch (err: any) { toast.error(err.message || "Failed to process images"); }
     setEditUploadingImages(false);
   };
 
