@@ -10,6 +10,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
   OAuthProvider,
@@ -69,11 +70,27 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     setLoading(true);
     try {
       if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email, password);
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        if (!result.user.emailVerified) {
+          await sendEmailVerification(result.user, {
+            url: window.location.origin,
+          });
+          await auth.signOut();
+          toast.error("Email not verified. A new verification link has been sent to your inbox.");
+          setLoading(false);
+          return;
+        }
         toast.success("Signed in successfully");
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
-        toast.success("Account created successfully");
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(result.user, {
+          url: window.location.origin,
+        });
+        await auth.signOut();
+        toast.success("Account created! Please check your email and verify your account before signing in.");
+        setMode("login");
+        setLoading(false);
+        return;
       }
       onClose();
     } catch (err: any) {
