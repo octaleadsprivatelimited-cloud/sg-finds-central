@@ -1111,6 +1111,27 @@ const AddListing = () => {
                     )}
                   </div>
 
+                  {/* Upload progress */}
+                  {uploadingImages && Object.keys(uploadProgress).length > 0 && (
+                    <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
+                      <p className="text-xs font-medium text-foreground">Uploading...</p>
+                      {Object.entries(uploadProgress).map(([fileName, pct]) => (
+                        <div key={fileName} className="space-y-1">
+                          <div className="flex justify-between text-[11px] text-muted-foreground">
+                            <span className="truncate max-w-[200px]">{fileName}</span>
+                            <span className="font-medium">{pct}%</span>
+                          </div>
+                          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all duration-300"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <input
                     ref={imageInputRef}
                     type="file"
