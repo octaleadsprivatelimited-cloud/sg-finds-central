@@ -44,7 +44,7 @@ const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected
   rejected: { variant: "rejected", label: "Rejected", dotColor: "bg-red-500" },
 };
 
-type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "featured" | "hours" | "settings";
+type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "catalogue" | "featured" | "hours" | "settings";
 
 /* ─── Sidebar Nav Item ─── */
 const SidebarItem = ({ icon: Icon, label, active, badge, onClick }: {
@@ -334,6 +334,7 @@ const BusinessDashboard = () => {
     { key: "listings", icon: Store, label: "My Listings", badge: stats.total },
     { key: "enquiries", icon: Inbox, label: "Enquiries", badge: recentEnquiries.length },
     { key: "offers", icon: Gift, label: "Offers" },
+    { key: "catalogue", icon: BookOpen, label: "Catalogue" },
     { key: "featured", icon: Sparkles, label: "Featured" },
     { key: "hours", icon: Clock, label: "Hours" },
   ];
