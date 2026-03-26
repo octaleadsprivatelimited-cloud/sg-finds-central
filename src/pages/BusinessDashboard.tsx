@@ -390,7 +390,7 @@ const BusinessDashboard = () => {
         {/* Bottom settings */}
         <div className="px-3 py-4 border-t border-border space-y-1 shrink-0">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-4 mb-2">Settings</p>
-          <SidebarItem icon={Settings} label="Settings" onClick={() => {}} />
+          <SidebarItem icon={Settings} label="Settings" active={activeTab === "settings"} onClick={() => setActiveTab("settings")} />
           <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-[hsl(var(--destructive))] hover:bg-destructive/5 transition-all"
@@ -1056,9 +1056,17 @@ const BusinessDashboard = () => {
 
             {/* ─── SETTINGS TAB ─── */}
             {activeTab === "settings" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Settings</h2>
-                <p className="text-sm text-muted-foreground">Settings coming soon.</p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <h2 className="text-xl font-bold text-foreground tracking-tight">Settings</h2>
+
+                {/* Change Password */}
+                <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">Change Password</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Update your account password</p>
+                  </div>
+                  <ChangePasswordForm />
+                </div>
               </motion.div>
             )}
           </main>
