@@ -1003,6 +1003,23 @@ const Admin = () => {
                 ))}
               </div>
 
+              {/* Bulk Actions Bar */}
+              {selectedIds.size > 0 && (
+                <div className="bg-[hsl(220,70%,97%)] border border-[hsl(220,70%,85%)] rounded-xl px-4 py-3 flex items-center gap-3 animate-fade-in">
+                  <CheckSquare className="w-4 h-4 text-[hsl(220,70%,50%)]" />
+                  <span className="text-xs font-semibold text-[hsl(220,70%,40%)]">{selectedIds.size} selected</span>
+                  <div className="flex gap-2 ml-auto">
+                    <Button size="sm" onClick={handleBulkApprove} className="bg-[hsl(152,69%,40%)] hover:bg-[hsl(152,69%,35%)] text-white text-[11px] h-7 px-3 rounded-lg">
+                      <Check className="w-3 h-3 mr-1" />Approve All
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={handleBulkDelete} className="border-[hsl(354,50%,82%)] text-[hsl(354,70%,50%)] text-[11px] h-7 px-3 rounded-lg">
+                      <Trash2 className="w-3 h-3 mr-1" />Delete All
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())} className="text-[11px] h-7 px-2">Clear</Button>
+                  </div>
+                </div>
+              )}
+
               {/* Listings table */}
               {loading ? (
                 <div className="text-center py-16"><Loader2 className="w-5 h-5 animate-spin mx-auto text-[hsl(220,10%,60%)]" /></div>
