@@ -744,16 +744,29 @@ const Admin = () => {
                           <p className="text-xs text-foreground/80 line-clamp-2">{e.message}</p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
+                          {(() => {
+                            const waUrl = getWhatsAppUrl(e);
+                            return waUrl ? (
+                              <a href={waUrl} target="_blank" rel="noopener noreferrer"
+                                className="w-7 h-7 rounded-md hover:bg-[hsl(152,50%,92%)] dark:hover:bg-[hsl(152,30%,15%)] flex items-center justify-center transition" title="Reply via WhatsApp">
+                                <MessageCircle className="w-3.5 h-3.5 text-[hsl(152,69%,40%)]" />
+                              </a>
+                            ) : null;
+                          })()}
                           {e.email && (
-                            <a href={`mailto:${e.email}`} className="w-7 h-7 rounded-md hover:bg-[hsl(0,0%,93%)] dark:hover:bg-[hsl(250,15%,16%)] flex items-center justify-center transition">
+                            <a href={`mailto:${e.email}`} className="w-7 h-7 rounded-md hover:bg-[hsl(0,0%,93%)] dark:hover:bg-[hsl(250,15%,16%)] flex items-center justify-center transition" title="Email">
                               <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                             </a>
                           )}
                           {e.phone && (
-                            <a href={`tel:${e.phone}`} className="w-7 h-7 rounded-md hover:bg-[hsl(0,0%,93%)] dark:hover:bg-[hsl(250,15%,16%)] flex items-center justify-center transition">
+                            <a href={`tel:${e.phone}`} className="w-7 h-7 rounded-md hover:bg-[hsl(0,0%,93%)] dark:hover:bg-[hsl(250,15%,16%)] flex items-center justify-center transition" title="Call">
                               <Phone className="w-3.5 h-3.5 text-muted-foreground" />
                             </a>
                           )}
+                          <button onClick={() => handleDeleteEnquiry(e.id)} disabled={actionLoading === e.id}
+                            className="w-7 h-7 rounded-md hover:bg-[hsl(354,70%,97%)] dark:hover:bg-[hsl(354,30%,15%)] flex items-center justify-center transition" title="Delete enquiry">
+                            {actionLoading === e.id ? <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" /> : <Trash2 className="w-3.5 h-3.5 text-[hsl(354,70%,55%)]" />}
+                          </button>
                         </div>
                       </div>
                     );
