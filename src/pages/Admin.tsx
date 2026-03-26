@@ -275,10 +275,18 @@ const Admin = () => {
     l.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredEnquiries = enquiries.filter((e) =>
-    e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    e.listingName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredEnquiries = enquiries.filter((e) => {
+    const matchSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.listingName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchFilter = enquiryFilter === "all" || e.status === enquiryFilter;
+    return matchSearch && matchFilter;
+  });
+
+  const enquiryStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: enquiries.length };
+    ENQUIRY_STATUSES.forEach(s => { counts[s.key] = enquiries.filter(e => e.status === s.key).length; });
+    return counts;
+  }, [enquiries]);
 
   if (authLoading) {
     return (
