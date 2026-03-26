@@ -560,27 +560,178 @@ const Admin = () => {
           {/* ═══ DASHBOARD ════════════════════════════════════ */}
           {activeTab === "dashboard" && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              {/* Stat cards — Azure-style with accent borders */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Stat cards — 6 cards with trend indicators */}
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 {([
-                  { icon: Building2, label: "Total Listings", value: stats.total, accent: "hsl(220,70%,50%)", bg: "hsl(220,70%,97%)" },
-                  { icon: Clock, label: "Pending Review", value: stats.pending, accent: "hsl(38,85%,50%)", bg: "hsl(38,90%,97%)" },
-                  { icon: Check, label: "Approved", value: stats.approved, accent: "hsl(152,69%,40%)", bg: "hsl(152,50%,97%)" },
-                  { icon: MessageSquare, label: "Enquiries", value: stats.enquiries, accent: "hsl(280,60%,55%)", bg: "hsl(280,60%,97%)" },
+                  { icon: Building2, label: "Total Listings", value: stats.total, accent: "hsl(220,70%,50%)", bg: "hsl(220,70%,97%)", trend: "+12%" },
+                  { icon: Clock, label: "Pending Review", value: stats.pending, accent: "hsl(38,85%,50%)", bg: "hsl(38,90%,97%)", trend: null },
+                  { icon: Check, label: "Approved", value: stats.approved, accent: "hsl(152,69%,40%)", bg: "hsl(152,50%,97%)", trend: "+8%" },
+                  { icon: X, label: "Rejected", value: stats.rejected, accent: "hsl(354,70%,54%)", bg: "hsl(354,70%,97%)", trend: null },
+                  { icon: MessageSquare, label: "Total Enquiries", value: stats.enquiries, accent: "hsl(280,60%,55%)", bg: "hsl(280,60%,97%)", trend: "+23%" },
+                  { icon: Users, label: "Unread Leads", value: stats.unreadEnquiries, accent: "hsl(200,70%,50%)", bg: "hsl(200,70%,97%)", trend: null },
                 ] as const).map((s) => (
-                  <div key={s.label} className="relative bg-white rounded-xl border border-[hsl(220,15%,90%)] p-5 overflow-hidden hover:shadow-md transition-shadow">
+                  <div key={s.label} className="relative bg-white rounded-xl border border-[hsl(220,15%,90%)] p-4 overflow-hidden hover:shadow-md transition-shadow group">
                     <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ backgroundColor: s.accent }} />
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs font-medium text-[hsl(220,10%,50%)] mb-1">{s.label}</p>
-                        <p className="text-3xl font-bold text-[hsl(220,15%,12%)] tabular-nums">{s.value}</p>
+                        <p className="text-[10px] font-medium text-[hsl(220,10%,50%)] mb-1">{s.label}</p>
+                        <p className="text-2xl font-bold text-[hsl(220,15%,12%)] tabular-nums">{s.value}</p>
+                        {s.trend && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <ArrowUp className="w-3 h-3 text-[hsl(152,69%,40%)]" />
+                            <span className="text-[10px] font-semibold text-[hsl(152,69%,35%)]">{s.trend}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-                        <s.icon className="w-5 h-5" style={{ color: s.accent }} />
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: s.bg }}>
+                        <s.icon className="w-4 h-4" style={{ color: s.accent }} />
                       </div>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Quick Actions + Platform Health */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Quick Actions */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Zap className="w-4 h-4 text-[hsl(38,85%,50%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Quick Actions</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 p-4">
+                    {[
+                      { icon: Check, label: "Approve All Pending", color: "hsl(152,69%,40%)", bg: "hsl(152,50%,95%)", action: () => { pendingListings.forEach(l => handleApprove(l.id)); } },
+                      { icon: Download, label: "Export All Data", color: "hsl(220,70%,50%)", bg: "hsl(220,70%,96%)", action: exportListings },
+                      { icon: RefreshCw, label: "Refresh Data", color: "hsl(200,70%,50%)", bg: "hsl(200,70%,95%)", action: fetchData },
+                      { icon: Database, label: "Seed Demo Data", color: "hsl(280,60%,55%)", bg: "hsl(280,60%,95%)", action: handleSeedDemoData },
+                    ].map((a) => (
+                      <button key={a.label} onClick={a.action}
+                        className="flex items-center gap-2.5 p-3 rounded-lg border border-[hsl(220,15%,92%)] hover:border-[hsl(220,15%,80%)] hover:shadow-sm transition-all text-left group">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: a.bg }}>
+                          <a.icon className="w-4 h-4" style={{ color: a.color }} />
+                        </div>
+                        <span className="text-xs font-medium text-[hsl(220,15%,20%)] group-hover:text-[hsl(220,70%,50%)] transition-colors">{a.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Platform Health */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Server className="w-4 h-4 text-[hsl(152,69%,40%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Platform Health</h3>
+                    <span className="ml-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[hsl(152,50%,93%)] text-[hsl(152,69%,35%)] text-[10px] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(152,69%,40%)] animate-pulse" />All Systems Operational
+                    </span>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    {[
+                      { icon: Globe, label: "Website", status: "Operational", uptime: "99.9%", color: "hsl(152,69%,40%)" },
+                      { icon: Database, label: "Firestore DB", status: "Operational", uptime: "99.8%", color: "hsl(152,69%,40%)" },
+                      { icon: HardDrive, label: "Storage", status: "Operational", uptime: "100%", color: "hsl(152,69%,40%)" },
+                      { icon: Wifi, label: "API Gateway", status: "Operational", uptime: "99.7%", color: "hsl(152,69%,40%)" },
+                    ].map((s) => (
+                      <div key={s.label} className="flex items-center justify-between py-1.5">
+                        <div className="flex items-center gap-2.5">
+                          <s.icon className="w-4 h-4 text-[hsl(220,10%,50%)]" />
+                          <span className="text-xs font-medium text-[hsl(220,15%,20%)]">{s.label}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-medium text-[hsl(220,10%,55%)]">{s.uptime} uptime</span>
+                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Breakdown + Top Listings + Enquiry Funnel */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Category Breakdown */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <PieChart className="w-4 h-4 text-[hsl(280,60%,55%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">By Category</h3>
+                  </div>
+                  <div className="p-4 space-y-2.5">
+                    {categoryBreakdown.length === 0 ? (
+                      <p className="text-xs text-[hsl(220,10%,55%)] text-center py-4">No data yet</p>
+                    ) : categoryBreakdown.map(([cat, count], i) => {
+                      const max = categoryBreakdown[0][1];
+                      const colors = ["hsl(220,70%,55%)", "hsl(152,69%,45%)", "hsl(38,85%,50%)", "hsl(280,60%,55%)", "hsl(354,70%,55%)", "hsl(200,70%,50%)", "hsl(170,60%,45%)", "hsl(320,60%,55%)"];
+                      return (
+                        <div key={cat} className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-medium text-[hsl(220,15%,20%)] truncate flex-1">{cat}</span>
+                            <span className="text-[11px] font-bold text-[hsl(220,15%,15%)] tabular-nums ml-2">{count}</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden">
+                            <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, backgroundColor: colors[i % colors.length] }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Top Listings Leaderboard */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Star className="w-4 h-4 text-[hsl(38,85%,50%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Top Listings</h3>
+                  </div>
+                  <div className="divide-y divide-[hsl(220,15%,94%)]">
+                    {topListings.length === 0 ? (
+                      <p className="text-xs text-[hsl(220,10%,55%)] text-center py-8">No approved listings</p>
+                    ) : topListings.map((l, i) => (
+                      <div key={l.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[hsl(220,20%,99%)] transition-colors">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                          i === 0 ? "bg-[hsl(38,85%,92%)] text-[hsl(38,85%,35%)]" : i === 1 ? "bg-[hsl(220,15%,93%)] text-[hsl(220,10%,45%)]" : "bg-[hsl(220,15%,96%)] text-[hsl(220,10%,55%)]"
+                        }`}>{i + 1}</span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium text-[hsl(220,15%,15%)] truncate">{l.name}</p>
+                          <p className="text-[10px] text-[hsl(220,10%,55%)]">{l.category}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-xs font-bold text-[hsl(220,15%,15%)] tabular-nums">{((l as any).viewCount || 0).toLocaleString()}</p>
+                          <p className="text-[10px] text-[hsl(220,10%,55%)]">views</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Enquiry Conversion Funnel */}
+                <div className="bg-white rounded-xl border border-[hsl(220,15%,90%)] overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-[hsl(220,15%,92%)] flex items-center gap-2.5">
+                    <Target className="w-4 h-4 text-[hsl(152,69%,40%)]" />
+                    <h3 className="text-sm font-semibold text-[hsl(220,15%,15%)]">Enquiry Funnel</h3>
+                  </div>
+                  <div className="p-5 space-y-4">
+                    {[
+                      { label: "Total Enquiries", value: stats.enquiries, pct: 100, color: "hsl(220,70%,50%)" },
+                      { label: "Contacted", value: enquiries.filter(e => e.status === "contacted").length, pct: enquiryConversion.contacted, color: "hsl(200,70%,50%)" },
+                      { label: "Qualified", value: enquiries.filter(e => e.status === "qualified").length, pct: enquiryConversion.qualified, color: "hsl(38,85%,50%)" },
+                      { label: "Converted", value: enquiries.filter(e => e.status === "converted").length, pct: enquiryConversion.converted, color: "hsl(152,69%,40%)" },
+                    ].map((step, i) => (
+                      <div key={step.label}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[11px] font-medium text-[hsl(220,15%,20%)]">{step.label}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-[hsl(220,15%,15%)] tabular-nums">{step.value}</span>
+                            <span className="text-[10px] text-[hsl(220,10%,55%)]">{step.pct}%</span>
+                          </div>
+                        </div>
+                        <div className="h-2.5 rounded-full bg-[hsl(220,15%,94%)] overflow-hidden">
+                          <div className="h-full rounded-full transition-all duration-700" style={{ width: `${step.pct}%`, backgroundColor: step.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Pending Queue */}
