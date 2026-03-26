@@ -187,10 +187,10 @@ const BusinessDashboard = () => {
         ...(offerCode ? { code: offerCode } : {}),
       };
       const updatedOffers = [...existingOffers, newOffer];
-      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers, status: "pending_approval" });
-      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers, status: "pending_approval" } : l));
+      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers });
+      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers } : l));
       setOfferTitle(""); setOfferDescription(""); setOfferDiscount(""); setOfferValidUntil(""); setOfferCode("");
-      toast.success("Offer added — pending admin approval before going live.");
+      toast.success("Offer added successfully!");
     } catch (err: any) { toast.error(err.message || "Failed to add offer"); }
     setOfferSaving(false);
   };
@@ -199,9 +199,9 @@ const BusinessDashboard = () => {
     try {
       const listing = listings.find(l => l.id === listingId);
       const updatedOffers = (listing?.offers || []).filter(o => o.id !== offerId);
-      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers, status: "pending_approval" });
-      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers, status: "pending_approval" } : l));
-      toast.success("Offer removed — pending admin re-approval.");
+      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers });
+      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers } : l));
+      toast.success("Offer removed successfully.");
     } catch (err: any) { toast.error(err.message || "Failed to remove offer"); }
   };
 
