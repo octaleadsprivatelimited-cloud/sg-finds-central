@@ -374,13 +374,13 @@ const AddListing = () => {
       errors.forEach(e => toast.error(e));
 
       if (validFiles.length > 0) {
-        const urls: string[] = [];
-        for (const file of validFiles) {
+        const uploadPromises = validFiles.map(async (file) => {
           const ext = file.name.split(".").pop() || "jpg";
           const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`);
           await uploadBytes(storageRef, file);
-          urls.push(await getDownloadURL(storageRef));
-        }
+          return getDownloadURL(storageRef);
+        });
+        const urls = await Promise.all(uploadPromises);
         setImageUrls(prev => [...prev, ...urls]);
         toast.success(`${urls.length} image(s) uploaded`);
       }

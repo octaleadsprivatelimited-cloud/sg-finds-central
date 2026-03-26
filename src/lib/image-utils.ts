@@ -6,9 +6,9 @@
  */
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const MAX_DIMENSION = 2048; // px – resize if wider/taller
+const MAX_DIMENSION = 1600; // px – resize if wider/taller
 const MIN_DIMENSION = 200; // px – reject if smaller
-const COMPRESS_QUALITY = 0.82;
+const COMPRESS_QUALITY = 0.75;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export interface ImageValidationResult {
