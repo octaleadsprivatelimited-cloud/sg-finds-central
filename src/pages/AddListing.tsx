@@ -582,6 +582,7 @@ const AddListing = () => {
         lng: locationLng,
         createdAt: serverTimestamp(),
       });
+      clearDraft();
       toast.success("Listing submitted for approval!");
       navigate("/");
     } catch (err: any) {
