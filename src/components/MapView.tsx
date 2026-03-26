@@ -41,6 +41,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
+  const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
   const navigate = useNavigate();
