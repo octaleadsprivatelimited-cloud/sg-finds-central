@@ -1515,19 +1515,6 @@ const Admin = () => {
                     </Button>
                   )}
                 </div>
-                  <div key={s.key} className="flex items-center justify-between px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-[hsl(220,15%,97%)] flex items-center justify-center">
-                        <s.icon className="w-4 h-4 text-[hsl(220,10%,45%)]" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-[hsl(220,15%,15%)]">{s.label}</p>
-                        <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5">{s.desc}</p>
-                      </div>
-                    </div>
-                    <Switch checked={settings[s.key]} onCheckedChange={() => setSettings((prev) => ({ ...prev, [s.key]: !prev[s.key] }))} />
-                  </div>
-                ))}
               </div>
 
               <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl px-5 py-4">
