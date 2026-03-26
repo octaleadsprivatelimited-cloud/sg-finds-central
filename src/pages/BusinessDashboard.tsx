@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Listing, ListingOffer, OperatingHours, SpecialHours, DEFAULT_OPERATING_HOURS } from "@/components/ListingCard";
 import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
