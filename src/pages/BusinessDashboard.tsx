@@ -1357,6 +1357,75 @@ const BusinessDashboard = () => {
               </motion.div>
             )}
 
+            {/* ─── ANALYTICS TAB ─── */}
+            {activeTab === "analytics" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground tracking-tight">View Analytics</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Track how your listings are performing</p>
+                </div>
+
+                {/* Per-listing analytics */}
+                {listings.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-border bg-card p-16 text-center">
+                    <BarChart3 className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="font-semibold text-foreground">No listings yet</p>
+                    <p className="text-sm text-muted-foreground mt-1">Create a listing to start tracking views</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Overview cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-80" />
+                        <p className="text-xs font-medium text-muted-foreground">Total Views</p>
+                        <p className="text-3xl font-semibold text-foreground mt-1 tabular-nums">{totalViews.toLocaleString()}</p>
+                      </div>
+                      <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--success))] opacity-80" />
+                        <p className="text-xs font-medium text-muted-foreground">Live Listings</p>
+                        <p className="text-3xl font-semibold text-foreground mt-1 tabular-nums">{stats.approved}</p>
+                      </div>
+                      <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--info))] opacity-80" />
+                        <p className="text-xs font-medium text-muted-foreground">Avg. Views / Listing</p>
+                        <p className="text-3xl font-semibold text-foreground mt-1 tabular-nums">{stats.approved > 0 ? Math.round(totalViews / stats.approved).toLocaleString() : 0}</p>
+                      </div>
+                    </div>
+
+                    {/* Per-listing breakdown */}
+                    {listings.map(listing => (
+                      <div key={listing.id} className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-40" />
+                        <div className="p-5">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              {listing.logoUrl ? (
+                                <img src={listing.logoUrl} alt="" className="w-9 h-9 rounded-lg object-cover border border-border/50" />
+                              ) : (
+                                <div className="w-9 h-9 rounded-lg bg-[hsl(var(--primary)/0.08)] flex items-center justify-center">
+                                  <Store className="w-4 h-4 text-[hsl(var(--primary))]" />
+                                </div>
+                              )}
+                              <div>
+                                <h3 className="font-semibold text-foreground text-sm">{listing.name}</h3>
+                                <p className="text-xs text-muted-foreground">{listing.category} · {listing.district}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-2xl font-semibold text-foreground tabular-nums">{(viewCounts[listing.id] || 0).toLocaleString()}</p>
+                              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">views</p>
+                            </div>
+                          </div>
+                          <ViewAnalyticsChart listingId={listing.id} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
             {/* ─── SETTINGS TAB ─── */}
             {activeTab === "settings" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
