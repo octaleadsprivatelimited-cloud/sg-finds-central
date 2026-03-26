@@ -22,7 +22,9 @@ import {
   LogOut, Search, Bell, Eye, Store, Trash2, Edit3, Upload, Image,
   MessageSquare, MessageCircle, Mail, Phone, Menu, MoreHorizontal,
   ChevronRight, Activity, Users, Database, TrendingUp, ArrowUpRight,
-  ChevronDown, Filter, RefreshCw, Zap, Download,
+  ChevronDown, Filter, RefreshCw, Zap, Download, BarChart3,
+  Globe, Server, Cpu, HardDrive, Wifi, Star, Target, Layers,
+  PieChart, ArrowUp, ArrowDown, Sparkles, CheckSquare, Square,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
