@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Camera, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
@@ -21,10 +21,25 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
   const visiblePhotos = allPhotos.slice(0, 4);
   const remaining = allPhotos.length - 4;
 
+  const goPrev = useCallback(() => setActiveIndex((i) => Math.max(0, i - 1)), []);
+  const goNext = useCallback(() => setActiveIndex((i) => Math.min(allPhotos.length - 1, i + 1)), [allPhotos.length]);
+
   const openLightbox = (idx: number) => {
     setActiveIndex(idx);
     setLightboxOpen(true);
   };
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); goPrev(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
+      else if (e.key === "Escape") { setLightboxOpen(false); }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightboxOpen, goPrev, goNext]);
 
   return (
     <>
@@ -73,9 +88,9 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
           ))}
       </div>
 
-      {/* Lightbox — Apple-style minimal */}
+      {/* Lightbox */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-5xl p-0 bg-black/95 backdrop-blur-2xl border-none rounded-2xl overflow-hidden" aria-describedby={undefined}>
+        <DialogContent className="max-w-[95vw] sm:max-w-5xl p-0 bg-black/95 backdrop-blur-2xl border-none rounded-2xl overflow-hidden [&>button:last-child]:hidden" aria-describedby={undefined}>
           <div className="relative flex items-center justify-center min-h-[50vh] sm:min-h-[70vh]">
             <img
               src={allPhotos[activeIndex]}
@@ -83,32 +98,35 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
               className="w-full max-h-[85vh] object-contain"
             />
             {/* Counter */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-white/80 text-xs font-medium">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-medium">
               {activeIndex + 1} / {allPhotos.length}
             </div>
             {/* Close */}
             <button
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 backdrop-blur-md text-white/80 hover:text-white hover:bg-white/20 flex items-center justify-center transition-colors"
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 flex items-center justify-center transition-colors z-10"
               onClick={() => setLightboxOpen(false)}
+              aria-label="Close"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
             {/* Prev */}
             {activeIndex > 0 && (
               <button
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md text-white/80 flex items-center justify-center hover:bg-white/20 transition-colors"
-                onClick={() => setActiveIndex(activeIndex - 1)}
+                className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/35 active:scale-95 transition-all z-10 shadow-lg"
+                onClick={goPrev}
+                aria-label="Previous photo"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-6 h-6" />
               </button>
             )}
             {/* Next */}
             {activeIndex < allPhotos.length - 1 && (
               <button
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md text-white/80 flex items-center justify-center hover:bg-white/20 transition-colors"
-                onClick={() => setActiveIndex(activeIndex + 1)}
+                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/35 active:scale-95 transition-all z-10 shadow-lg"
+                onClick={goNext}
+                aria-label="Next photo"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-6 h-6" />
               </button>
             )}
             {/* Dots */}
@@ -116,7 +134,8 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
               {allPhotos.map((_, idx) => (
                 <button
                   key={idx}
-                  className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-6 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/30 hover:bg-white/50"}`}
+                  aria-label={`Go to photo ${idx + 1}`}
+                  className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-6 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"}`}
                   onClick={() => setActiveIndex(idx)}
                 />
               ))}
