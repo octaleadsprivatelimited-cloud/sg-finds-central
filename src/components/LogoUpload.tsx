@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase";
+import { compressFileToBase64 } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import { Camera, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -22,22 +21,20 @@ const LogoUpload = ({ currentUrl, userId, onUploaded, onRemoved }: LogoUploadPro
       toast.error("Please upload an image file (JPG, PNG, WEBP)");
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Logo must be under 2MB");
-      return;
-    }
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || "jpg";
-      const storageRef = ref(storage, `logos/${userId}/logo.${ext}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      setPreview(url);
-      onUploaded(url);
-      toast.success("Logo uploaded");
+      const base64 = await compressFileToBase64(file);
+      if (!base64) {
+        toast.error("Failed to process image. Try a different file.");
+        setUploading(false);
+        return;
+      }
+      setPreview(base64);
+      onUploaded(base64);
+      toast.success("Logo added");
     } catch (err: any) {
-      toast.error(err.message || "Failed to upload logo");
+      toast.error(err.message || "Failed to process logo");
     }
     setUploading(false);
   };
@@ -73,7 +70,7 @@ const LogoUpload = ({ currentUrl, userId, onUploaded, onRemoved }: LogoUploadPro
       </div>
       <div className="flex-1">
         <p className="text-sm font-medium text-foreground">Business Logo</p>
-        <p className="text-xs text-muted-foreground mb-2">JPG, PNG, or WEBP. Max 2MB.</p>
+        <p className="text-xs text-muted-foreground mb-2">JPG, PNG, or WEBP. Auto-compressed.</p>
         <div className="flex gap-2">
           <Button
             type="button"
@@ -82,7 +79,7 @@ const LogoUpload = ({ currentUrl, userId, onUploaded, onRemoved }: LogoUploadPro
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
           >
-            {uploading ? "Uploading..." : preview ? "Change" : "Upload"}
+            {uploading ? "Processing..." : preview ? "Change" : "Upload"}
           </Button>
           {preview && (
             <Button

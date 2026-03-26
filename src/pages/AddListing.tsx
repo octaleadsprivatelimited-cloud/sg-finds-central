@@ -2,8 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
 import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { processImageFiles } from "@/lib/image-utils";
 
@@ -214,7 +213,6 @@ const AddListing = () => {
   // ── Screen 8: Images ──
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   // ── Screen 9: Profile extras ──
@@ -507,42 +505,16 @@ const AddListing = () => {
 
     setUploadingImages(true);
     try {
-      const { validFiles, errors } = await processImageFiles(Array.from(files), remaining);
+      const { validBase64, errors } = await processImageFiles(Array.from(files), remaining);
       errors.forEach(e => toast.error(e));
 
-      if (validFiles.length > 0) {
-        setUploadProgress({});
-        const uploadPromises = validFiles.map(async (file) => {
-          const ext = file.name.split(".").pop() || "jpg";
-          const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-          const storageRef = ref(storage, `listings/${user.uid}/${fileName}`);
-          return new Promise<string>((resolve, reject) => {
-            const task = uploadBytesResumable(storageRef, file);
-            task.on("state_changed",
-              (snap) => {
-                const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-                setUploadProgress(prev => ({ ...prev, [file.name]: pct }));
-              },
-              (err) => reject(err),
-              async () => {
-                const url = await getDownloadURL(task.snapshot.ref);
-                resolve(url);
-              }
-            );
-          });
-        });
-        const urls = await Promise.all(uploadPromises);
-        setImageUrls(prev => [...prev, ...urls]);
-        setUploadProgress({});
-        toast.success(`${urls.length} image(s) uploaded`);
+      if (validBase64.length > 0) {
+        setImageUrls(prev => [...prev, ...validBase64]);
+        toast.success(`${validBase64.length} image(s) added`);
       }
     } catch (err: any) {
-      console.error("Image upload error:", err?.code, err?.message, err);
-      if (err?.code === "storage/unauthorized" || err?.message?.includes("not authorized")) {
-        toast.error("Storage permission denied. Please check Firebase Storage rules allow authenticated uploads.");
-      } else {
-        toast.error(err.message || "Failed to upload images");
-      }
+      console.error("Image processing error:", err);
+      toast.error(err.message || "Failed to process images");
     }
     setUploadingImages(false);
   };
@@ -1116,24 +1088,11 @@ const AddListing = () => {
                     )}
                   </div>
 
-                  {/* Upload progress */}
-                  {uploadingImages && Object.keys(uploadProgress).length > 0 && (
-                    <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
-                      <p className="text-xs font-medium text-foreground">Uploading...</p>
-                      {Object.entries(uploadProgress).map(([fileName, pct]) => (
-                        <div key={fileName} className="space-y-1">
-                          <div className="flex justify-between text-[11px] text-muted-foreground">
-                            <span className="truncate max-w-[200px]">{fileName}</span>
-                            <span className="font-medium">{pct}%</span>
-                          </div>
-                          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-primary transition-all duration-300"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
+                  {/* Processing indicator */}
+                  {uploadingImages && (
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 p-3">
+                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <p className="text-xs font-medium text-foreground">Compressing & processing images...</p>
                     </div>
                   )}
 
