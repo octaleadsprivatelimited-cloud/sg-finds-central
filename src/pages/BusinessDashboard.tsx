@@ -818,6 +818,116 @@ const BusinessDashboard = () => {
               </motion.div>
             )}
 
+            {/* ─── CATALOGUE TAB ─── */}
+            {activeTab === "catalogue" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <h2 className="text-xl font-bold text-foreground tracking-tight">Catalogue Management</h2>
+
+                {/* Add Item Form */}
+                <div className="rounded-2xl border border-border bg-card p-6">
+                  <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
+                      <Plus className="w-4 h-4 text-[hsl(var(--primary))]" />
+                    </div>
+                    Add Catalogue Item
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
+                      <Select value={catListingId} onValueChange={setCatListingId}>
+                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
+                        <SelectContent>
+                          {listings.map(l => (
+                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Title *</Label>
+                        <Input className="rounded-xl" value={catTitle} onChange={e => setCatTitle(e.target.value)} placeholder="e.g. Premium Haircut" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Price</Label>
+                        <Input className="rounded-xl" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="e.g. $50 onwards" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
+                      <Textarea className="rounded-xl" value={catDescription} onChange={e => setCatDescription(e.target.value)} placeholder="Brief description of this item..." rows={2} />
+                    </div>
+                    <Button
+                      className="rounded-xl"
+                      disabled={catSaving || !catListingId || !catTitle.trim()}
+                      onClick={async () => {
+                        setCatSaving(true);
+                        try {
+                          const listing = listings.find(l => l.id === catListingId);
+                          const existing = listing?.catalogueItems || [];
+                          const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim() };
+                          const updated = [...existing, newItem];
+                          await updateDoc(doc(db, "listings", catListingId), { catalogueItems: updated });
+                          setListings(prev => prev.map(l => l.id === catListingId ? { ...l, catalogueItems: updated } : l));
+                          setCatTitle(""); setCatDescription(""); setCatPrice("");
+                          toast.success("Catalogue item added!");
+                        } catch (err: any) { toast.error(err.message || "Failed to add item"); }
+                        setCatSaving(false);
+                      }}
+                    >
+                      {catSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      <Plus className="w-4 h-4 mr-2" /> Add Item
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Existing Items per Listing */}
+                {listings.filter(l => l.catalogueItems && l.catalogueItems.length > 0).length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                    <p className="text-sm">No catalogue items yet. Add your first item above.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {listings.filter(l => l.catalogueItems && l.catalogueItems.length > 0).map(listing => (
+                      <div key={listing.id} className="rounded-2xl border border-border bg-card p-5">
+                        <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                          <Store className="w-4 h-4 text-muted-foreground" />
+                          {listing.name}
+                          <Badge variant="outline" className="ml-auto text-xs">{listing.catalogueItems!.length} items</Badge>
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {listing.catalogueItems!.map(item => (
+                            <div key={item.id} className="rounded-xl border border-border/60 bg-background p-4 space-y-2 group">
+                              <div className="flex items-start justify-between gap-2">
+                                <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
+                                <Button
+                                  variant="ghost" size="icon"
+                                  className="w-7 h-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                                  onClick={async () => {
+                                    try {
+                                      const updated = listing.catalogueItems!.filter(c => c.id !== item.id);
+                                      await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
+                                      setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
+                                      toast.success("Item removed");
+                                    } catch (err: any) { toast.error(err.message || "Failed to remove item"); }
+                                  }}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              </div>
+                              {item.description && <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>}
+                              {item.price && <p className="text-sm font-semibold text-foreground">{item.price}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
             {/* ─── FEATURED TAB ─── */}
             {activeTab === "featured" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
