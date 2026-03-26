@@ -32,7 +32,8 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const location = useLocation();
-  const hideFooter = ["/signup", "/reset-password"].includes(location.pathname);
+  const isAdminPage = location.pathname === "/admin";
+  const hideFooter = isAdminPage || ["/signup", "/reset-password"].includes(location.pathname);
   const [showMap, setShowMap] = useState(false);
   const [detectLocationFn, setDetectLocationFn] = useState<(() => void) | null>(null);
 
@@ -43,11 +44,13 @@ const AppContent = () => {
   return (
     <>
       <ScrollToTop />
-      <Header
-        showMap={showMap}
-        onToggleMap={() => setShowMap(prev => !prev)}
-        onDetectLocation={detectLocationFn ?? undefined}
-      />
+      {!isAdminPage && (
+        <Header
+          showMap={showMap}
+          onToggleMap={() => setShowMap(prev => !prev)}
+          onDetectLocation={detectLocationFn ?? undefined}
+        />
+      )}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
