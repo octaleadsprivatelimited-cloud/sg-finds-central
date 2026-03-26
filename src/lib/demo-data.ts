@@ -201,6 +201,26 @@ const categoryMap: Record<string, BizTemplate[]> = {
   "Photography / Videography": photography,
 };
 
+const CATEGORY_LOGO_COLORS: Record<string, string> = {
+  "Tuition": "4F46E5",
+  "Baking": "D97706",
+  "Music / Art / Craft": "9333EA",
+  "Home Food": "EA580C",
+  "Beauty": "EC4899",
+  "Pet Services": "059669",
+  "Event Services": "E11D48",
+  "Tailoring": "7C3AED",
+  "Cleaning": "0284C7",
+  "Handyman": "CA8A04",
+  "Photography / Videography": "475569",
+};
+
+const getLogoUrl = (name: string, category: string) => {
+  const bg = CATEGORY_LOGO_COLORS[category] || "6366F1";
+  const initials = name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase();
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=${bg}&color=fff&size=128&font-size=0.4&bold=true&format=svg`;
+};
+
 let idCounter = 1;
 const allDemoListings: Listing[] = [];
 
@@ -223,6 +243,7 @@ Object.entries(categoryMap).forEach(([category, templates]) => {
       description: t.desc,
       status: "approved",
       ownerId: "demo",
+      logoUrl: getLogoUrl(t.name, category),
       lat: coords.lat + (Math.random() - 0.5) * 0.005,
       lng: coords.lng + (Math.random() - 0.5) * 0.005,
     });
