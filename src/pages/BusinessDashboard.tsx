@@ -1213,6 +1213,29 @@ const BusinessDashboard = () => {
               </div>
             </div>
 
+                {/* Quick Actions */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { icon: <Plus className="w-5 h-5" />, label: "Add Listing", action: () => navigate("/add-listing"), color: "primary" },
+                    { icon: <Gift className="w-5 h-5" />, label: "Create Offer", action: () => setActiveTab("offers"), color: "success" },
+                    { icon: <BookOpen className="w-5 h-5" />, label: "Manage Catalogue", action: () => setActiveTab("catalogue"), color: "info" },
+                    { icon: <Settings className="w-5 h-5" />, label: "Settings", action: () => setActiveTab("settings"), color: "warning" },
+                  ].map(item => (
+                    <motion.button
+                      key={item.label}
+                      whileHover={{ y: -1 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={item.action}
+                      className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4 text-left hover:shadow-sm transition-all group"
+                    >
+                      <div className={`w-10 h-10 rounded-lg bg-[hsl(var(--${item.color})/0.08)] flex items-center justify-center text-[hsl(var(--${item.color}))] group-hover:bg-[hsl(var(--${item.color})/0.14)] transition-colors`}>
+                        {item.icon}
+                      </div>
+                      <span className="text-sm font-medium text-foreground">{item.label}</span>
+                    </motion.button>
+                  ))}
+                </div>
+
 
             {/* Recent Enquiries compact */}
             <div className="rounded-2xl border border-border p-4 space-y-3">
