@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toSlug } from "@/lib/url-helpers";
 import foodImg from "@/assets/highlights/food.png";
 import beautyImg from "@/assets/highlights/beauty.png";
 import cleaningImg from "@/assets/highlights/cleaning.png";
@@ -46,7 +47,7 @@ const CategoryHighlights = () => {
           <div
             key={i}
             className={`relative overflow-hidden rounded-2xl ${item.bg} cursor-pointer active:scale-[0.97] hover:scale-[1.02] transition-transform duration-200 min-h-[180px] md:min-h-[240px] flex flex-col justify-between p-4 md:p-5`}
-            onClick={() => navigate(`/city/singapore/${item.category.toLowerCase().replace(/ /g, "-")}`)}
+            onClick={() => navigate(`/singapore/${toSlug(item.category)}`)}
           >
             <div className="relative z-10">
               <h3 className="font-extrabold text-white text-base md:text-xl leading-tight tracking-tight whitespace-pre-line">
