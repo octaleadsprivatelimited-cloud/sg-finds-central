@@ -30,13 +30,63 @@ import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, auth as firebaseAuth } from "@/lib/firebase";
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import LogoUpload from "@/components/LogoUpload";
 import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
 import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
 import { motion, AnimatePresence } from "framer-motion";
+
+/* ─── Change Password Form ─── */
+const ChangePasswordForm = () => {
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = async () => {
+    if (!currentPw) { toast.error("Enter your current password"); return; }
+    if (newPw.length < 6) { toast.error("New password must be at least 6 characters"); return; }
+    if (newPw !== confirmPw) { toast.error("Passwords do not match"); return; }
+    const user = firebaseAuth.currentUser;
+    if (!user || !user.email) { toast.error("Not signed in"); return; }
+    setSaving(true);
+    try {
+      const cred = EmailAuthProvider.credential(user.email, currentPw);
+      await reauthenticateWithCredential(user, cred);
+      await updatePassword(user, newPw);
+      toast.success("Password updated successfully!");
+      setCurrentPw(""); setNewPw(""); setConfirmPw("");
+    } catch (err: any) {
+      const msg = err?.code === "auth/wrong-password" ? "Current password is incorrect" : err?.message || "Failed to update password";
+      toast.error(msg);
+    }
+    setSaving(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <Label className="text-xs">Current Password</Label>
+        <Input type="password" placeholder="••••••••" value={currentPw} onChange={e => setCurrentPw(e.target.value)} className="h-9 text-sm" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-xs">New Password</Label>
+        <Input type="password" placeholder="••••••••" value={newPw} onChange={e => setNewPw(e.target.value)} className="h-9 text-sm" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-xs">Confirm New Password</Label>
+        <Input type="password" placeholder="••••••••" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="h-9 text-sm" />
+      </div>
+      <Button onClick={handleChange} disabled={saving} className="h-9 text-sm">
+        {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        Update Password
+      </Button>
+    </div>
+  );
+};
 
 const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected"; label: string; dotColor: string }> = {
   approved: { variant: "approved", label: "Live", dotColor: "bg-emerald-500" },
@@ -390,7 +440,7 @@ const BusinessDashboard = () => {
         {/* Bottom settings */}
         <div className="px-3 py-4 border-t border-border space-y-1 shrink-0">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-4 mb-2">Settings</p>
-          <SidebarItem icon={Settings} label="Settings" onClick={() => {}} />
+          <SidebarItem icon={Settings} label="Settings" active={activeTab === "settings"} onClick={() => setActiveTab("settings")} />
           <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-[hsl(var(--destructive))] hover:bg-destructive/5 transition-all"
@@ -1056,9 +1106,17 @@ const BusinessDashboard = () => {
 
             {/* ─── SETTINGS TAB ─── */}
             {activeTab === "settings" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Settings</h2>
-                <p className="text-sm text-muted-foreground">Settings coming soon.</p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <h2 className="text-xl font-bold text-foreground tracking-tight">Settings</h2>
+
+                {/* Change Password */}
+                <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">Change Password</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Update your account password</p>
+                  </div>
+                  <ChangePasswordForm />
+                </div>
               </motion.div>
             )}
           </main>
