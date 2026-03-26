@@ -803,6 +803,23 @@ const Admin = () => {
                 ))}
               </div>
 
+              {/* WhatsApp Prefill Message */}
+              <div className="bg-white dark:bg-[hsl(250,15%,12%)] border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)] rounded-lg px-5 py-4">
+                <h3 className="text-sm font-semibold text-foreground mb-1 flex items-center gap-1.5">
+                  <MessageCircle className="w-4 h-4 text-[hsl(152,69%,40%)]" />WhatsApp Quick Reply
+                </h3>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Prefilled message for WhatsApp replies to enquiries. Use <code className="px-1 py-0.5 bg-secondary rounded text-[10px]">{"{{name}}"}</code> and <code className="px-1 py-0.5 bg-secondary rounded text-[10px]">{"{{business}}"}</code> as placeholders.
+                </p>
+                <Textarea
+                  value={settings.whatsappPrefill}
+                  onChange={(e) => setSettings((prev) => ({ ...prev, whatsappPrefill: e.target.value }))}
+                  rows={3}
+                  className="rounded-md text-sm"
+                  placeholder="Hi {{name}}, thanks for your enquiry about {{business}}. "
+                />
+              </div>
+
               <div className="bg-white dark:bg-[hsl(250,15%,12%)] border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)] rounded-lg px-5 py-4">
                 <h3 className="text-sm font-semibold text-foreground mb-3">Account</h3>
                 <div className="space-y-2.5">
