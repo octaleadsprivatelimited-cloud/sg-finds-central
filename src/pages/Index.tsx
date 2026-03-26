@@ -441,19 +441,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           <div className="flex gap-0">
             {/* LEFT: Listings */}
             <div className="min-w-0 w-[58%] border-r border-border pr-5">
-              <div className="flex items-center justify-between pt-4 pb-3">
-                <nav className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-                  <ChevronRight className="w-3 h-3" />
-                  <span>Singapore</span>
-                  {category !== "All Categories" && (
-                    <>
-                      <ChevronRight className="w-3 h-3" />
-                      <span className="text-foreground font-medium">{category}</span>
-                    </>
-                  )}
-                </nav>
-              </div>
+              {category !== "All Categories" && (
+                <div className="flex items-center pt-4 pb-3">
+                  <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <span className="text-foreground font-medium">{category}</span>
+                  </nav>
+                </div>
+              )}
 
 
               <div className="max-h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide pb-6">
