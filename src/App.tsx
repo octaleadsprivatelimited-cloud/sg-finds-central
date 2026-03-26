@@ -33,7 +33,9 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isAdminPage = location.pathname === "/admin";
-  const hideFooter = isAdminPage || ["/signup", "/reset-password"].includes(location.pathname);
+  const isDashboardPage = location.pathname === "/dashboard";
+  const hideHeader = isAdminPage || isDashboardPage;
+  const hideFooter = isAdminPage || isDashboardPage || ["/signup", "/reset-password"].includes(location.pathname);
   const [showMap, setShowMap] = useState(false);
   const [detectLocationFn, setDetectLocationFn] = useState<(() => void) | null>(null);
 
@@ -44,7 +46,7 @@ const AppContent = () => {
   return (
     <>
       <ScrollToTop />
-      {!isAdminPage && (
+      {!hideHeader && (
         <Header
           showMap={showMap}
           onToggleMap={() => setShowMap(prev => !prev)}

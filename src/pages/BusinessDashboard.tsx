@@ -7,11 +7,12 @@ import {
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp,
   MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
   CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image, BookOpen,
+  LayoutDashboard, Inbox, Settings, LogOut, Search, Bell, ChevronRight,
+  Store, Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
@@ -37,22 +38,46 @@ import { useListingViewCounts } from "@/hooks/useViewTracking";
 import ViewAnalyticsChart from "@/components/ViewAnalyticsChart";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected"; label: string; dotColor: string }> = {
   approved: { variant: "approved", label: "Live", dotColor: "bg-emerald-500" },
   pending_approval: { variant: "pending", label: "In Review", dotColor: "bg-amber-500" },
   rejected: { variant: "rejected", label: "Rejected", dotColor: "bg-red-500" },
 };
 
+type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "featured" | "hours" | "settings";
+
+/* ─── Sidebar Nav Item ─── */
+const SidebarItem = ({ icon: Icon, label, active, badge, onClick }: {
+  icon: any; label: string; active?: boolean; badge?: number; onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
+      ${active
+        ? "bg-[hsl(var(--primary)/0.08)] text-[hsl(var(--primary))]"
+        : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+      }`}
+  >
+    <Icon className="w-5 h-5 shrink-0" />
+    <span className="truncate">{label}</span>
+    {badge !== undefined && badge > 0 && (
+      <span className="ml-auto min-w-[20px] h-5 px-1.5 rounded-full bg-[hsl(var(--primary))] text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+        {badge > 99 ? "99+" : badge}
+      </span>
+    )}
+  </button>
+);
+
 const BusinessDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("listings");
+  const [activeTab, setActiveTab] = useState<DashTab>("dashboard");
   const [listings, setListings] = useState<Listing[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [viewingListing, setViewingListing] = useState<Listing | null>(null);
   const [saving, setSaving] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Featured ticket state
   const [featuredTicketReason, setFeaturedTicketReason] = useState("");
@@ -239,31 +264,16 @@ const BusinessDashboard = () => {
     const sanitizedSlug = toSlug(editCustomSlug || editName);
     setSaving(true);
     try {
-      // Determine if logo or images changed — route to pending fields
       const logoChanged = editLogoUrl !== (editingListing.logoUrl || "");
       const imagesChanged = JSON.stringify(editImageUrls) !== JSON.stringify(editingListing.imageUrls || []);
-
       const updates: Record<string, any> = {
         name: editName, category: editCategory, district: editDistrict, address: editAddress,
         phone: editPhone, website: editWebsite, email: editEmail, description: editDescription,
         customSlug: sanitizedSlug, operatingHours: editHours,
         specialHours: editSpecialHours, catalogueEnabled: editCatalogueEnabled, status: "pending_approval",
       };
-
-      // Logo: if changed, save to pendingLogoUrl; keep existing logoUrl
-      if (logoChanged) {
-        updates.pendingLogoUrl = editLogoUrl;
-      } else {
-        updates.logoUrl = editLogoUrl;
-      }
-
-      // Images: if changed, save to pendingImageUrls; keep existing imageUrls
-      if (imagesChanged) {
-        updates.pendingImageUrls = editImageUrls;
-      } else {
-        updates.imageUrls = editImageUrls;
-      }
-
+      if (logoChanged) { updates.pendingLogoUrl = editLogoUrl; } else { updates.logoUrl = editLogoUrl; }
+      if (imagesChanged) { updates.pendingImageUrls = editImageUrls; } else { updates.imageUrls = editImageUrls; }
       await updateDoc(doc(db, "listings", editingListing.id), updates);
       setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...updates } : l));
       setEditingListing(null);
@@ -288,12 +298,10 @@ const BusinessDashboard = () => {
     if (!user) return;
     const remaining = 5 - editImageUrls.length;
     if (remaining <= 0) { toast.error("Maximum 5 images allowed"); return; }
-
     setEditUploadingImages(true);
     try {
       const { validBase64, errors } = await processImageFiles(Array.from(files), remaining);
       errors.forEach(e => toast.error(e));
-
       if (validBase64.length > 0) {
         setEditImageUrls(prev => [...prev, ...validBase64]);
         toast.success(`${validBase64.length} image(s) added`);
@@ -313,518 +321,666 @@ const BusinessDashboard = () => {
     setResubmitting(null);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-  };
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } },
-  };
+  const userName = user?.displayName || user?.email?.split("@")[0] || "User";
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good Morning";
+    if (h < 18) return "Good Afternoon";
+    return "Good Evening";
+  })();
+
+  const navItems: { key: DashTab; icon: any; label: string; badge?: number }[] = [
+    { key: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { key: "listings", icon: Store, label: "My Listings", badge: stats.total },
+    { key: "enquiries", icon: Inbox, label: "Enquiries", badge: recentEnquiries.length },
+    { key: "offers", icon: Gift, label: "Offers" },
+    { key: "featured", icon: Sparkles, label: "Featured" },
+    { key: "hours", icon: Clock, label: "Hours" },
+  ];
+
+  if (loadingListings) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary)/0.08)] via-transparent to-[hsl(var(--primary)/0.04)]" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(var(--primary)/0.06)_0%,transparent_70%)]" />
-        
-        <div className="relative container mx-auto px-6 pt-8 pb-6 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--primary-glow))] flex items-center justify-center shadow-lg glow-primary">
-                <Building2 className="w-7 h-7 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
-                <p className="text-muted-foreground text-sm mt-0.5">
-                  Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                className="glass border-border/50 hover:bg-muted/50"
-                onClick={() => navigate("/")}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />Directory
-              </Button>
-              <Button
-                className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary-glow))] text-primary-foreground shadow-lg glow-primary hover:opacity-90 transition-opacity"
-                onClick={() => navigate("/add-listing")}
-              >
-                <Plus className="w-4 h-4 mr-2" />New Listing
-              </Button>
-            </div>
-          </motion.div>
+    <div className="min-h-screen bg-[hsl(var(--background))] flex">
+      {/* ═══════════════════════════════════════════
+          LEFT SIDEBAR
+          ═══════════════════════════════════════════ */}
+      <aside className={`${sidebarOpen ? "w-[240px]" : "w-0 overflow-hidden"} shrink-0 border-r border-border bg-card transition-all duration-300 flex flex-col h-screen sticky top-0`}>
+        {/* Logo area */}
+        <div className="h-16 flex items-center px-5 border-b border-border gap-3 shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--primary-glow))] flex items-center justify-center">
+            <Building2 className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <span className="font-bold text-foreground text-base tracking-tight">NearBuy</span>
+        </div>
 
-          {/* Stats Row */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-8"
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-4 mb-2">Overview</p>
+          {navItems.map(item => (
+            <SidebarItem
+              key={item.key}
+              icon={item.icon}
+              label={item.label}
+              active={activeTab === item.key}
+              badge={item.badge}
+              onClick={() => setActiveTab(item.key)}
+            />
+          ))}
+        </nav>
+
+        {/* Bottom settings */}
+        <div className="px-3 py-4 border-t border-border space-y-1 shrink-0">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 px-4 mb-2">Settings</p>
+          <SidebarItem icon={Settings} label="Settings" onClick={() => {}} />
+          <button
+            onClick={() => navigate("/")}
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-[hsl(var(--destructive))] hover:bg-destructive/5 transition-all"
           >
-            <StatCard icon={<Building2 className="w-5 h-5" />} label="Total Listings" value={stats.total} gradient="from-[hsl(var(--primary)/0.1)] to-[hsl(var(--primary)/0.05)]" />
-            <StatCard icon={<Zap className="w-5 h-5" />} label="Live" value={stats.approved} gradient="from-[hsl(var(--success)/0.1)] to-[hsl(var(--success)/0.05)]" valueColor="text-[hsl(var(--success))]" />
-            <StatCard icon={<Clock className="w-5 h-5" />} label="In Review" value={stats.pending} gradient="from-[hsl(var(--warning)/0.1)] to-[hsl(var(--warning)/0.05)]" valueColor="text-[hsl(var(--warning))]" />
-            <StatCard icon={<X className="w-5 h-5" />} label="Rejected" value={stats.rejected} gradient="from-[hsl(var(--destructive)/0.1)] to-[hsl(var(--destructive)/0.05)]" valueColor="text-destructive" />
-            <StatCard icon={<Eye className="w-5 h-5" />} label="Total Views" value={totalViews} gradient="from-[hsl(var(--info)/0.1)] to-[hsl(var(--info)/0.05)]" valueColor="text-[hsl(var(--info))]" />
-          </motion.div>
+            <LogOut className="w-5 h-5 shrink-0" />
+            <span>Back to Site</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* ═══════════════════════════════════════════
+          MAIN AREA (top bar + content + right sidebar)
+          ═══════════════════════════════════════════ */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Bar */}
+        <header className="h-16 border-b border-border bg-card flex items-center px-6 gap-4 shrink-0 sticky top-0 z-20">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground lg:hidden">
+            <LayoutDashboard className="w-5 h-5" />
+          </button>
+
+          {/* Search */}
+          <div className="flex-1 max-w-lg">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search your listings..."
+                className="w-full h-10 pl-10 pr-4 rounded-xl bg-muted/50 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 ml-auto">
+            <button className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-colors relative">
+              <Mail className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-colors relative">
+              <Bell className="w-4 h-4 text-muted-foreground" />
+              {recentEnquiries.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[hsl(var(--primary))] text-primary-foreground text-[9px] font-bold flex items-center justify-center">
+                  {recentEnquiries.length}
+                </span>
+              )}
+            </button>
+            {/* User avatar */}
+            <div className="flex items-center gap-3 ml-2 pl-3 border-l border-border">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary)/0.2)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center">
+                <span className="text-sm font-bold text-[hsl(var(--primary))]">{userName.charAt(0).toUpperCase()}</span>
+              </div>
+              <span className="text-sm font-semibold text-foreground hidden sm:block">{userName}</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Content body */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* ═══ Main content area ═══ */}
+          <main className="flex-1 overflow-y-auto p-6 space-y-6">
+
+            {/* ─── DASHBOARD TAB ─── */}
+            {activeTab === "dashboard" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                {/* Welcome Banner */}
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary-glow))] p-8 text-primary-foreground">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
+                  <div className="absolute bottom-0 right-20 w-32 h-32 bg-white/5 rounded-full translate-y-1/2" />
+                  <div className="relative z-10">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-white/60 mb-2">Business Dashboard</p>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
+                      Manage Your Business<br />Listings & Performance
+                    </h1>
+                    <Button
+                      onClick={() => navigate("/add-listing")}
+                      className="mt-4 bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:bg-white/30 rounded-full px-6"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />Add New Listing
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Quick Stat Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <QuickStatCard icon={<Building2 className="w-5 h-5" />} label="Total Listings" value={stats.total} color="primary" />
+                  <QuickStatCard icon={<Zap className="w-5 h-5" />} label="Live" value={stats.approved} color="success" />
+                  <QuickStatCard icon={<Clock className="w-5 h-5" />} label="In Review" value={stats.pending} color="warning" />
+                  <QuickStatCard icon={<Eye className="w-5 h-5" />} label="Total Views" value={totalViews} color="info" />
+                </div>
+
+                {/* Listings preview row */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-foreground tracking-tight">Your Listings</h2>
+                    <button onClick={() => setActiveTab("listings")} className="text-sm text-[hsl(var(--primary))] font-medium flex items-center gap-1 hover:underline">
+                      See all <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {listings.length === 0 ? (
+                      <div className="col-span-full rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+                        <Building2 className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+                        <p className="font-semibold text-foreground">No listings yet</p>
+                        <p className="text-sm text-muted-foreground mt-1 mb-4">Create your first listing to get started</p>
+                        <Button onClick={() => navigate("/add-listing")} size="sm">
+                          <Plus className="w-4 h-4 mr-2" />Add Listing
+                        </Button>
+                      </div>
+                    ) : listings.slice(0, 3).map(listing => {
+                      const sc = statusConfig[listing.status];
+                      return (
+                        <div key={listing.id} className="rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow group">
+                          {/* Card image */}
+                          <div className="h-36 bg-gradient-to-br from-muted to-muted/50 relative overflow-hidden">
+                            {listing.imageUrls?.[0] ? (
+                              <img src={listing.imageUrls[0]} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Building2 className="w-10 h-10 text-muted-foreground/20" />
+                              </div>
+                            )}
+                            <Badge className={`absolute top-3 left-3 ${
+                              listing.status === "approved" ? "bg-emerald-500/90 text-white border-transparent" :
+                              listing.status === "pending_approval" ? "bg-amber-500/90 text-white border-transparent" :
+                              "bg-red-500/90 text-white border-transparent"
+                            }`}>
+                              {sc.label}
+                            </Badge>
+                          </div>
+                          <div className="p-4">
+                            <div className="flex items-center gap-2 mb-1">
+                              {listing.logoUrl && (
+                                <img src={listing.logoUrl} alt="" className="w-6 h-6 rounded-md object-cover" />
+                              )}
+                              <h3 className="font-semibold text-foreground text-sm truncate">{listing.name}</h3>
+                            </div>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                              <MapPin className="w-3 h-3 shrink-0" />{listing.district}
+                            </p>
+                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
+                              <span className="text-xs text-muted-foreground">{listing.category}</span>
+                              <span className="text-xs font-semibold text-[hsl(var(--primary))] flex items-center gap-1">
+                                <Eye className="w-3 h-3" />{(viewCounts[listing.id] || 0).toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Recent Enquiries */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-foreground tracking-tight">Recent Enquiries</h2>
+                    <button onClick={() => setActiveTab("enquiries")} className="text-sm text-[hsl(var(--primary))] font-medium flex items-center gap-1 hover:underline">
+                      See all <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                    {recentEnquiries.length === 0 ? (
+                      <div className="p-12 text-center">
+                        <MessageSquare className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">No enquiries yet</p>
+                      </div>
+                    ) : (
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border">
+                            <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
+                            <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Listing</th>
+                            <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Message</th>
+                            <th className="text-right py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {recentEnquiries.map((eq, i) => (
+                            <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors">
+                              <td className="py-3 px-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-[hsl(var(--primary)/0.1)] flex items-center justify-center shrink-0">
+                                    <span className="text-xs font-bold text-[hsl(var(--primary))]">{eq.name.charAt(0)}</span>
+                                  </div>
+                                  <span className="font-medium text-foreground">{eq.name}</span>
+                                </div>
+                              </td>
+                              <td className="py-3 px-4 hidden sm:table-cell">
+                                <Badge variant="secondary" className="text-xs">{eq.listing || "—"}</Badge>
+                              </td>
+                              <td className="py-3 px-4 hidden md:table-cell">
+                                <span className="text-muted-foreground line-clamp-1">{eq.message}</span>
+                              </td>
+                              <td className="py-3 px-4 text-right text-muted-foreground text-xs">{eq.time}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ─── LISTINGS TAB ─── */}
+            {activeTab === "listings" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-foreground tracking-tight">My Listings</h2>
+                  <Button onClick={() => navigate("/add-listing")} size="sm" className="rounded-xl">
+                    <Plus className="w-4 h-4 mr-2" />Add Listing
+                  </Button>
+                </div>
+                {listings.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-border bg-card p-16 text-center">
+                    <Building2 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="font-semibold text-lg text-foreground">No listings yet</p>
+                    <p className="text-muted-foreground mt-1 mb-6">Create your first business listing to get started</p>
+                    <Button onClick={() => navigate("/add-listing")}>
+                      <Plus className="w-4 h-4 mr-2" />Add Listing
+                    </Button>
+                  </div>
+                ) : listings.map(listing => {
+                  const sc = statusConfig[listing.status];
+                  return (
+                    <div key={listing.id} className="rounded-2xl border border-border bg-card p-5 hover:shadow-sm transition-shadow group">
+                      <div className="flex items-start justify-between gap-5">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2 flex-wrap">
+                            {listing.logoUrl ? (
+                              <img src={listing.logoUrl} alt="" className="w-10 h-10 rounded-xl object-cover border border-border/50" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(var(--primary)/0.15)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center">
+                                <Building2 className="w-5 h-5 text-[hsl(var(--primary))]" />
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="font-semibold text-foreground text-lg tracking-tight">{listing.name}</h3>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className={`w-2 h-2 rounded-full ${sc.dotColor} animate-pulse`} />
+                                <span className="text-xs font-medium text-muted-foreground">{sc.label}</span>
+                                <span className="text-muted-foreground/30">·</span>
+                                <span className="text-xs text-muted-foreground">{listing.category}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2 ml-[52px]">
+                            <MapPin className="w-3.5 h-3.5 shrink-0 text-muted-foreground/60" />
+                            <span className="truncate">{listing.address}</span>
+                          </div>
+                          {listing.status === "rejected" && (listing as any).rejectionReason && (
+                            <div className="ml-[52px] mb-3 p-3 rounded-xl bg-destructive/5 border border-destructive/10">
+                              <p className="text-xs font-medium text-destructive mb-0.5">Rejection Reason</p>
+                              <p className="text-sm text-destructive/80">{(listing as any).rejectionReason}</p>
+                            </div>
+                          )}
+                          {listing.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 ml-[52px]">{listing.description}</p>
+                          )}
+                          <div className="flex items-center gap-5 flex-wrap text-xs text-muted-foreground mt-3 ml-[52px]">
+                            {listing.phone && (
+                              <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{listing.phone}</span>
+                            )}
+                            {listing.website && (
+                              <a href={listing.website} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-[hsl(var(--primary))] hover:underline font-medium">
+                                <Globe className="w-3.5 h-3.5" />Website<ArrowUpRight className="w-3 h-3" />
+                              </a>
+                            )}
+                            {viewCounts[listing.id] > 0 && (
+                              <span className="flex items-center gap-1.5 text-[hsl(var(--primary))] font-semibold">
+                                <Eye className="w-3.5 h-3.5" />{viewCounts[listing.id].toLocaleString()} views
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48 rounded-xl">
+                            <DropdownMenuItem onClick={() => setViewingListing(listing)} className="rounded-lg">
+                              <Eye className="w-4 h-4 mr-2" />View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openEdit(listing)} className="rounded-lg">
+                              <Edit3 className="w-4 h-4 mr-2" />Edit Listing
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive focus:text-destructive rounded-lg" onClick={() => deleteListing(listing.id)}>
+                              <Trash2 className="w-4 h-4 mr-2" />Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      {(listing.pendingLogoUrl || (listing.pendingImageUrls && listing.pendingImageUrls.length > 0)) && (
+                        <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
+                          <Image className="w-3.5 h-3.5" />
+                          {listing.pendingLogoUrl && "Logo"}{listing.pendingLogoUrl && listing.pendingImageUrls?.length ? " & " : ""}{listing.pendingImageUrls?.length ? `${listing.pendingImageUrls.length} image(s)` : ""} pending admin approval.
+                        </div>
+                      )}
+                      {listing.status === "pending_approval" && (
+                        <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
+                          <Clock className="w-3.5 h-3.5" />
+                          Your listing is under review. This usually takes 1–2 business days.
+                        </div>
+                      )}
+                      {listing.status === "rejected" && (
+                        <div className="mt-4 pt-4 border-t border-border/30">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-xs text-destructive flex items-center gap-2">
+                              <X className="w-3.5 h-3.5" />Fix the issues and resubmit for review.
+                            </p>
+                            <div className="flex gap-2 shrink-0">
+                              <Button size="sm" variant="outline" className="rounded-lg" onClick={() => openEdit(listing)}>
+                                <Edit3 className="w-3.5 h-3.5 mr-1.5" />Edit
+                              </Button>
+                              <Button size="sm" className="rounded-lg" onClick={() => resubmitListing(listing.id)} disabled={resubmitting === listing.id}>
+                                {resubmitting === listing.id ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1.5" />}
+                                Resubmit
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </motion.div>
+            )}
+
+            {/* ─── ENQUIRIES TAB ─── */}
+            {activeTab === "enquiries" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Enquiries</h2>
+                {user && <EnquiryInbox />}
+              </motion.div>
+            )}
+
+            {/* ─── OFFERS TAB ─── */}
+            {activeTab === "offers" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <h2 className="text-xl font-bold text-foreground tracking-tight">Offers & Deals</h2>
+                <div className="rounded-2xl border border-border bg-card p-6">
+                  <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[hsl(var(--success)/0.1)] flex items-center justify-center">
+                      <Gift className="w-4 h-4 text-[hsl(var(--success))]" />
+                    </div>
+                    Create New Offer
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Active offers appear in "Exclusive Deals This Week" on the homepage.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
+                      <Select value={offerListingId} onValueChange={setOfferListingId}>
+                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
+                        <SelectContent>
+                          {listings.filter(l => l.status === "approved").map(l => (
+                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Offer Title *</Label>
+                        <Input className="rounded-xl" value={offerTitle} onChange={e => setOfferTitle(e.target.value)} placeholder="e.g. Grand Opening Special" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Discount *</Label>
+                        <Input className="rounded-xl" value={offerDiscount} onChange={e => setOfferDiscount(e.target.value)} placeholder="e.g. 20% OFF" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
+                      <Textarea className="rounded-xl" value={offerDescription} onChange={e => setOfferDescription(e.target.value)} placeholder="Describe your offer..." rows={2} />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Valid Until</Label>
+                        <Input className="rounded-xl" type="date" value={offerValidUntil} onChange={e => setOfferValidUntil(e.target.value)} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Promo Code (optional)</Label>
+                        <Input className="rounded-xl" value={offerCode} onChange={e => setOfferCode(e.target.value)} placeholder="e.g. SAVE20" />
+                      </div>
+                    </div>
+                    <Button onClick={addOfferToListing} disabled={offerSaving || !offerListingId} className="rounded-xl">
+                      {offerSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      <Gift className="w-4 h-4 mr-2" />Add Offer
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-card p-6">
+                  <h3 className="font-semibold text-foreground mb-4">Active Offers</h3>
+                  {listings.filter(l => l.offers && l.offers.length > 0).length === 0 ? (
+                    <div className="text-center py-12">
+                      <Tag className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No offers yet</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-5">
+                      {listings.filter(l => l.offers && l.offers.length > 0).map(listing => (
+                        <div key={listing.id}>
+                          <p className="text-sm font-semibold text-foreground mb-2">{listing.name}</p>
+                          <div className="space-y-2">
+                            {listing.offers!.map(offer => (
+                              <div key={offer.id} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card/50 hover:bg-muted/30 transition-colors">
+                                <div className="flex items-center gap-3">
+                                  <Badge className="bg-[hsl(var(--success)/0.1)] text-[hsl(var(--success))] border-transparent font-bold">{offer.discount}</Badge>
+                                  <div>
+                                    <p className="text-sm font-semibold text-foreground">{offer.title}</p>
+                                    {offer.description && <p className="text-xs text-muted-foreground">{offer.description}</p>}
+                                  </div>
+                                </div>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive rounded-lg" onClick={() => removeOffer(listing.id, offer.id)}>
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* ─── FEATURED TAB ─── */}
+            {activeTab === "featured" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <h2 className="text-xl font-bold text-foreground tracking-tight">Featured Requests</h2>
+                <div className="rounded-2xl border border-border bg-card p-6">
+                  <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-[hsl(var(--warning))]" />
+                    </div>
+                    Request Featured Status
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-6">Featured businesses get premium visibility on the homepage.</p>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
+                      <Select value={selectedListingForFeatured} onValueChange={setSelectedListingForFeatured}>
+                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
+                        <SelectContent>
+                          {listings.filter(l => l.status === "approved" && !l.featured).map(l => (
+                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Why featured?</Label>
+                      <Textarea className="rounded-xl" value={featuredTicketReason} onChange={e => setFeaturedTicketReason(e.target.value)} placeholder="Tell us why..." rows={3} />
+                    </div>
+                    <Button onClick={submitFeaturedTicket} disabled={featuredTicketLoading || !selectedListingForFeatured} className="rounded-xl">
+                      {featuredTicketLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      <Sparkles className="w-4 h-4 mr-2" />Submit Request
+                    </Button>
+                  </div>
+                </div>
+
+                {featuredTickets.length > 0 && (
+                  <div className="rounded-2xl border border-border bg-card p-6">
+                    <h3 className="font-semibold text-foreground mb-4">Your Requests</h3>
+                    <div className="space-y-0 divide-y divide-border/40">
+                      {featuredTickets.map(ticket => (
+                        <div key={ticket.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">{ticket.listingName}</p>
+                            {ticket.reason && <p className="text-xs text-muted-foreground mt-0.5">{ticket.reason}</p>}
+                          </div>
+                          <Badge className={
+                            ticket.status === "approved"
+                              ? "bg-[hsl(var(--success)/0.1)] text-[hsl(var(--success))] border-transparent"
+                              : ticket.status === "rejected"
+                              ? "bg-destructive/10 text-destructive border-transparent"
+                              : "bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--warning))] border-transparent"
+                          }>
+                            {ticket.status === "approved" ? "Approved" : ticket.status === "rejected" ? "Rejected" : "Pending"}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* ─── HOURS TAB ─── */}
+            {activeTab === "hours" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Operating Hours</h2>
+                <p className="text-sm text-muted-foreground mb-6">Manage open/close times for all your listings.</p>
+                {listings.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-12">No listings yet.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {listings.map(listing => (
+                      <HoursEditor
+                        key={listing.id}
+                        listing={listing}
+                        onSave={async (hours) => {
+                          try {
+                            await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours, status: "pending_approval" });
+                            setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours, status: "pending_approval" } : l));
+                            toast.success(`Hours updated for ${listing.name} — pending admin re-approval.`);
+                          } catch (err: any) { toast.error(err.message || "Failed to update hours"); }
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* ─── SETTINGS TAB ─── */}
+            {activeTab === "settings" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Settings</h2>
+                <p className="text-sm text-muted-foreground">Settings coming soon.</p>
+              </motion.div>
+            )}
+          </main>
+
+          {/* ═══════════════════════════════════════════
+              RIGHT SIDEBAR
+              ═══════════════════════════════════════════ */}
+          <aside className="hidden xl:block w-[300px] shrink-0 border-l border-border bg-card p-5 overflow-y-auto h-[calc(100vh-64px)] sticky top-16 space-y-6">
+            {/* Greeting */}
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[hsl(var(--primary)/0.15)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center mx-auto mb-3 border-2 border-[hsl(var(--primary)/0.2)]">
+                <span className="text-2xl font-bold text-[hsl(var(--primary))]">{userName.charAt(0).toUpperCase()}</span>
+              </div>
+              <h3 className="font-bold text-foreground">{greeting} {userName} 🔥</h3>
+              <p className="text-xs text-muted-foreground mt-1">Manage your business to grow further!</p>
+            </div>
+
+            {/* Stats summary */}
+            <div className="rounded-2xl border border-border p-4 space-y-4">
+              <h4 className="text-sm font-semibold text-foreground">Statistics</h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Live Listings</span>
+                  <span className="text-sm font-bold text-foreground">{stats.approved}</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-[hsl(var(--success))]" style={{ width: `${stats.total ? (stats.approved / stats.total * 100) : 0}%` }} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">In Review</span>
+                  <span className="text-sm font-bold text-[hsl(var(--warning))]">{stats.pending}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Total Views</span>
+                  <span className="text-sm font-bold text-[hsl(var(--info))]">{totalViews.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Analytics Chart */}
+            {user && listings.length > 0 && (
+              <div className="rounded-2xl border border-border p-4">
+                <h4 className="text-sm font-semibold text-foreground mb-3">View Analytics</h4>
+                <ViewAnalyticsChart listings={listings} userId={user.uid} />
+              </div>
+            )}
+
+            {/* Recent Enquiries compact */}
+            <div className="rounded-2xl border border-border p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold text-foreground">Recent Enquiries</h4>
+                {recentEnquiries.length > 0 && (
+                  <button onClick={() => setActiveTab("enquiries")} className="text-[10px] text-[hsl(var(--primary))] font-semibold hover:underline">See All</button>
+                )}
+              </div>
+              {recentEnquiries.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-4">No enquiries yet</p>
+              ) : recentEnquiries.slice(0, 3).map((eq, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[hsl(var(--primary)/0.1)] flex items-center justify-center shrink-0">
+                    <span className="text-[10px] font-bold text-[hsl(var(--primary))]">{eq.name.charAt(0)}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-foreground truncate">{eq.name}</span>
+                      <span className="text-[10px] text-muted-foreground shrink-0">{eq.time}</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">{eq.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-6 pb-12 max-w-7xl">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
-          <TabsList className="glass border-border/40 p-1 h-auto gap-1 rounded-xl">
-            {[
-              { value: "listings", icon: Building2, label: "Listings" },
-              { value: "analytics", icon: BarChart3, label: "Analytics" },
-              { value: "offers", icon: Gift, label: "Offers" },
-              { value: "featured", icon: Sparkles, label: "Featured" },
-              { value: "enquiries", icon: MessageSquare, label: "Enquiries" },
-              { value: "hours", icon: Clock, label: "Hours" },
-            ].map(tab => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="gap-2 rounded-lg px-4 py-2.5 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
-              >
-                <tab.icon className="w-4 h-4" />
-                <span className="hidden sm:inline text-sm font-medium">{tab.label}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {/* LISTINGS TAB */}
-          <TabsContent value="listings" className="mt-8">
-            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
-              {listings.length === 0 ? (
-                <motion.div variants={itemVariants} className="glass-card p-16 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                    <Building2 className="w-8 h-8 text-muted-foreground/50" />
-                  </div>
-                  <p className="font-semibold text-lg text-foreground">No listings yet</p>
-                  <p className="text-muted-foreground mt-1 mb-6">Create your first business listing to get started</p>
-                  <Button onClick={() => navigate("/add-listing")} className="glow-primary">
-                    <Plus className="w-4 h-4 mr-2" />Add Listing
-                  </Button>
-                </motion.div>
-              ) : listings.map((listing, i) => {
-                const sc = statusConfig[listing.status];
-                return (
-                  <motion.div
-                    key={listing.id}
-                    variants={itemVariants}
-                    className="glass-card p-6 hover-lift group"
-                  >
-                    <div className="flex items-start justify-between gap-5">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                          {listing.logoUrl ? (
-                            <img src={listing.logoUrl} alt="" className="w-10 h-10 rounded-xl object-cover border border-border/50" />
-                          ) : (
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(var(--primary)/0.15)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center">
-                              <Building2 className="w-5 h-5 text-primary" />
-                            </div>
-                          )}
-                          <div>
-                            <h3 className="font-semibold text-foreground text-lg tracking-tight">{listing.name}</h3>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className={`w-2 h-2 rounded-full ${sc.dotColor} animate-pulse`} />
-                              <span className="text-xs font-medium text-muted-foreground">{sc.label}</span>
-                              <span className="text-muted-foreground/30">·</span>
-                              <span className="text-xs text-muted-foreground">{listing.category}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2 ml-[52px]">
-                          <MapPin className="w-3.5 h-3.5 shrink-0 text-muted-foreground/60" />
-                          <span className="truncate">{listing.address}</span>
-                        </div>
-
-                        {listing.status === "rejected" && (listing as any).rejectionReason && (
-                          <div className="ml-[52px] mb-3 p-3 rounded-xl bg-destructive/5 border border-destructive/10">
-                            <p className="text-xs font-medium text-destructive mb-0.5">Rejection Reason</p>
-                            <p className="text-sm text-destructive/80">{(listing as any).rejectionReason}</p>
-                          </div>
-                        )}
-
-                        {listing.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2 ml-[52px]">{listing.description}</p>
-                        )}
-
-                        <div className="flex items-center gap-5 flex-wrap text-xs text-muted-foreground mt-3 ml-[52px]">
-                          {listing.phone && (
-                            <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{listing.phone}</span>
-                          )}
-                          {listing.website && (
-                            <a href={listing.website} target="_blank" rel="noopener noreferrer"
-                              className="flex items-center gap-1.5 text-primary hover:underline font-medium">
-                              <Globe className="w-3.5 h-3.5" />Website<ArrowUpRight className="w-3 h-3" />
-                            </a>
-                          )}
-                          {viewCounts[listing.id] > 0 && (
-                            <span className="flex items-center gap-1.5 text-primary font-semibold">
-                              <Eye className="w-3.5 h-3.5" />{viewCounts[listing.id].toLocaleString()} views
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 rounded-xl">
-                          <DropdownMenuItem onClick={() => setViewingListing(listing)} className="rounded-lg">
-                            <Eye className="w-4 h-4 mr-2" />View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openEdit(listing)} className="rounded-lg">
-                            <Edit3 className="w-4 h-4 mr-2" />Edit Listing
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive focus:text-destructive rounded-lg" onClick={() => deleteListing(listing.id)}>
-                            <Trash2 className="w-4 h-4 mr-2" />Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-
-                    {(listing.pendingLogoUrl || (listing.pendingImageUrls && listing.pendingImageUrls.length > 0)) && (
-                      <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
-                        <div className="w-6 h-6 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
-                          <Image className="w-3.5 h-3.5" />
-                        </div>
-                        {listing.pendingLogoUrl && "Logo"}{listing.pendingLogoUrl && listing.pendingImageUrls?.length ? " & " : ""}{listing.pendingImageUrls?.length ? `${listing.pendingImageUrls.length} image(s)` : ""} pending admin approval.
-                      </div>
-                    )}
-                    {listing.status === "pending_approval" && (
-                      <div className="mt-4 pt-4 border-t border-border/30 flex items-center gap-2 text-xs text-[hsl(var(--warning))]">
-                        <div className="w-6 h-6 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
-                          <Clock className="w-3.5 h-3.5" />
-                        </div>
-                        Your listing is under review. This usually takes 1–2 business days.
-                      </div>
-                    )}
-                    {listing.status === "rejected" && (
-                      <div className="mt-4 pt-4 border-t border-border/30">
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="text-xs text-destructive flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
-                              <X className="w-3.5 h-3.5" />
-                            </div>
-                            Fix the issues and resubmit for review.
-                          </p>
-                          <div className="flex gap-2 shrink-0">
-                            <Button size="sm" variant="outline" className="rounded-lg" onClick={() => openEdit(listing)}>
-                              <Edit3 className="w-3.5 h-3.5 mr-1.5" />Edit
-                            </Button>
-                            <Button size="sm" className="rounded-lg" onClick={() => resubmitListing(listing.id)} disabled={resubmitting === listing.id}>
-                              {resubmitting === listing.id ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 mr-1.5" />}
-                              Resubmit
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </TabsContent>
-
-          {/* ANALYTICS TAB */}
-          <TabsContent value="analytics" className="mt-8 space-y-6">
-            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <motion.div variants={itemVariants}>
-                <AnalyticCard title="Total Views" value={totalViews.toLocaleString()} icon={<Eye className="w-5 h-5" />} accent="primary" />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <AnalyticCard title="Contact Clicks" value="—" icon={<Phone className="w-5 h-5" />} accent="success" />
-              </motion.div>
-              <motion.div variants={itemVariants}>
-                <AnalyticCard title="Website Visits" value="—" icon={<Globe className="w-5 h-5" />} accent="info" />
-              </motion.div>
-            </motion.div>
-
-            {user && <ViewAnalyticsChart listings={listings} userId={user.uid} />}
-
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-foreground mb-6 flex items-center gap-2.5 text-lg tracking-tight">
-                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                </div>
-                Performance by Listing
-              </h3>
-              <div className="space-y-0 divide-y divide-border/40">
-                {listings.filter(l => l.status === "approved").map(listing => (
-                  <div key={listing.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[hsl(var(--primary)/0.1)] to-transparent flex items-center justify-center">
-                        <Building2 className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{listing.name}</p>
-                        <p className="text-xs text-muted-foreground">{listing.district}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-8 text-sm">
-                      <div className="text-right">
-                        <p className="font-bold text-foreground tabular-nums">{(viewCounts[listing.id] || 0).toLocaleString()}</p>
-                        <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Views</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground tabular-nums">—</p>
-                        <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Clicks</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {listings.filter(l => l.status === "approved").length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-12">No approved listings to show analytics for</p>
-                )}
-              </div>
-            </div>
-
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-foreground mb-6 flex items-center gap-2.5 text-lg tracking-tight">
-                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
-                  <MessageSquare className="w-4 h-4 text-primary" />
-                </div>
-                Recent Enquiries
-              </h3>
-              <div className="space-y-0 divide-y divide-border/40">
-                {recentEnquiries.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
-                      <MessageSquare className="w-6 h-6 text-muted-foreground/40" />
-                    </div>
-                    <p className="text-sm text-muted-foreground">No enquiries yet</p>
-                  </div>
-                ) : recentEnquiries.map((enquiry, i) => (
-                  <div key={i} className="flex items-start gap-3.5 py-4 first:pt-0 last:pb-0">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[hsl(var(--primary)/0.15)] to-[hsl(var(--primary)/0.05)] flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-primary">{enquiry.name.charAt(0)}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-foreground">{enquiry.name}</p>
-                        <span className="text-[11px] text-muted-foreground font-medium">{enquiry.time}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{enquiry.message}</p>
-                      {enquiry.listing && <p className="text-xs text-primary mt-1 font-medium">Re: {enquiry.listing}</p>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* OFFERS TAB */}
-          <TabsContent value="offers" className="mt-8 space-y-6">
-            <motion.div variants={itemVariants} initial="hidden" animate="visible" className="glass-card p-6">
-              <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2.5 text-lg tracking-tight">
-                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--success)/0.1)] flex items-center justify-center">
-                  <Gift className="w-4 h-4 text-[hsl(var(--success))]" />
-                </div>
-                Create New Offer
-              </h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                Active offers appear in <span className="font-semibold text-foreground">"Exclusive Deals This Week"</span> on the homepage.
-              </p>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
-                  <Select value={offerListingId} onValueChange={setOfferListingId}>
-                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
-                    <SelectContent>
-                      {listings.filter(l => l.status === "approved").map(l => (
-                        <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Offer Title *</Label>
-                    <Input className="rounded-xl" value={offerTitle} onChange={e => setOfferTitle(e.target.value)} placeholder="e.g. Grand Opening Special" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Discount *</Label>
-                    <Input className="rounded-xl" value={offerDiscount} onChange={e => setOfferDiscount(e.target.value)} placeholder="e.g. 20% OFF or $10 Credit" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
-                  <Textarea className="rounded-xl" value={offerDescription} onChange={e => setOfferDescription(e.target.value)} placeholder="Describe your offer..." rows={2} />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Valid Until</Label>
-                    <Input className="rounded-xl" type="date" value={offerValidUntil} onChange={e => setOfferValidUntil(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Promo Code (optional)</Label>
-                    <Input className="rounded-xl" value={offerCode} onChange={e => setOfferCode(e.target.value)} placeholder="e.g. SAVE20" />
-                  </div>
-                </div>
-                <Button onClick={addOfferToListing} disabled={offerSaving || !offerListingId} className="rounded-xl glow-primary">
-                  {offerSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  <Gift className="w-4 h-4 mr-2" />Add Offer
-                </Button>
-              </div>
-            </motion.div>
-
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-foreground mb-4 text-lg tracking-tight">Active Offers</h3>
-              {listings.filter(l => l.offers && l.offers.length > 0).length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
-                    <Tag className="w-6 h-6 text-muted-foreground/40" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">No offers yet. Create your first one above!</p>
-                </div>
-              ) : (
-                <div className="space-y-5">
-                  {listings.filter(l => l.offers && l.offers.length > 0).map(listing => (
-                    <div key={listing.id}>
-                      <p className="text-sm font-semibold text-foreground mb-2">{listing.name}</p>
-                      <div className="space-y-2">
-                        {listing.offers!.map(offer => (
-                          <div key={offer.id} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card/50 hover:bg-card transition-colors">
-                            <div className="flex items-center gap-3">
-                              <Badge className="bg-[hsl(var(--success)/0.1)] text-[hsl(var(--success))] border-transparent font-bold">{offer.discount}</Badge>
-                              <div>
-                                <p className="text-sm font-semibold text-foreground">{offer.title}</p>
-                                {offer.description && <p className="text-xs text-muted-foreground">{offer.description}</p>}
-                              </div>
-                            </div>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive rounded-lg" onClick={() => removeOffer(listing.id, offer.id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          {/* FEATURED REQUEST TAB */}
-          <TabsContent value="featured" className="mt-8 space-y-6">
-            <motion.div variants={itemVariants} initial="hidden" animate="visible" className="glass-card p-6">
-              <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2.5 text-lg tracking-tight">
-                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--warning)/0.1)] flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-[hsl(var(--warning))]" />
-                </div>
-                Request Featured Status
-              </h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                Featured businesses get premium visibility on the homepage with priority placement.
-              </p>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
-                  <Select value={selectedListingForFeatured} onValueChange={setSelectedListingForFeatured}>
-                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
-                    <SelectContent>
-                      {listings.filter(l => l.status === "approved" && !l.featured).map(l => (
-                        <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Why should your business be featured?</Label>
-                  <Textarea className="rounded-xl" value={featuredTicketReason} onChange={e => setFeaturedTicketReason(e.target.value)} placeholder="Tell us why your business deserves to be featured..." rows={3} />
-                </div>
-                <Button onClick={submitFeaturedTicket} disabled={featuredTicketLoading || !selectedListingForFeatured} className="rounded-xl glow-primary">
-                  {featuredTicketLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  <Sparkles className="w-4 h-4 mr-2" />Submit Request
-                </Button>
-              </div>
-            </motion.div>
-
-            {featuredTickets.length > 0 && (
-              <div className="glass-card p-6">
-                <h3 className="font-semibold text-foreground mb-4 text-lg tracking-tight">Your Requests</h3>
-                <div className="space-y-0 divide-y divide-border/40">
-                  {featuredTickets.map(ticket => (
-                    <div key={ticket.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{ticket.listingName}</p>
-                        {ticket.reason && <p className="text-xs text-muted-foreground mt-0.5">{ticket.reason}</p>}
-                      </div>
-                      <Badge className={
-                        ticket.status === "approved"
-                          ? "bg-[hsl(var(--success)/0.1)] text-[hsl(var(--success))] border-transparent"
-                          : ticket.status === "rejected"
-                          ? "bg-destructive/10 text-destructive border-transparent"
-                          : "bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--warning))] border-transparent"
-                      }>
-                        {ticket.status === "approved" ? "Approved" : ticket.status === "rejected" ? "Rejected" : "Pending"}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* ENQUIRIES TAB */}
-          <TabsContent value="enquiries" className="mt-8">
-            <EnquiryInbox />
-          </TabsContent>
-
-          {/* HOURS TAB */}
-          <TabsContent value="hours" className="mt-8">
-            <div className="glass-card p-6">
-              <h3 className="font-semibold text-foreground flex items-center gap-2.5 mb-1 text-lg tracking-tight">
-                <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-primary" />
-                </div>
-                Operating Hours
-              </h3>
-              <p className="text-sm text-muted-foreground mb-6 ml-[42px]">Manage open/close times for all your listings.</p>
-
-              {listings.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-12">No listings yet.</p>
-              ) : (
-                <div className="space-y-4">
-                  {listings.map((listing) => (
-                    <HoursEditor
-                      key={listing.id}
-                      listing={listing}
-                      onSave={async (hours) => {
-                        try {
-                          await updateDoc(doc(db, "listings", listing.id), { operatingHours: hours, status: "pending_approval" });
-                          setListings(prev => prev.map(l => l.id === listing.id ? { ...l, operatingHours: hours, status: "pending_approval" } : l));
-                          toast.success(`Hours updated for ${listing.name} — pending admin re-approval.`);
-                        } catch (err: any) { toast.error(err.message || "Failed to update hours"); }
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* View Listing Dialog */}
+      {/* ═══ View Listing Dialog ═══ */}
       <Dialog open={!!viewingListing} onOpenChange={() => setViewingListing(null)}>
         <DialogContent className="sm:max-w-lg rounded-2xl" aria-describedby={undefined}>
           <DialogHeader>
@@ -850,7 +1006,7 @@ const BusinessDashboard = () => {
                 <p className="font-medium mt-0.5">{viewingListing.address}</p>
               </div>
               {viewingListing.website && (
-                <a href={viewingListing.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1.5 font-medium">
+                <a href={viewingListing.website} target="_blank" rel="noopener noreferrer" className="text-[hsl(var(--primary))] hover:underline flex items-center gap-1.5 font-medium">
                   <Globe className="w-4 h-4" />{viewingListing.website}<ArrowUpRight className="w-3.5 h-3.5" />
                 </a>
               )}
@@ -859,7 +1015,7 @@ const BusinessDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Listing Dialog */}
+      {/* ═══ Edit Listing Dialog ═══ */}
       <Dialog open={!!editingListing} onOpenChange={() => setEditingListing(null)}>
         <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl" aria-describedby={undefined}>
           <DialogHeader>
@@ -1041,7 +1197,7 @@ const BusinessDashboard = () => {
                 </div>
               )}
               <div className="flex gap-3 pt-4">
-                <Button className="flex-1 rounded-xl glow-primary" onClick={saveEdit} disabled={!!slugError || saving}>
+                <Button className="flex-1 rounded-xl" onClick={saveEdit} disabled={!!slugError || saving}>
                   {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   {saving ? "Saving..." : "Save Changes"}
                 </Button>
@@ -1057,35 +1213,18 @@ const BusinessDashboard = () => {
 
 /* ─── Subcomponents ─── */
 
-const StatCard = ({ icon, label, value, gradient, valueColor = "text-foreground" }: {
-  icon: React.ReactNode; label: string; value: number; gradient: string; valueColor?: string;
+const QuickStatCard = ({ icon, label, value, color }: {
+  icon: React.ReactNode; label: string; value: number; color: string;
 }) => (
-  <motion.div
-    variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
-    className={`glass-card p-5 bg-gradient-to-br ${gradient}`}
-  >
+  <div className="rounded-2xl border border-border bg-card p-5 hover:shadow-sm transition-shadow">
     <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 rounded-xl bg-background/60 backdrop-blur-sm flex items-center justify-center text-muted-foreground">
-        {icon}
-      </div>
-    </div>
-    <p className={`text-3xl font-bold tracking-tight ${valueColor} tabular-nums`}>{value.toLocaleString()}</p>
-    <p className="text-xs text-muted-foreground mt-1 font-medium uppercase tracking-wider">{label}</p>
-  </motion.div>
-);
-
-const AnalyticCard = ({ title, value, icon, accent }: {
-  title: string; value: string; icon: React.ReactNode; accent: string;
-}) => (
-  <div className="glass-card p-6 hover-lift">
-    <div className="flex items-center justify-between mb-4">
-      <div className={`w-10 h-10 rounded-xl bg-[hsl(var(--${accent})/0.1)] flex items-center justify-center text-[hsl(var(--${accent}))]`}>
+      <div className={`w-10 h-10 rounded-xl bg-[hsl(var(--${color})/0.1)] flex items-center justify-center text-[hsl(var(--${color}))]`}>
         {icon}
       </div>
       <Activity className="w-4 h-4 text-muted-foreground/30" />
     </div>
-    <p className="text-3xl font-bold text-foreground tracking-tight tabular-nums">{value}</p>
-    <p className="text-sm text-muted-foreground mt-1 font-medium">{title}</p>
+    <p className="text-3xl font-bold tracking-tight text-foreground tabular-nums">{value.toLocaleString()}</p>
+    <p className="text-xs text-muted-foreground mt-1 font-medium uppercase tracking-wider">{label}</p>
   </div>
 );
 
@@ -1106,15 +1245,15 @@ const HoursEditor = ({ listing, onSave }: { listing: Listing; onSave: (hours: Op
   };
 
   return (
-    <div className="glass-card p-5 space-y-3">
+    <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center">
-            <Building2 className="w-4 h-4 text-primary" />
+            <Building2 className="w-4 h-4 text-[hsl(var(--primary))]" />
           </div>
           <h4 className="font-semibold text-sm text-foreground">{listing.name}</h4>
         </div>
-        <Button size="sm" disabled={!dirty || saving} onClick={handleSave} className="h-8 text-xs rounded-lg glow-primary">
+        <Button size="sm" disabled={!dirty || saving} onClick={handleSave} className="h-8 text-xs rounded-lg">
           {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Check className="w-3.5 h-3.5 mr-1" />}
           {saving ? "Saving..." : "Save"}
         </Button>
