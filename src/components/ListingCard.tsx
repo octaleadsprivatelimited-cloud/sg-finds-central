@@ -191,6 +191,8 @@ export function getNextOpenInfo(listing: Listing): string | null {
 const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanceKm, index }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
+  const catBg = CATEGORY_BG[listing.category] || "";
+  const catBorder = CATEGORY_BORDER[listing.category] || "";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
   const nextOpenInfo = useMemo(() => (isOpen === false ? getNextOpenInfo(listing) : null), [listing, isOpen]);
 
