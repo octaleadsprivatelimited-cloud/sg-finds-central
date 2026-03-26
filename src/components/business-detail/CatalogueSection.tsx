@@ -1,3 +1,4 @@
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface CatalogueItem {
@@ -30,10 +31,19 @@ const DEMO_CATALOGUE: CatalogueItem[] = [
 
 interface CatalogueSectionProps {
   items?: CatalogueItem[];
+  whatsappNumber?: string;
+  businessName?: string;
 }
 
-const CatalogueSection = ({ items }: CatalogueSectionProps) => {
+const CatalogueSection = ({ items, whatsappNumber, businessName }: CatalogueSectionProps) => {
   const catalogue = items && items.length > 0 ? items : DEMO_CATALOGUE;
+
+  const handleEnquire = (item: CatalogueItem) => {
+    const sanitized = (whatsappNumber || "").replace(/[^0-9+]/g, "");
+    const message = `Hi${businessName ? ` ${businessName}` : ""},\n\nI'm interested in:\n📦 *${item.title}*\n💰 ${item.price}\n\nCould you share more details?\n\nThank you!`;
+    const url = `https://wa.me/${sanitized}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="space-y-4">
@@ -47,7 +57,13 @@ const CatalogueSection = ({ items }: CatalogueSectionProps) => {
             <h4 className="font-semibold text-foreground text-sm line-clamp-2">{item.title}</h4>
             <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
             <p className="text-sm font-semibold text-foreground">{item.price}</p>
-            <Button variant="outline" size="sm" className="w-full text-primary border-primary/30 hover:bg-primary/5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-950"
+              onClick={() => handleEnquire(item)}
+            >
+              <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
               Enquire Now
             </Button>
           </div>
