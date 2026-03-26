@@ -739,11 +739,22 @@ const Admin = () => {
             <div className="space-y-4 max-w-5xl">
               <div>
                 <h1 className="text-lg font-semibold text-foreground">Enquiries</h1>
-                <p className="text-xs text-muted-foreground mt-0.5">{stats.unreadEnquiries} unread · {stats.enquiries} total</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{stats.unreadEnquiries} new · {stats.enquiries} total</p>
               </div>
 
-              {loading ? (
-                <div className="text-center py-16"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></div>
+              {/* Filter pills */}
+              <div className="flex gap-1.5 flex-wrap">
+                {[{ key: "all" as const, label: "All" }, ...ENQUIRY_STATUSES].map((f) => (
+                  <button key={f.key} onClick={() => setEnquiryFilter(f.key)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition border
+                      ${enquiryFilter === f.key
+                        ? "bg-[hsl(250,40%,16%)] text-white border-transparent"
+                        : "bg-white dark:bg-[hsl(250,15%,12%)] text-muted-foreground border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,18%)] hover:border-[hsl(250,30%,70%)]"
+                      }`}>
+                    {f.label} ({enquiryStatusCounts[f.key] || 0})
+                  </button>
+                ))}
+              </div>
               ) : filteredEnquiries.length === 0 ? (
                 <div className="text-center py-12 bg-white dark:bg-[hsl(250,15%,12%)] rounded-lg border border-[hsl(0,0%,91%)] dark:border-[hsl(250,15%,18%)]">
                   <Inbox className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
