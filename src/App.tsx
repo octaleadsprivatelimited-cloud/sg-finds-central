@@ -32,7 +32,8 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const location = useLocation();
-  const hideFooter = ["/signup", "/reset-password"].includes(location.pathname);
+  const isAdminPage = location.pathname === "/admin";
+  const hideFooter = isAdminPage || ["/signup", "/reset-password"].includes(location.pathname);
   const [showMap, setShowMap] = useState(false);
   const [detectLocationFn, setDetectLocationFn] = useState<(() => void) | null>(null);
 
