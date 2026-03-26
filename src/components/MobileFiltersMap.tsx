@@ -133,8 +133,8 @@ const MobileFiltersMap = ({
           </div>
 
           {/* Row 2: Distance chips */}
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap">
-            <span className="text-[11px] font-medium text-muted-foreground shrink-0">Distance</span>
+          <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide flex-nowrap">
+            <span className="text-[10px] font-medium text-muted-foreground shrink-0 mr-0.5">Distance</span>
             {DISTANCES.map((r) => (
               <button
                 key={r.label}
@@ -144,7 +144,7 @@ const MobileFiltersMap = ({
                   }
                   setRadiusKm(r.value);
                 }}
-                className={`px-2 py-1 rounded-full text-[11px] font-medium border transition-all whitespace-nowrap shrink-0 active:scale-95 ${
+                className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium border transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   radiusKm === r.value
                     ? "bg-foreground text-background border-foreground shadow-sm"
                     : "bg-background text-foreground border-border hover:bg-muted"
@@ -154,8 +154,8 @@ const MobileFiltersMap = ({
               </button>
             ))}
             {radiusKm !== null && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
-                <MapPin className="w-2.5 h-2.5" />
+              <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full text-[9px] font-medium shrink-0 bg-primary/10 text-primary border border-primary/20">
+                <MapPin className="w-2 h-2" />
                 {userLocation ? "GPS" : district !== "All Districts" ? district : "—"}
               </span>
             )}
