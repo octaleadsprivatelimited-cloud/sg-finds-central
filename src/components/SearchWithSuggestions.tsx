@@ -106,7 +106,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
       ) : (
         <Input
           placeholder={placeholder}
-          className="h-full min-h-[48px] rounded-none border-border bg-card pl-4 pr-12 focus-visible:ring-0 focus-visible:ring-offset-0 border text-sm"
+          className="h-full min-h-[40px] rounded-lg border-0 bg-transparent pl-2 pr-4 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm shadow-none"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => setFocused(true)}
