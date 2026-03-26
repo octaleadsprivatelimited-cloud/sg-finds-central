@@ -68,7 +68,7 @@ interface Enquiry {
    MAIN ADMIN PAGE — TEAMS LAYOUT
    ═══════════════════════════════════════════════════════════ */
 const Admin = () => {
-  const { user, isSuperAdmin, loading: authLoading } = useAuth();
+  const { user, isSuperAdmin, loading: authLoading, isDevMode, devLogout } = useAuth();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<AdminTab>("listings");
@@ -262,7 +262,7 @@ const Admin = () => {
           <div className="w-8 h-8 rounded-full bg-[hsl(250,50%,55%)] flex items-center justify-center text-white text-xs font-bold">
             {user?.displayName?.[0] || user?.email?.[0]?.toUpperCase() || "A"}
           </div>
-          <button onClick={async () => { await signOut(auth); navigate("/"); }} title="Sign out"
+          <button onClick={async () => { if (isDevMode) devLogout(); else await signOut(auth); navigate("/"); }} title="Sign out"
             className="text-[hsl(250,20%,60%)] hover:text-white transition p-2">
             <LogOut className="w-4 h-4" />
           </button>
@@ -320,7 +320,7 @@ const Admin = () => {
               </button>
             ))}
             <div className="mt-auto pt-4 border-t border-white/10">
-              <button onClick={async () => { await signOut(auth); navigate("/"); }}
+              <button onClick={async () => { if (isDevMode) devLogout(); else await signOut(auth); navigate("/"); }}
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm text-[hsl(250,20%,65%)] hover:bg-white/5 hover:text-white transition">
                 <LogOut className="w-[18px] h-[18px]" />
                 <span>Sign out</span>
