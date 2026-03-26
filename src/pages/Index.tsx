@@ -52,6 +52,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   useEffect(() => {
     if (listingsScrollRef.current) {
       listingsScrollRef.current.scrollTo({ top: 0, behavior: 'instant' });
+      listingsScrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [currentPage]);
 
