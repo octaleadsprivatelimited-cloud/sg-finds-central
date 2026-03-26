@@ -339,7 +339,12 @@ const CityCategory = () => {
                       <div className="p-1.5 text-center">
                         <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">{sub.label}</p>
                         <p className="text-[11px] text-muted-foreground mt-0.5">
-                          {listings.filter((l) => l.category === matchedCategory && (l as any).subcategory === sub.value).length} listings
+                          {listings.filter((l) => {
+                            if (l.category !== matchedCategory) return false;
+                            const list: string[] = (l as any).subcategoryList || [];
+                            const data = (l as any).subcategoryData;
+                            return list.includes(sub.value) || data?.subcategory === sub.value || data?.subcategories?.includes(sub.value) || data?.subjects?.includes(sub.value);
+                          }).length} listings
                         </p>
                       </div>
                     </button>
