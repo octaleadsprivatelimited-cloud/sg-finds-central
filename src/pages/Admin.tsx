@@ -314,7 +314,7 @@ const Admin = () => {
   }, [allListings]);
 
   const topListings = useMemo(() =>
-    [...allListings].filter(l => l.status === "approved").sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0)).slice(0, 5),
+    [...allListings].filter(l => l.status === "approved").sort((a, b) => ((b as any).viewCount || 0) - ((a as any).viewCount || 0)).slice(0, 5),
   [allListings]);
 
   const activityLog = useMemo(() => {
