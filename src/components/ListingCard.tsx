@@ -98,6 +98,34 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Photography / Videography": "from-slate-500 to-slate-700",
 };
 
+const CATEGORY_BG: Record<string, string> = {
+  "Tuition": "bg-blue-50/50 dark:bg-blue-950/20",
+  "Baking": "bg-amber-50/50 dark:bg-amber-950/20",
+  "Music / Art / Craft": "bg-purple-50/50 dark:bg-purple-950/20",
+  "Home Food": "bg-orange-50/50 dark:bg-orange-950/20",
+  "Beauty": "bg-pink-50/50 dark:bg-pink-950/20",
+  "Pet Services": "bg-emerald-50/50 dark:bg-emerald-950/20",
+  "Event Services": "bg-rose-50/50 dark:bg-rose-950/20",
+  "Tailoring": "bg-violet-50/50 dark:bg-violet-950/20",
+  "Cleaning": "bg-sky-50/50 dark:bg-sky-950/20",
+  "Handyman": "bg-yellow-50/50 dark:bg-yellow-950/20",
+  "Photography / Videography": "bg-slate-50/50 dark:bg-slate-950/20",
+};
+
+const CATEGORY_BORDER: Record<string, string> = {
+  "Tuition": "border-l-blue-400",
+  "Baking": "border-l-amber-400",
+  "Music / Art / Craft": "border-l-purple-400",
+  "Home Food": "border-l-orange-400",
+  "Beauty": "border-l-pink-400",
+  "Pet Services": "border-l-emerald-400",
+  "Event Services": "border-l-rose-400",
+  "Tailoring": "border-l-violet-400",
+  "Cleaning": "border-l-sky-400",
+  "Handyman": "border-l-yellow-400",
+  "Photography / Videography": "border-l-slate-400",
+};
+
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export function getIsOpenNow(listing: Listing): boolean | null {
