@@ -32,6 +32,14 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isHomePage = location.pathname === "/";
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
+  const greeting = getGreeting();
+
   const handleSignOut = async () => {
     if (isDevMode) {
       devLogout();
@@ -44,7 +52,8 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     <>
       {/* ═══ ANNOUNCEMENT BAR ═══ */}
       <Link to="/signup" className="group block bg-[hsl(220,60%,15%)] text-white hover:bg-[hsl(220,60%,20%)] transition-all cursor-pointer">
-        <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-center text-[11px] sm:text-xs">
+        <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-between text-[11px] sm:text-xs">
+          <span className="text-white/70 font-medium">{greeting} 👋</span>
           <div className="flex items-center gap-1.5">
             <span className="font-bold hidden sm:inline">List your business for FREE — Reach thousands of customers</span>
             <span className="font-bold sm:hidden">FREE Business Listing →</span>
