@@ -46,7 +46,7 @@ const AppContent = () => {
   return (
     <>
       <ScrollToTop />
-      {!isAdminPage && (
+      {!hideHeader && (
         <Header
           showMap={showMap}
           onToggleMap={() => setShowMap(prev => !prev)}
