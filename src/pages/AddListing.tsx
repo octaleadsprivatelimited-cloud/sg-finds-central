@@ -118,9 +118,6 @@ const getSteps = (category: string, serviceLocations: string[]) => {
   const steps: { key: string; label: string; icon: React.ReactNode }[] = [
     { key: "category", label: "Category", icon: <Building2 className="w-4 h-4" /> },
   ];
-  if (needsSubcategoryScreen(category)) {
-    steps.push({ key: "subcategory", label: "Subcategory", icon: <FileText className="w-4 h-4" /> });
-  }
   steps.push(
     { key: "details", label: "Business Details", icon: <FileText className="w-4 h-4" /> },
   );
@@ -460,21 +457,26 @@ const AddListing = () => {
   const canProceed = (): boolean => {
     if (!currentStep) return false;
     switch (currentStep.key) {
-      case "category": return !!category && !!district;
+      case "category": {
+        if (!category || !district) return false;
+        // Subcategory validation inline
+        if (needsSubcategoryScreen(category)) {
+          if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
+          if (category === "Music / Art / Craft") return !!musicArtSub || !!musicArtOther;
+          if (category === "Beauty") return beautySubs.length > 0 || !!beautyOther;
+          if (category === "Pet Services") return petSubs.length > 0 || !!petOther;
+          if (category === "Handyman") return handymanSubs.length > 0 || !!handymanOther;
+          if (category === "Home Food") return homeFoodSubs.length > 0 || !!homeFoodOther;
+          if (category === "Baking") return bakingSubs.length > 0 || !!bakingOther;
+          if (category === "Photography / Videography") return photoSubs.length > 0 || !!photoOther;
+          if (category === "Tailoring") return tailoringSubs.length > 0 || !!tailoringOther;
+          if (category === "Event Services") return eventSubs.length > 0 || !!eventOther;
+          if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
+          return false;
+        }
+        return true;
+      }
       case "details": return !!name && !!ownerName;
-      case "subcategory":
-        if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
-        if (category === "Music / Art / Craft") return !!musicArtSub || !!musicArtOther;
-        if (category === "Beauty") return beautySubs.length > 0 || !!beautyOther;
-        if (category === "Pet Services") return petSubs.length > 0 || !!petOther;
-        if (category === "Handyman") return handymanSubs.length > 0 || !!handymanOther;
-        if (category === "Home Food") return homeFoodSubs.length > 0 || !!homeFoodOther;
-        if (category === "Baking") return bakingSubs.length > 0 || !!bakingOther;
-        if (category === "Photography / Videography") return photoSubs.length > 0 || !!photoOther;
-        if (category === "Tailoring") return tailoringSubs.length > 0 || !!tailoringOther;
-        if (category === "Event Services") return eventSubs.length > 0 || !!eventOther;
-        if (category === "Cleaning") return cleaningSubs.length > 0 || !!cleaningOther;
-        return false;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode && locationLat !== null && locationLng !== null;
       case "description": {
@@ -723,166 +725,145 @@ const AddListing = () => {
                     </Select>
                     <FieldError show={showErrors && !district} message="Please select a district" />
                   </div>
-                </div>
-              )}
 
-              {/* SCREEN 2: Business Details */}
-              {currentStep?.key === "details" && (
-                <div className="space-y-4 animate-fade-in">
-                  <h2 className="text-lg font-semibold text-foreground">Business Details</h2>
-                  <div className="space-y-2">
-                    <Label>Business Name *</Label>
-                    <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Mary's Tuition Centre" />
-                    <FieldError show={showErrors && !name} message="Business name is required" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Owner Name *</Label>
-                    <Input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="e.g. Mary Tan" />
-                    <FieldError show={showErrors && !ownerName} message="Owner name is required" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>UEN <span className="text-muted-foreground text-xs">(optional)</span></Label>
-                    <Input value={uen} onChange={e => setUen(e.target.value)} placeholder="e.g. 201912345A" />
-                  </div>
-                </div>
-              )}
+                  {/* Inline subcategory selection */}
+                  {needsSubcategoryScreen(category) && (
+                    <div className="space-y-4 pt-2 border-t border-border mt-4">
+                      {category === "Tuition" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Tuition Profile</h3>
+                          <div className="space-y-2">
+                            <Label>Subjects taught *</Label>
+                            <ChipSelect options={TUITION_SUBJECTS} selected={subjects} onChange={setSubjects} allowOther otherValue={subjectsOther} onOtherChange={setSubjectsOther} />
+                            <FieldError show={showErrors && subjects.length === 0} message="Please select at least one subject" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Languages</Label>
+                            <ChipSelect options={TUITION_LANGUAGES} selected={languages} onChange={setLanguages} allowOther otherValue={languagesOther} onOtherChange={setLanguagesOther} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Levels supported *</Label>
+                            <ChipSelect options={TUITION_LEVELS} selected={levels} onChange={setLevels} allowOther otherValue={levelsOther} onOtherChange={setLevelsOther} />
+                            <FieldError show={showErrors && levels.length === 0} message="Please select at least one level" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Syllabus supported *</Label>
+                            <ChipSelect options={TUITION_SYLLABI} selected={syllabi} onChange={setSyllabi} allowOther otherValue={syllabiOther} onOtherChange={setSyllabiOther} />
+                            <FieldError show={showErrors && syllabi.length === 0} message="Please select at least one syllabus" />
+                          </div>
+                        </>
+                      )}
 
-              {/* SCREEN 3: Subcategory (conditional) */}
-              {currentStep?.key === "subcategory" && (
-                <div className="space-y-5 animate-fade-in">
-                  {category === "Tuition" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Tuition Profile</h2>
-                      <div className="space-y-2">
-                        <Label>Subjects taught *</Label>
-                        <ChipSelect options={TUITION_SUBJECTS} selected={subjects} onChange={setSubjects} allowOther otherValue={subjectsOther} onOtherChange={setSubjectsOther} />
-                        <FieldError show={showErrors && subjects.length === 0} message="Please select at least one subject" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Languages</Label>
-                        <ChipSelect options={TUITION_LANGUAGES} selected={languages} onChange={setLanguages} allowOther otherValue={languagesOther} onOtherChange={setLanguagesOther} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Levels supported *</Label>
-                        <ChipSelect options={TUITION_LEVELS} selected={levels} onChange={setLevels} allowOther otherValue={levelsOther} onOtherChange={setLevelsOther} />
-                        <FieldError show={showErrors && levels.length === 0} message="Please select at least one level" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Syllabus supported *</Label>
-                        <ChipSelect options={TUITION_SYLLABI} selected={syllabi} onChange={setSyllabi} allowOther otherValue={syllabiOther} onOtherChange={setSyllabiOther} />
-                        <FieldError show={showErrors && syllabi.length === 0} message="Please select at least one syllabus" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Music / Art / Craft" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Subcategory *</h3>
+                          <div className="space-y-2">
+                            <Label>Select one *</Label>
+                            <SingleChipSelect options={MUSIC_ART_CRAFT_SUBS} selected={musicArtSub} onChange={setMusicArtSub} allowOther otherValue={musicArtOther} onOtherChange={setMusicArtOther} />
+                            <FieldError show={showErrors && !musicArtSub && !musicArtOther} message="Please select or enter a subcategory" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Music / Art / Craft" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Subcategory</h2>
-                      <div className="space-y-2">
-                        <Label>Select one *</Label>
-                        <SingleChipSelect options={MUSIC_ART_CRAFT_SUBS} selected={musicArtSub} onChange={setMusicArtSub} allowOther otherValue={musicArtOther} onOtherChange={setMusicArtOther} />
-                        <FieldError show={showErrors && !musicArtSub && !musicArtOther} message="Please select or enter a subcategory" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Beauty" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Beauty Services *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={BEAUTY_SUBS} selected={beautySubs} onChange={setBeautySubs} allowOther otherValue={beautyOther} onOtherChange={setBeautyOther} />
+                            <FieldError show={showErrors && beautySubs.length === 0 && !beautyOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Beauty" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Beauty Services</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={BEAUTY_SUBS} selected={beautySubs} onChange={setBeautySubs} allowOther otherValue={beautyOther} onOtherChange={setBeautyOther} />
-                        <FieldError show={showErrors && beautySubs.length === 0 && !beautyOther} message="Please select at least one service" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Pet Services" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Pet Services *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={PET_SUBS} selected={petSubs} onChange={setPetSubs} allowOther otherValue={petOther} onOtherChange={setPetOther} />
+                            <FieldError show={showErrors && petSubs.length === 0 && !petOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Pet Services" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Pet Services</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={PET_SUBS} selected={petSubs} onChange={setPetSubs} allowOther otherValue={petOther} onOtherChange={setPetOther} />
-                        <FieldError show={showErrors && petSubs.length === 0 && !petOther} message="Please select at least one service" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Handyman" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Handyman Services *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={HANDYMAN_SUBS} selected={handymanSubs} onChange={setHandymanSubs} allowOther otherValue={handymanOther} onOtherChange={setHandymanOther} />
+                            <FieldError show={showErrors && handymanSubs.length === 0 && !handymanOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Handyman" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Handyman Services</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={HANDYMAN_SUBS} selected={handymanSubs} onChange={setHandymanSubs} allowOther otherValue={handymanOther} onOtherChange={setHandymanOther} />
-                        <FieldError show={showErrors && handymanSubs.length === 0 && !handymanOther} message="Please select at least one service" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Home Food" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Home Food Type *</h3>
+                          <div className="space-y-2">
+                            <Label>Select cuisine type *</Label>
+                            <ChipSelect options={HOME_FOOD_SUBS} selected={homeFoodSubs} onChange={setHomeFoodSubs} allowOther otherValue={homeFoodOther} onOtherChange={setHomeFoodOther} />
+                            <FieldError show={showErrors && homeFoodSubs.length === 0 && !homeFoodOther} message="Please select at least one cuisine type" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Home Food" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Home Food Type</h2>
-                      <div className="space-y-2">
-                        <Label>Select cuisine type *</Label>
-                        <ChipSelect options={HOME_FOOD_SUBS} selected={homeFoodSubs} onChange={setHomeFoodSubs} allowOther otherValue={homeFoodOther} onOtherChange={setHomeFoodOther} />
-                        <FieldError show={showErrors && homeFoodSubs.length === 0 && !homeFoodOther} message="Please select at least one cuisine type" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Baking" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Baking Speciality *</h3>
+                          <div className="space-y-2">
+                            <Label>Select baked goods *</Label>
+                            <ChipSelect options={BAKING_SUBS} selected={bakingSubs} onChange={setBakingSubs} allowOther otherValue={bakingOther} onOtherChange={setBakingOther} />
+                            <FieldError show={showErrors && bakingSubs.length === 0 && !bakingOther} message="Please select at least one type" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Baking" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Baking Speciality</h2>
-                      <div className="space-y-2">
-                        <Label>Select baked goods *</Label>
-                        <ChipSelect options={BAKING_SUBS} selected={bakingSubs} onChange={setBakingSubs} allowOther otherValue={bakingOther} onOtherChange={setBakingOther} />
-                        <FieldError show={showErrors && bakingSubs.length === 0 && !bakingOther} message="Please select at least one type" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Photography / Videography" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Photography / Videography *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={PHOTOGRAPHY_SUBS} selected={photoSubs} onChange={setPhotoSubs} allowOther otherValue={photoOther} onOtherChange={setPhotoOther} />
+                            <FieldError show={showErrors && photoSubs.length === 0 && !photoOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Photography / Videography" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Photography / Videography</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={PHOTOGRAPHY_SUBS} selected={photoSubs} onChange={setPhotoSubs} allowOther otherValue={photoOther} onOtherChange={setPhotoOther} />
-                        <FieldError show={showErrors && photoSubs.length === 0 && !photoOther} message="Please select at least one service" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Tailoring" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Tailoring Services *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={TAILORING_SUBS} selected={tailoringSubs} onChange={setTailoringSubs} allowOther otherValue={tailoringOther} onOtherChange={setTailoringOther} />
+                            <FieldError show={showErrors && tailoringSubs.length === 0 && !tailoringOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Tailoring" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Tailoring Services</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={TAILORING_SUBS} selected={tailoringSubs} onChange={setTailoringSubs} allowOther otherValue={tailoringOther} onOtherChange={setTailoringOther} />
-                        <FieldError show={showErrors && tailoringSubs.length === 0 && !tailoringOther} message="Please select at least one service" />
-                      </div>
-                    </>
-                  )}
+                      {category === "Event Services" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Event Services *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={EVENT_SERVICES_SUBS} selected={eventSubs} onChange={setEventSubs} allowOther otherValue={eventOther} onOtherChange={setEventOther} />
+                            <FieldError show={showErrors && eventSubs.length === 0 && !eventOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
 
-                  {category === "Event Services" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Event Services</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={EVENT_SERVICES_SUBS} selected={eventSubs} onChange={setEventSubs} allowOther otherValue={eventOther} onOtherChange={setEventOther} />
-                        <FieldError show={showErrors && eventSubs.length === 0 && !eventOther} message="Please select at least one service" />
-                      </div>
-                    </>
-                  )}
-
-                  {category === "Cleaning" && (
-                    <>
-                      <h2 className="text-lg font-semibold text-foreground">Cleaning Services</h2>
-                      <div className="space-y-2">
-                        <Label>Select services *</Label>
-                        <ChipSelect options={CLEANING_SUBS} selected={cleaningSubs} onChange={setCleaningSubs} allowOther otherValue={cleaningOther} onOtherChange={setCleaningOther} />
-                        <FieldError show={showErrors && cleaningSubs.length === 0 && !cleaningOther} message="Please select at least one service" />
-                      </div>
-                    </>
+                      {category === "Cleaning" && (
+                        <>
+                          <h3 className="text-base font-semibold text-foreground">Cleaning Services *</h3>
+                          <div className="space-y-2">
+                            <Label>Select services *</Label>
+                            <ChipSelect options={CLEANING_SUBS} selected={cleaningSubs} onChange={setCleaningSubs} allowOther otherValue={cleaningOther} onOtherChange={setCleaningOther} />
+                            <FieldError show={showErrors && cleaningSubs.length === 0 && !cleaningOther} message="Please select at least one service" />
+                          </div>
+                        </>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
