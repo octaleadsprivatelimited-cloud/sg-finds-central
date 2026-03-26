@@ -253,6 +253,17 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
             {isOpen === false && <span className="text-destructive font-medium">• Closed</span>}
           </div>
 
+          {listing.subcategoryList && listing.subcategoryList.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {listing.subcategoryList.slice(0, 3).map((sub) => (
+                <span key={sub} className="px-1.5 py-0.5 rounded bg-secondary text-[10px] font-medium text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
+              ))}
+              {listing.subcategoryList.length > 3 && (
+                <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px] font-medium text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
+              )}
+            </div>
+          )}
+
           {/* Actions row */}
           <div className="flex items-center gap-2 mt-1.5">
             {listing.phone && (
@@ -333,6 +344,12 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
 
           <div className="flex items-center gap-2 mt-3 flex-wrap">
             <span className="px-2.5 py-0.5 rounded-md border border-border text-xs font-medium text-foreground bg-secondary">{listing.category}</span>
+            {listing.subcategoryList && listing.subcategoryList.length > 0 && listing.subcategoryList.slice(0, 4).map((sub) => (
+              <span key={sub} className="px-2 py-0.5 rounded-md border border-border/50 text-xs font-medium text-muted-foreground bg-muted capitalize">{sub.replace(/-/g, " ")}</span>
+            ))}
+            {listing.subcategoryList && listing.subcategoryList.length > 4 && (
+              <span className="px-2 py-0.5 rounded-md text-xs font-medium text-muted-foreground">+{listing.subcategoryList.length - 4}</span>
+            )}
             {listing.verified && (
               <span className="px-2.5 py-0.5 rounded-md border border-[hsl(var(--success))]/30 text-xs font-medium text-[hsl(var(--success))] bg-[hsl(var(--success))]/10">✓ Verified</span>
             )}
