@@ -95,7 +95,7 @@ const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected
   rejected: { variant: "rejected", label: "Rejected", dotColor: "bg-red-500" },
 };
 
-type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "catalogue" | "featured" | "hours" | "settings";
+type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "catalogue" | "featured" | "hours" | "analytics" | "settings";
 
 /* ─── Sidebar Nav Item ─── */
 const SidebarItem = ({ icon: Icon, label, active, badge, onClick }: {
@@ -407,6 +407,7 @@ const BusinessDashboard = () => {
     { key: "catalogue", icon: BookOpen, label: "Catalogue" },
     { key: "featured", icon: Sparkles, label: "Featured" },
     { key: "hours", icon: Clock, label: "Hours" },
+    { key: "analytics", icon: BarChart3, label: "View Analytics" },
   ];
 
   if (loadingListings) {
@@ -1351,6 +1352,85 @@ const BusinessDashboard = () => {
                         }}
                       />
                     ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* ─── ANALYTICS TAB ─── */}
+            {activeTab === "analytics" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground tracking-tight">View Analytics</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Track how your listings are performing</p>
+                </div>
+
+                {/* Per-listing analytics */}
+                {listings.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-border bg-card p-16 text-center">
+                    <BarChart3 className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="font-semibold text-foreground">No listings yet</p>
+                    <p className="text-sm text-muted-foreground mt-1">Create a listing to start tracking views</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Overview cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-80" />
+                        <p className="text-xs font-medium text-muted-foreground">Total Views</p>
+                        <p className="text-3xl font-semibold text-foreground mt-1 tabular-nums">{totalViews.toLocaleString()}</p>
+                      </div>
+                      <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--success))] opacity-80" />
+                        <p className="text-xs font-medium text-muted-foreground">Live Listings</p>
+                        <p className="text-3xl font-semibold text-foreground mt-1 tabular-nums">{stats.approved}</p>
+                      </div>
+                      <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card p-4">
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--info))] opacity-80" />
+                        <p className="text-xs font-medium text-muted-foreground">Avg. Views / Listing</p>
+                        <p className="text-3xl font-semibold text-foreground mt-1 tabular-nums">{stats.approved > 0 ? Math.round(totalViews / stats.approved).toLocaleString() : 0}</p>
+                      </div>
+                    </div>
+
+                    {/* Chart */}
+                    <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--primary))] opacity-40" />
+                      <div className="p-5">
+                        <ViewAnalyticsChart listings={listings} userId={user?.uid || ""} />
+                      </div>
+                    </div>
+
+                    {/* Per-listing view counts */}
+                    <div className="relative overflow-hidden rounded-xl border border-border/60 bg-card">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[hsl(var(--success))] opacity-40" />
+                      <div className="p-5">
+                        <h3 className="font-semibold text-foreground text-sm mb-4">Views by Listing</h3>
+                        <div className="space-y-3">
+                          {listings.map(listing => (
+                            <div key={listing.id} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
+                              <div className="flex items-center gap-3">
+                                {listing.logoUrl ? (
+                                  <img src={listing.logoUrl} alt="" className="w-8 h-8 rounded-lg object-cover border border-border/50" />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.08)] flex items-center justify-center">
+                                    <Store className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+                                  </div>
+                                )}
+                                <div>
+                                  <p className="text-sm font-medium text-foreground">{listing.name}</p>
+                                  <p className="text-xs text-muted-foreground">{listing.category}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Eye className="w-3.5 h-3.5 text-muted-foreground" />
+                                <span className="text-sm font-semibold text-foreground tabular-nums">{(viewCounts[listing.id] || 0).toLocaleString()}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </motion.div>
