@@ -548,8 +548,16 @@ const Admin = () => {
                             </p>
                             <div className="flex gap-1.5 overflow-x-auto">
                               {listing.imageUrls.map((url, i) => (
-                                <img key={i} src={url} alt={`${listing.name} ${i + 1}`}
-                                  className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] shrink-0" />
+                                <div key={i} className="relative group shrink-0">
+                                  <img src={url} alt={`${listing.name} ${i + 1}`}
+                                    onClick={() => setPreviewImage(url)}
+                                    className="w-16 h-16 rounded-md object-cover border border-[hsl(0,0%,90%)] dark:border-[hsl(250,15%,20%)] cursor-pointer hover:opacity-80 transition" />
+                                  <button onClick={() => handleDeleteSingleImage(listing.id, i, "imageUrls")}
+                                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[hsl(354,70%,54%)] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                                    title="Delete this image">
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
                               ))}
                             </div>
                           </div>
