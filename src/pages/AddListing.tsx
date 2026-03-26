@@ -214,6 +214,7 @@ const AddListing = () => {
   // ── Screen 8: Images ──
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   // ── Screen 9: Profile extras ──
