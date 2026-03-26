@@ -97,7 +97,7 @@ const MobileFiltersMap = ({
           isSticky ? "shadow-md bg-background/95 backdrop-blur-md -mx-3 px-3 py-1.5" : ""
         }`}
       >
-        <div className={`bg-card border border-border rounded-xl p-2 space-y-1.5 ${isSticky ? "rounded-t-none border-t-0" : ""}`}>
+        <div className={`bg-card border border-border rounded-lg p-1.5 space-y-1 ${isSticky ? "rounded-t-none border-t-0" : ""}`}>
           {/* Row 1: Category chips */}
           <div className="flex items-center gap-1">
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-nowrap flex-1 min-w-0">
