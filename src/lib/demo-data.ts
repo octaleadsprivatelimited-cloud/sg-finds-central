@@ -201,30 +201,102 @@ const categoryMap: Record<string, BizTemplate[]> = {
   "Photography / Videography": photography,
 };
 
-const CATEGORY_LOGO_COLORS: Record<string, string> = {
-  "Tuition": "4F46E5",
-  "Baking": "D97706",
-  "Music / Art / Craft": "9333EA",
-  "Home Food": "EA580C",
-  "Beauty": "EC4899",
-  "Pet Services": "059669",
-  "Event Services": "E11D48",
-  "Tailoring": "7C3AED",
-  "Cleaning": "0284C7",
-  "Handyman": "CA8A04",
-  "Photography / Videography": "475569",
-};
-
-const getLogoUrl = (name: string, category: string) => {
-  const bg = CATEGORY_LOGO_COLORS[category] || "6366F1";
-  const initials = name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase();
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=${bg}&color=fff&size=128&font-size=0.4&bold=true&format=svg`;
+const CATEGORY_LOGOS: Record<string, string[]> = {
+  "Tuition": [
+    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=128&h=128&fit=crop",
+  ],
+  "Baking": [
+    "https://images.unsplash.com/photo-1486427944544-d2c246c4d282?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1555507036-ab1f4038024a?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=128&h=128&fit=crop",
+  ],
+  "Music / Art / Craft": [
+    "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1596367407372-96cb88503db6?w=128&h=128&fit=crop",
+  ],
+  "Home Food": [
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1493770348161-369560ae357d?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1547592180-85f173990554?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=128&h=128&fit=crop",
+  ],
+  "Beauty": [
+    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=128&h=128&fit=crop",
+  ],
+  "Pet Services": [
+    "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=128&h=128&fit=crop",
+  ],
+  "Event Services": [
+    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=128&h=128&fit=crop",
+  ],
+  "Tailoring": [
+    "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1517502884422-41eaead166d4?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1592878897400-38a0f0a6d6f8?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1612731486606-2d66e8e61f84?w=128&h=128&fit=crop",
+  ],
+  "Cleaning": [
+    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1527515637462-cee1143f1c67?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=128&h=128&fit=crop",
+  ],
+  "Handyman": [
+    "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1590479773265-7464e5d48118?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1535350356005-fd52b3b524fb?w=128&h=128&fit=crop",
+  ],
+  "Photography / Videography": [
+    "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=128&h=128&fit=crop",
+    "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=128&h=128&fit=crop",
+  ],
 };
 
 let idCounter = 1;
 const allDemoListings: Listing[] = [];
 
 Object.entries(categoryMap).forEach(([category, templates]) => {
+  const logos = CATEGORY_LOGOS[category] || [];
   templates.forEach((t, i) => {
     const district = pick(districts, idCounter);
     const coords = coord(district);
@@ -243,7 +315,7 @@ Object.entries(categoryMap).forEach(([category, templates]) => {
       description: t.desc,
       status: "approved",
       ownerId: "demo",
-      logoUrl: getLogoUrl(t.name, category),
+      logoUrl: logos[i % logos.length],
       lat: coords.lat + (Math.random() - 0.5) * 0.005,
       lng: coords.lng + (Math.random() - 0.5) * 0.005,
     });
