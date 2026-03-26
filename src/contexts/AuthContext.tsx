@@ -84,6 +84,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        // Block unverified email/password users (social logins are always verified)
+        const isEmailProvider = firebaseUser.providerData.some(p => p.providerId === "password");
+        if (isEmailProvider && !firebaseUser.emailVerified) {
+          await auth.signOut();
+          setRole("user");
+          setUser(null);
+          setIsDevMode(false);
+          setLoading(false);
+          return;
+        }
+
         try {
           localStorage.removeItem(DEV_AUTH_KEY);
         } catch {}
