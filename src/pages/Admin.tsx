@@ -426,6 +426,10 @@ const Admin = () => {
           <NavItem icon={Building2} label={sidebarCollapsed ? "" : "All Listings"} active={activeTab === "listings"} badge={stats.total} onClick={() => setActiveTab("listings")} />
           <NavItem icon={MessageSquare} label={sidebarCollapsed ? "" : "Enquiries"} active={activeTab === "enquiries"} badge={stats.unreadEnquiries} onClick={() => setActiveTab("enquiries")} />
           
+          {!sidebarCollapsed && <p className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(220,10%,60%)] px-3 mt-5 mb-2">Insights</p>}
+          <NavItem icon={BarChart3} label={sidebarCollapsed ? "" : "Analytics"} active={activeTab === "analytics"} onClick={() => setActiveTab("analytics")} />
+          <NavItem icon={Activity} label={sidebarCollapsed ? "" : "Activity Log"} active={activeTab === "activity"} onClick={() => setActiveTab("activity")} />
+
           {!sidebarCollapsed && <p className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(220,10%,60%)] px-3 mt-5 mb-2">System</p>}
           <NavItem icon={Settings} label={sidebarCollapsed ? "" : "Settings"} active={activeTab === "settings"} onClick={() => setActiveTab("settings")} />
         </nav>
