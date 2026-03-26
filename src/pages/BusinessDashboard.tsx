@@ -418,7 +418,7 @@ const BusinessDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))] flex">
+    <div className="min-h-screen bg-[hsl(var(--background))] flex dashboard-theme" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif" }}>
       {/* ═══════════════════════════════════════════
           LEFT SIDEBAR
           ═══════════════════════════════════════════ */}
