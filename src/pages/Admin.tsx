@@ -1050,7 +1050,10 @@ const Admin = () => {
                       };
                       const s = statusMap[l.status] || statusMap.approved;
                       return (
-                        <div key={l.id} className="grid grid-cols-[1fr_120px_100px_80px] gap-3 items-center px-5 py-3 hover:bg-[hsl(220,20%,99%)] transition-colors">
+                        <div key={l.id} className={`grid grid-cols-[32px_1fr_120px_100px_80px] gap-3 items-center px-5 py-3 hover:bg-[hsl(220,20%,99%)] transition-colors ${selectedIds.has(l.id) ? "bg-[hsl(220,70%,98%)]" : ""}`}>
+                          <button onClick={() => toggleSelect(l.id)} className={`w-5 h-5 rounded border flex items-center justify-center transition ${selectedIds.has(l.id) ? "bg-[hsl(220,70%,50%)] border-[hsl(220,70%,50%)]" : "border-[hsl(220,15%,80%)] hover:bg-[hsl(220,20%,95%)]"}`}>
+                            {selectedIds.has(l.id) && <Check className="w-3 h-3 text-white" />}
+                          </button>
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="w-9 h-9 rounded-lg bg-[hsl(220,15%,96%)] flex items-center justify-center overflow-hidden shrink-0 border border-[hsl(220,15%,90%)]">
                               {l.logoUrl ? <img src={l.logoUrl} alt={l.name} className="w-full h-full object-cover" /> : <Store className="w-4 h-4 text-[hsl(220,10%,55%)]" />}
