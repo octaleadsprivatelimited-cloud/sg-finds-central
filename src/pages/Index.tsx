@@ -47,6 +47,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [pincodeAddress, setPincodeAddress] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
+  const listingsScrollRef = useRef<HTMLDivElement>(null);
 
   const handlePincodeSearch = useCallback(async (code: string) => {
     setPincode(code);
