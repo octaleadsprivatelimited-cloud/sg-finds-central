@@ -47,6 +47,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [pincodeAddress, setPincodeAddress] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
+  const listingsScrollRef = useRef<HTMLDivElement>(null);
 
   const handlePincodeSearch = useCallback(async (code: string) => {
     setPincode(code);
@@ -450,7 +451,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               )}
 
 
-              <div className="max-h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide pb-6">
+              <div ref={listingsScrollRef} className="max-h-[calc(100vh-64px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
                   {sortedFiltered.length === 0 ? (
                     <div className="text-center py-16 bg-card rounded-lg border border-border">
@@ -477,7 +478,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       {totalPages > 1 && (
                         <div className="flex items-center justify-center gap-1.5 pt-4">
                           <button
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); listingsScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
                             disabled={currentPage === 1}
                             className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                           >
@@ -496,7 +497,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                               ) : (
                                 <button
                                   key={p}
-                                  onClick={() => setCurrentPage(p as number)}
+                                  onClick={() => { setCurrentPage(p as number); listingsScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
                                   className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${
                                     currentPage === p
                                       ? "bg-primary text-primary-foreground shadow-sm"
@@ -508,7 +509,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                               )
                             )}
                           <button
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); listingsScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); }}
                             disabled={currentPage === totalPages}
                             className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                           >
