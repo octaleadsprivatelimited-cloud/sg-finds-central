@@ -133,6 +133,44 @@ html {
     --shadow-card-hover: 0 8px 30px -6px hsl(0 0% 0% / 0.4);
     --shadow-primary: 0 8px 30px -4px hsl(4 84% 50% / 0.3);
   }
+
+  /* ── Dashboard-scoped green theme (Donezo-inspired) ── */
+  .dashboard-theme {
+    --background: 120 10% 96%;
+    --foreground: 150 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 10% 10%;
+    --primary: 152 45% 28%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 152 50% 35%;
+    --secondary: 120 8% 94%;
+    --secondary-foreground: 150 10% 30%;
+    --muted: 120 8% 94%;
+    --muted-foreground: 150 5% 45%;
+    --accent: 152 45% 28%;
+    --accent-foreground: 0 0% 100%;
+    --border: 120 6% 88%;
+    --input: 120 6% 88%;
+    --ring: 152 45% 28%;
+    --success: 152 60% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 210 80% 52%;
+    --info-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 150 10% 26%;
+    --sidebar-primary: 152 45% 28%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 152 30% 94%;
+    --sidebar-accent-foreground: 152 45% 20%;
+    --sidebar-border: 120 6% 90%;
+    --sidebar-ring: 152 45% 28%;
+  }
 }
 
 @layer base {
