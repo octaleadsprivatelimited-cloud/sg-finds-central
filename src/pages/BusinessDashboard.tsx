@@ -531,6 +531,62 @@ const BusinessDashboard = () => {
                   <QuickStatCard icon={<Eye className="w-5 h-5" />} label="Total Views" value={totalViews} color="info" />
                 </div>
 
+                {/* Quick Actions */}
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground tracking-tight mb-3">Quick Actions</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { icon: <Plus className="w-5 h-5" />, label: "Add Listing", desc: "Create a new business", action: () => navigate("/add-listing"), color: "primary" },
+                      { icon: <Gift className="w-5 h-5" />, label: "Create Offer", desc: "Promote with deals", action: () => setActiveTab("offers"), color: "success" },
+                      { icon: <BookOpen className="w-5 h-5" />, label: "Catalogue", desc: "Manage products", action: () => setActiveTab("catalogue"), color: "info" },
+                      { icon: <Settings className="w-5 h-5" />, label: "Settings", desc: "Account & security", action: () => setActiveTab("settings"), color: "warning" },
+                    ].map(item => (
+                      <motion.button
+                        key={item.label}
+                        whileHover={{ y: -2, boxShadow: "0 6px 24px -8px hsl(var(--foreground) / 0.1)" }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={item.action}
+                        className="flex flex-col items-start gap-3 rounded-xl border border-border/60 bg-card p-5 text-left hover:border-[hsl(var(--${item.color})/0.3)] transition-all group"
+                      >
+                        <div className={`w-10 h-10 rounded-lg bg-[hsl(var(--${item.color})/0.08)] flex items-center justify-center text-[hsl(var(--${item.color}))] group-hover:bg-[hsl(var(--${item.color})/0.14)] transition-colors`}>
+                          {item.icon}
+                        </div>
+                        <div>
+                          <span className="text-sm font-semibold text-foreground block">{item.label}</span>
+                          <span className="text-xs text-muted-foreground">{item.desc}</span>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Getting Started Tips */}
+                {listings.length <= 1 && (
+                  <div className="rounded-xl border border-[hsl(var(--primary)/0.15)] bg-[hsl(var(--primary)/0.03)] p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-[hsl(var(--primary)/0.1)] flex items-center justify-center shrink-0">
+                        <Sparkles className="w-5 h-5 text-[hsl(var(--primary))]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground text-sm mb-1">Get the most out of your dashboard</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed mb-3">Complete these steps to maximise your business visibility and attract more customers.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          {[
+                            { done: listings.length > 0, text: "Create your first listing" },
+                            { done: listings.some(l => l.catalogueItems?.length), text: "Add catalogue items" },
+                            { done: listings.some(l => l.offers?.length), text: "Set up a special offer" },
+                          ].map((step, i) => (
+                            <div key={i} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium ${step.done ? "bg-[hsl(var(--success)/0.08)] text-[hsl(var(--success))]" : "bg-card border border-border/60 text-muted-foreground"}`}>
+                              {step.done ? <Check className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border-2 border-muted-foreground/30 shrink-0" />}
+                              {step.text}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Listings preview row */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
