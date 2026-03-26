@@ -29,7 +29,7 @@ import {
 import {
   ArrowLeft, ArrowRight, Check, Loader2, Building2, X,
   MapPin, FileText, Phone, Image, ShieldCheck, MessageCircle,
-  AlertTriangle, Clock, Upload, Trash2,
+  AlertTriangle, Clock, Upload, Trash2, CloudOff, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -267,10 +267,11 @@ const AddListing = () => {
     verificationDocUrl,
   ]);
 
-  // Save draft (debounced)
+  // Save draft (debounced) with indicator
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const [draftSavedShow, setDraftSavedShow] = useState(false);
+  const draftFadeRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
-    // Don't save empty drafts
     if (!category && !name) return;
     clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
@@ -280,6 +281,9 @@ const AddListing = () => {
           expiresAt: Date.now() + DRAFT_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
         };
         localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+        setDraftSavedShow(true);
+        clearTimeout(draftFadeRef.current);
+        draftFadeRef.current = setTimeout(() => setDraftSavedShow(false), 2500);
       } catch {}
     }, 1000);
     return () => clearTimeout(saveTimerRef.current);
@@ -609,6 +613,11 @@ const AddListing = () => {
           <p className="text-muted-foreground mt-1 text-sm">
             Please provide your business details clearly and accurately. Your listing will be reviewed by our admin team before it is published.
           </p>
+          {draftSavedShow && (
+            <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 animate-fade-in">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Draft saved
+            </div>
+          )}
         </div>
 
         {/* Guidelines Banner */}
