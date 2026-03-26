@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
-import { processImageFiles } from "@/lib/image-utils";
+import { processImageFiles, compressFileToBase64 } from "@/lib/image-utils";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp,
@@ -152,11 +152,13 @@ const BusinessDashboard = () => {
   const [catTitle, setCatTitle] = useState("");
   const [catDescription, setCatDescription] = useState("");
   const [catPrice, setCatPrice] = useState("");
+  const [catImage, setCatImage] = useState<string>("");
   const [catSaving, setCatSaving] = useState(false);
   const [editingCatItem, setEditingCatItem] = useState<{ listingId: string; itemId: string } | null>(null);
   const [editCatTitle, setEditCatTitle] = useState("");
   const [editCatDescription, setEditCatDescription] = useState("");
   const [editCatPrice, setEditCatPrice] = useState("");
+  const [editCatImage, setEditCatImage] = useState<string>("");
 
   // Load user's listings from Firestore
   useEffect(() => {
@@ -911,6 +913,34 @@ const BusinessDashboard = () => {
                       <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
                       <Textarea className="rounded-xl" value={catDescription} onChange={e => setCatDescription(e.target.value)} placeholder="Brief description of this item..." rows={2} />
                     </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Image</Label>
+                      <div className="flex items-center gap-3">
+                        {catImage && (
+                          <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0">
+                            <img src={catImage} alt="Preview" className="w-full h-full object-cover" />
+                            <button onClick={() => setCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                        <label className="flex items-center gap-2 px-3 py-2 rounded-xl border border-dashed border-border cursor-pointer hover:bg-secondary/50 transition-colors text-sm text-muted-foreground">
+                          <Upload className="w-4 h-4" />
+                          {catImage ? "Change" : "Upload image"}
+                          <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const base64 = await compressFileToBase64(file);
+                            if (base64) {
+                              setCatImage(base64);
+                            } else {
+                              toast.error("Failed to process image");
+                            }
+                            e.target.value = "";
+                          }} />
+                        </label>
+                      </div>
+                    </div>
                     <Button
                       className="rounded-xl"
                       disabled={catSaving || !catListingId || !catTitle.trim()}
@@ -919,11 +949,11 @@ const BusinessDashboard = () => {
                         try {
                           const listing = listings.find(l => l.id === catListingId);
                           const existing = listing?.catalogueItems || [];
-                          const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim() };
+                          const newItem = { id: `cat_${Date.now()}`, title: catTitle.trim(), description: catDescription.trim(), price: catPrice.trim(), image: catImage || undefined };
                           const updated = [...existing, newItem];
                           await updateDoc(doc(db, "listings", catListingId), { catalogueItems: updated });
                           setListings(prev => prev.map(l => l.id === catListingId ? { ...l, catalogueItems: updated } : l));
-                          setCatTitle(""); setCatDescription(""); setCatPrice("");
+                          setCatTitle(""); setCatDescription(""); setCatPrice(""); setCatImage("");
                           toast.success("Catalogue item added!");
                         } catch (err: any) { toast.error(err.message || "Failed to add item"); }
                         setCatSaving(false);
@@ -960,11 +990,33 @@ const BusinessDashboard = () => {
                                   <Input className="rounded-lg text-sm" value={editCatTitle} onChange={e => setEditCatTitle(e.target.value)} placeholder="Title" />
                                   <Input className="rounded-lg text-sm" value={editCatPrice} onChange={e => setEditCatPrice(e.target.value)} placeholder="Price" />
                                   <Textarea className="rounded-lg text-sm" value={editCatDescription} onChange={e => setEditCatDescription(e.target.value)} placeholder="Description" rows={2} />
+                                  <div className="flex items-center gap-2">
+                                    {editCatImage && (
+                                      <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-border shrink-0">
+                                        <img src={editCatImage} alt="Preview" className="w-full h-full object-cover" />
+                                        <button onClick={() => setEditCatImage("")} className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl-md p-0.5">
+                                          <X className="w-2.5 h-2.5" />
+                                        </button>
+                                      </div>
+                                    )}
+                                    <label className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-dashed border-border cursor-pointer hover:bg-secondary/50 transition-colors text-xs text-muted-foreground">
+                                      <Upload className="w-3 h-3" />
+                                      {editCatImage ? "Change" : "Add image"}
+                                      <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        const base64 = await compressFileToBase64(file);
+                                        if (base64) setEditCatImage(base64);
+                                        else toast.error("Failed to process image");
+                                        e.target.value = "";
+                                      }} />
+                                    </label>
+                                  </div>
                                   <div className="flex gap-2">
                                     <Button size="sm" className="rounded-lg text-xs" disabled={!editCatTitle.trim()}
                                       onClick={async () => {
                                         try {
-                                          const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim() } : c);
+                                          const updated = listing.catalogueItems!.map(c => c.id === item.id ? { ...c, title: editCatTitle.trim(), description: editCatDescription.trim(), price: editCatPrice.trim(), image: editCatImage || undefined } : c);
                                           await updateDoc(doc(db, "listings", listing.id), { catalogueItems: updated });
                                           setListings(prev => prev.map(l => l.id === listing.id ? { ...l, catalogueItems: updated } : l));
                                           setEditingCatItem(null);
@@ -980,11 +1032,16 @@ const BusinessDashboard = () => {
                                 </div>
                               ) : (
                                 <>
+                                  {item.image && (
+                                    <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-2 bg-muted">
+                                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
                                   <div className="flex items-start justify-between gap-2">
                                     <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                                       <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-foreground"
-                                        onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); }}>
+                                        onClick={() => { setEditingCatItem({ listingId: listing.id, itemId: item.id }); setEditCatTitle(item.title); setEditCatDescription(item.description); setEditCatPrice(item.price); setEditCatImage(item.image || ""); }}>
                                         <Edit3 className="w-3.5 h-3.5" />
                                       </Button>
                                       <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive"

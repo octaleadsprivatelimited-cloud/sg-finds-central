@@ -6,6 +6,7 @@ interface CatalogueItem {
   title: string;
   description: string;
   price: string;
+  image?: string;
 }
 
 const DEMO_CATALOGUE: CatalogueItem[] = [
@@ -53,19 +54,26 @@ const CatalogueSection = ({ items, whatsappNumber, businessName }: CatalogueSect
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {catalogue.map((item) => (
-          <div key={item.id} className="border border-border rounded-xl p-4 space-y-3 hover:shadow-md transition-shadow bg-card">
-            <h4 className="font-semibold text-foreground text-sm line-clamp-2">{item.title}</h4>
-            <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
-            <p className="text-sm font-semibold text-foreground">{item.price}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-950"
-              onClick={() => handleEnquire(item)}
-            >
-              <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
-              Enquire Now
-            </Button>
+          <div key={item.id} className="border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow bg-card">
+            {item.image && (
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
+                <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+              </div>
+            )}
+            <div className="p-4 space-y-3">
+              <h4 className="font-semibold text-foreground text-sm line-clamp-2">{item.title}</h4>
+              <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
+              <p className="text-sm font-semibold text-foreground">{item.price}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-950"
+                onClick={() => handleEnquire(item)}
+              >
+                <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
+                Enquire Now
+              </Button>
+            </div>
           </div>
         ))}
       </div>
