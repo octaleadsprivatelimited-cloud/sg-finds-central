@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Camera, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { createPortal } from "react-dom";
 
 interface PhotoGalleryProps {
   photos: string[];
@@ -29,16 +29,20 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
     setLightboxOpen(true);
   };
 
-  // Keyboard navigation
+  // Keyboard navigation + body scroll lock
   useEffect(() => {
     if (!lightboxOpen) return;
+    document.body.style.overflow = "hidden";
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") { e.preventDefault(); goPrev(); }
       else if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
       else if (e.key === "Escape") { setLightboxOpen(false); }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
   }, [lightboxOpen, goPrev, goNext]);
 
   return (
@@ -88,61 +92,71 @@ const PhotoGallery = ({ photos, businessName }: PhotoGalleryProps) => {
           ))}
       </div>
 
-      {/* Lightbox */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-5xl p-0 bg-black/95 backdrop-blur-2xl border-none rounded-2xl overflow-hidden [&>button:last-child]:hidden" aria-describedby={undefined}>
-          <div className="relative flex items-center justify-center min-h-[50vh] sm:min-h-[70vh]">
+      {/* Full-screen Lightbox via Portal */}
+      {lightboxOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+            onClick={() => setLightboxOpen(false)}
+          >
+            {/* Image */}
             <img
               src={allPhotos[activeIndex]}
               alt={`${businessName} photo`}
-              className="w-full max-h-[85vh] object-contain"
+              className="max-w-[85vw] max-h-[85vh] object-contain select-none"
+              onClick={(e) => e.stopPropagation()}
             />
+
             {/* Counter */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-medium">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white/15 backdrop-blur-md text-white text-sm font-semibold pointer-events-none">
               {activeIndex + 1} / {allPhotos.length}
             </div>
+
             {/* Close */}
             <button
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 flex items-center justify-center transition-colors z-10"
+              className="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 flex items-center justify-center transition-colors"
               onClick={() => setLightboxOpen(false)}
               aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6" />
             </button>
+
             {/* Prev */}
             {activeIndex > 0 && (
               <button
-                className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/35 active:scale-95 transition-all z-10 shadow-lg"
-                onClick={goPrev}
+                className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/25 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/45 active:scale-95 transition-all shadow-2xl border border-white/20"
+                onClick={(e) => { e.stopPropagation(); goPrev(); }}
                 aria-label="Previous photo"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-7 h-7" />
               </button>
             )}
+
             {/* Next */}
             {activeIndex < allPhotos.length - 1 && (
               <button
-                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/35 active:scale-95 transition-all z-10 shadow-lg"
-                onClick={goNext}
+                className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/25 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/45 active:scale-95 transition-all shadow-2xl border border-white/20"
+                onClick={(e) => { e.stopPropagation(); goNext(); }}
                 aria-label="Next photo"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-7 h-7" />
               </button>
             )}
+
             {/* Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {allPhotos.map((_, idx) => (
                 <button
                   key={idx}
                   aria-label={`Go to photo ${idx + 1}`}
-                  className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-6 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"}`}
-                  onClick={() => setActiveIndex(idx)}
+                  className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-7 h-2 bg-white" : "w-2 h-2 bg-white/40 hover:bg-white/60"}`}
+                  onClick={(e) => { e.stopPropagation(); setActiveIndex(idx); }}
                 />
               ))}
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </div>,
+          document.body
+        )}
     </>
   );
 };
