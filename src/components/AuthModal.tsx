@@ -239,7 +239,9 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           <div className="space-y-3">
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm">Email</Label>
-              <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <form onSubmit={(e) => { e.preventDefault(); handleForgotPassword(); }}>
+                <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </form>
             </div>
             <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleForgotPassword} disabled={loading}>
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -250,7 +252,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </button>
           </div>
         ) : method === "email" ? (
-          <div className="space-y-3">
+          <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); handleEmailAuth(); }}>
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm">Email</Label>
               <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -266,11 +268,11 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               </div>
               <Input type="password" placeholder="••••••••" className="h-9 sm:h-10 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleEmailAuth} disabled={loading}>
+            <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={loading}>
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {mode === "login" ? "Sign In" : "Sign Up"}
             </Button>
-          </div>
+          </form>
         ) : (method === "phone" || method === "whatsapp") ? (
           <div className="space-y-3">
             {!confirmResult ? (
