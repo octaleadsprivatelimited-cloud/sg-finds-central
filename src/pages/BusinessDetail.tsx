@@ -219,7 +219,7 @@ const BusinessDetail = () => {
 
               {listing.catalogueEnabled !== false && (
                 <TabsContent value="catalogue" className="mt-8">
-                  <CatalogueSection />
+                  <CatalogueSection items={listing.catalogueItems} />
                 </TabsContent>
               )}
 
