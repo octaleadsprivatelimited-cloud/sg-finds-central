@@ -1485,6 +1485,49 @@ const Admin = () => {
                     <Switch checked={settings[s.key]} onCheckedChange={() => setSettings((prev) => ({ ...prev, [s.key]: !prev[s.key] }))} />
                   </div>
                 ))}
+
+                {/* Browser Push Notifications */}
+                <div className="flex items-center justify-between px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-[hsl(220,15%,97%)] flex items-center justify-center">
+                      <Bell className="w-4 h-4 text-[hsl(220,10%,45%)]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[hsl(220,15%,15%)]">Browser push notifications</p>
+                      <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5">
+                        {notifPermission === "granted" ? "Enabled — you'll receive alerts for new enquiries & listings" :
+                         notifPermission === "denied" ? "Blocked — enable in browser settings" :
+                         "Click to enable desktop alerts"}
+                      </p>
+                    </div>
+                  </div>
+                  {notifPermission === "granted" ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[hsl(152,50%,93%)] text-[hsl(152,69%,35%)] text-[11px] font-semibold">
+                      <Check className="w-3 h-3" />Active
+                    </span>
+                  ) : notifPermission === "denied" ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[hsl(354,70%,95%)] text-[hsl(354,70%,45%)] text-[11px] font-semibold">
+                      <X className="w-3 h-3" />Blocked
+                    </span>
+                  ) : (
+                    <Button size="sm" onClick={requestNotifPermission} className="bg-[hsl(220,70%,50%)] hover:bg-[hsl(220,70%,45%)] text-white rounded-lg text-xs h-8">
+                      <Bell className="w-3.5 h-3.5 mr-1.5" />Enable
+                    </Button>
+                  )}
+                </div>
+                  <div key={s.key} className="flex items-center justify-between px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-[hsl(220,15%,97%)] flex items-center justify-center">
+                        <s.icon className="w-4 h-4 text-[hsl(220,10%,45%)]" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-[hsl(220,15%,15%)]">{s.label}</p>
+                        <p className="text-[11px] text-[hsl(220,10%,55%)] mt-0.5">{s.desc}</p>
+                      </div>
+                    </div>
+                    <Switch checked={settings[s.key]} onCheckedChange={() => setSettings((prev) => ({ ...prev, [s.key]: !prev[s.key] }))} />
+                  </div>
+                ))}
               </div>
 
               <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl px-5 py-4">
