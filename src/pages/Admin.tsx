@@ -359,18 +359,21 @@ const Admin = () => {
 
   const filteredAllListings = useMemo(() => {
     return allListings.filter((l) => {
-      const matchSearch = l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const q = searchQuery.toLowerCase();
+      const matchSearch = l.name.toLowerCase().includes(q) || l.category.toLowerCase().includes(q) || (l.postalCode && l.postalCode.includes(searchQuery.trim())) || (l.district && l.district.toLowerCase().includes(q)) || (l.address && l.address.toLowerCase().includes(q));
       const matchFilter = listingFilter === "all" || l.status === listingFilter;
       return matchSearch && matchFilter;
     });
   }, [allListings, searchQuery, listingFilter]);
 
-  const filteredPending = pendingListings.filter((l) =>
-    l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPending = pendingListings.filter((l) => {
+    const q = searchQuery.toLowerCase();
+    return l.name.toLowerCase().includes(q) || l.category.toLowerCase().includes(q) || (l.postalCode && l.postalCode.includes(searchQuery.trim())) || (l.district && l.district.toLowerCase().includes(q));
+  });
 
   const filteredEnquiries = enquiries.filter((e) => {
-    const matchSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) || e.listingName.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.toLowerCase();
+    const matchSearch = e.name.toLowerCase().includes(q) || e.listingName.toLowerCase().includes(q) || (e.phone && e.phone.includes(searchQuery.trim()));
     const matchFilter = enquiryFilter === "all" || e.status === enquiryFilter;
     return matchSearch && matchFilter;
   });
