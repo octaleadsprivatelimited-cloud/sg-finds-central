@@ -11,22 +11,15 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   OAuthProvider,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  linkWithCredential,
-  PhoneAuthProvider,
-  ConfirmationResult,
-  deleteUser,
+  sendEmailVerification,
 } from "firebase/auth";
-import { Mail, Phone, Loader2, MessageCircle, ArrowLeft, UserPlus, CheckCircle2, ShieldCheck } from "lucide-react";
+import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 const googleProvider = new GoogleAuthProvider();
 const appleProvider = new OAuthProvider("apple.com");
 appleProvider.addScope("email");
 appleProvider.addScope("name");
-const microsoftProvider = new OAuthProvider("microsoft.com");
-microsoftProvider.addScope("user.read");
 
 const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
   if (loading) return <Loader2 className="w-5 h-5 animate-spin shrink-0" />;
@@ -46,62 +39,27 @@ const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
           <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
         </svg>
       );
-    case "microsoft":
-      return (
-        <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
-          <rect x="13" y="1" width="10" height="10" fill="#7FBA00"/>
-          <rect x="1" y="13" width="10" height="10" fill="#00A4EF"/>
-          <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
-        </svg>
-      );
     default: return null;
   }
 };
-
-
-// Step 1 = collect credentials, Step 2 = verify phone OTP
-type SignUpStep = "credentials" | "phone-verify";
-type SignUpMethod = "email" | "social";
 
 const SignUp = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Step tracking
-  const [step, setStep] = useState<SignUpStep>("credentials");
-  const [signUpMethod, setSignUpMethod] = useState<SignUpMethod>("email");
-
-  // Step 1 — email fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Step 2 — phone OTP
-  const [phone, setPhone] = useState("+65");
-  const [otp, setOtp] = useState("");
-  const [confirmResult, setConfirmResult] = useState<ConfirmationResult | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const [resendTimer, setResendTimer] = useState(0);
 
-  // Countdown timer for resend
+  // If user is logged in, redirect
   useEffect(() => {
-    if (resendTimer <= 0) return;
-    const interval = setInterval(() => setResendTimer((t) => t - 1), 1000);
-    return () => clearInterval(interval);
-  }, [resendTimer]);
-
-  // If user is fully verified, redirect
-  useEffect(() => {
-    if (user && phoneVerified) {
+    if (user) {
       navigate("/add-listing");
     }
-  }, [user, phoneVerified, navigate]);
+  }, [user, navigate]);
 
-  // ── Step 1: Email sign-up → move to phone verify ──
   const handleEmailSignUp = async () => {
     if (!email.trim() || !password.trim()) {
       toast.error("Please fill in all fields");
@@ -117,109 +75,38 @@ const SignUp = () => {
     }
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      setSignUpMethod("email");
-      setStep("phone-verify");
-      toast.success("Email registered! Now verify your phone number.");
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(result.user, {
+        url: window.location.origin,
+      });
+      await auth.signOut();
+      toast.success("Account created! Please check your email to verify your account before signing in.");
+      navigate("/");
     } catch (err: any) {
-      toast.error(err.message || "Sign up failed");
+      const code = err?.code || "";
+      const messages: Record<string, string> = {
+        "auth/email-already-in-use": "An account with this email already exists.",
+        "auth/weak-password": "Password is too weak. Use at least 6 characters.",
+        "auth/invalid-email": "Please enter a valid email address.",
+      };
+      toast.error(messages[code] || err.message || "Sign up failed");
     }
     setLoading(false);
   };
 
-  // ── Step 1: Social sign-up → move to phone verify ──
   const handleSocialSignUp = async (providerName: string) => {
     setSocialLoading(providerName);
     try {
-      let provider;
-      switch (providerName) {
-        case "google": provider = googleProvider; break;
-        case "apple": provider = appleProvider; break;
-        case "microsoft": provider = microsoftProvider; break;
-        default: return;
-      }
+      const provider = providerName === "google" ? googleProvider : appleProvider;
       await signInWithPopup(auth, provider);
-      setSignUpMethod("social");
-      setStep("phone-verify");
-      toast.success("Signed in! Now verify your phone number.");
+      toast.success("Account created successfully!");
+      navigate("/add-listing");
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         toast.error(err.message || `${providerName} sign-up failed`);
       }
     }
     setSocialLoading(null);
-  };
-
-  // ── Step 2: Send phone OTP ──
-  const handleSendOTP = async () => {
-    // Validate Singapore number: must start with +65 and have 8 digits after
-    const cleaned = phone.replace(/\s/g, "");
-    const sgRegex = /^\+65[689]\d{7}$/;
-    if (!sgRegex.test(cleaned)) {
-      toast.error("Please enter a valid Singapore mobile number (+65 8/9xxx xxxx)");
-      return;
-    }
-    setLoading(true);
-    try {
-      const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
-      const result = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
-      setConfirmResult(result);
-      setResendTimer(60);
-      toast.success(`OTP sent to ${phone}`);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to send OTP");
-    }
-    setLoading(false);
-  };
-
-  // ── Step 2: Verify OTP and link phone to account ──
-  const handleVerifyOTP = async () => {
-    if (!confirmResult || !otp.trim()) return;
-    setLoading(true);
-    try {
-      // Verify the OTP
-      const credential = PhoneAuthProvider.credential(confirmResult.verificationId, otp);
-
-      // Try to link phone to existing account
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        try {
-          await linkWithCredential(currentUser, credential);
-        } catch (linkErr: any) {
-          // If already linked or provider exists, that's fine
-          if (linkErr.code !== "auth/provider-already-linked" && linkErr.code !== "auth/credential-already-in-use") {
-            throw linkErr;
-          }
-        }
-      } else {
-        // Fallback: confirm directly (creates phone-only account)
-        await confirmResult.confirm(otp);
-      }
-
-      setPhoneVerified(true);
-      toast.success("Phone verified! Account created successfully.");
-      navigate("/add-listing");
-    } catch (err: any) {
-      toast.error(err.message || "Invalid OTP — please try again");
-    }
-    setLoading(false);
-  };
-
-  // ── Cancel: delete partially-created account ──
-  const handleCancel = async () => {
-    const currentUser = auth.currentUser;
-    if (currentUser && !phoneVerified) {
-      try {
-        await deleteUser(currentUser);
-      } catch {
-        // User may need to re-auth to delete — just sign out
-        await auth.signOut();
-      }
-    }
-    setStep("credentials");
-    setConfirmResult(null);
-    setOtp("");
-    setPhone("+65");
   };
 
   return (
@@ -232,181 +119,93 @@ const SignUp = () => {
       </div>
 
       <div className="container mx-auto px-3 py-3 md:py-10 max-w-md relative z-10">
-        {/* Back button */}
-
-
-        {/* ═══ STEP 1: CREDENTIALS ═══ */}
-        {step === "credentials" && (
-          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-4 md:p-8 shadow-lg animate-fade-in">
-            {/* Header */}
-            <div className="text-center mb-4 md:mb-6">
-              <div className="inline-flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-primary/10 mb-2 md:mb-3">
-                <UserPlus className="w-5 h-5 md:w-7 md:h-7 text-primary" />
-              </div>
-              <h1 className="text-lg md:text-2xl font-bold text-foreground">Get Started Free</h1>
-              <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-                List your business in seconds
-              </p>
+        <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-4 md:p-8 shadow-lg animate-fade-in">
+          {/* Header */}
+          <div className="text-center mb-4 md:mb-6">
+            <div className="inline-flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-primary/10 mb-2 md:mb-3">
+              <UserPlus className="w-5 h-5 md:w-7 md:h-7 text-primary" />
             </div>
+            <h1 className="text-lg md:text-2xl font-bold text-foreground">Get Started Free</h1>
+            <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
+              List your business in seconds
+            </p>
+          </div>
 
-            {/* Social Sign-Up */}
-            <div className="grid grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4">
-              {(["google", "apple", "microsoft"] as const).map((provider) => (
-                <Button
-                  key={provider}
-                  variant="outline"
-                  className="h-9 md:h-11 rounded-xl"
-                  onClick={() => handleSocialSignUp(provider)}
-                  disabled={!!socialLoading}
-                  title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
-                >
-                  <SocialIcon name={provider} loading={socialLoading === provider} />
-                </Button>
-              ))}
-            </div>
-
-            {/* Divider */}
-            <div className="relative my-3 md:my-4">
-              <Separator />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
-                or sign up with email
-              </span>
-            </div>
-
-            {/* Email Sign Up */}
-            <div className="space-y-2 md:space-y-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs sm:text-sm">Email</Label>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="h-9 md:h-10 text-sm"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs sm:text-sm">Password</Label>
-                <Input
-                  type="password"
-                  placeholder="Min. 6 characters"
-                  className="h-9 md:h-10 text-sm"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs sm:text-sm">Confirm Password</Label>
-                <Input
-                  type="password"
-                  placeholder="Re-enter your password"
-                  className="h-9 md:h-10 text-sm"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-              <Button className="w-full h-9 md:h-10" onClick={handleEmailSignUp} disabled={loading}>
-                {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Continue
+          {/* Social Sign-Up */}
+          <div className="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-4">
+            {(["google", "apple"] as const).map((provider) => (
+              <Button
+                key={provider}
+                variant="outline"
+                className="h-9 md:h-11 rounded-xl"
+                onClick={() => handleSocialSignUp(provider)}
+                disabled={!!socialLoading}
+                title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
+              >
+                <SocialIcon name={provider} loading={socialLoading === provider} />
+                <span className="ml-2 capitalize">{provider}</span>
               </Button>
-            </div>
-
-            <p className="text-center text-[10px] text-muted-foreground mt-3 md:mt-4">
-              You'll need to verify your mobile number in the next step
-            </p>
-
-            {/* Already have account */}
-            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
-              Already have an account?{" "}
-              <button className="text-primary font-medium hover:underline" onClick={() => navigate("/")}>
-                Sign in
-              </button>
-            </p>
+            ))}
           </div>
-        )}
 
-        {/* ═══ STEP 2: PHONE VERIFICATION ═══ */}
-        {step === "phone-verify" && (
-          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-6 md:p-8 shadow-lg animate-fade-in">
-            {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
-                <ShieldCheck className="w-7 h-7 text-primary" />
-              </div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground">Verify Your Phone</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Enter your mobile number to receive a verification code
-              </p>
-            </div>
-
-            {!confirmResult ? (
-              <div className="space-y-4 animate-fade-in">
-                <div className="space-y-1.5">
-                  <Label className="text-xs sm:text-sm">Singapore Mobile Number</Label>
-                  <div className="flex items-center gap-2">
-                    <span className="flex items-center h-10 px-3 rounded-md border border-border bg-secondary/50 text-sm font-medium text-muted-foreground shrink-0">
-                      🇸🇬 +65
-                    </span>
-                    <Input
-                      type="tel"
-                      placeholder="9123 4567"
-                      className="h-10 text-sm"
-                      value={phone.replace(/^\+65\s?/, "")}
-                      onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, "").slice(0, 8);
-                        setPhone(`+65${digits}`);
-                      }}
-                      maxLength={9}
-                    />
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Only Singapore numbers (+65) are accepted
-                  </p>
-                </div>
-                <Button className="w-full h-10" onClick={handleSendOTP} disabled={loading}>
-                  {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  <Phone className="w-4 h-4 mr-1.5" />
-                  Send OTP
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4 animate-fade-in">
-                <div className="rounded-lg bg-secondary/50 p-3 text-center">
-                  <p className="text-xs text-muted-foreground">
-                    OTP sent to <span className="font-semibold text-foreground">{phone}</span>
-                  </p>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs sm:text-sm">Enter 6-digit OTP</Label>
-                  <Input
-                    type="text"
-                    placeholder="123456"
-                    className="h-12 text-center text-lg font-mono tracking-[0.5em]"
-                    value={otp}
-                    maxLength={6}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                    autoFocus
-                  />
-                </div>
-                <Button className="w-full h-10" onClick={handleVerifyOTP} disabled={loading || otp.length < 6}>
-                  {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  Verify & Create Account
-                </Button>
-                <button
-                  className={`w-full text-xs transition-colors ${resendTimer > 0 ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-primary"}`}
-                  onClick={() => { if (resendTimer <= 0) { setConfirmResult(null); setOtp(""); } }}
-                  disabled={resendTimer > 0}
-                >
-                  {resendTimer > 0
-                    ? `Resend OTP in ${resendTimer}s`
-                    : "Didn't receive OTP? Resend"}
-                </button>
-              </div>
-            )}
-
-            <div id="recaptcha-container" />
+          {/* Divider */}
+          <div className="relative my-3 md:my-4">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+              or sign up with email
+            </span>
           </div>
-        )}
+
+          {/* Email Sign Up */}
+          <form className="space-y-2 md:space-y-3" onSubmit={(e) => { e.preventDefault(); handleEmailSignUp(); }}>
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Email</Label>
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                className="h-9 md:h-10 text-sm"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Password</Label>
+              <Input
+                type="password"
+                placeholder="Min. 6 characters"
+                className="h-9 md:h-10 text-sm"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Confirm Password</Label>
+              <Input
+                type="password"
+                placeholder="Re-enter your password"
+                className="h-9 md:h-10 text-sm"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full h-9 md:h-10" disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Create Account
+            </Button>
+          </form>
+
+          <p className="text-center text-[10px] text-muted-foreground mt-3 md:mt-4">
+            A verification link will be sent to your email
+          </p>
+
+          {/* Already have account */}
+          <p className="text-center text-xs sm:text-sm text-muted-foreground mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
+            Already have an account?{" "}
+            <button className="text-primary font-medium hover:underline" onClick={() => navigate("/")}>
+              Sign in
+            </button>
+          </p>
+        </div>
 
         {/* Trust badges */}
         <div className="flex items-center justify-center gap-4 mt-6 text-xs text-muted-foreground">
