@@ -38,7 +38,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
-  const [radiusKm, setRadiusKm] = useState<number | null>(5);
+  const [radiusKm, setRadiusKm] = useState<number | null>(0.5);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   
   const [openNow, setOpenNow] = useState(false);
