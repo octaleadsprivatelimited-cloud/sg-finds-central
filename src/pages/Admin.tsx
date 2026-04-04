@@ -1477,6 +1477,67 @@ const Admin = () => {
             </motion.div>
           )}
 
+          {/* ═══ USERS ═══════════════════════════════════════ */}
+          {activeTab === "users" && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-lg font-semibold text-[hsl(220,15%,15%)]">Registered Users</h1>
+                  <p className="text-xs text-[hsl(220,10%,55%)] mt-0.5">{appUsers.length} user{appUsers.length !== 1 ? "s" : ""} registered</p>
+                </div>
+                <Button size="sm" variant="outline" className="gap-1.5 text-xs rounded-lg" onClick={() => {
+                  const csv = ["Email,Phone,Registered"].concat(appUsers.map(u => `${u.email || ""},${u.phone || ""},${u.createdAt?.toDate ? u.createdAt.toDate().toLocaleDateString() : ""}`)).join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a"); a.href = url; a.download = "users.csv"; a.click();
+                  URL.revokeObjectURL(url);
+                  toast.success("Users exported");
+                }}>
+                  <Download className="w-3.5 h-3.5" /> Export CSV
+                </Button>
+              </div>
+
+              <div className="bg-white border border-[hsl(220,15%,90%)] rounded-xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-[hsl(220,15%,93%)] bg-[hsl(220,20%,97%)]">
+                        <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(220,10%,50%)]">#</th>
+                        <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(220,10%,50%)]">Email</th>
+                        <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(220,10%,50%)]">Mobile Number</th>
+                        <th className="text-left px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(220,10%,50%)]">Registered</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[hsl(220,15%,94%)]">
+                      {appUsers.length === 0 ? (
+                        <tr><td colSpan={4} className="text-center py-10 text-[hsl(220,10%,55%)] text-sm">No registered users yet</td></tr>
+                      ) : appUsers.map((u, i) => (
+                        <tr key={u.id} className="hover:bg-[hsl(220,20%,98%)] transition-colors">
+                          <td className="px-4 py-3 text-[hsl(220,10%,55%)] text-xs">{i + 1}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-3.5 h-3.5 text-[hsl(220,70%,50%)]" />
+                              <span className="text-[hsl(220,15%,20%)]">{u.email || "—"}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <Phone className="w-3.5 h-3.5 text-[hsl(152,69%,40%)]" />
+                              <span className="text-[hsl(220,15%,20%)] font-medium">{u.phone || "—"}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-[hsl(220,10%,55%)]">
+                            {u.createdAt?.toDate ? u.createdAt.toDate().toLocaleDateString() : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* ═══ SETTINGS ═════════════════════════════════════ */}
           {activeTab === "settings" && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5 max-w-2xl">
