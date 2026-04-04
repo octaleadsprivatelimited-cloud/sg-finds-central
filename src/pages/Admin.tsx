@@ -596,6 +596,7 @@ const Admin = () => {
                 { tab: "dashboard" as const, icon: LayoutDashboard, label: "Dashboard", badge: stats.pending },
                 { tab: "listings" as const, icon: Building2, label: "All Listings", badge: stats.total },
                 { tab: "enquiries" as const, icon: MessageSquare, label: "Enquiries", badge: stats.unreadEnquiries },
+                { tab: "users" as const, icon: Users, label: "Users", badge: appUsers.length },
                 { tab: "analytics" as const, icon: BarChart3, label: "Analytics" },
                 { tab: "activity" as const, icon: Activity, label: "Activity Log" },
                 { tab: "settings" as const, icon: Settings, label: "Settings" },
