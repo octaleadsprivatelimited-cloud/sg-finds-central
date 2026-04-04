@@ -215,6 +215,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
             <div
               onClick={(e) => {
                 e.stopPropagation();
+                pinClickRef.current = true;
                 setActiveId(listing.id);
                 onSelectListing?.(listing);
                 const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
