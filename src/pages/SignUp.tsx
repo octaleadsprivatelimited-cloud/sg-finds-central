@@ -78,6 +78,14 @@ const SignUp = () => {
     setLoading(true);
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      // Store phone number in Firestore for admin panel
+      if (phone.trim()) {
+        await setDoc(doc(db, "users", result.user.uid), {
+          email,
+          phone: phone.trim(),
+          createdAt: serverTimestamp(),
+        });
+      }
       await sendEmailVerification(result.user, {
         url: window.location.origin,
       });
