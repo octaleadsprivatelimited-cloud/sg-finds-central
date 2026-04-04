@@ -61,6 +61,21 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const clickedRef = useRef(false); // true when user explicitly clicked a pin
   const navigate = useNavigate();
 
+  const smoothZoomTo = useCallback((map: google.maps.Map, target: { lat: number; lng: number }, targetZoom: number) => {
+    const currentZoom = map.getZoom() ?? 14;
+    // First pan smoothly
+    map.panTo(target);
+    // Then animate zoom step by step
+    if (currentZoom === targetZoom) return;
+    const step = targetZoom > currentZoom ? 1 : -1;
+    let z = currentZoom;
+    const interval = setInterval(() => {
+      z += step;
+      map.setZoom(z);
+      if (z === targetZoom) clearInterval(interval);
+    }, 120);
+  }, []);
+
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
   }, []);
@@ -82,8 +97,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       setActiveId(selectedId);
       const listing = listings.find(l => l.id === selectedId);
       if (listing?.lat && listing?.lng && mapRef.current) {
-        mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
-        mapRef.current.setZoom(15);
+        smoothZoomTo(mapRef.current, { lat: listing.lat, lng: listing.lng }, 16);
       }
     }
   }, [selectedId, listings]);
@@ -96,8 +110,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
     }
     if (!mapRef.current || !center || !radiusKm) return;
 
-    mapRef.current.setZoom(radiusToZoom(radiusKm));
-    mapRef.current.panTo(center);
+    smoothZoomTo(mapRef.current, center, radiusToZoom(radiusKm));
 
     circleRef.current = new google.maps.Circle({
       map: mapRef.current,
