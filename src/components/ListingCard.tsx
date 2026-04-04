@@ -304,83 +304,58 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       </div>
 
       {/* ── DESKTOP ── */}
-      <div className="hidden md:flex gap-4 p-4">
-        {/* Image */}
-        <div className="w-[200px] h-[160px] shrink-0 rounded-md overflow-hidden bg-muted">
-          {listing.logoUrl ? (
-            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
-          ) : listing.coverImage ? (
-            <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <span className="text-4xl font-bold text-white/90">{listing.name.charAt(0)}</span>
-            </div>
+      <div className="hidden md:block p-3.5">
+        <div className="flex items-center gap-2.5">
+          {/* Icon / Avatar */}
+          <div className="w-10 h-10 shrink-0 rounded-xl overflow-hidden bg-accent/10 border border-accent/30 flex items-center justify-center">
+            {listing.logoUrl ? (
+              <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
+            ) : listing.coverImage ? (
+              <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-base font-bold text-primary">{listing.name.charAt(0)}</span>
+            )}
+          </div>
+
+          {/* Main info */}
+          <div className="flex-1 min-w-0">
+            <p className="font-extrabold text-[13.5px] text-foreground truncate">
+              {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
+              {listing.name}
+            </p>
+            <p className="text-[11.5px] font-semibold text-muted-foreground/70 mt-0.5 truncate">
+              <MapPin className="w-3 h-3 inline mr-0.5 -mt-0.5" />
+              {listing.district}
+              {isOpen === true && <span className="text-[hsl(var(--success))] ml-1.5">• Open</span>}
+              {isOpen === false && <span className="text-destructive ml-1.5">• {nextOpenInfo || "Closed"}</span>}
+            </p>
+          </div>
+
+          {/* Distance pill */}
+          {distanceKm != null && (
+            <span className="shrink-0 text-[11px] font-extrabold text-primary bg-accent/10 border border-accent/30 rounded-full px-2 py-0.5">
+              {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}
+            </span>
           )}
         </div>
 
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-foreground text-lg leading-tight">
-            {index !== undefined && <span className="text-muted-foreground mr-1.5">{index}.</span>}
-            <span className="text-primary hover:underline">{listing.name}</span>
-          </h3>
-
-          <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
-            <MapPin className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{listing.district}</span>
-            {listing.priceRange && <><span>•</span><span>{listing.priceRange}</span></>}
-            {isOpen === true && <><span>•</span><span className="text-[hsl(var(--success))] font-semibold">Open</span></>}
-            {isOpen === false && <><span>•</span><span className="text-destructive font-medium">{nextOpenInfo || "Closed"}</span></>}
-          </div>
-
-          {distanceKm != null && (
-            <p className="text-xs text-muted-foreground mt-1">
-              {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m away` : `${distanceKm.toFixed(1)} km away`}
-            </p>
+        {/* Badges row */}
+        <div className="flex flex-wrap items-center gap-1 mt-2">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-accent/10 border border-accent/35 text-primary">{listing.category}</span>
+          {listing.subcategoryList && listing.subcategoryList.slice(0, 3).map((sub) => (
+            <span key={sub} className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-muted border border-border/50 text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
+          ))}
+          {listing.subcategoryList && listing.subcategoryList.length > 3 && (
+            <span className="text-[10.5px] font-bold text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
           )}
-
-          {listing.description && (
-            <p className="text-sm text-muted-foreground mt-2 line-clamp-2 leading-relaxed">{listing.description}</p>
+          {listing.verified && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[hsl(var(--success))]/10 border border-[hsl(var(--success))]/30 text-[hsl(var(--success))]">✓ Verified</span>
           )}
-
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-md border border-border text-xs font-medium text-foreground bg-secondary">{listing.category}</span>
-            {listing.subcategoryList && listing.subcategoryList.length > 0 && listing.subcategoryList.slice(0, 4).map((sub) => (
-              <span key={sub} className="px-2 py-0.5 rounded-md border border-border/50 text-xs font-medium text-muted-foreground bg-muted capitalize">{sub.replace(/-/g, " ")}</span>
-            ))}
-            {listing.subcategoryList && listing.subcategoryList.length > 4 && (
-              <span className="px-2 py-0.5 rounded-md text-xs font-medium text-muted-foreground">+{listing.subcategoryList.length - 4}</span>
-            )}
-            {listing.verified && (
-              <span className="px-2.5 py-0.5 rounded-md border border-[hsl(var(--success))]/30 text-xs font-medium text-[hsl(var(--success))] bg-[hsl(var(--success))]/10">✓ Verified</span>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex items-center gap-3">
-              {listing.website && (
-                <button onClick={handleWebsiteClick} className="text-sm font-medium text-primary hover:underline flex items-center gap-1">
-                  <Globe className="w-3.5 h-3.5" />Website
-                </button>
-              )}
-              {listing.phone && (
-                <button onClick={handlePhoneClick} className="text-sm font-medium text-foreground hover:text-primary flex items-center gap-1 transition-colors">
-                  <Phone className="w-3.5 h-3.5" />{listing.phone}
-                </button>
-              )}
-            </div>
-            {listing.lat && listing.lng && (
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
-              >
-                <Navigation className="w-3.5 h-3.5" />Get Directions
-              </a>
-            )}
-          </div>
+          {listing.phone && (
+            <button onClick={handlePhoneClick} className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors">
+              <Phone className="w-3 h-3" />{listing.phone}
+            </button>
+          )}
         </div>
       </div>
     </div>
