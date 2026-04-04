@@ -97,8 +97,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       setActiveId(selectedId);
       const listing = listings.find(l => l.id === selectedId);
       if (listing?.lat && listing?.lng && mapRef.current) {
-        mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
-        mapRef.current.setZoom(15);
+        smoothZoomTo(mapRef.current, { lat: listing.lat, lng: listing.lng }, 16);
       }
     }
   }, [selectedId, listings]);
