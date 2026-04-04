@@ -110,8 +110,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
     }
     if (!mapRef.current || !center || !radiusKm) return;
 
-    mapRef.current.setZoom(radiusToZoom(radiusKm));
-    mapRef.current.panTo(center);
+    smoothZoomTo(mapRef.current, center, radiusToZoom(radiusKm));
 
     circleRef.current = new google.maps.Circle({
       map: mapRef.current,
