@@ -17,6 +17,7 @@ import { MapPin, SlidersHorizontal, Search, Map as MapIcon, ChevronRight, Clock,
 import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -230,33 +231,24 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         </div>
 
-        {/* Row 2: Distance chips */}
+        {/* Row 2: Distance slider + Open Now */}
         <div className="border-b border-border bg-card px-3 py-2">
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-3">
             <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
-            {[
-              { label: "All", value: null as number | null },
-              { label: "500m", value: 0.5 },
-              { label: "1 km", value: 1 },
-              { label: "2 km", value: 2 },
-              { label: "5 km", value: 5 },
-            ].map((opt) => (
-              <button
-                key={opt.label}
-                onClick={() => {
-                  setRadiusKm(opt.value);
-                  if (opt.value !== null && !userLocation) handleDetectLocation();
-                }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
-                  radiusKm === opt.value
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-            {/* Open Now */}
+            <Slider
+              value={[radiusKm ?? 10]}
+              onValueChange={([v]) => {
+                setRadiusKm(v);
+                if (!userLocation) handleDetectLocation();
+              }}
+              min={0.5}
+              max={10}
+              step={0.5}
+              className="flex-1"
+            />
+            <span className="text-xs font-semibold text-foreground shrink-0 w-12 text-right">
+              {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
+            </span>
             <button
               onClick={() => setOpenNow(!openNow)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
@@ -410,27 +402,22 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 Open Now
               </button>
 
-              {[
-                { label: "500m", value: 0.5 },
-                { label: "1 km", value: 1 },
-                { label: "2 km", value: 2 },
-                { label: "5 km", value: 5 },
-              ].map((opt) => (
-                <button
-                  key={opt.label}
-                  onClick={() => {
-                    setRadiusKm(radiusKm === opt.value ? null : opt.value);
-                    if (opt.value && !userLocation) handleDetectLocation();
+              <div className="flex items-center gap-2 shrink-0" style={{ minWidth: 180 }}>
+                <Slider
+                  value={[radiusKm ?? 10]}
+                  onValueChange={([v]) => {
+                    setRadiusKm(v);
+                    if (!userLocation) handleDetectLocation();
                   }}
-                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
-                    radiusKm === opt.value
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-foreground border-border hover:border-foreground/30"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+                  min={0.5}
+                  max={10}
+                  step={0.5}
+                  className="w-28"
+                />
+                <span className="text-xs font-semibold text-foreground w-12 text-right">
+                  {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
+                </span>
+              </div>
 
               <div className="w-px h-5 bg-border shrink-0" />
 
