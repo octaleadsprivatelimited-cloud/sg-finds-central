@@ -199,7 +199,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
         disableDefaultUI: true,
         zoomControl: true,
       }}
-      onClick={() => { if (pinClickRef.current) { pinClickRef.current = false; return; } setActiveId(null); }}
+      onClick={() => { if (pinClickRef.current) { pinClickRef.current = false; return; } setActiveId(null); clickedRef.current = false; }}
     >
       {/* Custom pin markers */}
       {listings.map((listing) => {
