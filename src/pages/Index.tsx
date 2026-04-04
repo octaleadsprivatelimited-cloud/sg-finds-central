@@ -17,6 +17,7 @@ import { MapPin, SlidersHorizontal, Search, Map as MapIcon, ChevronRight, Clock,
 import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
