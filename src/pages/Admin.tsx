@@ -92,6 +92,7 @@ const Admin = () => {
   const [pendingListings, setPendingListings] = useState<Listing[]>([]);
   const [allListings, setAllListings] = useState<Listing[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [appUsers, setAppUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
