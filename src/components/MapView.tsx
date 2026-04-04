@@ -1,7 +1,7 @@
-import { GoogleMap, MarkerF, InfoWindowF, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, MarkerF, InfoWindowF, OverlayViewF, OverlayView } from "@react-google-maps/api";
 import { Listing } from "./ListingCard";
 import { getBusinessUrl } from "@/lib/url-helpers";
-import { Loader2, Star } from "lucide-react";
+import { Loader2, MapPin, Navigation } from "lucide-react";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,29 +37,58 @@ const MAP_STYLES = [
 const getMapsScriptSrc = (apiKey: string) =>
   `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=maps&v=weekly`;
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  "Tuition": "📚",
+  "Baking": "🧁",
+  "Music / Art / Craft": "🎨",
+  "Home Food": "🍱",
+  "Beauty": "💄",
+  "Pet Services": "🐾",
+  "Event Services": "🎉",
+  "Tailoring": "🧵",
+  "Cleaning": "🧹",
+  "Handyman": "🔧",
+  "Photography / Videography": "📷",
+};
+
 const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverListing, center, radiusKm }: MapViewProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [activeMarker, setActiveMarker] = useState<string | null>(null);
-  const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
+  const pinClickRef = useRef(false);
+  const clickedRef = useRef(false); // true when user explicitly clicked a pin
   const navigate = useNavigate();
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
   }, []);
 
-  // Auto-pan to hovered listing
+  // Sync hoveredId from parent → auto-open that marker's popup & flyTo
   useEffect(() => {
-    if (!mapRef.current || !hoveredId) return;
-    const listing = listings.find(l => l.id === hoveredId);
-    if (listing?.lat && listing?.lng) {
-      mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
+    if (hoveredId) {
+      setActiveId(hoveredId);
+      const listing = listings.find(l => l.id === hoveredId);
+      if (listing?.lat && listing?.lng && mapRef.current) {
+        mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
+      }
     }
   }, [hoveredId, listings]);
 
-  // Draw radius circle and adjust zoom
+  // Sync selectedId from parent
+  useEffect(() => {
+    if (selectedId) {
+      setActiveId(selectedId);
+      const listing = listings.find(l => l.id === selectedId);
+      if (listing?.lat && listing?.lng && mapRef.current) {
+        mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
+        mapRef.current.setZoom(15);
+      }
+    }
+  }, [selectedId, listings]);
+
+  // Draw radius circle
   useEffect(() => {
     if (circleRef.current) {
       circleRef.current.setMap(null);
@@ -74,11 +103,11 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       map: mapRef.current,
       center,
       radius: radiusKm * 1000,
-      fillColor: "hsl(221, 83%, 53%)",
+      fillColor: "#4f7a5c",
       fillOpacity: 0.08,
-      strokeColor: "hsl(221, 83%, 53%)",
-      strokeOpacity: 0.5,
-      strokeWeight: 2,
+      strokeColor: "#A1BE95",
+      strokeOpacity: 0.55,
+      strokeWeight: 1.5,
     });
 
     return () => {
@@ -110,10 +139,8 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       } else {
         const handleLoad = () => setIsLoaded(true);
         const handleError = () => setLoadError("Failed to load Google Maps");
-
         existingScript.addEventListener("load", handleLoad);
         existingScript.addEventListener("error", handleError);
-
         return () => {
           existingScript.removeEventListener("load", handleLoad);
           existingScript.removeEventListener("error", handleError);
@@ -126,14 +153,11 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
     script.src = desiredSrc;
     script.async = true;
     script.defer = true;
-
     const handleLoad = () => setIsLoaded(true);
     const handleError = () => setLoadError("Failed to load Google Maps");
-
     script.addEventListener("load", handleLoad);
     script.addEventListener("error", handleError);
     document.head.appendChild(script);
-
     return () => {
       script.removeEventListener("load", handleLoad);
       script.removeEventListener("error", handleError);
@@ -162,10 +186,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
     );
   }
 
-  const activeListing = listings.find((l) => l.id === activeMarker);
-  const hoveredListing = listings.find((l) => l.id === hoveredMarker);
-  const previewListing = activeListing || hoveredListing;
-  const previewMarkerId = activeMarker || hoveredMarker;
+  const previewListing = listings.find(l => l.id === activeId);
 
   return (
     <GoogleMap
@@ -178,87 +199,177 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
         disableDefaultUI: true,
         zoomControl: true,
       }}
-      onClick={() => { setActiveMarker(null); setHoveredMarker(null); }}
+      onClick={() => { if (pinClickRef.current) { pinClickRef.current = false; return; } setActiveId(null); clickedRef.current = false; }}
     >
+      {/* Custom pin markers */}
       {listings.map((listing) => {
         if (!listing.lat || !listing.lng) return null;
-        const isActive = listing.id === previewMarkerId;
+        const isActive = listing.id === activeId || listing.id === hoveredId || listing.id === selectedId;
+        const emoji = CATEGORY_EMOJI[listing.category] || "📍";
+
         return (
-          <MarkerF
+          <OverlayViewF
             key={listing.id}
             position={{ lat: listing.lat, lng: listing.lng }}
-            onClick={() => {
-              setActiveMarker(listing.id);
-              setHoveredMarker(null);
-              onSelectListing?.(listing);
-              const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
-              if (card) {
-                card.scrollIntoView({ behavior: "smooth", block: "center" });
-              }
-            }}
-            onMouseOver={() => {
-              if (!activeMarker) setHoveredMarker(listing.id);
-              onHoverListing?.(listing.id);
-            }}
-            onMouseOut={() => {
-              if (!activeMarker) setHoveredMarker(null);
-              onHoverListing?.(null);
-            }}
-            options={{
-              opacity: hoveredId === listing.id || selectedId === listing.id || isActive ? 1 : 0.7,
-            }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
           >
-            {isActive && previewListing && (
-              <InfoWindowF
-                position={{ lat: listing.lat, lng: listing.lng }}
-                onCloseClick={() => { setActiveMarker(null); setHoveredMarker(null); }}
-              >
-                <div
-                  style={{ maxWidth: 230, cursor: "pointer", padding: 0 }}
-                  onClick={() => navigate(getBusinessUrl(previewListing))}
-                >
-                  {(previewListing.coverImage || previewListing.logoUrl || (previewListing.imageUrls && previewListing.imageUrls[0])) && (
-                    <img
-                      src={previewListing.coverImage || previewListing.logoUrl || previewListing.imageUrls?.[0]}
-                      alt={previewListing.name}
-                      style={{
-                        width: "100%",
-                        height: 110,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        marginBottom: 8,
-                      }}
-                    />
-                  )}
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#1a1a1a", lineHeight: 1.3 }}>
-                    {previewListing.name}
-                  </div>
-                  <div style={{ fontSize: 12, color: "#666", marginBottom: 2 }}>
-                    {previewListing.category}
-                  </div>
-                  {previewListing.district && (
-                    <div style={{ fontSize: 11, color: "#999", display: "flex", alignItems: "center", gap: 3 }}>
-                      📍 {previewListing.district}
-                    </div>
-                  )}
-                  {(previewListing as any).rating && (
-                    <div style={{ fontSize: 12, color: "#f59e0b", marginTop: 4, display: "flex", alignItems: "center", gap: 3 }}>
-                      <Star className="w-3 h-3 fill-current" />
-                      {(previewListing as any).rating}
-                      {(previewListing as any).reviewCount && (
-                        <span style={{ color: "#999", fontSize: 11 }}>({(previewListing as any).reviewCount})</span>
-                      )}
-                    </div>
-                  )}
-                  <div style={{ fontSize: 11, color: "#3b82f6", marginTop: 6, fontWeight: 600 }}>
-                    View Details →
-                  </div>
-                </div>
-              </InfoWindowF>
-            )}
-          </MarkerF>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                pinClickRef.current = true;
+                clickedRef.current = true;
+                setActiveId(listing.id);
+                onSelectListing?.(listing);
+                const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
+                if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              onMouseEnter={() => {
+                if (!clickedRef.current) setActiveId(listing.id);
+                onHoverListing?.(listing.id);
+              }}
+              onMouseLeave={() => {
+                if (!clickedRef.current) setActiveId(null);
+                onHoverListing?.(null);
+              }}
+              style={{
+                width: isActive ? 44 : 36,
+                height: isActive ? 44 : 36,
+                borderRadius: "50%",
+                background: isActive ? "#16a34a" : "#31473A",
+                border: isActive ? "3px solid white" : "2.5px solid white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: isActive ? 18 : 15,
+                lineHeight: 1,
+                boxShadow: isActive
+                  ? "0 0 0 8px rgba(22,163,74,0.20), 0 4px 18px rgba(2,6,23,0.32)"
+                  : "0 3px 12px rgba(2,6,23,0.30)",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                transform: "translate(-50%, -50%)",
+                zIndex: isActive ? 1000 : 1,
+                position: "relative",
+              }}
+            >
+              {emoji}
+            </div>
+          </OverlayViewF>
         );
       })}
+
+      {/* InfoWindow popup for active marker */}
+      {activeId && previewListing && previewListing.lat && previewListing.lng && (
+        <InfoWindowF
+          position={{ lat: previewListing.lat, lng: previewListing.lng }}
+          onCloseClick={() => setActiveId(null)}
+          options={{ pixelOffset: new google.maps.Size(0, -24), maxWidth: 260 }}
+        >
+          <div
+            style={{ width: 240, cursor: "pointer", padding: 0 }}
+            onClick={() => navigate(getBusinessUrl(previewListing))}
+          >
+            {/* Image */}
+            {(previewListing.coverImage || previewListing.logoUrl || previewListing.imageUrls?.[0]) && (
+              <img
+                src={previewListing.coverImage || previewListing.logoUrl || previewListing.imageUrls?.[0]}
+                alt={previewListing.name}
+                style={{
+                  width: "100%",
+                  height: 100,
+                  objectFit: "cover",
+                  borderRadius: 10,
+                  marginBottom: 10,
+                }}
+              />
+            )}
+            {/* Name & category */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <div style={{
+                width: 34, height: 34, borderRadius: 10,
+                background: "rgba(232,241,236,0.75)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 16, flexShrink: 0,
+              }}>
+                {CATEGORY_EMOJI[previewListing.category] || "📍"}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: 13.5, color: "#1f3a2e", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {previewListing.name}
+                </div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(31,58,46,0.58)", marginTop: 2 }}>
+                  {previewListing.category}
+                </div>
+              </div>
+            </div>
+            {/* Address */}
+            {previewListing.district && (
+              <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(15,23,42,0.38)", marginBottom: 8, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                📍 {previewListing.district}{previewListing.postalCode ? ` · ${previewListing.postalCode}` : ""}
+              </div>
+            )}
+            {/* Badges */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
+              {previewListing.verified && (
+                <span style={{
+                  padding: "3px 8px", borderRadius: 999, fontSize: 10.5, fontWeight: 700,
+                  background: "rgba(232,241,236,0.70)", border: "1px solid rgba(161,190,149,0.45)", color: "#1f3a2e",
+                }}>
+                  ✓ Verified
+                </span>
+              )}
+              {previewListing.subcategoryList?.slice(0, 2).map(sub => (
+                <span key={sub} style={{
+                  padding: "3px 8px", borderRadius: 999, fontSize: 10.5, fontWeight: 700,
+                  background: "rgba(15,23,42,0.05)", border: "1px solid rgba(15,23,42,0.12)", color: "#0f172a",
+                  textTransform: "capitalize",
+                }}>
+                  {sub.replace(/-/g, " ")}
+                </span>
+              ))}
+            </div>
+            {/* Action links */}
+            <div style={{ display: "flex", gap: 6 }}>
+              <span style={{
+                padding: "5px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+                background: "#1f3a2e", color: "white", flex: 1, textAlign: "center",
+              }}>
+                View Details →
+              </span>
+              {previewListing.lat && previewListing.lng && (
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${previewListing.lat},${previewListing.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    padding: "5px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+                    background: "rgba(37,99,235,0.07)", border: "1px solid rgba(37,99,235,0.20)", color: "#1d4ed8",
+                    textDecoration: "none", display: "flex", alignItems: "center", gap: 3,
+                  }}
+                >
+                  🧭 Directions
+                </a>
+              )}
+            </div>
+          </div>
+        </InfoWindowF>
+      )}
+
+      {/* User location marker */}
+      {center && (
+        <OverlayViewF
+          position={center}
+          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        >
+          <div style={{
+            width: 16, height: 16, borderRadius: "50%",
+            background: "#3b82f6", border: "3px solid white",
+            boxShadow: "0 0 0 6px rgba(59,130,246,0.20), 0 2px 8px rgba(2,6,23,0.25)",
+            transform: "translate(-50%, -50%)",
+          }} />
+        </OverlayViewF>
+      )}
     </GoogleMap>
   );
 };
