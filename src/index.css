@@ -18,36 +18,36 @@ html {
 
 @layer base {
   :root {
-    --background: 0 0% 97%;
-    --foreground: 0 0% 13%;
+    --background: 140 20% 96%;
+    --foreground: 215 28% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 13%;
+    --card-foreground: 215 28% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
+    --popover-foreground: 215 28% 17%;
 
-    --primary: 4 84% 44%;
+    --primary: 153 30% 17%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 4 84% 50%;
+    --primary-glow: 144 18% 24%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 30%;
+    --secondary: 140 15% 94%;
+    --secondary-foreground: 153 20% 30%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 140 15% 94%;
+    --muted-foreground: 215 10% 45%;
 
-    --accent: 4 84% 44%;
+    --accent: 138 21% 39%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 4 84% 44%;
+    --border: 140 8% 88%;
+    --input: 140 8% 88%;
+    --ring: 153 30% 17%;
 
-    --radius: 0.25rem;
+    --radius: 0.625rem;
 
     --success: 152 69% 40%;
     --success-foreground: 0 0% 100%;
@@ -56,26 +56,26 @@ html {
     --info: 210 100% 56%;
     --info-foreground: 0 0% 100%;
 
-    --header-bg: 4 84% 44%;
+    --header-bg: 153 30% 17%;
     --header-foreground: 0 0% 100%;
-    --announcement-bg: 0 0% 13%;
+    --announcement-bg: 215 28% 17%;
     --announcement-foreground: 0 0% 100%;
     --nav-bg: 0 0% 100%;
-    --nav-border: 0 0% 90%;
-    --hero-overlay: 0 0% 10%;
+    --nav-border: 140 8% 88%;
+    --hero-overlay: 153 30% 10%;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 26%;
-    --sidebar-primary: 0 0% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 4 84% 44%;
+    --sidebar-foreground: 153 20% 26%;
+    --sidebar-primary: 153 30% 17%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 140 20% 94%;
+    --sidebar-accent-foreground: 153 30% 17%;
+    --sidebar-border: 140 8% 88%;
+    --sidebar-ring: 153 30% 17%;
 
-    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.06), 0 1px 2px -1px hsl(0 0% 0% / 0.06);
-    --shadow-card-hover: 0 4px 12px -2px hsl(0 0% 0% / 0.12);
-    --shadow-primary: 0 4px 14px 0 hsl(4 84% 44% / 0.25);
+    --shadow-card: 0 2px 12px 0 hsl(215 28% 17% / 0.05);
+    --shadow-card-hover: 0 4px 18px -2px hsl(215 28% 17% / 0.09);
+    --shadow-primary: 0 4px 14px 0 hsl(153 30% 17% / 0.25);
   }
 
   .dark {
