@@ -88,7 +88,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-2 ml-auto">
             <Link to="/add-listing">
-              <Button size="sm" className="h-9 bg-yellow-400 hover:bg-yellow-500 text-black font-bold shadow-sm">
+              <Button size="sm" className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-sm">
                 <Plus className="w-4 h-4 mr-1" />List Free
               </Button>
             </Link>
