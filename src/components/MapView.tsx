@@ -193,7 +193,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       onLoad={onMapLoad}
       mapContainerClassName="w-full h-full rounded-xl"
       center={center || DEFAULT_CENTER}
-      zoom={12}
+      zoom={center ? 16 : 14}
       options={{
         styles: MAP_STYLES,
         disableDefaultUI: true,
