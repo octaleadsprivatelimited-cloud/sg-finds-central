@@ -16,12 +16,12 @@ interface MapViewProps {
 }
 
 const radiusToZoom = (km: number): number => {
-  if (km <= 0.5) return 16;
-  if (km <= 1) return 15;
-  if (km <= 2) return 14;
-  if (km <= 3) return 13;
-  if (km <= 5) return 12;
-  return 11;
+  if (km <= 0.5) return 18;
+  if (km <= 1) return 16;
+  if (km <= 2) return 15;
+  if (km <= 3) return 14;
+  if (km <= 5) return 13;
+  return 12;
 };
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
@@ -193,7 +193,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       onLoad={onMapLoad}
       mapContainerClassName="w-full h-full rounded-xl"
       center={center || DEFAULT_CENTER}
-      zoom={12}
+      zoom={center ? 16 : 14}
       options={{
         styles: MAP_STYLES,
         disableDefaultUI: true,
