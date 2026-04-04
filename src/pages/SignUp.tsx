@@ -179,6 +179,16 @@ const SignUp = () => {
               />
             </div>
             <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Mobile Number</Label>
+              <Input
+                type="tel"
+                placeholder="+65 XXXX XXXX"
+                className="h-9 md:h-10 text-sm"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm">Password</Label>
               <Input
                 type="password"
