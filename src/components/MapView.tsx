@@ -217,17 +217,18 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
               onClick={(e) => {
                 e.stopPropagation();
                 pinClickRef.current = true;
+                clickedRef.current = true;
                 setActiveId(listing.id);
                 onSelectListing?.(listing);
                 const card = document.querySelector(`[data-listing-id="${listing.id}"]`);
                 if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
               onMouseEnter={() => {
-                if (!activeId) setActiveId(listing.id);
+                if (!clickedRef.current) setActiveId(listing.id);
                 onHoverListing?.(listing.id);
               }}
               onMouseLeave={() => {
-                if (activeId === listing.id && !selectedId) setActiveId(null);
+                if (!clickedRef.current) setActiveId(null);
                 onHoverListing?.(null);
               }}
               style={{
