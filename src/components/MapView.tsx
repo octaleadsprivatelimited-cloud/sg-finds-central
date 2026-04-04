@@ -58,6 +58,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const mapRef = useRef<google.maps.Map | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
   const pinClickRef = useRef(false);
+  const clickedRef = useRef(false); // true when user explicitly clicked a pin
   const navigate = useNavigate();
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
