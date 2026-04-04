@@ -401,27 +401,22 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 Open Now
               </button>
 
-              {[
-                { label: "500m", value: 0.5 },
-                { label: "1 km", value: 1 },
-                { label: "2 km", value: 2 },
-                { label: "5 km", value: 5 },
-              ].map((opt) => (
-                <button
-                  key={opt.label}
-                  onClick={() => {
-                    setRadiusKm(radiusKm === opt.value ? null : opt.value);
-                    if (opt.value && !userLocation) handleDetectLocation();
+              <div className="flex items-center gap-2 shrink-0" style={{ minWidth: 180 }}>
+                <Slider
+                  value={[radiusKm ?? 10]}
+                  onValueChange={([v]) => {
+                    setRadiusKm(v);
+                    if (!userLocation) handleDetectLocation();
                   }}
-                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
-                    radiusKm === opt.value
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-foreground border-border hover:border-foreground/30"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+                  min={0.5}
+                  max={10}
+                  step={0.5}
+                  className="w-28"
+                />
+                <span className="text-xs font-semibold text-foreground w-12 text-right">
+                  {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
+                </span>
+              </div>
 
               <div className="w-px h-5 bg-border shrink-0" />
 
