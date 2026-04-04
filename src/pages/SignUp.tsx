@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   signInWithPopup,
@@ -48,6 +49,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -76,6 +78,14 @@ const SignUp = () => {
     setLoading(true);
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      // Store phone number in Firestore for admin panel
+      if (phone.trim()) {
+        await setDoc(doc(db, "users", result.user.uid), {
+          email,
+          phone: phone.trim(),
+          createdAt: serverTimestamp(),
+        });
+      }
       await sendEmailVerification(result.user, {
         url: window.location.origin,
       });
@@ -166,6 +176,16 @@ const SignUp = () => {
                 className="h-9 md:h-10 text-sm"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">Mobile Number</Label>
+              <Input
+                type="tel"
+                placeholder="+65 XXXX XXXX"
+                className="h-9 md:h-10 text-sm"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
