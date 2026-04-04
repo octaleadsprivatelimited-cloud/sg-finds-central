@@ -255,6 +255,10 @@ const Admin = () => {
         const eSnap = await getDocs(collection(db, "enquiries"));
         setEnquiries(eSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Enquiry)));
       } catch {}
+      try {
+        const uSnap = await getDocs(collection(db, "users"));
+        setAppUsers(uSnap.docs.map((d) => ({ id: d.id, ...d.data() } as AppUser)));
+      } catch {}
     } catch {
       setAllListings(DEMO_ALL_LISTINGS);
       setPendingListings(DEMO_ALL_LISTINGS.filter((l) => l.status === "pending_approval"));
