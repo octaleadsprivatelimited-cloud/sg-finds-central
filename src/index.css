@@ -79,34 +79,34 @@ html {
   }
 
   .dark {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 93%;
+    --background: 150 10% 7%;
+    --foreground: 140 10% 93%;
 
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 93%;
+    --card: 150 10% 11%;
+    --card-foreground: 140 10% 93%;
 
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 93%;
+    --popover: 150 10% 11%;
+    --popover-foreground: 140 10% 93%;
 
-    --primary: 4 84% 50%;
+    --primary: 152 35% 40%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 4 84% 55%;
+    --primary-glow: 152 40% 48%;
 
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 80%;
+    --secondary: 150 10% 16%;
+    --secondary-foreground: 140 10% 80%;
 
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 150 10% 16%;
+    --muted-foreground: 140 5% 55%;
 
-    --accent: 4 84% 50%;
+    --accent: 152 35% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 63% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 4 84% 50%;
+    --border: 150 8% 20%;
+    --input: 150 8% 20%;
+    --ring: 152 35% 40%;
 
     --success: 152 69% 45%;
     --success-foreground: 0 0% 100%;
@@ -115,23 +115,23 @@ html {
     --info: 210 100% 56%;
     --info-foreground: 0 0% 100%;
 
-    --header-bg: 4 84% 38%;
+    --header-bg: 153 30% 14%;
     --header-foreground: 0 0% 100%;
-    --announcement-bg: 0 0% 10%;
+    --announcement-bg: 150 10% 10%;
     --announcement-foreground: 0 0% 100%;
 
-    --sidebar-background: 0 0% 9%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 0 0% 96%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 0 0% 16%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 4 84% 50%;
+    --sidebar-background: 150 10% 9%;
+    --sidebar-foreground: 140 10% 90%;
+    --sidebar-primary: 140 10% 96%;
+    --sidebar-primary-foreground: 150 10% 9%;
+    --sidebar-accent: 150 10% 16%;
+    --sidebar-accent-foreground: 140 10% 96%;
+    --sidebar-border: 150 8% 20%;
+    --sidebar-ring: 152 35% 40%;
 
     --shadow-card: 0 2px 20px -2px hsl(0 0% 0% / 0.3);
     --shadow-card-hover: 0 8px 30px -6px hsl(0 0% 0% / 0.4);
-    --shadow-primary: 0 8px 30px -4px hsl(4 84% 50% / 0.3);
+    --shadow-primary: 0 8px 30px -4px hsl(152 35% 40% / 0.3);
   }
 
   /* ── Dashboard-scoped green theme (Donezo-inspired) ── */
