@@ -155,6 +155,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     registerDetectLocation(handleDetectLocation);
   }, [registerDetectLocation, handleDetectLocation]);
 
+  // Auto-detect location on mount for default 5km radius
+  useEffect(() => {
+    handleDetectLocation();
+  }, []);
+
   const hasActiveFilters = searchQuery || district !== "All Districts" || category !== "All Categories" || radiusKm !== null || openNow || pincode;
   const activeFilterCount = [district !== "All Districts", category !== "All Categories", radiusKm !== null, openNow, !!searchQuery, !!pincode].filter(Boolean).length;
 
