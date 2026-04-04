@@ -57,6 +57,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
   const [activeId, setActiveId] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
+  const pinClickRef = useRef(false);
   const navigate = useNavigate();
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
