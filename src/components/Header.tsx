@@ -76,7 +76,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
 
           {/* Search */}
           <div className="hidden md:flex items-center gap-2 ml-4 flex-1 max-w-xl">
-            <div className="flex-1 relative flex items-center h-10 rounded-lg border border-[hsl(220,15%,78%)] bg-card hover:border-[hsl(220,15%,65%)] focus-within:border-primary focus-within:shadow-[0_0_0_1px_hsl(var(--primary))] transition-all">
+            <div className="flex-1 relative flex items-center h-10 rounded-lg border-[1.5px] border-accent/30 bg-card hover:border-accent/50 focus-within:border-primary focus-within:shadow-[0_0_0_3px_hsl(var(--accent)/0.12)] transition-all">
               <Search className="w-4 h-4 text-muted-foreground ml-3 shrink-0" />
               <SearchWithSuggestions
                 placeholder="Search businesses, categories, or postal code..."
