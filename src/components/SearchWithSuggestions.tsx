@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, MapPin, Building2 } from "lucide-react";
+import { Search, MapPin, Building2, Navigation } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
 import { getBusinessUrl } from "@/lib/url-helpers";
 import { cn } from "@/lib/utils";
+import { SINGAPORE_DISTRICTS } from "@/lib/districts";
 
 interface SearchWithSuggestionsProps {
   compact?: boolean;
