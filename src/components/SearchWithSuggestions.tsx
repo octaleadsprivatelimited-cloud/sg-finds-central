@@ -45,6 +45,12 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
     return cats.filter((c) => c.toLowerCase().includes(q)).slice(0, 3);
   }, [searchQuery, listings, isPincodeQuery]);
 
+  const districtMatches = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2 || isPincodeQuery) return [];
+    const q = searchQuery.toLowerCase();
+    return SINGAPORE_DISTRICTS.filter((d) => d !== "All Districts" && d.toLowerCase().includes(q)).slice(0, 3);
+  }, [searchQuery, isPincodeQuery]);
+
   const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0 || isPincodeQuery);
 
   useEffect(() => {
