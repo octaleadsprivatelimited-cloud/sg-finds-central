@@ -51,7 +51,7 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
     return SINGAPORE_DISTRICTS.filter((d) => d !== "All Districts" && d.toLowerCase().includes(q)).slice(0, 3);
   }, [searchQuery, isPincodeQuery]);
 
-  const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0 || isPincodeQuery);
+  const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0 || districtMatches.length > 0 || isPincodeQuery);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
