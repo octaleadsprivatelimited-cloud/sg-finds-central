@@ -155,6 +155,25 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
             </div>
           )}
 
+          {/* District / Area suggestions */}
+          {districtMatches.length > 0 && (
+            <div className="px-3 pt-2.5 pb-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Areas</p>
+              <div className="flex flex-wrap gap-1.5">
+                {districtMatches.map((d) => (
+                  <button
+                    key={d}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-foreground text-xs font-medium hover:bg-accent/20 transition-colors"
+                    onClick={() => handleSelect(d)}
+                  >
+                    <Navigation className="w-3 h-3" />
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Category suggestions */}
           {categoryMatches.length > 0 && (
             <div className="px-3 pt-2.5 pb-1">
