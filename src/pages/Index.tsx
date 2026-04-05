@@ -116,7 +116,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
   const filtered = useMemo(() => {
     const result = listings.filter((l) => {
-      const matchQ = !searchQuery || l.name.toLowerCase().includes(searchQuery.toLowerCase()) || l.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const q = searchQuery.toLowerCase();
+      const matchQ = !searchQuery || l.name.toLowerCase().includes(q) || l.category.toLowerCase().includes(q) || l.district.toLowerCase().includes(q);
       const matchD = (radiusKm && filterOrigin) || district === "All Districts" || l.district === district;
       const matchC = category === "All Categories" || l.category === category;
       const matchR = !radiusKm || !filterOrigin || !l.lat || !l.lng || getDistance(filterOrigin.lat, filterOrigin.lng, l.lat, l.lng) <= radiusKm;

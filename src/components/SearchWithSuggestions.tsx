@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, MapPin, Building2 } from "lucide-react";
+import { Search, MapPin, Building2, Navigation } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/contexts/SearchContext";
 import { getBusinessUrl } from "@/lib/url-helpers";
 import { cn } from "@/lib/utils";
+import { SINGAPORE_DISTRICTS } from "@/lib/districts";
 
 interface SearchWithSuggestionsProps {
   compact?: boolean;
@@ -44,7 +45,13 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
     return cats.filter((c) => c.toLowerCase().includes(q)).slice(0, 3);
   }, [searchQuery, listings, isPincodeQuery]);
 
-  const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0 || isPincodeQuery);
+  const districtMatches = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2 || isPincodeQuery) return [];
+    const q = searchQuery.toLowerCase();
+    return SINGAPORE_DISTRICTS.filter((d) => d !== "All Districts" && d.toLowerCase().includes(q)).slice(0, 3);
+  }, [searchQuery, isPincodeQuery]);
+
+  const showDropdown = focused && searchQuery.length >= 2 && (suggestions.length > 0 || categoryMatches.length > 0 || districtMatches.length > 0 || isPincodeQuery);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -145,6 +152,25 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
                   </p>
                 </div>
               </button>
+            </div>
+          )}
+
+          {/* District / Area suggestions */}
+          {districtMatches.length > 0 && (
+            <div className="px-3 pt-2.5 pb-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Areas</p>
+              <div className="flex flex-wrap gap-1.5">
+                {districtMatches.map((d) => (
+                  <button
+                    key={d}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-foreground text-xs font-medium hover:bg-accent/20 transition-colors"
+                    onClick={() => handleSelect(d)}
+                  >
+                    <Navigation className="w-3 h-3" />
+                    {d}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
