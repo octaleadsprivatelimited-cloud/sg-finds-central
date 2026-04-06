@@ -203,10 +203,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
-        {/* Category Grid after hero */}
-        <section className="px-3 py-3">
-          <CategoryGrid />
-        </section>
 
         {/* Row 1: Category chips */}
         <div className="border-b border-border bg-card px-3 py-2">
