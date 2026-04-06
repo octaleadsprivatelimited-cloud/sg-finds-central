@@ -251,16 +251,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             <span className="text-xs font-semibold text-foreground shrink-0 w-12 text-right">
               {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
             </span>
-            <button
-              onClick={() => setOpenNow(!openNow)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
-                openNow
-                  ? "bg-emerald-600 text-white border-emerald-600"
-                  : "bg-card text-foreground border-border"
-              }`}
-            >
-              Open Now
-            </button>
           </div>
         </div>
 
