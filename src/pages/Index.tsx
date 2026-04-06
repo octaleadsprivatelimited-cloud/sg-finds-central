@@ -369,10 +369,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ DESKTOP LAYOUT ═══ */}
       <div className="hidden lg:block">
-        {/* Category Grid after hero */}
-        <section className="container mx-auto px-4 py-4">
-          <CategoryGrid />
-        </section>
 
         {/* Filter chips bar */}
         <div className="border-b border-border bg-card">
