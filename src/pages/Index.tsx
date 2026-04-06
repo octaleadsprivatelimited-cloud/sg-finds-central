@@ -370,45 +370,38 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       {/* ═══ DESKTOP LAYOUT ═══ */}
       <div className="hidden lg:block">
 
-        {/* JustDial-style filter bar */}
-        <div className="bg-card border-b border-border mb-4 shadow-sm">
+        {/* Filter bar */}
+        <div className="bg-card border-b border-border mb-4">
           <div className="container mx-auto px-4">
-            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-3">
-              {/* All button */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2">
               <button
                 onClick={() => {
                   setCategory("All Categories");
                   setRadiusKm(null);
                   setOpenNow(false);
                 }}
-                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0 min-w-[64px] ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
                   !hasActiveFilters
-                    ? "bg-primary/10 text-primary ring-1 ring-primary/30"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <span className="text-base">✨</span>
-                <span>All</span>
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                All
               </button>
 
-              {/* Open Now */}
               <button
                 onClick={() => setOpenNow(!openNow)}
-                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0 min-w-[64px] ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
                   openNow
-                    ? "bg-primary/10 text-primary ring-1 ring-primary/30"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <span className="text-base">🟢</span>
-                <span>Open Now</span>
+                Open Now
               </button>
 
-              {/* Distance slider */}
-              <div className="flex flex-col items-center gap-1 px-3 py-1.5 shrink-0 min-w-[100px]">
-                <span className="text-xs font-semibold text-foreground">
-                  {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
-                </span>
+              <div className="flex items-center gap-2 bg-secondary rounded-full px-3 py-1 shrink-0">
                 <Slider
                   value={[radiusKm ?? 10]}
                   onValueChange={([v]) => {
@@ -420,24 +413,24 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   step={0.5}
                   className="w-20"
                 />
+                <span className="text-xs font-medium text-foreground w-10 text-right">
+                  {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm}km`) : "All"}
+                </span>
               </div>
 
-              {/* Divider */}
-              <div className="w-px h-8 bg-border shrink-0 mx-1" />
+              <div className="w-px h-5 bg-border shrink-0" />
 
-              {/* Category pills */}
               {CATEGORY_NAV.map((c) => (
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                  className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0 min-w-[64px] ${
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
                     category === c.value
-                      ? "bg-primary/10 text-primary ring-1 ring-primary/30"
-                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  <span className="text-base">{c.icon}</span>
-                  <span>{c.label}</span>
+                  {c.label}
                 </button>
               ))}
             </div>
