@@ -541,17 +541,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </div>
 
         {/* Desktop extras */}
-        {!hasActiveFilters && (
-          <section className="container mx-auto px-4 py-8" data-reveal>
-            <CategoryGrid />
-          </section>
-        )}
-        {!hasActiveFilters && <div data-reveal><PromoBanner /></div>}
-        {!hasActiveFilters && (
-          <section className="container mx-auto px-4 py-6" data-reveal>
-            <CategoryHighlights />
-          </section>
-        )}
+        <section className="container mx-auto px-4 py-8" data-reveal>
+          <CategoryGrid />
+        </section>
+        <div data-reveal><PromoBanner /></div>
+        <section className="container mx-auto px-4 py-6" data-reveal>
+          <CategoryHighlights />
+        </section>
       </div>
     </div>
   );
