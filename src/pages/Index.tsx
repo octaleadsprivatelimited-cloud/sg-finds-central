@@ -380,16 +380,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 All
               </button>
 
-              <button
-                onClick={() => setOpenNow(!openNow)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
-                  openNow
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Open Now
-              </button>
 
               <div className="flex items-center gap-2 bg-secondary rounded-full px-3 py-1 shrink-0">
                 <Slider
