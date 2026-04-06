@@ -183,17 +183,17 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   }, [sortedFiltered, currentPage, ITEMS_PER_PAGE]);
 
   const CATEGORY_NAV = [
-    { value: "Tuition", label: "Tuition" },
-    { value: "Baking", label: "Baking" },
-    { value: "Music / Art / Craft", label: "Music / Art" },
-    { value: "Home Food", label: "Home Food" },
-    { value: "Beauty", label: "Beauty" },
-    { value: "Pet Services", label: "Pet Services" },
-    { value: "Event Services", label: "Events" },
-    { value: "Tailoring", label: "Tailoring" },
-    { value: "Cleaning", label: "Cleaning" },
-    { value: "Handyman", label: "Handyman" },
-    { value: "Photography / Videography", label: "Photo / Video" },
+    { value: "Tuition", label: "Tuition", icon: "📚" },
+    { value: "Baking", label: "Baking", icon: "🧁" },
+    { value: "Music / Art / Craft", label: "Music / Art", icon: "🎨" },
+    { value: "Home Food", label: "Home Food", icon: "🍱" },
+    { value: "Beauty", label: "Beauty", icon: "💅" },
+    { value: "Pet Services", label: "Pet Services", icon: "🐾" },
+    { value: "Event Services", label: "Events", icon: "🎉" },
+    { value: "Tailoring", label: "Tailoring", icon: "🧵" },
+    { value: "Cleaning", label: "Cleaning", icon: "🧹" },
+    { value: "Handyman", label: "Handyman", icon: "🔧" },
+    { value: "Photography / Videography", label: "Photo / Video", icon: "📸" },
   ];
 
   const scrollRevealRef = useScrollReveal<HTMLDivElement>();
