@@ -370,38 +370,45 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       {/* ═══ DESKTOP LAYOUT ═══ */}
       <div className="hidden lg:block">
 
-        {/* Filter chips bar */}
-        <div className="border-b border-border bg-card mb-4">
+        {/* JustDial-style filter bar */}
+        <div className="bg-card border-b border-border mb-4 shadow-sm">
           <div className="container mx-auto px-4">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2.5">
+            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-3">
+              {/* All button */}
               <button
                 onClick={() => {
                   setCategory("All Categories");
                   setRadiusKm(null);
                   setOpenNow(false);
                 }}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0 min-w-[64px] ${
                   !hasActiveFilters
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border hover:border-foreground/30"
+                    ? "bg-primary/10 text-primary ring-1 ring-primary/30"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                All
+                <span className="text-base">✨</span>
+                <span>All</span>
               </button>
 
+              {/* Open Now */}
               <button
                 onClick={() => setOpenNow(!openNow)}
-                className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0 min-w-[64px] ${
                   openNow
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border hover:border-foreground/30"
+                    ? "bg-primary/10 text-primary ring-1 ring-primary/30"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
-                Open Now
+                <span className="text-base">🟢</span>
+                <span>Open Now</span>
               </button>
 
-              <div className="flex items-center gap-2 shrink-0" style={{ minWidth: 180 }}>
+              {/* Distance slider */}
+              <div className="flex flex-col items-center gap-1 px-3 py-1.5 shrink-0 min-w-[100px]">
+                <span className="text-xs font-semibold text-foreground">
+                  {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
+                </span>
                 <Slider
                   value={[radiusKm ?? 10]}
                   onValueChange={([v]) => {
@@ -411,26 +418,26 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   min={0.5}
                   max={10}
                   step={0.5}
-                  className="w-28"
+                  className="w-20"
                 />
-                <span className="text-xs font-semibold text-foreground w-12 text-right">
-                  {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
-                </span>
               </div>
 
-              <div className="w-px h-5 bg-border shrink-0" />
+              {/* Divider */}
+              <div className="w-px h-8 bg-border shrink-0 mx-1" />
 
+              {/* Category pills */}
               {CATEGORY_NAV.map((c) => (
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors shrink-0 border ${
+                  className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all shrink-0 min-w-[64px] ${
                     category === c.value
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-foreground border-border hover:border-foreground/30"
+                      ? "bg-primary/10 text-primary ring-1 ring-primary/30"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                   }`}
                 >
-                  {c.label}
+                  <span className="text-base">{c.icon}</span>
+                  <span>{c.label}</span>
                 </button>
               ))}
             </div>
