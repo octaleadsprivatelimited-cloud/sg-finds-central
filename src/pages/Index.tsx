@@ -203,10 +203,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
-        {/* Category Grid after hero */}
-        <section className="px-3 py-3">
-          <CategoryGrid />
-        </section>
 
         {/* Row 1: Category chips */}
         <div className="border-b border-border bg-card px-3 py-2">
@@ -361,21 +357,18 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           )}
         </div>
 
-        {/* Extras (mobile) */}
-        {!hasActiveFilters && <div data-reveal><PromoBanner /></div>}
-        {!hasActiveFilters && (
-          <section className="px-3 py-3" data-reveal>
-            <CategoryHighlights />
-          </section>
-        )}
+        {/* Extras before footer (mobile) */}
+        <section className="px-3 py-4" data-reveal>
+          <CategoryGrid />
+        </section>
+        <div data-reveal><PromoBanner /></div>
+        <section className="px-3 py-3" data-reveal>
+          <CategoryHighlights />
+        </section>
       </div>
 
       {/* ═══ DESKTOP LAYOUT ═══ */}
       <div className="hidden lg:block">
-        {/* Category Grid after hero */}
-        <section className="container mx-auto px-4 py-4">
-          <CategoryGrid />
-        </section>
 
         {/* Filter chips bar */}
         <div className="border-b border-border bg-card">
@@ -548,17 +541,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </div>
 
         {/* Desktop extras */}
-        {!hasActiveFilters && (
-          <section className="container mx-auto px-4 py-8" data-reveal>
-            <CategoryGrid />
-          </section>
-        )}
-        {!hasActiveFilters && <div data-reveal><PromoBanner /></div>}
-        {!hasActiveFilters && (
-          <section className="container mx-auto px-4 py-6" data-reveal>
-            <CategoryHighlights />
-          </section>
-        )}
+        <section className="container mx-auto px-4 py-8" data-reveal>
+          <CategoryGrid />
+        </section>
+        <div data-reveal><PromoBanner /></div>
+        <section className="container mx-auto px-4 py-6" data-reveal>
+          <CategoryHighlights />
+        </section>
       </div>
     </div>
   );
