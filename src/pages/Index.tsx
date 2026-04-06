@@ -541,11 +541,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </div>
 
         {/* Desktop extras */}
-        <section className="container mx-auto px-4 py-8" data-reveal>
+        <section className="container mx-auto px-4 py-6" data-reveal>
           <CategoryGrid />
         </section>
         <div data-reveal><PromoBanner /></div>
-        <section className="container mx-auto px-4 py-6" data-reveal>
+        <section className="container mx-auto px-4 py-4" data-reveal>
           <CategoryHighlights />
         </section>
       </div>
