@@ -203,6 +203,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
+        {/* Category Grid after hero */}
+        <section className="px-3 py-3">
+          <CategoryGrid />
+        </section>
+
         {/* Row 1: Category chips */}
         <div className="border-b border-border bg-card px-3 py-2">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
@@ -356,12 +361,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           )}
         </div>
 
-        {/* Category Grid & extras (mobile) */}
-        {!hasActiveFilters && (
-          <section className="px-3 py-4" data-reveal>
-            <CategoryGrid />
-          </section>
-        )}
+        {/* Extras (mobile) */}
         {!hasActiveFilters && <div data-reveal><PromoBanner /></div>}
         {!hasActiveFilters && (
           <section className="px-3 py-3" data-reveal>
@@ -372,6 +372,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
       {/* ═══ DESKTOP LAYOUT ═══ */}
       <div className="hidden lg:block">
+        {/* Category Grid after hero */}
+        <section className="container mx-auto px-4 py-4">
+          <CategoryGrid />
+        </section>
+
         {/* Filter chips bar */}
         <div className="border-b border-border bg-card">
           <div className="container mx-auto px-4">
