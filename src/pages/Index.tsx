@@ -357,13 +357,14 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           )}
         </div>
 
-        {/* Extras (mobile) */}
-        {!hasActiveFilters && <div data-reveal><PromoBanner /></div>}
-        {!hasActiveFilters && (
-          <section className="px-3 py-3" data-reveal>
-            <CategoryHighlights />
-          </section>
-        )}
+        {/* Extras before footer (mobile) */}
+        <section className="px-3 py-4" data-reveal>
+          <CategoryGrid />
+        </section>
+        <div data-reveal><PromoBanner /></div>
+        <section className="px-3 py-3" data-reveal>
+          <CategoryHighlights />
+        </section>
       </div>
 
       {/* ═══ DESKTOP LAYOUT ═══ */}
