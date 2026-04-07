@@ -507,7 +507,7 @@ const AddListing = () => {
       }
       case "hours": return true;
       case "images": return imageUrls.length >= 3;
-      case "profile": return true;
+      case "profile": return !!logoUrl;
       case "compliance": {
         const gates = getComplianceGates(category, serviceLocations);
         return gates.every(g => complianceChecks[g.id] === true);
@@ -1165,13 +1165,14 @@ const AddListing = () => {
                   <h2 className="text-lg font-semibold text-foreground">Profile Extras</h2>
                   {user && (
                     <div className="space-y-2">
-                      <Label>Profile Image (optional)</Label>
+                      <Label>Business Logo / Profile Image *</Label>
                       <LogoUpload
                         currentUrl={logoUrl || undefined}
                         userId={user.uid}
                         onUploaded={url => setLogoUrl(url)}
                         onRemoved={() => setLogoUrl("")}
                       />
+                      <FieldError show={showErrors && !logoUrl} message="Please upload a logo or profile image to continue" />
                     </div>
                   )}
                   <div className="space-y-2">
