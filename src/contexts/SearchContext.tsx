@@ -83,7 +83,7 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery, listings, setListings, onPincodeSearch, setOnPincodeSearch }}>
+    <SearchContext.Provider value={{ searchQuery, setSearchQuery, listings, setListings, onPincodeSearch, setOnPincodeSearch, onDistrictSelect, setOnDistrictSelect }}>
       {children}
     </SearchContext.Provider>
   );
