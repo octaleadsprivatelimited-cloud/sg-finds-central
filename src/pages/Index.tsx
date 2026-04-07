@@ -374,6 +374,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             </>
           )}
         </div>
+        </div>{/* end wrapper for sticky unstick */}
 
         {/* Extras before footer (mobile) */}
         <section className="px-3 py-4" data-reveal>
