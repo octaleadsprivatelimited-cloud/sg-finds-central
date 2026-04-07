@@ -264,7 +264,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             ))}
           </div>
         </div>
-          <div className="border-b border-border bg-card px-3 py-2.5">
+          <div className="border-b border-border/60 bg-background/80 backdrop-blur-xl px-3 py-2.5">
             <div className="flex items-center gap-3">
               <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
               <Slider
