@@ -16,12 +16,12 @@ interface MapViewProps {
 }
 
 const radiusToZoom = (km: number): number => {
-  if (km <= 0.5) return 18;
-  if (km <= 1) return 16;
-  if (km <= 2) return 15;
-  if (km <= 3) return 14;
-  if (km <= 5) return 13;
-  return 12;
+  if (km <= 0.5) return 20;
+  if (km <= 1) return 18;
+  if (km <= 2) return 17;
+  if (km <= 3) return 16;
+  if (km <= 5) return 15;
+  return 14;
 };
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
@@ -63,9 +63,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
 
   const smoothZoomTo = useCallback((map: google.maps.Map, target: { lat: number; lng: number }, targetZoom: number) => {
     const currentZoom = map.getZoom() ?? 14;
-    // First pan smoothly
     map.panTo(target);
-    // Then animate zoom step by step
     if (currentZoom === targetZoom) return;
     const step = targetZoom > currentZoom ? 1 : -1;
     let z = currentZoom;
@@ -73,7 +71,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       z += step;
       map.setZoom(z);
       if (z === targetZoom) clearInterval(interval);
-    }, 120);
+    }, 180);
   }, []);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
@@ -211,7 +209,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       onLoad={onMapLoad}
       mapContainerClassName="w-full h-full rounded-xl"
       center={center || DEFAULT_CENTER}
-      zoom={center ? (radiusKm ? radiusToZoom(radiusKm) : 14) : 12}
+      zoom={center ? (radiusKm ? radiusToZoom(radiusKm) : 17) : 14}
       options={{
         styles: MAP_STYLES,
         disableDefaultUI: true,
