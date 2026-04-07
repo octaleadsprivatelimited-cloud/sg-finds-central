@@ -276,10 +276,10 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
         <InfoWindowF
           position={{ lat: previewListing.lat, lng: previewListing.lng }}
           onCloseClick={() => setActiveId(null)}
-          options={{ pixelOffset: new google.maps.Size(0, -24), maxWidth: 260 }}
+          options={{ pixelOffset: new google.maps.Size(0, -24), maxWidth: 200 }}
         >
           <div
-            style={{ width: 240, cursor: "pointer", padding: 0 }}
+            style={{ width: 180, cursor: "pointer", padding: 0 }}
             onClick={() => navigate(getBusinessUrl(previewListing))}
           >
             {/* Image */}
@@ -289,65 +289,35 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                 alt={previewListing.name}
                 style={{
                   width: "100%",
-                  height: 100,
+                  height: 60,
                   objectFit: "cover",
-                  borderRadius: 10,
-                  marginBottom: 10,
+                  borderRadius: 6,
+                  marginBottom: 6,
                 }}
               />
             )}
             {/* Name & category */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-              <div style={{
-                width: 34, height: 34, borderRadius: 10,
-                background: "rgba(232,241,236,0.75)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 16, flexShrink: 0,
-              }}>
-                {CATEGORY_EMOJI[previewListing.category] || "📍"}
+            <div style={{ marginBottom: 4 }}>
+              <div style={{ fontWeight: 700, fontSize: 12, color: "#1f3a2e", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {previewListing.name}
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 800, fontSize: 13.5, color: "#1f3a2e", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {previewListing.name}
-                </div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(31,58,46,0.58)", marginTop: 2 }}>
-                  {previewListing.category}
-                </div>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "rgba(31,58,46,0.55)", marginTop: 1 }}>
+                {previewListing.category}
               </div>
             </div>
             {/* Address */}
             {previewListing.district && (
-              <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(15,23,42,0.38)", marginBottom: 8, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <div style={{ fontSize: 10, fontWeight: 500, color: "rgba(15,23,42,0.4)", marginBottom: 6, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 📍 {previewListing.district}{previewListing.postalCode ? ` · ${previewListing.postalCode}` : ""}
               </div>
             )}
-            {/* Badges */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
-              {previewListing.verified && (
-                <span style={{
-                  padding: "3px 8px", borderRadius: 999, fontSize: 10.5, fontWeight: 700,
-                  background: "rgba(232,241,236,0.70)", border: "1px solid rgba(161,190,149,0.45)", color: "#1f3a2e",
-                }}>
-                  ✓ Verified
-                </span>
-              )}
-              {previewListing.subcategoryList?.slice(0, 2).map(sub => (
-                <span key={sub} style={{
-                  padding: "3px 8px", borderRadius: 999, fontSize: 10.5, fontWeight: 700,
-                  background: "rgba(15,23,42,0.05)", border: "1px solid rgba(15,23,42,0.12)", color: "#0f172a",
-                  textTransform: "capitalize",
-                }}>
-                  {sub.replace(/-/g, " ")}
-                </span>
-              ))}
-            </div>
-            {/* Action links */}
-            <div style={{ display: "flex", gap: 6 }}>
+            {/* Actions */}
+            <div style={{ display: "flex", gap: 4 }}>
               <span style={{
-                padding: "5px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+                padding: "3px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
                 background: "#1f3a2e", color: "white", flex: 1, textAlign: "center",
               }}>
-                View Details →
+                View →
               </span>
               {previewListing.lat && previewListing.lng && (
                 <a
@@ -356,12 +326,12 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
                   style={{
-                    padding: "5px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
-                    background: "rgba(37,99,235,0.07)", border: "1px solid rgba(37,99,235,0.20)", color: "#1d4ed8",
-                    textDecoration: "none", display: "flex", alignItems: "center", gap: 3,
+                    padding: "3px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
+                    background: "rgba(37,99,235,0.07)", border: "1px solid rgba(37,99,235,0.18)", color: "#1d4ed8",
+                    textDecoration: "none",
                   }}
                 >
-                  🧭 Directions
+                  🧭
                 </a>
               )}
             </div>
