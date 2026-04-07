@@ -244,46 +244,45 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         </div>
 
-        {/* Row 2: Distance slider + Open Now */}
-        <div className="border-b border-border bg-card px-3 py-2">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
-            <Slider
-              value={[radiusKm ?? 10]}
-              onValueChange={([v]) => {
-                setRadiusKm(v);
-                if (!userLocation) handleDetectLocation();
-              }}
-              min={0.5}
-              max={10}
-              step={0.5}
-              className="flex-1"
-            />
-            <span className="text-xs font-semibold text-foreground shrink-0 w-12 text-right">
-              {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
-            </span>
+        {/* Distance bar + Map: Sticky together */}
+        <div className="sticky top-0 z-20">
+          <div className="border-b border-border bg-card px-3 py-2">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
+              <Slider
+                value={[radiusKm ?? 10]}
+                onValueChange={([v]) => {
+                  setRadiusKm(v);
+                  if (!userLocation) handleDetectLocation();
+                }}
+                min={0.5}
+                max={10}
+                step={0.5}
+                className="flex-1"
+              />
+              <span className="text-xs font-semibold text-foreground shrink-0 w-12 text-right">
+                {radiusKm ? (radiusKm < 1 ? `${radiusKm * 1000}m` : `${radiusKm} km`) : "All"}
+              </span>
+            </div>
           </div>
-        </div>
-
-        {/* Row 3: Sticky Map */}
-        <div className="sticky top-0 z-20 h-[180px] relative border-b border-border">
-          <MapView
-            listings={sortedFiltered}
-            selectedId={selectedListing?.id}
-            hoveredId={hoveredListingId}
-            onHoverListing={setHoveredListingId}
-            onSelectListing={setSelectedListing}
-            center={mapCenter}
-            radiusKm={radiusKm}
-          />
-          {/* GPS button overlay */}
-          <div className="absolute top-2 right-2 flex flex-col gap-1">
-            <button
-              onClick={handleDetectLocation}
-              className="w-8 h-8 rounded-lg bg-card/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center active:scale-90 transition-transform"
-            >
-              <MapPin className="w-4 h-4 text-foreground" />
-            </button>
+          <div className="h-[180px] relative border-b border-border">
+            <MapView
+              listings={sortedFiltered}
+              selectedId={selectedListing?.id}
+              hoveredId={hoveredListingId}
+              onHoverListing={setHoveredListingId}
+              onSelectListing={setSelectedListing}
+              center={mapCenter}
+              radiusKm={radiusKm}
+            />
+            <div className="absolute top-2 right-2 flex flex-col gap-1">
+              <button
+                onClick={handleDetectLocation}
+                className="w-8 h-8 rounded-lg bg-card/90 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center active:scale-90 transition-transform"
+              >
+                <MapPin className="w-4 h-4 text-foreground" />
+              </button>
+            </div>
           </div>
         </div>
 
