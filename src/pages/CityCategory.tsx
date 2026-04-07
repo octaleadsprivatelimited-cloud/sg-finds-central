@@ -11,6 +11,32 @@ import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
 
+// Category images
+import tuitionImg from "@/assets/categories/education.webp";
+import bakingImg from "@/assets/categories/food.webp";
+import musicArtImg from "@/assets/categories/events.webp";
+import homeFoodImg from "@/assets/categories/home.webp";
+import beautyImg from "@/assets/categories/beauty.webp";
+import petImg from "@/assets/categories/pet.webp";
+import eventImg from "@/assets/categories/events.webp";
+import tailoringImg from "@/assets/categories/retail.webp";
+import cleaningImg from "@/assets/categories/cleaning.webp";
+import handymanImg from "@/assets/categories/construction.webp";
+import photographyImg from "@/assets/categories/photography.webp";
+
+const CATEGORY_IMAGE_MAP: Record<string, string> = {
+  "Tuition": tuitionImg,
+  "Baking": bakingImg,
+  "Music / Art / Craft": musicArtImg,
+  "Home Food": homeFoodImg,
+  "Beauty": beautyImg,
+  "Pet Services": petImg,
+  "Event Services": eventImg,
+  "Tailoring": tailoringImg,
+  "Cleaning": cleaningImg,
+  "Handyman": handymanImg,
+  "Photography / Videography": photographyImg,
+};
 // Subcategory images — all WebP for fast loading
 // Beauty
 import nailsImg from "@/assets/subcategories/nails.webp";
