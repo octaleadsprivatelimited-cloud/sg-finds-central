@@ -242,7 +242,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-foreground text-sm leading-tight truncate">
-            <span className="text-primary">{listing.name}</span>
+            <span className="text-foreground">{listing.name}</span>
           </h3>
 
           <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
@@ -270,7 +270,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
               <a
                 href={`tel:${listing.phone}`}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-[hsl(221,72%,45%)] text-[11px] font-semibold text-[hsl(221,72%,45%)] active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[hsl(221,72%,45%)] text-[11px] font-semibold text-white active:scale-95 transition-transform"
               >
                 <Phone className="w-3 h-3" />Call
               </a>
@@ -281,8 +281,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold text-white active:scale-95 transition-transform shadow-md"
-                style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border text-[11px] font-semibold text-foreground bg-background active:scale-95 transition-transform shadow-sm"
               >
                 <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 rounded-sm" />WhatsApp
               </a>
