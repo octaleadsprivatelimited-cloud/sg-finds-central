@@ -109,12 +109,15 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           </div>
 
           {/* Mobile */}
-          <div className="flex items-center gap-2 flex-1 md:hidden">
-            <SearchWithSuggestions
-              compact
-              placeholder="Search..."
-              className="flex-1"
-            />
+            <div className="flex items-center gap-2 flex-1 md:hidden">
+            <div className="flex-1 flex items-center h-9 rounded-full border border-border bg-secondary/50 px-3">
+              <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              <SearchWithSuggestions
+                compact
+                placeholder="Search..."
+                className="flex-1"
+              />
+            </div>
             <button
               className="p-2 rounded-full hover:bg-secondary transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
