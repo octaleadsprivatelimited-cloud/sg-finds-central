@@ -113,6 +113,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     return () => setOnDistrictSelect(null);
   }, [setOnDistrictSelect, setDistrict, setSearchQuery]);
 
+  useEffect(() => {
     const fetchListings = async () => {
       try {
         const q = query(collection(db, "listings"), where("status", "==", "approved"));
