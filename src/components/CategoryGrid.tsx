@@ -35,15 +35,15 @@ const CategoryGrid = () => {
           <button
             key={cat.name}
             onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-            className="group flex flex-col items-center gap-1.5 md:gap-2 p-2 md:p-3 rounded-xl border border-border/60 bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+            className="group flex flex-col items-center gap-1.5 md:gap-2 p-2 md:p-3 rounded-xl border border-gray-300 bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
           >
-            <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl ${cat.bg} flex items-center justify-center`}>
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-white flex items-center justify-center">
               <img
                 src={cat.image}
                 alt={cat.name}
-                width={40}
-                height={40}
-                className="w-9 h-9 md:w-11 md:h-11 object-contain"
+                width={48}
+                height={48}
+                className="w-11 h-11 md:w-13 md:h-13 object-contain"
                 loading="eager"
                 decoding="async"
               />
