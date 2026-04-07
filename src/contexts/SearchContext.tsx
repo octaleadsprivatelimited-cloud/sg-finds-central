@@ -41,6 +41,8 @@ interface SearchContextType {
   setListings: (listings: SearchableListing[]) => void;
   onPincodeSearch: ((code: string) => void) | null;
   setOnPincodeSearch: (fn: ((code: string) => void) | null) => void;
+  onDistrictSelect: ((district: string) => void) | null;
+  setOnDistrictSelect: (fn: ((district: string) => void) | null) => void;
 }
 
 const SearchContext = createContext<SearchContextType>({
@@ -50,12 +52,15 @@ const SearchContext = createContext<SearchContextType>({
   setListings: () => {},
   onPincodeSearch: null,
   setOnPincodeSearch: () => {},
+  onDistrictSelect: null,
+  setOnDistrictSelect: () => {},
 });
 
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [listings, setListings] = useState<SearchableListing[]>(DEMO_SEARCH_LISTINGS);
   const [onPincodeSearch, setOnPincodeSearch] = useState<((code: string) => void) | null>(null);
+  const [onDistrictSelect, setOnDistrictSelect] = useState<((district: string) => void) | null>(null);
 
   // Try to fetch real listings for suggestions
   useEffect(() => {
@@ -78,7 +83,7 @@ export const SearchProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery, listings, setListings, onPincodeSearch, setOnPincodeSearch }}>
+    <SearchContext.Provider value={{ searchQuery, setSearchQuery, listings, setListings, onPincodeSearch, setOnPincodeSearch, onDistrictSelect, setOnDistrictSelect }}>
       {children}
     </SearchContext.Provider>
   );
