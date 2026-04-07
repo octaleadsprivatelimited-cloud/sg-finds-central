@@ -237,14 +237,14 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Category + Distance + Map: All sticky */}
         <div className="sticky top-0 z-20">
         {/* Row 1: Category chips */}
-        <div className="border-b border-border bg-card px-3 py-2">
+        <div className="border-b border-border/60 bg-background/80 backdrop-blur-xl px-3 py-2">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setCategory("All Categories")}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all active:scale-95 ${
                 category === "All Categories"
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-foreground border-border"
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-muted-foreground"
               }`}
             >
               All
@@ -253,10 +253,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all active:scale-95 ${
                   category === c.value
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border"
+                    ? "bg-foreground text-background"
+                    : "bg-secondary text-muted-foreground"
                 }`}
               >
                 {c.label}
@@ -264,7 +264,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             ))}
           </div>
         </div>
-          <div className="border-b border-border bg-card px-3 py-2.5">
+          <div className="border-b border-border/60 bg-background/80 backdrop-blur-xl px-3 py-2.5">
             <div className="flex items-center gap-3">
               <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
               <Slider
@@ -308,7 +308,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Listings */}
         <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
           {sortedFiltered.length === 0 ? (
-            <div className="text-center py-12 bg-card rounded-lg border border-border">
+            <div className="text-center py-12 bg-white rounded-2xl">
               <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-foreground font-semibold">No businesses found</p>
               <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
@@ -390,18 +390,18 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       <div className="hidden lg:block">
 
         {/* Filter bar */}
-        <div className="bg-card border-b border-border mb-4">
+        <div className="bg-background/80 backdrop-blur-xl border-b border-border/60 mb-4">
           <div className="container mx-auto px-4">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2.5">
               <button
                 onClick={() => {
                   setCategory("All Categories");
                   setRadiusKm(null);
                   setOpenNow(false);
                 }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
                   !hasActiveFilters
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-foreground text-background"
                     : "bg-secondary text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -433,9 +433,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
                     category === c.value
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-foreground text-background"
                       : "bg-secondary text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -463,7 +463,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <div ref={listingsScrollRef} className="max-h-[calc(100vh-64px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
                   {sortedFiltered.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-lg border border-border">
+                    <div className="text-center py-16 bg-white rounded-2xl">
                       <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
                       <p className="text-foreground font-semibold">No businesses found</p>
                       <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
