@@ -308,7 +308,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Listings */}
         <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
           {sortedFiltered.length === 0 ? (
-            <div className="text-center py-12 bg-card rounded-lg border border-border">
+            <div className="text-center py-12 bg-white rounded-2xl">
               <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-foreground font-semibold">No businesses found</p>
               <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
