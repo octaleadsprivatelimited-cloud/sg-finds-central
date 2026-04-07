@@ -242,7 +242,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-foreground text-sm leading-tight truncate">
-            <span className="text-primary">{listing.name}</span>
+            <span className="text-foreground">{listing.name}</span>
           </h3>
 
           <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
