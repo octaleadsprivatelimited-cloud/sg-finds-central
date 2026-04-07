@@ -217,8 +217,8 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   return (
     <div
       data-listing-id={listing.id}
-      className={`rounded-xl border-[1.5px] border-border/60 bg-card cursor-pointer transition-all duration-150 hover:shadow-[0_4px_18px_rgba(2,6,23,0.09)] ${
-        highlighted ? "border-accent/50 shadow-[0_0_0_3px_rgba(161,190,149,0.18)]" : ""
+      className={`rounded-xl border-[1.5px] border-[hsl(0,0%,75%)] bg-white dark:bg-card cursor-pointer transition-all duration-150 hover:shadow-[0_4px_18px_rgba(2,6,23,0.09)] ${
+        highlighted ? "border-[hsl(0,0%,60%)] shadow-[0_0_0_3px_rgba(161,190,149,0.18)]" : ""
       } mb-2 last:mb-0`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
