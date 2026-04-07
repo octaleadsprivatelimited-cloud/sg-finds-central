@@ -225,7 +225,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       onMouseLeave={() => onHover?.(null)}
     >
       {/* ── MOBILE ── */}
-      <div className={`flex gap-3 p-3 md:hidden rounded-xl border-l-[3px] ${catBorder} ${catBg}`}>
+      <div className={`flex gap-3 p-3 md:hidden rounded-xl border-l-[3px] ${catBorder} bg-white dark:bg-card`}>
         {/* Compact image */}
         <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-muted shadow-sm">
           {listing.logoUrl ? (
