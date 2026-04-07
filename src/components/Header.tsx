@@ -62,7 +62,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
 
           {/* Desktop Search */}
           <div className="hidden md:flex items-center gap-2 ml-6 flex-1 max-w-md">
-            <div className="flex-1 relative flex items-center h-9 rounded-full bg-secondary/70 hover:bg-secondary transition-colors">
+            <div className="flex-1 relative flex items-center h-9 rounded-full bg-secondary/70 hover:bg-secondary transition-colors shadow-[inset_0_0_0_1px_hsl(var(--border))]">
               <Search className="w-3.5 h-3.5 text-muted-foreground ml-3 shrink-0" />
               <SearchWithSuggestions
                 placeholder="Search businesses or postal code..."
