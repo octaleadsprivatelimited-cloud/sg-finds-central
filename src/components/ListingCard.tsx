@@ -281,8 +281,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold text-white active:scale-95 transition-transform shadow-md"
-                style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border text-[11px] font-semibold text-foreground bg-background active:scale-95 transition-transform shadow-sm"
               >
                 <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 rounded-sm" />WhatsApp
               </a>
