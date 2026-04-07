@@ -346,7 +346,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       )
                     )}
                   <button
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); scrollToListings(); }}
                     disabled={currentPage === totalPages}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                   >
