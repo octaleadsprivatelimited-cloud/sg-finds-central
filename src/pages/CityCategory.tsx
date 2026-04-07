@@ -254,7 +254,7 @@ const CityCategory = () => {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
-            <Link to={`/${citySlug}`} className="hover:text-primary transition-colors">{city?.name || citySlug}</Link>
+            <Link to={`/${citySlug}`} className="hover:text-primary transition-colors">{locationName}</Link>
             {matchedCategory && (
               <>
                 <ChevronRight className="w-3 h-3" />
