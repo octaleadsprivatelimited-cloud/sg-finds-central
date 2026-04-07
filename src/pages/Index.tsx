@@ -31,7 +31,7 @@ interface IndexProps {
 }
 
 const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
-  const { searchQuery, setSearchQuery, setListings: setSearchListings, setOnPincodeSearch } = useSearch();
+  const { searchQuery, setSearchQuery, setListings: setSearchListings, setOnPincodeSearch, setOnDistrictSelect } = useSearch();
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
