@@ -80,15 +80,20 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
     mapRef.current = map;
   }, []);
 
-  // Sync hoveredId from parent → auto-open that marker's popup & flyTo
+  // Sync hoveredId from parent → auto-open that marker's popup & flyTo (debounced)
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
     if (hoveredId) {
       setActiveId(hoveredId);
-      const listing = listings.find(l => l.id === hoveredId);
-      if (listing?.lat && listing?.lng && mapRef.current) {
-        mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
-      }
+      hoverTimerRef.current = setTimeout(() => {
+        const listing = listings.find(l => l.id === hoveredId);
+        if (listing?.lat && listing?.lng && mapRef.current) {
+          mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
+        }
+      }, 400);
     }
+    return () => { if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current); };
   }, [hoveredId, listings]);
 
   // Sync selectedId from parent
