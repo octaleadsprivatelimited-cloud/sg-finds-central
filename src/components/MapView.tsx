@@ -63,9 +63,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
 
   const smoothZoomTo = useCallback((map: google.maps.Map, target: { lat: number; lng: number }, targetZoom: number) => {
     const currentZoom = map.getZoom() ?? 14;
-    // First pan smoothly
     map.panTo(target);
-    // Then animate zoom step by step
     if (currentZoom === targetZoom) return;
     const step = targetZoom > currentZoom ? 1 : -1;
     let z = currentZoom;
@@ -73,7 +71,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       z += step;
       map.setZoom(z);
       if (z === targetZoom) clearInterval(interval);
-    }, 120);
+    }, 180);
   }, []);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
