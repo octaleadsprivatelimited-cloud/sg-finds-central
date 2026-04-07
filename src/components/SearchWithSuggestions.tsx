@@ -14,7 +14,7 @@ interface SearchWithSuggestionsProps {
 }
 
 const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, categories, or postal code...", className }: SearchWithSuggestionsProps) => {
-  const { searchQuery, setSearchQuery, listings, onPincodeSearch } = useSearch();
+  const { searchQuery, setSearchQuery, listings, onPincodeSearch, onDistrictSelect } = useSearch();
   const navigate = useNavigate();
   const location = useLocation();
   const [focused, setFocused] = useState(false);
