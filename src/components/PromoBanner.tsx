@@ -37,14 +37,6 @@ const BANNERS: Banner[] = [
     face: face2,
   },
   {
-    id: "3",
-    title: "Verified & Trusted Businesses",
-    subtitle: "All our featured businesses are UEN-verified for your peace of mind",
-    cta: "Browse Verified",
-    image: banner3,
-    face: face3,
-  },
-  {
     id: "4",
     title: "Exclusive Deals This Week",
     subtitle: "Save up to 50% with partner businesses — limited time offers",
