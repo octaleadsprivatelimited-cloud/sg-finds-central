@@ -101,20 +101,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Photography / Videography": "from-slate-500 to-slate-700",
 };
 
-const CATEGORY_BG: Record<string, string> = {
-  "Tuition": "bg-blue-50/50 dark:bg-blue-950/20",
-  "Baking": "bg-amber-50/50 dark:bg-amber-950/20",
-  "Music / Art / Craft": "bg-purple-50/50 dark:bg-purple-950/20",
-  "Home Food": "bg-orange-50/50 dark:bg-orange-950/20",
-  "Beauty": "bg-pink-50/50 dark:bg-pink-950/20",
-  "Pet Services": "bg-emerald-50/50 dark:bg-emerald-950/20",
-  "Event Services": "bg-rose-50/50 dark:bg-rose-950/20",
-  "Tailoring": "bg-violet-50/50 dark:bg-violet-950/20",
-  "Cleaning": "bg-sky-50/50 dark:bg-sky-950/20",
-  "Handyman": "bg-yellow-50/50 dark:bg-yellow-950/20",
-  "Photography / Videography": "bg-slate-50/50 dark:bg-slate-950/20",
-};
-
 const CATEGORY_BORDER: Record<string, string> = {
   "Tuition": "border-l-blue-400",
   "Baking": "border-l-amber-400",
@@ -194,7 +180,6 @@ export function getNextOpenInfo(listing: Listing): string | null {
 const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanceKm, index }: ListingCardProps) => {
   const navigate = useNavigate();
   const gradient = CATEGORY_COLORS[listing.category] || "from-primary to-accent";
-  const catBg = CATEGORY_BG[listing.category] || "";
   const catBorder = CATEGORY_BORDER[listing.category] || "";
   const isOpen = useMemo(() => getIsOpenNow(listing), [listing]);
   const nextOpenInfo = useMemo(() => (isOpen === false ? getNextOpenInfo(listing) : null), [listing, isOpen]);
@@ -202,11 +187,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   const handleClick = () => {
     if (onSelect) onSelect(listing);
     navigate(getBusinessUrl(listing));
-  };
-
-  const handleWebsiteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (listing.website) window.open(listing.website, "_blank");
   };
 
   const handlePhoneClick = (e: React.MouseEvent) => {
@@ -217,17 +197,18 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
   return (
     <div
       data-listing-id={listing.id}
-      className={`rounded-xl border-[1.5px] border-[hsl(0,0%,75%)] bg-white dark:bg-card cursor-pointer transition-all duration-150 hover:shadow-[0_4px_18px_rgba(2,6,23,0.09)] ${
-        highlighted ? "border-[hsl(0,0%,60%)] shadow-[0_0_0_3px_rgba(161,190,149,0.18)]" : ""
-      } mb-2 last:mb-0`}
+      className={`rounded-2xl bg-white cursor-pointer transition-all duration-200 ${
+        highlighted
+          ? "shadow-[0_0_0_2px_hsl(211,100%,50%,0.2),0_10px_25px_-5px_hsl(0,0%,0%,0.08)]"
+          : "shadow-[0_1px_3px_0_hsl(0,0%,0%,0.04)]"
+      } hover:shadow-[0_10px_25px_-5px_hsl(0,0%,0%,0.08)] mb-2 last:mb-0`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
       {/* ── MOBILE ── */}
-      <div className={`flex gap-3 p-3 md:hidden rounded-xl border-l-[3px] ${catBorder} bg-white dark:bg-card`}>
-        {/* Compact image */}
-        <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-muted shadow-sm">
+      <div className={`flex gap-3 p-3.5 md:hidden rounded-2xl border-l-[3px] ${catBorder}`}>
+        <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-secondary">
           {listing.logoUrl ? (
             <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
           ) : listing.coverImage ? (
@@ -239,12 +220,8 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
           )}
         </div>
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground text-sm leading-tight truncate">
-            <span className="text-foreground">{listing.name}</span>
-          </h3>
-
+          <h3 className="font-semibold text-foreground text-sm leading-tight truncate">{listing.name}</h3>
           <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
             {distanceKm != null && (
               <span>{distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}</span>
@@ -256,21 +233,20 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
           {listing.subcategoryList && listing.subcategoryList.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1">
               {listing.subcategoryList.slice(0, 3).map((sub) => (
-                <span key={sub} className="px-1.5 py-0.5 rounded bg-secondary text-[10px] font-medium text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
+                <span key={sub} className="px-1.5 py-0.5 rounded-full bg-secondary text-[10px] font-medium text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
               ))}
               {listing.subcategoryList.length > 3 && (
-                <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px] font-medium text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-secondary text-[10px] font-medium text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
               )}
             </div>
           )}
 
-          {/* Actions row */}
-          <div className="flex items-center gap-2 mt-1.5">
+          <div className="flex items-center gap-2 mt-2">
             {listing.phone && (
               <a
                 href={`tel:${listing.phone}`}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[hsl(221,72%,45%)] text-[11px] font-semibold text-white active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-[11px] font-semibold text-primary-foreground active:scale-95 transition-transform"
               >
                 <Phone className="w-3 h-3" />Call
               </a>
@@ -281,7 +257,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border text-[11px] font-semibold text-foreground bg-background active:scale-95 transition-transform shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border text-[11px] font-semibold text-foreground active:scale-95 transition-transform"
               >
                 <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 rounded-sm" />WhatsApp
               </a>
@@ -292,9 +268,9 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary text-primary-foreground text-[11px] font-semibold active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary text-[11px] font-semibold text-foreground active:scale-95 transition-transform"
               >
-                <Navigation className="w-3 h-3" />Directions
+                <Navigation className="w-3 h-3" />Map
               </a>
             )}
           </div>
@@ -302,25 +278,21 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       </div>
 
       {/* ── DESKTOP ── */}
-      <div className="hidden md:block p-3.5">
-        <div className="flex items-center gap-2.5">
-          {/* Icon / Avatar */}
-          <div className="w-10 h-10 shrink-0 rounded-xl overflow-hidden bg-accent/10 border border-accent/30 flex items-center justify-center">
+      <div className="hidden md:block p-4">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
             {listing.logoUrl ? (
               <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
             ) : listing.coverImage ? (
               <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-base font-bold text-primary">{listing.name.charAt(0)}</span>
+              <span className="text-base font-semibold text-primary">{listing.name.charAt(0)}</span>
             )}
           </div>
 
-          {/* Main info */}
           <div className="flex-1 min-w-0">
-            <p className="font-extrabold text-[13.5px] text-foreground truncate">
-              {listing.name}
-            </p>
-            <p className="text-[11.5px] font-semibold text-muted-foreground/70 mt-0.5 truncate">
+            <p className="font-semibold text-sm text-foreground truncate">{listing.name}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">
               <MapPin className="w-3 h-3 inline mr-0.5 -mt-0.5" />
               {listing.district}
               {isOpen === true && <span className="text-[hsl(var(--success))] ml-1.5">• Open</span>}
@@ -328,28 +300,26 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
             </p>
           </div>
 
-          {/* Distance pill */}
           {distanceKm != null && (
-            <span className="shrink-0 text-[11px] font-extrabold text-primary bg-accent/10 border border-accent/30 rounded-full px-2 py-0.5">
+            <span className="shrink-0 text-xs font-semibold text-primary bg-primary/5 rounded-full px-2.5 py-0.5">
               {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}
             </span>
           )}
         </div>
 
-        {/* Badges row */}
-        <div className="flex flex-wrap items-center gap-1 mt-2">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-accent/10 border border-accent/35 text-primary">{listing.category}</span>
+        <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-primary/8 text-primary">{listing.category}</span>
           {listing.subcategoryList && listing.subcategoryList.slice(0, 3).map((sub) => (
-            <span key={sub} className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-muted border border-border/50 text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
+            <span key={sub} className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-secondary text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
           ))}
           {listing.subcategoryList && listing.subcategoryList.length > 3 && (
-            <span className="text-[10.5px] font-bold text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
+            <span className="text-[11px] font-medium text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
           )}
           {listing.verified && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[hsl(var(--success))]/10 border border-[hsl(var(--success))]/30 text-[hsl(var(--success))]">✓ Verified</span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[hsl(var(--success))]/8 text-[hsl(var(--success))]">✓ Verified</span>
           )}
           {listing.phone && (
-            <button onClick={handlePhoneClick} className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors">
+            <button onClick={handlePhoneClick} className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
               <Phone className="w-3 h-3" />{listing.phone}
             </button>
           )}

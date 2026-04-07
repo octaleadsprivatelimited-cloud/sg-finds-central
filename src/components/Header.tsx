@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Plus, Menu, X, LogOut, Shield, LayoutDashboard, Crown,
-  MapPin, User, List, Map as MapIcon, Search,
+  Plus, Menu, X, LogOut, Shield, LayoutDashboard,
+  MapPin, User, Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-
 interface HeaderProps {
   showMap?: boolean;
   onToggleMap?: () => void;
@@ -30,56 +29,43 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const isHomePage = location.pathname === "/";
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  };
-  const greeting = getGreeting();
 
   const handleSignOut = async () => {
-    if (isDevMode) {
-      devLogout();
-      return;
-    }
+    if (isDevMode) { devLogout(); return; }
     await signOut(auth);
   };
 
   return (
     <>
       {/* ═══ ANNOUNCEMENT BAR ═══ */}
-      <Link to="/signup" className="group block bg-primary text-primary-foreground hover:bg-primary/90 transition-all cursor-pointer">
-        <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-between text-[11px] sm:text-xs">
-          <span className="text-primary-foreground/70 font-medium">{greeting} 👋</span>
+      <Link to="/signup" className="group block bg-foreground text-background hover:bg-foreground/90 transition-all cursor-pointer">
+        <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-center text-[11px] sm:text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="font-bold hidden sm:inline">List your business for FREE — Reach thousands of customers</span>
-            <span className="font-bold sm:hidden">FREE Business Listing →</span>
-            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-[11px] font-bold group-hover:bg-yellow-300 transition-colors">
+            <span className="font-medium hidden sm:inline">List your business for FREE — Reach thousands of customers.</span>
+            <span className="font-medium sm:hidden">FREE Business Listing →</span>
+            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] sm:text-[11px] font-semibold group-hover:bg-primary/90 transition-colors">
               Get Started
             </span>
           </div>
         </div>
       </Link>
 
-      {/* ═══ MAIN HEADER ═══ */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border">
-        <div className="container mx-auto px-4 h-14 flex items-center gap-3">
+      {/* ═══ MAIN HEADER — Apple frosted glass ═══ */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60">
+        <div className="container mx-auto px-4 h-12 flex items-center gap-3">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-xl font-extrabold tracking-tight text-foreground uppercase">
+            <span className="text-xl font-bold tracking-tight text-foreground">
               NEAR<span className="text-primary">BUY</span>
             </span>
           </Link>
 
-          {/* Search */}
-          <div className="hidden md:flex items-center gap-2 ml-4 flex-1 max-w-xl">
-            <div className="flex-1 relative flex items-center h-10 rounded-lg border-[1.5px] border-accent/30 bg-card hover:border-accent/50 focus-within:border-primary focus-within:shadow-[0_0_0_3px_hsl(var(--accent)/0.12)] transition-all">
-              <Search className="w-4 h-4 text-muted-foreground ml-3 shrink-0" />
+          {/* Desktop Search */}
+          <div className="hidden md:flex items-center gap-2 ml-6 flex-1 max-w-md">
+            <div className="flex-1 relative flex items-center h-9 rounded-full bg-secondary/70 hover:bg-secondary transition-colors">
+              <Search className="w-3.5 h-3.5 text-muted-foreground ml-3 shrink-0" />
               <SearchWithSuggestions
-                placeholder="Search businesses, categories, or postal code..."
+                placeholder="Search businesses or postal code..."
                 className="flex-1"
               />
             </div>
@@ -88,19 +74,19 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-2 ml-auto">
             <Link to="/add-listing">
-              <Button size="sm" className="h-9 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-sm">
-                <Plus className="w-4 h-4 mr-1" />List Free
+              <Button size="sm" className="h-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs px-4">
+                <Plus className="w-3.5 h-3.5 mr-1" />List Free
               </Button>
             </Link>
 
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold">
-                    <User className="w-4 h-4 mr-1.5" />Account
+                  <Button variant="ghost" size="sm" className="h-8 rounded-full text-foreground font-medium text-xs hover:bg-secondary">
+                    <User className="w-3.5 h-3.5 mr-1" />Account
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-lg border-border/60">
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
                   </DropdownMenuItem>
@@ -116,59 +102,56 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="outline" size="sm" className="h-9 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold" onClick={() => setShowAuth(true)}>
-                <User className="w-4 h-4 mr-1.5" />Sign In
+              <Button variant="ghost" size="sm" className="h-8 rounded-full text-primary font-medium text-xs hover:bg-primary/5" onClick={() => setShowAuth(true)}>
+                Sign In
               </Button>
             )}
           </div>
 
-          {/* Mobile: search + GPS + Map + hamburger */}
+          {/* Mobile */}
           <div className="flex items-center gap-2 flex-1 md:hidden">
             <SearchWithSuggestions
               compact
-              placeholder="Search or postal code..."
+              placeholder="Search..."
               className="flex-1"
             />
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                onClick={() => setMobileOpen(!mobileOpen)}
-              >
-                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
-            </div>
+            <button
+              className="p-2 rounded-full hover:bg-secondary transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
 
-
-        {/* ═══ MOBILE NAV DROPDOWN ═══ */}
+        {/* ═══ MOBILE NAV ═══ */}
         {mobileOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 border-t border-border bg-card p-4 space-y-1.5 animate-fade-in shadow-lg z-50">
+          <div className="md:hidden absolute top-full left-0 right-0 border-t border-border/60 bg-background/95 backdrop-blur-xl p-4 space-y-1 animate-fade-in shadow-lg z-50">
             {isSuperAdmin && (
               <Link to="/admin" onClick={() => setMobileOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start rounded-xl h-11 font-medium">
                   <Shield className="w-4 h-4 mr-2" />Admin Panel
                 </Button>
               </Link>
             )}
             {user && (
               <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start rounded-xl h-11 font-medium">
                   <LayoutDashboard className="w-4 h-4 mr-2" />Dashboard
                 </Button>
               </Link>
             )}
             <Link to="/add-listing" onClick={() => setMobileOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start rounded-xl h-11 font-medium">
                 <Plus className="w-4 h-4 mr-2" />Add Listing
               </Button>
             </Link>
             {user ? (
-              <Button variant="ghost" className="w-full justify-start text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+              <Button variant="ghost" className="w-full justify-start rounded-xl h-11 font-medium text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                 <LogOut className="w-4 h-4 mr-2" />Sign Out
               </Button>
             ) : (
-              <Button className="w-full bg-primary text-primary-foreground" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
+              <Button className="w-full rounded-xl h-11 bg-primary text-primary-foreground font-medium" onClick={() => { setShowAuth(true); setMobileOpen(false); }}>
                 Sign In
               </Button>
             )}
