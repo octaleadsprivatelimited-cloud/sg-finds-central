@@ -232,6 +232,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
 
+        {/* Wrapper: sticky filters+map unstick when listings end */}
+        <div>
         {/* Category + Distance + Map: All sticky */}
         <div className="sticky top-0 z-20">
         {/* Row 1: Category chips */}
