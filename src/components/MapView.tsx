@@ -16,12 +16,12 @@ interface MapViewProps {
 }
 
 const radiusToZoom = (km: number): number => {
-  if (km <= 0.5) return 18;
-  if (km <= 1) return 16;
-  if (km <= 2) return 15;
-  if (km <= 3) return 14;
-  if (km <= 5) return 13;
-  return 12;
+  if (km <= 0.5) return 20;
+  if (km <= 1) return 18;
+  if (km <= 2) return 17;
+  if (km <= 3) return 16;
+  if (km <= 5) return 15;
+  return 14;
 };
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
