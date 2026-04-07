@@ -242,7 +242,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-foreground text-sm leading-tight truncate">
-            {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
             <span className="text-primary">{listing.name}</span>
           </h3>
 
