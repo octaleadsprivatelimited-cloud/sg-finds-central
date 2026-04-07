@@ -55,9 +55,18 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
   }, []);
 
+  const mobileListingsRef = useRef<HTMLDivElement>(null);
+
   const scrollToListings = () => {
     setTimeout(() => {
-      listingsScrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Desktop: scroll the inner scrollable container to top
+      if (listingsScrollRef.current) {
+        listingsScrollRef.current.scrollTop = 0;
+      }
+      // Mobile: scroll the page so listings start at the top
+      if (mobileListingsRef.current) {
+        mobileListingsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }, 50);
   };
 
