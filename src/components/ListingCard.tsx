@@ -242,7 +242,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-foreground text-sm leading-tight truncate">
-            {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
             <span className="text-primary">{listing.name}</span>
           </h3>
 
@@ -271,7 +270,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
               <a
                 href={`tel:${listing.phone}`}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border text-[11px] font-medium text-foreground active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-[hsl(221,72%,45%)] text-[11px] font-semibold text-[hsl(221,72%,45%)] active:scale-95 transition-transform"
               >
                 <Phone className="w-3 h-3" />Call
               </a>
@@ -320,7 +319,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
           {/* Main info */}
           <div className="flex-1 min-w-0">
             <p className="font-extrabold text-[13.5px] text-foreground truncate">
-              {index !== undefined && <span className="text-muted-foreground mr-1">{index}.</span>}
               {listing.name}
             </p>
             <p className="text-[11.5px] font-semibold text-muted-foreground/70 mt-0.5 truncate">
