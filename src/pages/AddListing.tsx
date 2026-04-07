@@ -507,7 +507,7 @@ const AddListing = () => {
       }
       case "hours": return true;
       case "images": return imageUrls.length >= 3;
-      case "profile": return true;
+      case "profile": return !!logoUrl;
       case "compliance": {
         const gates = getComplianceGates(category, serviceLocations);
         return gates.every(g => complianceChecks[g.id] === true);
