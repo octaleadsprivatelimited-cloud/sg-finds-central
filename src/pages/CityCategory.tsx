@@ -429,18 +429,37 @@ const CityCategory = () => {
               <div className="mt-12">
                 <h2 className="text-lg font-semibold text-foreground mb-4">Popular Categories</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {categories.slice(0, 9).map((cat) => (
-                    <Link
-                      key={cat}
-                      to={`/${citySlug}/${toSlug(cat)}`}
-                      className="p-4 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all text-center"
-                    >
-                      <p className="text-sm font-medium text-foreground">{cat}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {listings.filter((l) => l.category === cat).length} listings
-                      </p>
-                    </Link>
-                  ))}
+                  {categories.slice(0, 9).map((cat) => {
+                    const img = CATEGORY_IMAGE_MAP[cat];
+                    return (
+                      <Link
+                        key={cat}
+                        to={`/${citySlug}/${toSlug(cat)}`}
+                        className="rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all overflow-hidden group"
+                      >
+                        <div className="aspect-[16/10] overflow-hidden bg-muted">
+                          {img ? (
+                            <img
+                              src={img}
+                              alt={cat}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Building2 className="w-8 h-8 text-muted-foreground/40" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3 text-center">
+                          <p className="text-sm font-medium text-foreground">{cat}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {scopedListings.filter((l) => l.category === cat).length} listings
+                          </p>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}
