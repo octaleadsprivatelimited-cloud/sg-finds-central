@@ -199,15 +199,24 @@ const CityCategory = () => {
   // Show subcategory selection if category has subs and none is selected yet
   const showSubcategoryPicker = !!subcategories && !activeSub;
 
+  const routeDistrictSlug = city ? null : (citySlug || null);
+
+  const scopedListings = useMemo(() => {
+    if (!routeDistrictSlug) return listings;
+    return listings.filter((l) => toSlug(l.district) === routeDistrictSlug);
+  }, [listings, routeDistrictSlug]);
+
   const filtered = useMemo(() => {
-    if (!matchedCategory) return listings;
-    let result = listings.filter((l) => l.category === matchedCategory);
-    // Further filter by subcategory if selected
+    let result = scopedListings;
+
+    if (matchedCategory) {
+      result = result.filter((l) => l.category === matchedCategory);
+    }
+
     if (activeSub && activeSub !== "all") {
       result = result.filter((l) => {
         const data = (l as any).subcategoryData;
         const flatList: string[] = (l as any).subcategoryList || [];
-        // Check flat list first, then nested data
         if (flatList.includes(activeSub)) return true;
         if (data?.subcategory === activeSub) return true;
         if (data?.subcategories?.includes(activeSub)) return true;
@@ -215,22 +224,27 @@ const CityCategory = () => {
         return false;
       });
     }
+
     return result;
-  }, [matchedCategory, listings, activeSub]);
+  }, [matchedCategory, scopedListings, activeSub]);
 
   const categories = BUSINESS_CATEGORIES.filter((c) => c !== "All Categories");
 
   const subLabel = subcategories?.find((s) => s.value === activeSub)?.label;
 
+  const locationName = routeDistrictSlug
+    ? scopedListings[0]?.district || citySlug?.replace(/-/g, " ") || "this area"
+    : city?.name || "Singapore";
+
   const pageTitle = activeSub && subLabel
-    ? `${subLabel} — ${matchedCategory} in ${city?.name || "Singapore"}`
+    ? `${subLabel} — ${matchedCategory} in ${locationName}`
     : matchedCategory
-      ? `${matchedCategory} in ${city?.name || "Singapore"}`
-      : `Businesses in ${city?.name || "Singapore"}`;
+      ? `${matchedCategory} in ${locationName}`
+      : `Businesses in ${locationName}`;
 
   const pageDescription = matchedCategory
-    ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${city?.name || "Singapore"}. Browse verified listings, read reviews, and connect directly.`
-    : `Explore top businesses across all categories in ${city?.name || "Singapore"}. Your trusted local business directory.`;
+    ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${locationName}. Browse verified listings, read reviews, and connect directly.`
+    : `Explore top businesses across all categories in ${locationName}. Your trusted local business directory.`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -240,7 +254,7 @@ const CityCategory = () => {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
-            <Link to={`/${citySlug}`} className="hover:text-primary transition-colors">{city?.name || citySlug}</Link>
+            <Link to={`/${citySlug}`} className="hover:text-primary transition-colors">{locationName}</Link>
             {matchedCategory && (
               <>
                 <ChevronRight className="w-3 h-3" />
