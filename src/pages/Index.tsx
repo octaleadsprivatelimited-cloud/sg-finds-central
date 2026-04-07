@@ -50,6 +50,17 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const ITEMS_PER_PAGE = 10;
   const listingsScrollRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to top on initial page load
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
+  const scrollToListings = () => {
+    setTimeout(() => {
+      listingsScrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
+
   useEffect(() => {
     requestAnimationFrame(() => {
       if (listingsScrollRef.current) {
