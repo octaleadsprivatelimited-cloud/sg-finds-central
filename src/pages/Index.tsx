@@ -433,9 +433,9 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
                     category === c.value
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-foreground text-background"
                       : "bg-secondary text-muted-foreground hover:text-foreground"
                   }`}
                 >
