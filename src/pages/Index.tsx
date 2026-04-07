@@ -106,6 +106,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   }, [handlePincodeSearch, setOnPincodeSearch]);
 
   useEffect(() => {
+    setOnDistrictSelect(() => (d: string) => {
+      setDistrict(d);
+      setSearchQuery("");
+    });
+    return () => setOnDistrictSelect(null);
+  }, [setOnDistrictSelect, setDistrict, setSearchQuery]);
+
     const fetchListings = async () => {
       try {
         const q = query(collection(db, "listings"), where("status", "==", "approved"));
