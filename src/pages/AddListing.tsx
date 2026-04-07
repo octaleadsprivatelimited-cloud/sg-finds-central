@@ -42,37 +42,59 @@ const ChipSelect = ({
   allowOther?: boolean;
   otherValue?: string;
   onOtherChange?: (v: string) => void;
-}) => (
-  <div className="space-y-3">
-    <div className="flex flex-wrap gap-2">
-      {options.map((opt) => {
-        const active = selected.includes(opt.value);
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => onChange(active ? selected.filter(v => v !== opt.value) : [...selected, opt.value])}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-              active
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card text-foreground border-border hover:border-primary/40"
-            }`}
-          >
-            {opt.label}
-          </button>
-        );
-      })}
+}) => {
+  const allSelected = options.every((opt) => selected.includes(opt.value));
+  const toggleAll = () => {
+    if (allSelected) {
+      onChange([]);
+    } else {
+      onChange(options.map((opt) => opt.value));
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={toggleAll}
+          className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+            allSelected
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-card text-foreground border-border hover:border-primary/40"
+          }`}
+        >
+          Select All
+        </button>
+        {options.map((opt) => {
+          const active = selected.includes(opt.value);
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(active ? selected.filter(v => v !== opt.value) : [...selected, opt.value])}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                active
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-foreground border-border hover:border-primary/40"
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+      {allowOther && (
+        <Input
+          placeholder="Other (type here)"
+          value={otherValue}
+          onChange={(e) => onOtherChange?.(e.target.value)}
+          className="max-w-xs"
+        />
+      )}
     </div>
-    {allowOther && (
-      <Input
-        placeholder="Other (type here)"
-        value={otherValue}
-        onChange={(e) => onOtherChange?.(e.target.value)}
-        className="max-w-xs"
-      />
-    )}
-  </div>
-);
+  );
+};
 
 /* ── Single-select chip ── */
 const SingleChipSelect = ({
