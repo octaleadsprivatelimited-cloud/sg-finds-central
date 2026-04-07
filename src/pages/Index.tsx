@@ -334,7 +334,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       ) : (
                         <button
                           key={p}
-                          onClick={() => { setCurrentPage(p as number); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                          onClick={() => { setCurrentPage(p as number); scrollToListings(); }}
                           className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
                             currentPage === p
                               ? "bg-primary text-primary-foreground shadow-sm"
