@@ -390,7 +390,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       <div className="hidden lg:block">
 
         {/* Filter bar */}
-        <div className="bg-card border-b border-border mb-4">
+        <div className="bg-background/80 backdrop-blur-xl border-b border-border/60 mb-4">
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2">
               <button
