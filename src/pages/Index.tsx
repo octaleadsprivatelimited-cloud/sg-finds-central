@@ -463,7 +463,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <div ref={listingsScrollRef} className="max-h-[calc(100vh-64px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
                   {sortedFiltered.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-lg border border-border">
+                    <div className="text-center py-16 bg-white rounded-2xl">
                       <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
                       <p className="text-foreground font-semibold">No businesses found</p>
                       <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
