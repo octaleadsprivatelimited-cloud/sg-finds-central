@@ -392,16 +392,16 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Filter bar */}
         <div className="bg-background/80 backdrop-blur-xl border-b border-border/60 mb-4">
           <div className="container mx-auto px-4">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2.5">
               <button
                 onClick={() => {
                   setCategory("All Categories");
                   setRadiusKm(null);
                   setOpenNow(false);
                 }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
                   !hasActiveFilters
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-foreground text-background"
                     : "bg-secondary text-muted-foreground hover:text-foreground"
                 }`}
               >
