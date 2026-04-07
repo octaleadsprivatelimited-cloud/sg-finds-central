@@ -270,7 +270,7 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
               <a
                 href={`tel:${listing.phone}`}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border text-[11px] font-medium text-foreground active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-[hsl(221,72%,45%)] text-[11px] font-semibold text-[hsl(221,72%,45%)] active:scale-95 transition-transform"
               >
                 <Phone className="w-3 h-3" />Call
               </a>
