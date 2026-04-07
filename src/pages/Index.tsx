@@ -237,14 +237,14 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Category + Distance + Map: All sticky */}
         <div className="sticky top-0 z-20">
         {/* Row 1: Category chips */}
-        <div className="border-b border-border bg-card px-3 py-2">
+        <div className="border-b border-border/60 bg-background/80 backdrop-blur-xl px-3 py-2">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setCategory("All Categories")}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all active:scale-95 ${
                 category === "All Categories"
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-foreground border-border"
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-muted-foreground"
               }`}
             >
               All
@@ -253,10 +253,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 border transition-all active:scale-95 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all active:scale-95 ${
                   category === c.value
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border"
+                    ? "bg-foreground text-background"
+                    : "bg-secondary text-muted-foreground"
                 }`}
               >
                 {c.label}
