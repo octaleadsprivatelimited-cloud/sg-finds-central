@@ -41,6 +41,8 @@ interface SearchContextType {
   setListings: (listings: SearchableListing[]) => void;
   onPincodeSearch: ((code: string) => void) | null;
   setOnPincodeSearch: (fn: ((code: string) => void) | null) => void;
+  onDistrictSelect: ((district: string) => void) | null;
+  setOnDistrictSelect: (fn: ((district: string) => void) | null) => void;
 }
 
 const SearchContext = createContext<SearchContextType>({
@@ -50,6 +52,8 @@ const SearchContext = createContext<SearchContextType>({
   setListings: () => {},
   onPincodeSearch: null,
   setOnPincodeSearch: () => {},
+  onDistrictSelect: null,
+  setOnDistrictSelect: () => {},
 });
 
 export const SearchProvider = ({ children }: { children: ReactNode }) => {
