@@ -224,6 +224,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
 
+        {/* Category + Distance + Map: All sticky */}
+        <div className="sticky top-0 z-20">
         {/* Row 1: Category chips */}
         <div className="border-b border-border bg-card px-3 py-2">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
@@ -252,9 +254,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             ))}
           </div>
         </div>
-
-        {/* Distance bar + Map: Sticky together */}
-        <div className="sticky top-0 z-20">
           <div className="border-b border-border bg-card px-3 py-2">
             <div className="flex items-center gap-3">
               <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
