@@ -297,7 +297,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
 
         {/* Listings */}
-        <div className="px-3 pb-6 space-y-3">
+        <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
           {sortedFiltered.length === 0 ? (
             <div className="text-center py-12 bg-card rounded-lg border border-border">
               <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
