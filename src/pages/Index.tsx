@@ -265,8 +265,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         </div>
 
-        {/* Row 3: Map */}
-        <div className="h-[200px] relative">
+        {/* Row 3: Sticky Map */}
+        <div className="sticky top-0 z-20 h-[180px] relative border-b border-border">
           <MapView
             listings={sortedFiltered}
             selectedId={selectedListing?.id}
