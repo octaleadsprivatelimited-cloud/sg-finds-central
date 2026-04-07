@@ -232,15 +232,19 @@ const CityCategory = () => {
 
   const subLabel = subcategories?.find((s) => s.value === activeSub)?.label;
 
+  const locationName = routeDistrictSlug
+    ? scopedListings[0]?.district || citySlug?.replace(/-/g, " ") || "this area"
+    : city?.name || "Singapore";
+
   const pageTitle = activeSub && subLabel
-    ? `${subLabel} — ${matchedCategory} in ${city?.name || "Singapore"}`
+    ? `${subLabel} — ${matchedCategory} in ${locationName}`
     : matchedCategory
-      ? `${matchedCategory} in ${city?.name || "Singapore"}`
-      : `Businesses in ${city?.name || "Singapore"}`;
+      ? `${matchedCategory} in ${locationName}`
+      : `Businesses in ${locationName}`;
 
   const pageDescription = matchedCategory
-    ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${city?.name || "Singapore"}. Browse verified listings, read reviews, and connect directly.`
-    : `Explore top businesses across all categories in ${city?.name || "Singapore"}. Your trusted local business directory.`;
+    ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${locationName}. Browse verified listings, read reviews, and connect directly.`
+    : `Explore top businesses across all categories in ${locationName}. Your trusted local business directory.`;
 
   return (
     <div className="min-h-screen bg-background">
