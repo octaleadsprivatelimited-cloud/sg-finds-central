@@ -50,6 +50,17 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const ITEMS_PER_PAGE = 10;
   const listingsScrollRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to top on initial page load
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
+  const scrollToListings = () => {
+    setTimeout(() => {
+      listingsScrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
+
   useEffect(() => {
     requestAnimationFrame(() => {
       if (listingsScrollRef.current) {
@@ -304,7 +315,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-1 pt-4 pb-2">
                   <button
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); scrollToListings(); }}
                     disabled={currentPage === 1}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                   >
@@ -323,7 +334,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       ) : (
                         <button
                           key={p}
-                          onClick={() => { setCurrentPage(p as number); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                          onClick={() => { setCurrentPage(p as number); scrollToListings(); }}
                           className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
                             currentPage === p
                               ? "bg-primary text-primary-foreground shadow-sm"
@@ -335,7 +346,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       )
                     )}
                   <button
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); scrollToListings(); }}
                     disabled={currentPage === totalPages}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                   >
@@ -458,7 +469,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                       {totalPages > 1 && (
                         <div className="flex items-center justify-center gap-1.5 pt-4">
                           <button
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); scrollToListings(); }}
                             disabled={currentPage === 1}
                             className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                           >
@@ -477,7 +488,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                               ) : (
                                 <button
                                   key={p}
-                                  onClick={() => setCurrentPage(p as number)}
+                                  onClick={() => { setCurrentPage(p as number); scrollToListings(); }}
                                   className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${
                                     currentPage === p
                                       ? "bg-primary text-primary-foreground shadow-sm"
@@ -489,7 +500,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                               )
                             )}
                           <button
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); scrollToListings(); }}
                             disabled={currentPage === totalPages}
                             className="px-3 py-1.5 rounded-lg text-sm font-medium border border-border bg-card text-foreground disabled:opacity-40 transition-colors hover:bg-secondary"
                           >
