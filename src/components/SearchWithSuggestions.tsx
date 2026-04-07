@@ -164,7 +164,16 @@ const SearchWithSuggestions = ({ compact, placeholder = "Search businesses, cate
                   <button
                     key={d}
                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-foreground text-xs font-medium hover:bg-accent/20 transition-colors"
-                    onClick={() => handleSelect(d)}
+                    onClick={() => {
+                      if (onDistrictSelect) {
+                        onDistrictSelect(d);
+                        setSearchQuery("");
+                        setFocused(false);
+                        if (location.pathname !== "/") navigate("/");
+                      } else {
+                        handleSelect(d);
+                      }
+                    }}
                   >
                     <Navigation className="w-3 h-3" />
                     {d}
