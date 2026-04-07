@@ -199,15 +199,24 @@ const CityCategory = () => {
   // Show subcategory selection if category has subs and none is selected yet
   const showSubcategoryPicker = !!subcategories && !activeSub;
 
+  const routeDistrictSlug = city ? null : (citySlug || null);
+
+  const scopedListings = useMemo(() => {
+    if (!routeDistrictSlug) return listings;
+    return listings.filter((l) => toSlug(l.district) === routeDistrictSlug);
+  }, [listings, routeDistrictSlug]);
+
   const filtered = useMemo(() => {
-    if (!matchedCategory) return listings;
-    let result = listings.filter((l) => l.category === matchedCategory);
-    // Further filter by subcategory if selected
+    let result = scopedListings;
+
+    if (matchedCategory) {
+      result = result.filter((l) => l.category === matchedCategory);
+    }
+
     if (activeSub && activeSub !== "all") {
       result = result.filter((l) => {
         const data = (l as any).subcategoryData;
         const flatList: string[] = (l as any).subcategoryList || [];
-        // Check flat list first, then nested data
         if (flatList.includes(activeSub)) return true;
         if (data?.subcategory === activeSub) return true;
         if (data?.subcategories?.includes(activeSub)) return true;
@@ -215,8 +224,9 @@ const CityCategory = () => {
         return false;
       });
     }
+
     return result;
-  }, [matchedCategory, listings, activeSub]);
+  }, [matchedCategory, scopedListings, activeSub]);
 
   const categories = BUSINESS_CATEGORIES.filter((c) => c !== "All Categories");
 
