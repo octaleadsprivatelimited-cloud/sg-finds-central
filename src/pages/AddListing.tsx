@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { processImageFiles } from "@/lib/image-utils";
 
 import LogoUpload from "@/components/LogoUpload";
+import DraggableImageGrid from "@/components/DraggableImageGrid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

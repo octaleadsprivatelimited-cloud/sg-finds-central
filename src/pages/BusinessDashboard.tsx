@@ -34,6 +34,7 @@ import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, s
 import { db, auth as firebaseAuth } from "@/lib/firebase";
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import LogoUpload from "@/components/LogoUpload";
+import DraggableImageGrid from "@/components/DraggableImageGrid";
 import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
