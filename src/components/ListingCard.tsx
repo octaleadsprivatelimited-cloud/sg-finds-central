@@ -278,13 +278,11 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       <div className="hidden md:block p-4">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
-            {listing.logoUrl ? (
-              <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
-            ) : listing.coverImage ? (
-              <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-base font-semibold text-primary">{listing.name.charAt(0)}</span>
-            )}
+            <img
+              src={listing.logoUrl || listing.coverImage || getPlaceholderLogo(listing.id || listing.name)}
+              alt={listing.name}
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <div className="flex-1 min-w-0">
