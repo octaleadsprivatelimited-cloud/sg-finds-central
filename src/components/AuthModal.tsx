@@ -136,73 +136,63 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md gap-3" aria-describedby="auth-modal-desc">
-        <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl font-semibold">
+      <DialogContent className="sm:max-w-sm max-w-[92vw] gap-2 p-4 sm:p-6" aria-describedby="auth-modal-desc">
+        <DialogHeader className="space-y-0.5 pb-1">
+          <DialogTitle className="text-base font-semibold">
             {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
           </DialogTitle>
-          <p id="auth-modal-desc" className="text-xs sm:text-sm text-muted-foreground">
-            {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your business listings"}
+          <p id="auth-modal-desc" className="text-xs text-muted-foreground">
+            {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your listings"}
           </p>
         </DialogHeader>
 
-        {/* Social Sign-In */}
-        <div className="flex gap-3 justify-center">
-          <Button
-            variant="outline"
-            className="h-11 rounded-xl flex-1"
-            onClick={() => handleSocialSignIn("google")}
-            disabled={!!socialLoading}
-            title="Continue with Google"
-          >
-            <SocialIcon name="google" loading={socialLoading === "google"} />
-            <span className="ml-2">Continue with Google</span>
-          </Button>
-        </div>
-
-        <div className="relative my-1">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs text-muted-foreground">
-            or
-          </span>
-        </div>
+        {/* Google Sign-In */}
+        <Button
+          variant="outline"
+          className="w-full h-9 rounded-xl"
+          onClick={() => handleSocialSignIn("google")}
+          disabled={!!socialLoading}
+        >
+          <SocialIcon name="google" loading={socialLoading === "google"} />
+          <span className="ml-2 text-sm">Continue with Google</span>
+        </Button>
 
 
         {mode === "forgot" ? (
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm">Email</Label>
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <Label className="text-xs">Email</Label>
               <form onSubmit={(e) => { e.preventDefault(); handleForgotPassword(); }}>
-                <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input type="email" placeholder="you@example.com" className="h-8 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
               </form>
             </div>
-            <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleForgotPassword} disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            <Button className="w-full h-8 text-sm" onClick={handleForgotPassword} disabled={loading}>
+              {loading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Send Reset Link
             </Button>
-            <button className="w-full text-xs sm:text-sm text-primary font-medium hover:underline" onClick={() => setMode("login")}>
+            <button className="w-full text-xs text-primary font-medium hover:underline" onClick={() => setMode("login")}>
               ← Back to sign in
             </button>
           </div>
         ) : (
-          <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); handleEmailAuth(); }}>
-            <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm">Email</Label>
-              <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); handleEmailAuth(); }}>
+            <div className="space-y-1">
+              <Label className="text-xs">Email</Label>
+              <Input type="email" placeholder="you@example.com" className="h-8 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <Label className="text-xs sm:text-sm">Password</Label>
+                <Label className="text-xs">Password</Label>
                 {mode === "login" && (
-                  <button className="text-[11px] sm:text-xs text-primary font-medium hover:underline" onClick={() => setMode("forgot")}>
+                  <button className="text-[10px] text-primary font-medium hover:underline" onClick={() => setMode("forgot")}>
                     Forgot password?
                   </button>
                 )}
               </div>
-              <Input type="password" placeholder="••••••••" className="h-9 sm:h-10 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input type="password" placeholder="••••••••" className="h-8 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            <Button type="submit" className="w-full h-8 text-sm" disabled={loading}>
+              {loading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               {mode === "login" ? "Sign In" : "Sign Up"}
             </Button>
           </form>
