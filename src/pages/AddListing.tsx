@@ -526,8 +526,8 @@ const AddListing = () => {
 
   const handleImageUpload = async (files: FileList) => {
     if (!user) return;
-    const remaining = 5 - imageUrls.length;
-    if (remaining <= 0) { toast.error("Maximum 5 images allowed"); return; }
+    const remaining = 20 - imageUrls.length;
+    if (remaining <= 0) { toast.error("Maximum 20 images allowed"); return; }
 
     setUploadingImages(true);
     try {
@@ -1153,7 +1153,7 @@ const AddListing = () => {
                   />
 
                   <p className="text-xs text-muted-foreground">
-                    {imageUrls.length}/5 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
+                    {imageUrls.length}/20 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
                   </p>
                   <FieldError show={showErrors && imageUrls.length < 3} message={`Please upload at least 3 images (${imageUrls.length} uploaded)`} />
                 </div>

@@ -382,8 +382,8 @@ const BusinessDashboard = () => {
 
   const handleEditImageUpload = async (files: FileList) => {
     if (!user) return;
-    const remaining = 5 - editImageUrls.length;
-    if (remaining <= 0) { toast.error("Maximum 5 images allowed"); return; }
+    const remaining = 20 - editImageUrls.length;
+    if (remaining <= 0) { toast.error("Maximum 20 images allowed"); return; }
     setEditUploadingImages(true);
     try {
       const { validBase64, errors } = await processImageFiles(Array.from(files), remaining);
