@@ -137,20 +137,17 @@ const SignUp = () => {
           </div>
 
           {/* Social Sign-Up */}
-          <div className="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-4">
-            {(["google", "apple"] as const).map((provider) => (
-              <Button
-                key={provider}
-                variant="outline"
-                className="h-9 md:h-11 rounded-xl"
-                onClick={() => handleSocialSignUp(provider)}
-                disabled={!!socialLoading}
-                title={`Sign up with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
-              >
-                <SocialIcon name={provider} loading={socialLoading === provider} />
-                <span className="ml-2 capitalize">{provider}</span>
-              </Button>
-            ))}
+          <div className="mb-3 md:mb-4">
+            <Button
+              variant="outline"
+              className="w-full h-9 md:h-11 rounded-xl"
+              onClick={() => handleSocialSignUp("google")}
+              disabled={!!socialLoading}
+              title="Sign up with Google"
+            >
+              <SocialIcon name="google" loading={socialLoading === "google"} />
+              <span className="ml-2">Continue with Google</span>
+            </Button>
           </div>
 
           {/* Divider */}

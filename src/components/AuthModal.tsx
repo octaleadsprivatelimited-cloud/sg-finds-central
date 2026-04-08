@@ -146,21 +146,18 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           </p>
         </DialogHeader>
 
-        {/* Social Sign-In — icon-only row */}
+        {/* Social Sign-In */}
         <div className="flex gap-3 justify-center">
-          {(["google", "apple"] as const).map((provider) => (
-            <Button
-              key={provider}
-              variant="outline"
-              size="icon"
-              className="h-11 w-11 rounded-xl"
-              onClick={() => handleSocialSignIn(provider)}
-              disabled={!!socialLoading}
-              title={`Continue with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
-            >
-              <SocialIcon name={provider} loading={socialLoading === provider} />
-            </Button>
-          ))}
+          <Button
+            variant="outline"
+            className="h-11 rounded-xl flex-1"
+            onClick={() => handleSocialSignIn("google")}
+            disabled={!!socialLoading}
+            title="Continue with Google"
+          >
+            <SocialIcon name="google" loading={socialLoading === "google"} />
+            <span className="ml-2">Continue with Google</span>
+          </Button>
         </div>
 
         <div className="relative my-1">
