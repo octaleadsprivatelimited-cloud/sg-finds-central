@@ -5,6 +5,7 @@ import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl } from "@/lib/url-helpers";
 import whatsappLogo from "@/assets/whatsapp-logo.png";
+import { getPlaceholderLogo } from "@/lib/placeholder-logos";
 
 export interface ListingOffer {
   id: string;
@@ -209,15 +210,11 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       {/* ── MOBILE ── */}
       <div className={`flex gap-3 p-3.5 md:hidden rounded-2xl border-l-[3px] ${catBorder}`}>
         <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-secondary">
-          {listing.logoUrl ? (
-            <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
-          ) : listing.coverImage ? (
-            <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <span className="text-lg font-bold text-white/90">{listing.name.charAt(0)}</span>
-            </div>
-          )}
+          <img
+            src={listing.logoUrl || listing.coverImage || getPlaceholderLogo(listing.id || listing.name)}
+            alt={listing.name}
+            className="w-full h-full object-cover"
+          />
         </div>
 
         <div className="flex-1 min-w-0">
@@ -281,13 +278,11 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       <div className="hidden md:block p-4">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
-            {listing.logoUrl ? (
-              <img src={listing.logoUrl} alt={listing.name} className="w-full h-full object-cover" />
-            ) : listing.coverImage ? (
-              <img src={listing.coverImage} alt={listing.name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-base font-semibold text-primary">{listing.name.charAt(0)}</span>
-            )}
+            <img
+              src={listing.logoUrl || listing.coverImage || getPlaceholderLogo(listing.id || listing.name)}
+              alt={listing.name}
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <div className="flex-1 min-w-0">
