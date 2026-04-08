@@ -50,13 +50,19 @@ const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean 
 SocialIcon.displayName = "SocialIcon";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
-  const { devLogin } = useAuth();
+  const { user, devLogin } = useAuth();
   const DEV_BYPASS_ENABLED = import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+
+  // Google One Tap — auto sign-in prompt when modal is open
+  useGoogleOneTap({
+    disabled: !open || !!user,
+    onSuccess: () => onClose(),
+  });
 
   const handleEmailAuth = async () => {
     setLoading(true);
