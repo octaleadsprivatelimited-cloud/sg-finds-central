@@ -13,9 +13,11 @@ import {
   sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useGoogleOneTap } from "@/hooks/useGoogleOneTap";
 
 interface AuthModalProps {
   open: boolean;
