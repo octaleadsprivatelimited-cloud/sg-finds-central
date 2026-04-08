@@ -159,40 +159,40 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
 
 
         {mode === "forgot" ? (
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm">Email</Label>
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <Label className="text-xs">Email</Label>
               <form onSubmit={(e) => { e.preventDefault(); handleForgotPassword(); }}>
-                <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input type="email" placeholder="you@example.com" className="h-8 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
               </form>
             </div>
-            <Button className="w-full h-9 sm:h-10 text-sm" onClick={handleForgotPassword} disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            <Button className="w-full h-8 text-sm" onClick={handleForgotPassword} disabled={loading}>
+              {loading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Send Reset Link
             </Button>
-            <button className="w-full text-xs sm:text-sm text-primary font-medium hover:underline" onClick={() => setMode("login")}>
+            <button className="w-full text-xs text-primary font-medium hover:underline" onClick={() => setMode("login")}>
               ← Back to sign in
             </button>
           </div>
         ) : (
-          <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); handleEmailAuth(); }}>
-            <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm">Email</Label>
-              <Input type="email" placeholder="you@example.com" className="h-9 sm:h-10 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <form className="space-y-2" onSubmit={(e) => { e.preventDefault(); handleEmailAuth(); }}>
+            <div className="space-y-1">
+              <Label className="text-xs">Email</Label>
+              <Input type="email" placeholder="you@example.com" className="h-8 text-sm" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <Label className="text-xs sm:text-sm">Password</Label>
+                <Label className="text-xs">Password</Label>
                 {mode === "login" && (
-                  <button className="text-[11px] sm:text-xs text-primary font-medium hover:underline" onClick={() => setMode("forgot")}>
+                  <button className="text-[10px] text-primary font-medium hover:underline" onClick={() => setMode("forgot")}>
                     Forgot password?
                   </button>
                 )}
               </div>
-              <Input type="password" placeholder="••••••••" className="h-9 sm:h-10 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input type="password" placeholder="••••••••" className="h-8 text-sm" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            <Button type="submit" className="w-full h-8 text-sm" disabled={loading}>
+              {loading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               {mode === "login" ? "Sign In" : "Sign Up"}
             </Button>
           </form>
