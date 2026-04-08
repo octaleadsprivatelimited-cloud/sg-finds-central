@@ -146,26 +146,16 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           </p>
         </DialogHeader>
 
-        {/* Social Sign-In */}
-        <div className="flex gap-3 justify-center">
-          <Button
-            variant="outline"
-            className="h-11 rounded-xl flex-1"
-            onClick={() => handleSocialSignIn("google")}
-            disabled={!!socialLoading}
-            title="Continue with Google"
-          >
-            <SocialIcon name="google" loading={socialLoading === "google"} />
-            <span className="ml-2">Continue with Google</span>
-          </Button>
-        </div>
-
-        <div className="relative my-1">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs text-muted-foreground">
-            or
-          </span>
-        </div>
+        {/* Google Sign-In */}
+        <Button
+          variant="outline"
+          className="w-full h-9 rounded-xl"
+          onClick={() => handleSocialSignIn("google")}
+          disabled={!!socialLoading}
+        >
+          <SocialIcon name="google" loading={socialLoading === "google"} />
+          <span className="ml-2 text-sm">Continue with Google</span>
+        </Button>
 
 
         {mode === "forgot" ? (
