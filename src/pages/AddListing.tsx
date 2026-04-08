@@ -1097,38 +1097,16 @@ const AddListing = () => {
                     Upload 3–5 high-quality images of your business, products, or services. No blurry or unrelated images.
                   </p>
 
-                  {/* Image grid */}
-                  <div className="grid grid-cols-3 gap-2">
-                    {imageUrls.map((url, i) => (
-                      <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-border group">
-                        <img src={url} alt={`Business ${i + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(i)}
-                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                    {imageUrls.length < 5 && (
-                      <button
-                        type="button"
-                        onClick={() => imageInputRef.current?.click()}
-                        disabled={uploadingImages}
-                        className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center gap-1 text-muted-foreground transition-colors"
-                      >
-                        {uploadingImages ? (
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                          <>
-                            <Upload className="w-5 h-5" />
-                            <span className="text-[10px]">Upload</span>
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
+                  {/* Image grid with drag & drop reordering */}
+                  <DraggableImageGrid
+                    images={imageUrls}
+                    onReorder={setImageUrls}
+                    onRemove={removeImage}
+                    onUploadClick={() => imageInputRef.current?.click()}
+                    uploading={uploadingImages}
+                    maxImages={20}
+                  />
+                  <p className="text-[10px] text-muted-foreground/70">Drag images to reorder. First image is the cover photo.</p>
 
                   {/* Processing indicator */}
                   {uploadingImages && (
