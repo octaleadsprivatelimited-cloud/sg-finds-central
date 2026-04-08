@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import type { Listing } from "@/components/ListingCard";
 import { useState } from "react";
+import { getPlaceholderLogo } from "@/lib/placeholder-logos";
 import { toast } from "sonner";
 
 interface BusinessHeaderProps {
