@@ -12,10 +12,12 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   sendEmailVerification,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { Loader2, Store, Shield, Zap } from "lucide-react";
 import { toast } from "sonner";
 import signupIllustration from "@/assets/signup-illustration.png";
+import { useGoogleOneTap } from "@/hooks/useGoogleOneTap";
 
 const googleProvider = new GoogleAuthProvider();
 
