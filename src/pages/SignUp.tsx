@@ -11,7 +11,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
-  OAuthProvider,
   sendEmailVerification,
 } from "firebase/auth";
 import { Loader2, UserPlus } from "lucide-react";
