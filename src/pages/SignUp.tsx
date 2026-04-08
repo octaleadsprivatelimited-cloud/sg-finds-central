@@ -45,6 +45,12 @@ const SignUp = () => {
     if (user) navigate("/add-listing");
   }, [user, navigate]);
 
+  // Google One Tap — auto sign-in prompt
+  useGoogleOneTap({
+    disabled: !!user,
+    onSuccess: () => navigate("/add-listing"),
+  });
+
   const handleEmailSignUp = async () => {
     if (!email.trim() || !password.trim()) {
       toast.error("Please fill in all fields");
