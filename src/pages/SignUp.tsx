@@ -160,6 +160,13 @@ const SignUp = () => {
             <span className="ml-2">Continue with Google</span>
           </Button>
 
+          {/* Divider */}
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs text-muted-foreground">
+              or
+            </span>
+          </div>
 
           {/* Email Form */}
           <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); handleEmailSignUp(); }}>
