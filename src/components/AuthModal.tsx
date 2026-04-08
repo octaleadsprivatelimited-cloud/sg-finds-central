@@ -24,9 +24,6 @@ interface AuthModalProps {
 
 type AuthMode = "login" | "signup" | "forgot";
 const googleProvider = new GoogleAuthProvider();
-const appleProvider = new OAuthProvider("apple.com");
-appleProvider.addScope("email");
-appleProvider.addScope("name");
 
 const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean }>(
   ({ name, loading }, ref) => {
