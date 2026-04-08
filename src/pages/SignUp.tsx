@@ -17,9 +17,6 @@ import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 const googleProvider = new GoogleAuthProvider();
-const appleProvider = new OAuthProvider("apple.com");
-appleProvider.addScope("email");
-appleProvider.addScope("name");
 
 const SocialIcon = ({ name, loading }: { name: string; loading: boolean }) => {
   if (loading) return <Loader2 className="w-5 h-5 animate-spin shrink-0" />;
