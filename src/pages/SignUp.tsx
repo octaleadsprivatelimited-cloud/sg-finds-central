@@ -66,6 +66,18 @@ const SignUp = () => {
     }
     setLoading(true);
     try {
+      // Check if email already exists
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      if (methods.length > 0) {
+        const isGoogle = methods.includes("google.com");
+        toast.error(
+          isGoogle
+            ? "This email is already linked to a Google account. Please sign in with Google instead."
+            : "An account with this email already exists. Please sign in instead."
+        );
+        setLoading(false);
+        return;
+      }
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (phone.trim()) {
         await setDoc(doc(db, "users", result.user.uid), {
