@@ -103,8 +103,7 @@ const SignUp = () => {
   const handleSocialSignUp = async (providerName: string) => {
     setSocialLoading(providerName);
     try {
-      const provider = providerName === "google" ? googleProvider : appleProvider;
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, googleProvider);
       toast.success("Account created successfully!");
       navigate("/add-listing");
     } catch (err: any) {
