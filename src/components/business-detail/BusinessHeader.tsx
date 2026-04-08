@@ -37,13 +37,11 @@ const BusinessHeader = ({ listing, shareUrl, viewCount = 0, liveViewers = 0 }: B
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3">
             <div className="flex items-center gap-4">
-              {listing.logoUrl ? (
-                <img src={listing.logoUrl} alt={listing.name} className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-border/50 shadow-sm" />
-              ) : (
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center shadow-sm">
-                  <span className="text-2xl font-bold text-primary">{listing.name.charAt(0)}</span>
-                </div>
-              )}
+              <img
+                src={listing.logoUrl || getPlaceholderLogo(listing.id || listing.name)}
+                alt={listing.name}
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-border/50 shadow-sm"
+              />
               <div>
                 <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">{listing.name}</h1>
                 <div className="flex items-center gap-2 mt-1">

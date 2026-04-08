@@ -5,6 +5,7 @@ import VerifiedBadge from "./VerifiedBadge";
 import { useNavigate } from "react-router-dom";
 import { getBusinessUrl } from "@/lib/url-helpers";
 import whatsappLogo from "@/assets/whatsapp-logo.png";
+import { getPlaceholderLogo } from "@/lib/placeholder-logos";
 
 export interface ListingOffer {
   id: string;
