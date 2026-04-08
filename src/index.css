@@ -278,3 +278,8 @@ html {
     opacity: 1 !important;
   }
 }
+
+/* Hide Google Maps InfoWindow close button */
+.gm-ui-hover-effect {
+  display: none !important;
+}
