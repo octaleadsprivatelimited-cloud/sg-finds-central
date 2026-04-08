@@ -1153,7 +1153,7 @@ const AddListing = () => {
                   />
 
                   <p className="text-xs text-muted-foreground">
-                    {imageUrls.length}/5 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
+                    {imageUrls.length}/20 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
                   </p>
                   <FieldError show={showErrors && imageUrls.length < 3} message={`Please upload at least 3 images (${imageUrls.length} uploaded)`} />
                 </div>
