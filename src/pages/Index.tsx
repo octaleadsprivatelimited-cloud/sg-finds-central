@@ -37,6 +37,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
   useEffect(() => { setShowMap(true); }, [setShowMap]);
+  useGoogleOneTap(); // Show Google One Tap on homepage for returning users
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | undefined>();
   const [hoveredListingId, setHoveredListingId] = useState<string | null>(null);
