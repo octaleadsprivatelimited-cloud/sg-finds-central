@@ -37,18 +37,6 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
 
   return (
     <>
-      {/* ═══ ANNOUNCEMENT BAR ═══ */}
-      <Link to="/signup" className="group block bg-foreground text-background hover:bg-foreground/90 transition-all cursor-pointer">
-        <div className="container mx-auto px-4 h-8 sm:h-9 flex items-center justify-center text-[11px] sm:text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="font-medium hidden sm:inline">List your business for FREE — Reach thousands of customers.</span>
-            <span className="font-medium sm:hidden">FREE Business Listing →</span>
-            <span className="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] sm:text-[11px] font-semibold group-hover:bg-primary/90 transition-colors">
-              Get Started
-            </span>
-          </div>
-        </div>
-      </Link>
 
       {/* ═══ MAIN HEADER — Apple frosted glass ═══ */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60">
