@@ -314,15 +314,9 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                 📍 {previewListing.district}{previewListing.postalCode ? ` · ${previewListing.postalCode}` : ""}
               </div>
             )}
-            {/* Actions */}
-            <div style={{ display: "flex", gap: 4 }}>
-              <span style={{
-                padding: "3px 8px", borderRadius: 6, fontSize: 10, fontWeight: 700,
-                background: "#1f3a2e", color: "white", flex: 1, textAlign: "center",
-              }}>
-                View →
-              </span>
-              {previewListing.lat && previewListing.lng && (
+            {/* Direction link */}
+            {previewListing.lat && previewListing.lng && (
+              <div style={{ display: "flex", gap: 4 }}>
                 <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${previewListing.lat},${previewListing.lng}`}
                   target="_blank"
@@ -334,10 +328,10 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                     textDecoration: "none",
                   }}
                 >
-                  🧭
+                  🧭 Directions
                 </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </InfoWindowF>
       )}
