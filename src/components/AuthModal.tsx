@@ -121,7 +121,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const handleSocialSignIn = async (providerName: string) => {
     setSocialLoading(providerName);
     try {
-      const provider = providerName === "google" ? googleProvider : appleProvider;
+      const provider = googleProvider;
       await signInWithPopup(auth, provider);
       toast.success(`Signed in with ${providerName.charAt(0).toUpperCase() + providerName.slice(1)}`);
       onClose();
