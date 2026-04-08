@@ -34,6 +34,7 @@ import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc, s
 import { db, auth as firebaseAuth } from "@/lib/firebase";
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import LogoUpload from "@/components/LogoUpload";
+import DraggableImageGrid from "@/components/DraggableImageGrid";
 import { Switch } from "@/components/ui/switch";
 import EnquiryInbox from "@/components/EnquiryInbox";
 import { useListingViewCounts } from "@/hooks/useViewTracking";
@@ -1712,33 +1713,19 @@ const BusinessDashboard = () => {
               {/* Business Images */}
               <div className="space-y-3 pt-4 border-t border-border/40">
                 <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <Image className="w-4 h-4" />Business Images ({editImageUrls.length}/5)
+                  <Image className="w-4 h-4" />Business Images ({editImageUrls.length}/20)
                 </Label>
-                <p className="text-xs text-muted-foreground">Upload 3–5 high-quality images. Image changes require admin re-approval.</p>
-                {editImageUrls.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2">
-                    {editImageUrls.map((url, idx) => (
-                      <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-border/50">
-                        <img src={url} alt={`Image ${idx + 1}`} className="w-full h-full object-cover" />
-                        <button onClick={() => setEditImageUrls(prev => prev.filter((_, i) => i !== idx))}
-                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {editImageUrls.length < 5 && (
-                  <>
-                    <input ref={editImageInputRef} type="file" accept="image/*" multiple className="hidden"
-                      onChange={(e) => e.target.files && handleEditImageUpload(e.target.files)} />
-                    <Button variant="outline" size="sm" className="rounded-lg text-xs" disabled={editUploadingImages}
-                      onClick={() => editImageInputRef.current?.click()}>
-                      {editUploadingImages ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Upload className="w-3.5 h-3.5 mr-1.5" />}
-                      Upload Images
-                    </Button>
-                  </>
-                )}
+                <p className="text-xs text-muted-foreground">Upload up to 20 high-quality images. Drag to reorder. Image changes require admin re-approval.</p>
+                <DraggableImageGrid
+                  images={editImageUrls}
+                  onReorder={setEditImageUrls}
+                  onRemove={(idx) => setEditImageUrls(prev => prev.filter((_, i) => i !== idx))}
+                  onUploadClick={() => editImageInputRef.current?.click()}
+                  uploading={editUploadingImages}
+                  maxImages={20}
+                />
+                <input ref={editImageInputRef} type="file" accept="image/*" multiple className="hidden"
+                  onChange={(e) => e.target.files && handleEditImageUpload(e.target.files)} />
               </div>
               {user && (
                 <div className="pt-4 border-t border-border/40">
