@@ -13,7 +13,6 @@ import {
   sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
-  OAuthProvider,
 } from "firebase/auth";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
