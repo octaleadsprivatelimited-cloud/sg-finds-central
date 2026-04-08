@@ -34,7 +34,8 @@ const AppContent = () => {
   const location = useLocation();
   const isAdminPage = location.pathname === "/admin";
   const isDashboardPage = location.pathname === "/dashboard";
-  const hideHeader = isAdminPage || isDashboardPage;
+  const isSignupPage = location.pathname === "/signup";
+  const hideHeader = isAdminPage || isDashboardPage || isSignupPage;
   const hideFooter = isAdminPage || isDashboardPage || ["/signup", "/reset-password"].includes(location.pathname);
   const [showMap, setShowMap] = useState(false);
   const [detectLocationFn, setDetectLocationFn] = useState<(() => void) | null>(null);
