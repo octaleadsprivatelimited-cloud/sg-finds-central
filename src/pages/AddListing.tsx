@@ -526,8 +526,8 @@ const AddListing = () => {
 
   const handleImageUpload = async (files: FileList) => {
     if (!user) return;
-    const remaining = 5 - imageUrls.length;
-    if (remaining <= 0) { toast.error("Maximum 5 images allowed"); return; }
+    const remaining = 20 - imageUrls.length;
+    if (remaining <= 0) { toast.error("Maximum 20 images allowed"); return; }
 
     setUploadingImages(true);
     try {
