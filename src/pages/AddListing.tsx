@@ -502,10 +502,7 @@ const AddListing = () => {
       case "details": return !!name && !!ownerName;
       case "service-location": return serviceLocations.length > 0;
       case "address": return !!address && !!postalCode && locationLat !== null && locationLng !== null;
-      case "description": {
-        const wc = wordCount(shortDescription);
-        return wc >= 50 && wc <= 100 && !!detailedDescription.trim();
-      }
+      case "description": return true;
       case "hours": return true;
       case "images": return imageUrls.length >= 3;
       case "profile": return !!logoUrl;
@@ -1013,7 +1010,7 @@ const AddListing = () => {
                   <h2 className="text-lg font-semibold text-foreground">Business Description</h2>
 
                   <div className="space-y-2">
-                    <Label>Short Description (50–100 words) *</Label>
+                    <Label>Short Description (50–100 words)</Label>
                     <p className="text-xs text-muted-foreground">Explain what you offer and what makes your business unique.</p>
                     <Textarea
                       value={shortDescription}
@@ -1022,15 +1019,13 @@ const AddListing = () => {
                       rows={4}
                       className="resize-none"
                     />
-                    <p className={`text-xs text-right ${wordCount(shortDescription) < 50 ? "text-destructive" : wordCount(shortDescription) > 100 ? "text-destructive" : "text-muted-foreground"}`}>
-                      {wordCount(shortDescription)} / 50–100 words
+                    <p className={`text-xs text-right text-muted-foreground`}>
+                      {wordCount(shortDescription)} words
                     </p>
-                    <FieldError show={showErrors && wordCount(shortDescription) < 50} message={`Need at least 50 words (currently ${wordCount(shortDescription)})`} />
-                    <FieldError show={showErrors && wordCount(shortDescription) > 100} message={`Maximum 100 words allowed (currently ${wordCount(shortDescription)})`} />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Detailed Description *</Label>
+                    <Label>Detailed Description</Label>
                     <p className="text-xs text-muted-foreground">Services or products you provide, pricing (optional), experience or background.</p>
                     <Textarea
                       value={detailedDescription}
@@ -1040,7 +1035,6 @@ const AddListing = () => {
                       className="resize-none"
                     />
                     <p className="text-xs text-muted-foreground text-right">{detailedDescription.length} characters</p>
-                    <FieldError show={showErrors && !detailedDescription.trim()} message="Detailed description is required" />
                   </div>
                 </div>
               )}
