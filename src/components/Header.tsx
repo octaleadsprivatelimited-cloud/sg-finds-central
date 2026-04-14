@@ -39,12 +39,12 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     <>
 
       {/* ═══ MAIN HEADER — Apple frosted glass ═══ */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60">
-        <div className="container mx-auto px-4 h-12 flex items-center gap-3">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl backdrop-saturate-150 border-b-2 border-foreground/8">
+        <div className="container mx-auto px-4 h-14 flex items-center gap-3">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              NEAR<span className="text-primary">BUY</span>
+            <span className="text-xl font-extrabold tracking-tighter text-foreground uppercase" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Near<span className="text-primary border-b-2 border-primary pb-0.5">Buy</span>
             </span>
           </Link>
 

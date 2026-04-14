@@ -214,6 +214,42 @@ html {
   .glow-primary {
     box-shadow: var(--shadow-primary);
   }
+
+  /* ── Retro design utilities ── */
+  .retro-shadow {
+    box-shadow: 4px 4px 0 0 hsl(var(--foreground) / 0.08);
+  }
+  .retro-shadow-sm {
+    box-shadow: 2px 2px 0 0 hsl(var(--foreground) / 0.06);
+  }
+  .retro-shadow-primary {
+    box-shadow: 3px 3px 0 0 hsl(var(--primary) / 0.15);
+  }
+  .retro-border {
+    border: 2px solid hsl(var(--foreground) / 0.08);
+  }
+  .retro-border-strong {
+    border: 2px solid hsl(var(--foreground) / 0.12);
+  }
+  .retro-dot-bg {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .retro-grid-bg {
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .retro-stripe-bg {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      hsl(var(--foreground) / 0.015) 6px,
+      hsl(var(--foreground) / 0.015) 12px
+    );
+  }
 }
 
 /* Hyper-style announcement bar scroll */
