@@ -704,7 +704,7 @@ const AddListing = () => {
             <div className="mb-8 space-y-2">
               <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
                 <span className="font-medium text-foreground">{currentStep?.label}</span>
-                <span>Step {stepIndex + 1} of {steps.length}</span>
+                
               </div>
               <div className="w-full h-2.5 rounded-full bg-secondary overflow-hidden">
                 <div
