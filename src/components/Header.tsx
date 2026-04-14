@@ -2,8 +2,15 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard,
-  MapPin, User, Search,
+  MapPin, User, Search, ChevronDown,
 } from "lucide-react";
+import { SINGAPORE_DISTRICTS } from "@/lib/districts";
+import { useSearch } from "@/contexts/SearchContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
@@ -26,9 +33,18 @@ interface HeaderProps {
 
 const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const { user, isAdmin, isSuperAdmin, isDevMode, devLogout, role } = useAuth();
+  const { onDistrictSelect } = useSearch();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
+  const [locationOpen, setLocationOpen] = useState(false);
+
+  const handleDistrictSelect = (d: string) => {
+    setSelectedDistrict(d);
+    setLocationOpen(false);
+    if (onDistrictSelect) onDistrictSelect(d);
+  };
 
   const handleSignOut = async () => {
     if (isDevMode) { devLogout(); return; }
@@ -47,6 +63,32 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
               Near<span className="text-primary border-b-2 border-primary pb-0.5">Buy</span>
             </span>
           </Link>
+
+          {/* Location Selector */}
+          <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+            <PopoverTrigger asChild>
+              <button className="hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border-2 border-border/60 bg-card hover:border-primary/40 transition-colors text-sm font-medium shrink-0">
+                <MapPin className="w-3.5 h-3.5 text-primary" />
+                <span className="max-w-[120px] truncate">{selectedDistrict === "All Districts" ? "All Areas" : selectedDistrict}</span>
+                <ChevronDown className="w-3 h-3 text-muted-foreground" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2 max-h-72 overflow-y-auto" align="start">
+              {SINGAPORE_DISTRICTS.map((d) => (
+                <button
+                  key={d}
+                  onClick={() => handleDistrictSelect(d)}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                    selectedDistrict === d
+                      ? "bg-primary text-primary-foreground font-semibold"
+                      : "hover:bg-secondary text-foreground"
+                  }`}
+                >
+                  {d === "All Districts" ? "All Areas" : d}
+                </button>
+              ))}
+            </PopoverContent>
+          </Popover>
 
           {/* Desktop Search */}
           <div className="hidden md:flex items-center gap-2 ml-6 flex-1 max-w-md">
@@ -97,7 +139,30 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           </div>
 
           {/* Mobile */}
-            <div className="flex items-center gap-2 flex-1 md:hidden">
+            <div className="flex items-center gap-1.5 flex-1 md:hidden">
+            {/* Mobile Location */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center justify-center w-9 h-9 rounded-lg border-2 border-border/60 bg-card shrink-0">
+                  <MapPin className="w-4 h-4 text-primary" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2 max-h-72 overflow-y-auto" align="start">
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => handleDistrictSelect(d)}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                      selectedDistrict === d
+                        ? "bg-primary text-primary-foreground font-semibold"
+                        : "hover:bg-secondary text-foreground"
+                    }`}
+                  >
+                    {d === "All Districts" ? "All Areas" : d}
+                  </button>
+                ))}
+              </PopoverContent>
+            </Popover>
             <div className="flex-1 flex items-center h-9 rounded-lg border-2 border-border/60 bg-card px-3">
               <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <SearchWithSuggestions
