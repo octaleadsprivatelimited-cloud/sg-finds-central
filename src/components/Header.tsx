@@ -139,7 +139,30 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           </div>
 
           {/* Mobile */}
-            <div className="flex items-center gap-2 flex-1 md:hidden">
+            <div className="flex items-center gap-1.5 flex-1 md:hidden">
+            {/* Mobile Location */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center justify-center w-9 h-9 rounded-lg border-2 border-border/60 bg-card shrink-0">
+                  <MapPin className="w-4 h-4 text-primary" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2 max-h-72 overflow-y-auto" align="start">
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => handleDistrictSelect(d)}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                      selectedDistrict === d
+                        ? "bg-primary text-primary-foreground font-semibold"
+                        : "hover:bg-secondary text-foreground"
+                    }`}
+                  >
+                    {d === "All Districts" ? "All Areas" : d}
+                  </button>
+                ))}
+              </PopoverContent>
+            </Popover>
             <div className="flex-1 flex items-center h-9 rounded-lg border-2 border-border/60 bg-card px-3">
               <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <SearchWithSuggestions
