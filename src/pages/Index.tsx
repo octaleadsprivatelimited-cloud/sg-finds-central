@@ -243,10 +243,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setCategory("All Categories")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shrink-0 transition-all active:scale-95 uppercase tracking-wide border-2 ${
+              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 ${
                 category === "All Categories"
-                  ? "bg-foreground text-background border-foreground retro-shadow-sm"
-                  : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-secondary/80 text-muted-foreground border border-border/40"
               }`}
             >
               All
@@ -255,12 +255,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shrink-0 transition-all active:scale-95 uppercase tracking-wide border-2 ${
+                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 ${
                   category === c.value
-                    ? "bg-foreground text-background border-foreground retro-shadow-sm"
-                    : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-secondary/80 text-muted-foreground border border-border/40"
                 }`}
               >
+                <span className="text-sm">{c.icon}</span>
                 {c.label}
               </button>
             ))}
@@ -401,10 +402,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   setRadiusKm(null);
                   setOpenNow(false);
                 }}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all shrink-0 uppercase tracking-wide border-2 ${
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all shrink-0 ${
                   !hasActiveFilters
-                    ? "bg-foreground text-background border-foreground retro-shadow-sm"
-                    : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-secondary/80 text-foreground hover:bg-secondary border border-border/40 hover:border-primary/30"
                 }`}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -412,7 +413,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </button>
 
 
-              <div className="flex items-center gap-2 bg-card border-2 border-border/60 rounded-lg px-3 py-1 shrink-0">
+              <div className="flex items-center gap-2 bg-secondary/80 border border-border/40 rounded-full px-3 py-1.5 shrink-0">
                 <Slider
                   value={[radiusKm ?? 10]}
                   onValueChange={([v]) => {
@@ -435,12 +436,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all shrink-0 uppercase tracking-wide border-2 ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all shrink-0 ${
                     category === c.value
-                      ? "bg-foreground text-background border-foreground retro-shadow-sm"
-                      : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "bg-secondary/80 text-foreground hover:bg-secondary border border-border/40 hover:border-primary/30"
                   }`}
                 >
+                  <span className="text-base">{c.icon}</span>
                   {c.label}
                 </button>
               ))}
