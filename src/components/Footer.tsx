@@ -4,14 +4,14 @@ import { toSlug } from "@/lib/url-helpers";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border/60 bg-secondary/40">
+    <footer className="border-t-2 border-foreground/8 bg-secondary/30 retro-dot-bg">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block mb-3">
-              <span className="text-xl font-bold tracking-tight text-foreground">
-                NEAR<span className="text-primary">BUY</span>
+              <span className="text-xl font-extrabold tracking-tighter text-foreground uppercase" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Near<span className="text-primary border-b-2 border-primary pb-0.5">Buy</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
