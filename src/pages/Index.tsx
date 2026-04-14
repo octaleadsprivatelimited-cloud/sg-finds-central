@@ -229,7 +229,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const scrollRevealRef = useScrollReveal<HTMLDivElement>();
 
   return (
-    <div className="min-h-screen bg-background" ref={scrollRevealRef}>
+    <div className="min-h-screen bg-background retro-dot-bg" ref={scrollRevealRef}>
 
       {/* ═══ MOBILE LAYOUT ═══ */}
       <div className="lg:hidden">
@@ -239,14 +239,14 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Category + Distance + Map: All sticky */}
         <div className="sticky top-0 z-20">
         {/* Row 1: Category chips */}
-        <div className="border-b border-border/60 bg-background/80 backdrop-blur-xl px-3 py-2">
+        <div className="border-b-2 border-foreground/6 bg-background/90 backdrop-blur-xl px-3 py-2">
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setCategory("All Categories")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all active:scale-95 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shrink-0 transition-all active:scale-95 uppercase tracking-wide border-2 ${
                 category === "All Categories"
-                  ? "bg-foreground text-background"
-                  : "bg-secondary text-muted-foreground"
+                  ? "bg-foreground text-background border-foreground retro-shadow-sm"
+                  : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
               }`}
             >
               All
@@ -255,10 +255,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap shrink-0 transition-all active:scale-95 ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shrink-0 transition-all active:scale-95 uppercase tracking-wide border-2 ${
                   category === c.value
-                    ? "bg-foreground text-background"
-                    : "bg-secondary text-muted-foreground"
+                    ? "bg-foreground text-background border-foreground retro-shadow-sm"
+                    : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
                 }`}
               >
                 {c.label}
@@ -266,7 +266,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             ))}
           </div>
         </div>
-          <div className="border-b border-border/60 bg-background/80 backdrop-blur-xl px-3 py-2.5">
+          <div className="border-b-2 border-foreground/6 bg-background/90 backdrop-blur-xl px-3 py-2.5">
             <div className="flex items-center gap-3">
               <span className="text-xs font-medium text-muted-foreground shrink-0">Distance</span>
               <Slider
@@ -285,7 +285,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </span>
             </div>
           </div>
-          <div className="h-[200px] relative border-b border-border">
+          <div className="h-[200px] relative border-b-2 border-foreground/6">
             <MapView
               listings={sortedFiltered}
               selectedId={selectedListing?.id}
@@ -310,7 +310,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         {/* Listings */}
         <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
           {sortedFiltered.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl">
+            <div className="text-center py-12 bg-card rounded-xl border-2 border-border/60 retro-shadow">
               <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-foreground font-semibold">No businesses found</p>
               <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
@@ -392,7 +392,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
       <div className="hidden lg:block">
 
         {/* Filter bar */}
-        <div className="bg-background/80 backdrop-blur-xl border-b border-border/60 mb-4">
+        <div className="bg-background/90 backdrop-blur-xl border-b-2 border-foreground/6 mb-4">
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-2.5">
               <button
@@ -401,10 +401,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                   setRadiusKm(null);
                   setOpenNow(false);
                 }}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all shrink-0 uppercase tracking-wide border-2 ${
                   !hasActiveFilters
-                    ? "bg-foreground text-background"
-                    : "bg-secondary text-muted-foreground hover:text-foreground"
+                    ? "bg-foreground text-background border-foreground retro-shadow-sm"
+                    : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
                 }`}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -412,7 +412,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </button>
 
 
-              <div className="flex items-center gap-2 bg-secondary rounded-full px-3 py-1 shrink-0">
+              <div className="flex items-center gap-2 bg-card border-2 border-border/60 rounded-lg px-3 py-1 shrink-0">
                 <Slider
                   value={[radiusKm ?? 10]}
                   onValueChange={([v]) => {
@@ -435,10 +435,10 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
                 <button
                   key={c.value}
                   onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
+                  className={`px-4 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap transition-all shrink-0 uppercase tracking-wide border-2 ${
                     category === c.value
-                      ? "bg-foreground text-background"
-                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                      ? "bg-foreground text-background border-foreground retro-shadow-sm"
+                      : "bg-card text-muted-foreground border-border/60 hover:border-foreground/20"
                   }`}
                 >
                   {c.label}
@@ -465,7 +465,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <div ref={listingsScrollRef} className="max-h-[calc(100vh-64px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
                   {sortedFiltered.length === 0 ? (
-                    <div className="text-center py-16 bg-white rounded-2xl">
+                    <div className="text-center py-16 bg-card rounded-xl border-2 border-border/60 retro-shadow">
                       <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
                       <p className="text-foreground font-semibold">No businesses found</p>
                       <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
