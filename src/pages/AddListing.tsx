@@ -504,7 +504,7 @@ const AddListing = () => {
       case "address": return !!address && !!postalCode && locationLat !== null && locationLng !== null;
       case "description": return true;
       case "hours": return true;
-      case "images": return imageUrls.length >= 3;
+      case "images": return imageUrls.length >= 1;
       case "profile": return !!logoUrl;
       case "compliance": {
         const gates = getComplianceGates(category, serviceLocations);
@@ -1124,9 +1124,9 @@ const AddListing = () => {
                   />
 
                   <p className="text-xs text-muted-foreground">
-                    {imageUrls.length}/20 images uploaded. Minimum 3 required. Max 5MB each. JPG, PNG, or WEBP.
+                    {imageUrls.length}/20 images uploaded. Minimum 1 required. Max 5MB each. JPG, PNG, or WEBP.
                   </p>
-                  <FieldError show={showErrors && imageUrls.length < 3} message={`Please upload at least 3 images (${imageUrls.length} uploaded)`} />
+                  <FieldError show={showErrors && imageUrls.length < 1} message={`Please upload at least 1 image`} />
                 </div>
               )}
 
