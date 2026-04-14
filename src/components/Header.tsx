@@ -2,8 +2,15 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard,
-  MapPin, User, Search,
+  MapPin, User, Search, ChevronDown,
 } from "lucide-react";
+import { SINGAPORE_DISTRICTS } from "@/lib/districts";
+import { useSearch } from "@/contexts/SearchContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
