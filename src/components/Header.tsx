@@ -33,9 +33,18 @@ interface HeaderProps {
 
 const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const { user, isAdmin, isSuperAdmin, isDevMode, devLogout, role } = useAuth();
+  const { onDistrictSelect } = useSearch();
   const location = useLocation();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
+  const [locationOpen, setLocationOpen] = useState(false);
+
+  const handleDistrictSelect = (d: string) => {
+    setSelectedDistrict(d);
+    setLocationOpen(false);
+    if (onDistrictSelect) onDistrictSelect(d);
+  };
 
   const handleSignOut = async () => {
     if (isDevMode) { devLogout(); return; }
