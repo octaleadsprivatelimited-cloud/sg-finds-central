@@ -700,20 +700,18 @@ const AddListing = () => {
           </div>
         ) : (
           <>
-            {/* ── Step indicator ── */}
-            <div className="flex items-center justify-center gap-1 mb-8 overflow-x-auto pb-2">
-              {steps.map((s, i) => (
-                <div key={s.key} className="flex items-center gap-1">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors shrink-0 ${
-                    i < stepIndex ? "bg-primary text-primary-foreground" :
-                    i === stepIndex ? "bg-primary text-primary-foreground" :
-                    "bg-secondary text-muted-foreground"
-                  }`}>
-                    {i < stepIndex ? <Check className="w-3.5 h-3.5" /> : i + 1}
-                  </div>
-                  {i < steps.length - 1 && <div className="w-4 h-px bg-border" />}
-                </div>
-              ))}
+            {/* ── Progress bar ── */}
+            <div className="mb-8 space-y-2">
+              <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                <span className="font-medium text-foreground">{currentStep?.label}</span>
+                <span>Step {stepIndex + 1} of {steps.length}</span>
+              </div>
+              <div className="w-full h-2.5 rounded-full bg-secondary overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+                  style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
+                />
+              </div>
             </div>
 
             {/* ── Form card ── */}
