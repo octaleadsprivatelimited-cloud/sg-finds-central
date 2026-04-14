@@ -20,18 +20,24 @@ const CategoryGrid = () => {
 
   return (
     <section>
-      <h2 className="hidden md:block text-lg font-semibold text-foreground mb-4 tracking-tight">Browse by Category</h2>
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-px flex-1 bg-border" />
+        <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Browse by Category
+        </h2>
+        <div className="h-px flex-1 bg-border" />
+      </div>
       <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2.5 md:gap-3">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.name}
             onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-            className="group flex flex-col items-center gap-1.5 md:gap-2 p-2 md:p-3 rounded-2xl bg-secondary hover:shadow-[0_10px_25px_-5px_hsl(0,0%,0%,0.08)] transition-all duration-200 hover:-translate-y-0.5"
+            className="group flex flex-col items-center gap-1.5 md:gap-2 p-2.5 md:p-3.5 rounded-xl bg-card border-2 border-border/60 hover:border-primary/30 retro-shadow-sm hover:retro-shadow transition-all duration-200 hover:-translate-y-1 active:translate-y-0 active:shadow-none"
           >
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-secondary/60 flex items-center justify-center group-hover:bg-secondary transition-colors">
-              <span className="text-3xl md:text-4xl">{cat.emoji}</span>
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg bg-secondary/80 border border-border/40 flex items-center justify-center group-hover:bg-primary/5 transition-colors">
+              <span className="text-2xl md:text-3xl">{cat.emoji}</span>
             </div>
-            <span className="text-[9px] md:text-xs font-medium text-foreground text-center leading-tight line-clamp-2">
+            <span className="text-[9px] md:text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2 uppercase tracking-wide">
               {cat.name}
             </span>
           </button>

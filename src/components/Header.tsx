@@ -39,18 +39,18 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     <>
 
       {/* ═══ MAIN HEADER — Apple frosted glass ═══ */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60">
-        <div className="container mx-auto px-4 h-12 flex items-center gap-3">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl backdrop-saturate-150 border-b-2 border-foreground/8">
+        <div className="container mx-auto px-4 h-14 flex items-center gap-3">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              NEAR<span className="text-primary">BUY</span>
+            <span className="text-xl font-extrabold tracking-tighter text-foreground uppercase" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Near<span className="text-primary border-b-2 border-primary pb-0.5">Buy</span>
             </span>
           </Link>
 
           {/* Desktop Search */}
           <div className="hidden md:flex items-center gap-2 ml-6 flex-1 max-w-md">
-            <div className="flex-1 relative flex items-center h-9 rounded-full bg-secondary/70 hover:bg-secondary transition-colors shadow-[inset_0_0_0_1px_hsl(var(--border))]">
+            <div className="flex-1 relative flex items-center h-9 rounded-lg bg-card border-2 border-border/60 hover:border-foreground/15 transition-colors">
               <Search className="w-3.5 h-3.5 text-muted-foreground ml-3 shrink-0" />
               <SearchWithSuggestions
                 placeholder="Search businesses or postal code..."
@@ -62,7 +62,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-2 ml-auto">
             <Link to="/add-listing">
-              <Button size="sm" className="h-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs px-4">
+              <Button size="sm" className="h-8 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs px-4 uppercase tracking-wide border-2 border-primary retro-shadow-sm hover:retro-shadow transition-all">
                 <Plus className="w-3.5 h-3.5 mr-1" />List Free
               </Button>
             </Link>
@@ -98,7 +98,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
 
           {/* Mobile */}
             <div className="flex items-center gap-2 flex-1 md:hidden">
-            <div className="flex-1 flex items-center h-9 rounded-full border border-border bg-secondary/50 px-3">
+            <div className="flex-1 flex items-center h-9 rounded-lg border-2 border-border/60 bg-card px-3">
               <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <SearchWithSuggestions
                 compact
