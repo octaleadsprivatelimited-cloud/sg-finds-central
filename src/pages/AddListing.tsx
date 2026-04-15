@@ -152,9 +152,6 @@ const getSteps = (category: string, serviceLocations: string[]) => {
     { key: "images", label: "Images", icon: <Image className="w-4 h-4" /> },
     { key: "profile", label: "Profile Extras", icon: <Image className="w-4 h-4" /> },
   );
-  if (needsComplianceScreen(category, serviceLocations)) {
-    steps.push({ key: "compliance", label: "Compliance", icon: <ShieldCheck className="w-4 h-4" /> });
-  }
   steps.push({ key: "contact", label: "Contact", icon: <MessageCircle className="w-4 h-4" /> });
   return steps;
 };
@@ -506,10 +503,6 @@ const AddListing = () => {
       case "hours": return true;
       case "images": return imageUrls.length >= 1;
       case "profile": return !!logoUrl;
-      case "compliance": {
-        const gates = getComplianceGates(category, serviceLocations);
-        return gates.every(g => complianceChecks[g.id] === true);
-      }
       case "contact":
         if (!primaryContact) return false;
         if (!contactEmail || !/\S+@\S+\.\S+/.test(contactEmail)) return false;
@@ -1159,30 +1152,6 @@ const AddListing = () => {
                 </div>
               )}
 
-              {/* Compliance */}
-              {currentStep?.key === "compliance" && (
-                <div className="space-y-4 animate-fade-in">
-                  <h2 className="text-lg font-semibold text-foreground">Compliance</h2>
-                  <p className="text-sm text-muted-foreground">Please confirm the following before submitting your listing.</p>
-                  <div className="space-y-3">
-                    {getComplianceGates(category, serviceLocations).map(gate => (
-                      <label
-                        key={gate.id}
-                        className="flex items-start gap-3 p-3 rounded-xl border border-border bg-secondary/30 cursor-pointer hover:bg-secondary/50 transition-colors"
-                      >
-                        <Checkbox
-                          checked={complianceChecks[gate.id] || false}
-                          onCheckedChange={(checked) =>
-                            setComplianceChecks(prev => ({ ...prev, [gate.id]: !!checked }))
-                          }
-                          className="mt-0.5"
-                        />
-                        <span className="text-sm text-foreground">{gate.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Contact */}
               {currentStep?.key === "contact" && (
