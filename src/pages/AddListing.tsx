@@ -454,11 +454,11 @@ const AddListing = () => {
           if (data.GeocodeInfo && data.GeocodeInfo.length > 0) {
             const info = data.GeocodeInfo[0];
             const addr = info.BUILDINGNAME !== "NIL" ? `${info.BUILDINGNAME}, ${info.ROAD}` : info.ROAD;
-            if (!address) setAddress(addr || "");
-            if (!postalCode && info.POSTALCODE && info.POSTALCODE !== "NIL") setPostalCode(info.POSTALCODE);
+            setAddress(addr || "");
+            if (info.POSTALCODE && info.POSTALCODE !== "NIL") setPostalCode(info.POSTALCODE);
           }
         } catch {}
-        toast.success("Location detected successfully");
+        toast.success("Location detected — address and postal code filled automatically");
         setDetectingLocation(false);
       },
       () => {
@@ -466,7 +466,7 @@ const AddListing = () => {
         setDetectingLocation(false);
       }
     );
-  }, [address, postalCode]);
+  }, []);
 
   const wordCount = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 
