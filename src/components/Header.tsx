@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard,
@@ -138,28 +138,66 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
           </div>
 
           {/* Mobile */}
-            <div className="flex items-center gap-1.5 flex-1 md:hidden">
-            {/* Mobile Location */}
+          <div className="flex items-center gap-1.5 flex-1 md:hidden">
+            {/* Mobile Location with area name */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center justify-center w-9 h-9 rounded-lg border-2 border-border/60 bg-card shrink-0">
-                  <MapPin className="w-4 h-4 text-primary" />
+                <button className="flex items-center gap-1 h-9 px-2.5 rounded-lg border-2 border-border/60 bg-card shrink-0 max-w-[140px]">
+                  <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span className="text-xs font-medium truncate">{selectedDistrict === "All Districts" ? "All Areas" : selectedDistrict}</span>
+                  <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-56 p-2 max-h-72 overflow-y-auto" align="start">
-                {SINGAPORE_DISTRICTS.map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => handleDistrictSelect(d)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                      selectedDistrict === d
-                        ? "bg-primary text-primary-foreground font-semibold"
-                        : "hover:bg-secondary text-foreground"
-                    }`}
-                  >
-                    {d === "All Districts" ? "All Areas" : d}
-                  </button>
-                ))}
+              <PopoverContent className="w-72 p-3 max-h-80 overflow-y-auto" align="start">
+                {/* Pincode search */}
+                <div className="mb-3">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Search by Postal Code</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="e.g. 560123"
+                      className="flex-1 h-8 px-2.5 rounded-md border-2 border-border/60 bg-background text-sm focus:outline-none focus:border-primary/50"
+                      onKeyDown={async (e) => {
+                        if (e.key === 'Enter') {
+                          const val = (e.target as HTMLInputElement).value.trim();
+                          if (/^\d{6}$/.test(val)) {
+                            const { geocodeSingaporePostalCode } = await import('@/lib/geocode-pincode');
+                            const result = await geocodeSingaporePostalCode(val);
+                            if (result) {
+                              // Find nearest district
+                              const { DISTRICT_COORDINATES } = await import('@/lib/districts');
+                              let nearest = "All Districts";
+                              let minDist = Infinity;
+                              for (const [name, coords] of Object.entries(DISTRICT_COORDINATES)) {
+                                const d = Math.sqrt(Math.pow(result.lat - coords.lat, 2) + Math.pow(result.lng - coords.lng, 2));
+                                if (d < minDist) { minDist = d; nearest = name; }
+                              }
+                              handleDistrictSelect(nearest);
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="border-t border-border/40 pt-2">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Select District</label>
+                  {SINGAPORE_DISTRICTS.map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => handleDistrictSelect(d)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        selectedDistrict === d
+                          ? "bg-primary text-primary-foreground font-semibold"
+                          : "hover:bg-secondary text-foreground"
+                      }`}
+                    >
+                      {d === "All Districts" ? "All Areas" : d}
+                    </button>
+                  ))}
+                </div>
               </PopoverContent>
             </Popover>
             <div className="flex-1 flex items-center h-9 rounded-lg border-2 border-border/60 bg-card px-3">
