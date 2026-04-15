@@ -9,7 +9,7 @@ import FeaturedListings from "@/components/FeaturedListings";
 
 import CategoryHighlights from "@/components/CategoryHighlights";
 import CategoryGrid from "@/components/CategoryGrid";
-import PromoBanner from "@/components/PromoBanner";
+
 import MapView from "@/components/MapView";
 import { Link } from "react-router-dom";
 import MobileFiltersMap from "@/components/MobileFiltersMap";
@@ -383,7 +383,6 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <section className="px-3 py-4" data-reveal>
           <CategoryGrid />
         </section>
-        <div data-reveal><PromoBanner /></div>
         <section className="px-3 py-3" data-reveal>
           <CategoryHighlights />
         </section>
@@ -557,7 +556,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <section className="container mx-auto px-4 py-6" data-reveal>
           <CategoryGrid />
         </section>
-        <div data-reveal><PromoBanner /></div>
+        
         <section className="container mx-auto px-4 py-4" data-reveal>
           <CategoryHighlights />
         </section>
