@@ -886,9 +886,6 @@ const BusinessDashboard = () => {
                 {user && <EnquiryInbox />}
               </motion.div>
             )}
-                </div>
-              </motion.div>
-            )}
             {/* ─── CATALOGUE TAB ─── */}
             {activeTab === "catalogue" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
