@@ -156,7 +156,6 @@ export const SERVICE_LOCATIONS: MultiSelectOption[] = [
 export const CONTACT_METHODS: MultiSelectOption[] = [
   { label: "WhatsApp Business", value: "whatsapp" },
   { label: "Instagram", value: "instagram" },
-  { label: "Website", value: "website" },
 ];
 
 // ── All categories require subcategory screen ──
