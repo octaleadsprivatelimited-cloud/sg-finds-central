@@ -1,0 +1,172 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════════════
+//  Nearbuy — Production Firestore Security Rules
+//  Last updated: 2026-04-15
+//
+//  DEPLOYMENT: Copy these rules into Firebase Console →
+//  Firestore → Rules, then click "Publish"
+// ═══════════════════════════════════════════════════════════════
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper: Check if user is a Super Admin ──
+    function isSuperAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/superadmins/$(request.auth.uid));
+    }
+
+    // ── Helper: Check if user is an Admin (admin or superadmin) ──
+    function isAdmin() {
+      return isSuperAdmin()
+        || (request.auth != null
+            && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    // ── Helper: Check if user owns the resource ──
+    function isOwner(ownerId) {
+      return request.auth != null && request.auth.uid == ownerId;
+    }
+
+    // ───────────────────────────────────────────
+    //  SUPERADMINS — read-only, no client writes
+    // ───────────────────────────────────────────
+    match /superadmins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false; // Manage via Firebase Console only
+    }
+
+    // ───────────────────────────────────────────
+    //  ADMINS — only superadmins can manage
+    // ───────────────────────────────────────────
+    match /admins/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isSuperAdmin());
+      allow create, delete: if isSuperAdmin();
+      allow update: if false;
+    }
+
+    // ───────────────────────────────────────────
+    //  LISTINGS — core business data
+    // ───────────────────────────────────────────
+    match /listings/{listingId} {
+      // Public read for approved listings; owners & admins can read all
+      allow read: if resource.data.status == "approved"
+                  || isOwner(resource.data.ownerId)
+                  || isAdmin();
+
+      // Authenticated users can create (registration)
+      allow create: if request.auth != null
+                    && request.resource.data.ownerId == request.auth.uid
+                    && request.resource.data.status == "pending_approval";
+
+      // Owners can update their own listings BUT cannot change status
+      // (status changes are admin-only)
+      allow update: if isAdmin()
+                    || (isOwner(resource.data.ownerId)
+                        && request.resource.data.ownerId == resource.data.ownerId  // can't transfer ownership
+                        && (request.resource.data.status == "pending_approval"      // owner edits reset to pending
+                            || request.resource.data.status == resource.data.status // or keep current status (viewCount etc.)
+                           ));
+
+      // Only admins can delete listings
+      allow delete: if isAdmin();
+
+      // Catalogue sub-collection
+      match /catalogue/{itemId} {
+        allow read: if true; // Public catalogue
+        allow create, update: if isOwner(get(/databases/$(database)/documents/listings/$(listingId)).data.ownerId)
+                              || isAdmin();
+        allow delete: if isOwner(get(/databases/$(database)/documents/listings/$(listingId)).data.ownerId)
+                      || isAdmin();
+      }
+    }
+
+    // ───────────────────────────────────────────
+    //  ENQUIRIES — public create, restricted read
+    // ───────────────────────────────────────────
+    match /enquiries/{enquiryId} {
+      // Anyone can create an enquiry (lead generation)
+      allow create: if true
+                    && request.resource.data.keys().hasAll(['listingId', 'name', 'phone', 'status'])
+                    && request.resource.data.status == "unread"
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.phone is string
+                    && request.resource.data.phone.size() <= 20;
+
+      // Only the listing owner or admins can read
+      allow read: if isAdmin()
+                  || isOwner(resource.data.ownerId);
+
+      // Only the listing owner or admins can update status
+      allow update: if isAdmin()
+                    || isOwner(resource.data.ownerId);
+
+      // Only admins can delete
+      allow delete: if isAdmin();
+    }
+
+    // ───────────────────────────────────────────
+    //  USERS — registration records
+    // ───────────────────────────────────────────
+    match /users/{userId} {
+      // Users can read/write their own doc; admins can read all
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if isSuperAdmin();
+    }
+
+    // ───────────────────────────────────────────
+    //  VIEW_LOGS — public create for analytics
+    // ───────────────────────────────────────────
+    match /view_logs/{logId} {
+      allow create: if true; // Anonymous view tracking
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ───────────────────────────────────────────
+    //  LISTING_VIEWERS — real-time presence
+    // ───────────────────────────────────────────
+    match /listing_viewers/{viewerId} {
+      allow read: if true;
+      allow create, update: if true; // Ephemeral presence docs
+      allow delete: if true;
+    }
+
+    // ───────────────────────────────────────────
+    //  CONTACT_MESSAGES — public contact form
+    // ───────────────────────────────────────────
+    match /contact_messages/{msgId} {
+      allow create: if true
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() <= 255
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() <= 2000;
+      allow read: if isAdmin();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ───────────────────────────────────────────
+    //  FEATURED_TICKETS — owner creates, admin manages
+    // ───────────────────────────────────────────
+    match /featured_tickets/{ticketId} {
+      allow create: if request.auth != null
+                    && request.resource.data.ownerId == request.auth.uid;
+      allow read: if isAdmin()
+                  || isOwner(resource.data.ownerId);
+      allow update, delete: if isAdmin();
+    }
+
+    // ───────────────────────────────────────────
+    //  DEFAULT DENY — block everything else
+    // ───────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
