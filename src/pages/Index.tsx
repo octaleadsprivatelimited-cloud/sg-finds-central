@@ -454,7 +454,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         <div className="container mx-auto px-4">
           <div className="flex gap-0">
             {/* LEFT: Listings */}
-            <div className="min-w-0 w-[58%] border-r border-border pr-5">
+            <div className="min-w-0 w-[35%] border-r border-border pr-5">
               {category !== "All Categories" && (
                 <div className="flex items-center pt-4 pb-3">
                   <nav className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -537,7 +537,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
             </div>
 
             {/* RIGHT: Map */}
-            <div className="w-[42%]">
+            <div className="w-[65%]">
               <div className="sticky top-0 h-[calc(100vh-64px)]">
                 <MapView
                   listings={sortedFiltered}
