@@ -12,3 +12,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /seed
+Disallow: /reset-password
+
+Sitemap: https://nearbuy.sg/sitemap.xml
