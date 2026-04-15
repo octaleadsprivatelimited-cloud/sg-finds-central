@@ -79,13 +79,11 @@ const SignUp = () => {
         return;
       }
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      if (phone.trim()) {
-        await setDoc(doc(db, "users", result.user.uid), {
-          email,
-          phone: phone.trim(),
-          createdAt: serverTimestamp(),
-        });
-      }
+      await setDoc(doc(db, "users", result.user.uid), {
+        email,
+        ...(phone.trim() ? { phone: phone.trim() } : {}),
+        createdAt: serverTimestamp(),
+      });
       await sendEmailVerification(result.user, { url: window.location.origin });
       await auth.signOut();
       toast.success("Account created! Please check your email to verify your account before signing in.");
@@ -105,7 +103,12 @@ const SignUp = () => {
   const handleGoogleSignUp = async () => {
     setSocialLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      await setDoc(doc(db, "users", result.user.uid), {
+        email: result.user.email || "",
+        displayName: result.user.displayName || "",
+        createdAt: serverTimestamp(),
+      }, { merge: true });
       toast.success("Account created successfully!");
       navigate("/add-listing");
     } catch (err: any) {
