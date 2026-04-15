@@ -17,6 +17,7 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import AuthModal from "./AuthModal";
 import SearchWithSuggestions from "./SearchWithSuggestions";
+import nearbuyLogo from "@/assets/nearbuy-logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,10 +59,8 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl backdrop-saturate-150 border-b-2 border-foreground/8">
         <div className="container mx-auto px-4 h-14 flex items-center gap-3">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-xl font-extrabold tracking-tighter text-foreground uppercase" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-              Near<span className="text-primary border-b-2 border-primary pb-0.5">Buy</span>
-            </span>
+          <Link to="/" className="flex items-center shrink-0">
+            <img src={nearbuyLogo} alt="NearBuy" className="h-9 w-auto" />
           </Link>
 
           {/* Location Selector */}

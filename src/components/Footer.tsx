@@ -10,9 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block mb-3">
-              <span className="text-xl font-extrabold tracking-tighter text-foreground uppercase" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                Near<span className="text-primary border-b-2 border-primary pb-0.5">Buy</span>
-              </span>
+              <img src={nearbuyLogo} alt="NearBuy" className="h-9 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
               Singapore's trusted business directory. Discover, connect, and grow with local businesses.
