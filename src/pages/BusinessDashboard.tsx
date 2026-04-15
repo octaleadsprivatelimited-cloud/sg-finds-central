@@ -588,7 +588,6 @@ const BusinessDashboard = () => {
                     {[
                       { icon: <Plus className="w-5 h-5" />, label: "Add Listing", desc: "Create a new business", action: () => navigate("/add-listing"), color: "primary" },
                       { icon: <BookOpen className="w-5 h-5" />, label: "Catalogue", desc: "Manage products", action: () => setActiveTab("catalogue"), color: "success" },
-                      { icon: <BookOpen className="w-5 h-5" />, label: "Catalogue", desc: "Manage products", action: () => setActiveTab("catalogue"), color: "info" },
                       { icon: <Settings className="w-5 h-5" />, label: "Settings", desc: "Account & security", action: () => setActiveTab("settings"), color: "warning" },
                     ].map(item => (
                       <motion.button
