@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Linkedin, Mail } from "lucide-react";
 import { toSlug } from "@/lib/url-helpers";
+import nearbuyLogo from "@/assets/nearbuy-logo.png";
 
 const Footer = () => {
   return (
