@@ -5,7 +5,7 @@ import { processImageFiles, compressFileToBase64 } from "@/lib/image-utils";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp,
-  MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
+  MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Tag,
   CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image, BookOpen,
   LayoutDashboard, Inbox, Settings, LogOut, Search, Bell, ChevronRight,
   Store, Mail,
@@ -96,7 +96,7 @@ const statusConfig: Record<string, { variant: "approved" | "pending" | "rejected
   rejected: { variant: "rejected", label: "Rejected", dotColor: "bg-red-500" },
 };
 
-type DashTab = "dashboard" | "listings" | "enquiries" | "offers" | "catalogue" | "featured" | "hours" | "analytics" | "settings";
+type DashTab = "dashboard" | "listings" | "enquiries" | "catalogue" | "featured" | "hours" | "analytics" | "settings";
 
 /* ─── Sidebar Nav Item ─── */
 const SidebarItem = ({ icon: Icon, label, active, badge, onClick }: {
@@ -146,14 +146,6 @@ const BusinessDashboard = () => {
   });
   const unreadCount = Math.max(0, recentEnquiries.length - seenEnquiryCount);
 
-  // Offers state
-  const [offerListingId, setOfferListingId] = useState("");
-  const [offerTitle, setOfferTitle] = useState("");
-  const [offerDescription, setOfferDescription] = useState("");
-  const [offerDiscount, setOfferDiscount] = useState("");
-  const [offerValidUntil, setOfferValidUntil] = useState("");
-  const [offerCode, setOfferCode] = useState("");
-  const [offerSaving, setOfferSaving] = useState(false);
 
   // Catalogue state
   const [catListingId, setCatListingId] = useState("");
@@ -246,35 +238,6 @@ const BusinessDashboard = () => {
     setFeaturedTicketLoading(false);
   };
 
-  const addOfferToListing = async () => {
-    if (!offerListingId || !offerTitle || !offerDiscount) { toast.error("Please fill in offer title and discount"); return; }
-    setOfferSaving(true);
-    try {
-      const listing = listings.find(l => l.id === offerListingId);
-      const existingOffers: ListingOffer[] = listing?.offers || [];
-      const newOffer: ListingOffer = {
-        id: `offer-${Date.now()}`, title: offerTitle, description: offerDescription,
-        discount: offerDiscount, validUntil: offerValidUntil,
-        ...(offerCode ? { code: offerCode } : {}),
-      };
-      const updatedOffers = [...existingOffers, newOffer];
-      await updateDoc(doc(db, "listings", offerListingId), { offers: updatedOffers });
-      setListings(prev => prev.map(l => l.id === offerListingId ? { ...l, offers: updatedOffers } : l));
-      setOfferTitle(""); setOfferDescription(""); setOfferDiscount(""); setOfferValidUntil(""); setOfferCode("");
-      toast.success("Offer added successfully!");
-    } catch (err: any) { toast.error(err.message || "Failed to add offer"); }
-    setOfferSaving(false);
-  };
-
-  const removeOffer = async (listingId: string, offerId: string) => {
-    try {
-      const listing = listings.find(l => l.id === listingId);
-      const updatedOffers = (listing?.offers || []).filter(o => o.id !== offerId);
-      await updateDoc(doc(db, "listings", listingId), { offers: updatedOffers });
-      setListings(prev => prev.map(l => l.id === listingId ? { ...l, offers: updatedOffers } : l));
-      toast.success("Offer removed successfully.");
-    } catch (err: any) { toast.error(err.message || "Failed to remove offer"); }
-  };
 
   // Edit form state
   const [editName, setEditName] = useState("");
@@ -420,7 +383,7 @@ const BusinessDashboard = () => {
     { key: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { key: "listings", icon: Store, label: "My Listings", badge: stats.total },
     { key: "enquiries", icon: Inbox, label: "Enquiries", badge: recentEnquiries.length },
-    { key: "offers", icon: Gift, label: "Offers" },
+    
     { key: "catalogue", icon: BookOpen, label: "Catalogue" },
     { key: "featured", icon: Sparkles, label: "Featured" },
     { key: "hours", icon: Clock, label: "Hours" },
@@ -624,8 +587,7 @@ const BusinessDashboard = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
                       { icon: <Plus className="w-5 h-5" />, label: "Add Listing", desc: "Create a new business", action: () => navigate("/add-listing"), color: "primary" },
-                      { icon: <Gift className="w-5 h-5" />, label: "Create Offer", desc: "Promote with deals", action: () => setActiveTab("offers"), color: "success" },
-                      { icon: <BookOpen className="w-5 h-5" />, label: "Catalogue", desc: "Manage products", action: () => setActiveTab("catalogue"), color: "info" },
+                      { icon: <BookOpen className="w-5 h-5" />, label: "Catalogue", desc: "Manage products", action: () => setActiveTab("catalogue"), color: "success" },
                       { icon: <Settings className="w-5 h-5" />, label: "Settings", desc: "Account & security", action: () => setActiveTab("settings"), color: "warning" },
                     ].map(item => (
                       <motion.button
@@ -661,7 +623,7 @@ const BusinessDashboard = () => {
                           {[
                             { done: listings.length > 0, text: "Create your first listing" },
                             { done: listings.some(l => l.catalogueItems?.length), text: "Add catalogue items" },
-                            { done: listings.some(l => l.offers?.length), text: "Set up a special offer" },
+                            
                           ].map((step, i) => (
                             <div key={i} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium ${step.done ? "bg-[hsl(var(--success)/0.08)] text-[hsl(var(--success))]" : "bg-card border border-border/60 text-muted-foreground"}`}>
                               {step.done ? <Check className="w-3.5 h-3.5 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border-2 border-muted-foreground/30 shrink-0" />}
@@ -921,99 +883,6 @@ const BusinessDashboard = () => {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <h2 className="text-xl font-bold text-foreground tracking-tight mb-6">Enquiries</h2>
                 {user && <EnquiryInbox />}
-              </motion.div>
-            )}
-
-            {/* ─── OFFERS TAB ─── */}
-            {activeTab === "offers" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                <h2 className="text-xl font-bold text-foreground tracking-tight">Offers & Deals</h2>
-                <div className="rounded-2xl border border-border bg-card p-6">
-                  <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[hsl(var(--success)/0.1)] flex items-center justify-center">
-                      <Gift className="w-4 h-4 text-[hsl(var(--success))]" />
-                    </div>
-                    Create New Offer
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    Active offers appear in "Exclusive Deals This Week" on the homepage.
-                  </p>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Listing</Label>
-                      <Select value={offerListingId} onValueChange={setOfferListingId}>
-                        <SelectTrigger className="rounded-xl"><SelectValue placeholder="Choose a listing" /></SelectTrigger>
-                        <SelectContent>
-                          {listings.map(l => (
-                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Offer Title *</Label>
-                        <Input className="rounded-xl" value={offerTitle} onChange={e => setOfferTitle(e.target.value)} placeholder="e.g. Grand Opening Special" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Discount *</Label>
-                        <Input className="rounded-xl" value={offerDiscount} onChange={e => setOfferDiscount(e.target.value)} placeholder="e.g. 20% OFF" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
-                      <Textarea className="rounded-xl" value={offerDescription} onChange={e => setOfferDescription(e.target.value)} placeholder="Describe your offer..." rows={2} />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Valid Until</Label>
-                        <Input className="rounded-xl" type="date" value={offerValidUntil} onChange={e => setOfferValidUntil(e.target.value)} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Promo Code (optional)</Label>
-                        <Input className="rounded-xl" value={offerCode} onChange={e => setOfferCode(e.target.value)} placeholder="e.g. SAVE20" />
-                      </div>
-                    </div>
-                    <Button onClick={addOfferToListing} disabled={offerSaving || !offerListingId} className="rounded-xl">
-                      {offerSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      <Gift className="w-4 h-4 mr-2" />Add Offer
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-border bg-card p-6">
-                  <h3 className="font-semibold text-foreground mb-4">Active Offers</h3>
-                  {listings.filter(l => l.offers && l.offers.length > 0).length === 0 ? (
-                    <div className="text-center py-12">
-                      <Tag className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No offers yet</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-5">
-                      {listings.filter(l => l.offers && l.offers.length > 0).map(listing => (
-                        <div key={listing.id}>
-                          <p className="text-sm font-semibold text-foreground mb-2">{listing.name}</p>
-                          <div className="space-y-2">
-                            {listing.offers!.map(offer => (
-                              <div key={offer.id} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card/50 hover:bg-muted/30 transition-colors">
-                                <div className="flex items-center gap-3">
-                                  <Badge className="bg-[hsl(var(--success)/0.1)] text-[hsl(var(--success))] border-transparent font-bold">{offer.discount}</Badge>
-                                  <div>
-                                    <p className="text-sm font-semibold text-foreground">{offer.title}</p>
-                                    {offer.description && <p className="text-xs text-muted-foreground">{offer.description}</p>}
-                                  </div>
-                                </div>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive rounded-lg" onClick={() => removeOffer(listing.id, offer.id)}>
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
               </motion.div>
             )}
             {/* ─── CATALOGUE TAB ─── */}
