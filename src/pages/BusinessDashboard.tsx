@@ -5,7 +5,7 @@ import { processImageFiles, compressFileToBase64 } from "@/lib/image-utils";
 import {
   Building2, Plus, Edit3, Eye, Trash2, Clock, Check, X, BarChart3,
   ExternalLink, MapPin, Phone, Globe, ArrowLeft, TrendingUp,
-  MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Gift, Tag,
+  MessageSquare, MoreHorizontal, FileText, Loader2, Sparkles, Tag,
   CalendarDays, RefreshCw, ArrowUpRight, Activity, Users, Zap, Upload, Image, BookOpen,
   LayoutDashboard, Inbox, Settings, LogOut, Search, Bell, ChevronRight,
   Store, Mail,
