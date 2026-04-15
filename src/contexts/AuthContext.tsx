@@ -6,7 +6,7 @@ import { auth, db } from "@/lib/firebase";
 export type UserRole = "superadmin" | "admin" | "business_owner" | "user";
 
 const DEV_AUTH_KEY = "dev_auth_role";
-const DEV_BYPASS_ENABLED = import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
+const DEV_BYPASS_ENABLED = import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
 
 interface AuthContextType {
   user: User | null;

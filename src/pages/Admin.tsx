@@ -241,8 +241,8 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    if (!authLoading && (!user || !isSuperAdmin)) { navigate("/"); return; }
-    fetchData();
+    if (!authLoading && (!user || !isSuperAdmin)) { navigate("/", { replace: true }); return; }
+    if (!authLoading && user && isSuperAdmin) fetchData();
   }, [authLoading, user, isSuperAdmin]);
 
   const fetchData = async () => {
