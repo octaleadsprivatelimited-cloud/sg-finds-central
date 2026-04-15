@@ -205,13 +205,18 @@ const SignUp = () => {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-medium">Mobile Number</Label>
-              <Input
-                type="tel"
-                placeholder="+65 XXXX XXXX"
-                className="h-10 rounded-lg text-sm"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
+              <div className="flex">
+                <span className="inline-flex items-center px-3 h-10 rounded-l-lg border-2 border-r-0 border-border bg-muted text-sm font-medium text-muted-foreground select-none">+65</span>
+                <Input
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="8888 8888"
+                  className="h-10 rounded-l-none rounded-r-lg text-sm"
+                  value={phone}
+                  maxLength={8}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">

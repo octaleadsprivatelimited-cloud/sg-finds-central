@@ -81,7 +81,10 @@ const BusinessEnquiryForm = ({ listingId, listingName, ownerId }: BusinessEnquir
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Mobile Number *</Label>
-          <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+65 xxxx xxxx" className="h-9 text-sm" maxLength={20} />
+          <div className="flex">
+            <span className="inline-flex items-center px-2.5 h-9 rounded-l-lg border-2 border-r-0 border-border bg-muted text-xs font-medium text-muted-foreground select-none">+65</span>
+            <Input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 8))} placeholder="8888 8888" className="h-9 text-sm rounded-l-none rounded-r-lg" maxLength={8} inputMode="numeric" />
+          </div>
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Email</Label>

@@ -1180,7 +1180,10 @@ const AddListing = () => {
                     <div className="space-y-3 p-4 rounded-xl border border-border bg-secondary/20">
                       <div className="space-y-2">
                         <Label>WhatsApp Number *</Label>
-                        <Input value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} placeholder="+65 9123 4567" />
+                        <div className="flex">
+                          <span className="inline-flex items-center px-3 h-10 rounded-l-lg border-2 border-r-0 border-border bg-muted text-sm font-medium text-muted-foreground select-none">+65</span>
+                          <Input value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value.replace(/\D/g, "").slice(0, 8))} placeholder="9123 4567" className="rounded-l-none rounded-r-lg" maxLength={8} inputMode="numeric" />
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label>Pre-filled message (optional)</Label>
