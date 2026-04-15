@@ -22,6 +22,7 @@ import CityCategory from "./pages/CityCategory";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import SeedFirestore from "./pages/SeedFirestore";
+import GenerateSitemap from "./pages/GenerateSitemap";
 import SignUp from "./pages/SignUp";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
