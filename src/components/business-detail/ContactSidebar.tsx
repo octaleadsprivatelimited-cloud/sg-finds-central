@@ -64,21 +64,21 @@ const ContactSidebar = ({ listing }: ContactSidebarProps) => {
               <span className="text-sm font-medium text-emerald-600 group-hover:text-emerald-700 transition-colors">WhatsApp</span>
             </button>
           )}
-          {listing.email && (
-            <a href={`mailto:${listing.email}`} className="flex items-center gap-3.5 group">
+          {displayEmail && (
+            <a href={`mailto:${displayEmail}`} className="flex items-center gap-3.5 group">
               <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
                 <Mail className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
-              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">Send Enquiry</span>
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">{displayEmail}</span>
             </a>
           )}
-          {listing.website && (
-            <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3.5 group">
+          {displayWebsite && (
+            <a href={displayWebsite} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3.5 group">
               <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
                 <Globe className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
               <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                {listing.website.replace(/https?:\/\/(www\.)?/, "")}
+                {displayWebsite.replace(/https?:\/\/(www\.)?/, "")}
               </span>
               <ExternalLink className="w-3 h-3 text-muted-foreground shrink-0" />
             </a>
