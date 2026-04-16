@@ -203,21 +203,26 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
     if (listing.phone) window.open(`tel:${listing.phone}`, "_self");
   };
 
+  const displayPhone = listing.phone || listing.whatsapp || listing.contactDetails?.whatsapp;
+
   return (
     <div
       data-listing-id={listing.id}
-      className={`rounded-xl bg-card border-2 cursor-pointer transition-all duration-200 ${
+      className={`group relative rounded-2xl bg-white border cursor-pointer transition-all duration-300 overflow-hidden ${
         highlighted
-          ? "border-primary/40 retro-shadow-primary scale-[1.01]"
-          : "border-border/60 retro-shadow-sm"
-      } hover:retro-shadow hover:-translate-y-0.5 mb-2 last:mb-0`}
+          ? "border-primary/40 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)]"
+          : "border-border/50 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+      } hover:border-primary/30 hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 mb-3 last:mb-0`}
       onClick={handleClick}
       onMouseEnter={() => onHover?.(listing.id)}
       onMouseLeave={() => onHover?.(null)}
     >
+      {/* Soft gradient accent strip */}
+      <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradient} opacity-60`} />
+
       {/* ── MOBILE ── */}
-      <div className={`flex gap-3 p-3.5 md:hidden rounded-2xl border-l-[3px] ${catBorder}`}>
-        <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-secondary">
+      <div className="flex gap-3 p-4 md:hidden">
+        <div className="w-14 h-14 shrink-0 rounded-2xl overflow-hidden bg-secondary/50 ring-1 ring-border/40">
           <img
             src={listing.logoUrl || listing.coverImage || getPlaceholderLogo(listing.id || listing.name)}
             alt={listing.name}
@@ -226,32 +231,30 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground text-sm leading-tight truncate">{listing.name}</h3>
-          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-semibold text-foreground text-[15px] leading-tight truncate">{listing.name}</h3>
+            {listing.verified && <span className="text-[10px] shrink-0">✓</span>}
+          </div>
+          <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+            <MapPin className="w-3 h-3" />
+            <span className="truncate">{listing.district}</span>
             {distanceKm != null && (
-              <span>{distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}</span>
+              <span className="text-muted-foreground/60">· {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}</span>
             )}
-            {isOpen === true && <span className="text-[hsl(var(--success))] font-semibold">• Open</span>}
-            {isOpen === false && <span className="text-destructive font-medium">• Closed</span>}
           </div>
 
-          {listing.subcategoryList && listing.subcategoryList.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1">
-              {listing.subcategoryList.slice(0, 3).map((sub) => (
-                <span key={sub} className="px-1.5 py-0.5 rounded-full bg-secondary text-[10px] font-medium text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
-              ))}
-              {listing.subcategoryList.length > 3 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-secondary text-[10px] font-medium text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
-              )}
-            </div>
-          )}
+          <div className="flex items-center justify-between mt-2.5">
+            <span className="text-xs font-medium text-primary">{listing.category}</span>
+            {isOpen === true && <span className="text-[10px] font-semibold text-[hsl(var(--success))] bg-[hsl(var(--success))]/10 px-2 py-0.5 rounded-full">Open</span>}
+            {isOpen === false && <span className="text-[10px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">Closed</span>}
+          </div>
 
-          <div className="flex items-center gap-2 mt-2">
-            {listing.phone && (
+          <div className="flex items-center gap-1.5 mt-2.5">
+            {displayPhone && (
               <a
-                href={`tel:${listing.phone}`}
+                href={`tel:${displayPhone}`}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-[11px] font-semibold text-primary-foreground active:scale-95 transition-transform"
+                className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-primary/5 hover:bg-primary/10 text-[11px] font-semibold text-primary active:scale-95 transition-all"
               >
                 <Phone className="w-3 h-3" />Call
               </a>
@@ -262,9 +265,9 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border text-[11px] font-semibold text-foreground active:scale-95 transition-transform"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[11px] font-semibold text-[#128C7E] active:scale-95 transition-all"
               >
-                <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 rounded-sm" />WhatsApp
+                <img src={whatsappLogo} alt="" className="w-3.5 h-3.5" />Chat
               </a>
             )}
             {listing.lat && listing.lng && (
@@ -273,9 +276,9 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary text-[11px] font-semibold text-foreground active:scale-95 transition-transform"
+                className="inline-flex items-center justify-center w-9 h-8 rounded-xl bg-secondary/60 hover:bg-secondary text-foreground active:scale-95 transition-all"
               >
-                <Navigation className="w-3 h-3" />Map
+                <Navigation className="w-3.5 h-3.5" />
               </a>
             )}
           </div>
@@ -283,9 +286,9 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       </div>
 
       {/* ── DESKTOP ── */}
-      <div className="hidden md:block p-4">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
+      <div className="hidden md:block px-5 py-4">
+        <div className="flex items-start gap-4">
+          <div className="w-14 h-14 shrink-0 rounded-2xl overflow-hidden bg-secondary/50 ring-1 ring-border/40">
             <img
               src={listing.logoUrl || listing.coverImage || getPlaceholderLogo(listing.id || listing.name)}
               alt={listing.name}
@@ -294,36 +297,46 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm text-foreground truncate">{listing.name}</p>
-            <p className="text-xs text-muted-foreground mt-0.5 truncate">
-              <MapPin className="w-3 h-3 inline mr-0.5 -mt-0.5" />
-              {listing.district}
-              {isOpen === true && <span className="text-[hsl(var(--success))] ml-1.5">• Open</span>}
-              {isOpen === false && <span className="text-destructive ml-1.5">• {nextOpenInfo || "Closed"}</span>}
-            </p>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-[15px] text-foreground truncate">{listing.name}</h3>
+              {listing.verified && (
+                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[hsl(var(--success))]/15 text-[hsl(var(--success))] text-[10px] font-bold">✓</span>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 mt-1 text-xs text-muted-foreground">
+              <MapPin className="w-3.5 h-3.5" />
+              <span>{listing.district}</span>
+              {distanceKm != null && (
+                <>
+                  <span className="text-muted-foreground/40">·</span>
+                  <span className="font-medium">{distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}</span>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 mt-2.5">
+              <span className="inline-flex items-center text-xs font-semibold text-primary">
+                {listing.category}
+              </span>
+              {isOpen === true && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[hsl(var(--success))]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--success))]" />Open now
+                </span>
+              )}
+              {isOpen === false && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                  <span className="w-1.5 h-1.5 rounded-full bg-destructive/70" />{nextOpenInfo || "Closed"}
+                </span>
+              )}
+            </div>
           </div>
 
-          {distanceKm != null && (
-            <span className="shrink-0 text-xs font-semibold text-primary bg-primary/5 rounded-full px-2.5 py-0.5">
-              {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}
-            </span>
-          )}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-primary/8 text-primary">{listing.category}</span>
-          {listing.subcategoryList && listing.subcategoryList.slice(0, 3).map((sub) => (
-            <span key={sub} className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-secondary text-muted-foreground capitalize">{sub.replace(/-/g, " ")}</span>
-          ))}
-          {listing.subcategoryList && listing.subcategoryList.length > 3 && (
-            <span className="text-[11px] font-medium text-muted-foreground">+{listing.subcategoryList.length - 3}</span>
-          )}
-          {listing.verified && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[hsl(var(--success))]/8 text-[hsl(var(--success))]">✓ Verified</span>
-          )}
-          {listing.phone && (
-            <button onClick={handlePhoneClick} className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
-              <Phone className="w-3 h-3" />{listing.phone}
+          {displayPhone && (
+            <button
+              onClick={handlePhoneClick}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 hover:bg-primary/10 text-xs font-semibold text-primary transition-all"
+            >
+              <Phone className="w-3.5 h-3.5" />{displayPhone}
             </button>
           )}
         </div>
