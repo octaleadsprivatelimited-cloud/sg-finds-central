@@ -344,8 +344,12 @@ const Admin = () => {
     setEditingListing(listing);
     setAdminEditData({
       name: listing.name, category: listing.category, district: listing.district,
-      address: listing.address, phone: listing.phone || "", email: listing.email || "",
-      website: listing.website || "", description: listing.description || "",
+      address: listing.address,
+      phone: listing.phone || listing.contactDetails?.whatsapp || "",
+      email: listing.email || listing.contactEmail || "",
+      ownerEmail: listing.ownerEmail || "",
+      website: listing.website || listing.contactDetails?.website || "",
+      description: listing.description || "",
       imageUrls: listing.imageUrls || [], logoUrl: listing.logoUrl || "", status: listing.status,
     });
   };
@@ -953,11 +957,18 @@ const Admin = () => {
                                 )}
                               </div>
                               <p className="text-xs text-[hsl(220,10%,55%)] truncate">{listing.address}</p>
-                              <div className="flex items-center gap-3 mt-1.5 text-[11px] text-[hsl(220,10%,55%)]">
+                              <div className="flex items-center gap-3 mt-1.5 text-[11px] text-[hsl(220,10%,55%)] flex-wrap">
                                 <span className="font-medium">{listing.category}</span>
                                 <span className="text-[hsl(220,15%,85%)]">·</span>
                                 <span>{listing.district}</span>
-                                {listing.phone && <><span className="text-[hsl(220,15%,85%)]">·</span><span>{listing.phone}</span></>}
+                                {(listing.phone || listing.contactDetails?.whatsapp) && (
+                                  <><span className="text-[hsl(220,15%,85%)]">·</span>
+                                  <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{listing.phone || listing.contactDetails?.whatsapp}</span></>
+                                )}
+                                {(listing.ownerEmail || listing.contactEmail || listing.email) && (
+                                  <><span className="text-[hsl(220,15%,85%)]">·</span>
+                                  <span className="flex items-center gap-1 truncate max-w-[180px]"><Mail className="w-3 h-3" />{listing.ownerEmail || listing.contactEmail || listing.email}</span></>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -1708,6 +1719,12 @@ const Admin = () => {
                   <Input value={adminEditData.email || ""} onChange={e => setAdminEditData(prev => ({ ...prev, email: e.target.value }))} className="rounded-lg border-[hsl(220,15%,88%)]" />
                 </div>
               </div>
+              {adminEditData.ownerEmail && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-[hsl(220,15%,15%)]">Owner Registration Email</Label>
+                  <Input value={adminEditData.ownerEmail} readOnly className="rounded-lg border-[hsl(220,15%,88%)] bg-[hsl(220,20%,97%)] text-[hsl(220,10%,45%)]" />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium text-[hsl(220,15%,15%)]">Website</Label>
                 <Input value={adminEditData.website || ""} onChange={e => setAdminEditData(prev => ({ ...prev, website: e.target.value }))} className="rounded-lg border-[hsl(220,15%,88%)]" />
