@@ -344,8 +344,12 @@ const Admin = () => {
     setEditingListing(listing);
     setAdminEditData({
       name: listing.name, category: listing.category, district: listing.district,
-      address: listing.address, phone: listing.phone || "", email: listing.email || "",
-      website: listing.website || "", description: listing.description || "",
+      address: listing.address,
+      phone: listing.phone || listing.contactDetails?.whatsapp || "",
+      email: listing.email || listing.contactEmail || "",
+      ownerEmail: listing.ownerEmail || "",
+      website: listing.website || listing.contactDetails?.website || "",
+      description: listing.description || "",
       imageUrls: listing.imageUrls || [], logoUrl: listing.logoUrl || "", status: listing.status,
     });
   };
