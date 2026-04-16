@@ -155,7 +155,12 @@ const Admin = () => {
   const sendBrowserNotif = useCallback((title: string, body: string) => {
     if (typeof Notification !== "undefined" && Notification.permission === "granted") {
       try {
-        new Notification(title, { body, icon: "/favicon.ico", badge: "/favicon.ico", tag: "admin-notif" });
+        new Notification(title, {
+          body,
+          icon: `${import.meta.env.BASE_URL}favicon.png`,
+          badge: `${import.meta.env.BASE_URL}favicon.png`,
+          tag: "admin-notif",
+        });
       } catch {}
     }
   }, []);

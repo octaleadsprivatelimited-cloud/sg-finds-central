@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2, Database, CheckCircle2, Trash2 } from "lucide-react";
 import type { Listing } from "@/components/ListingCard";
+import { Link } from "react-router-dom";
 
 const SEED_LISTINGS: Omit<Listing, "id">[] = [
   // Food & Beverage
@@ -150,7 +151,7 @@ const SeedFirestore = () => {
             <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4 mb-6">
               <CheckCircle2 className="w-5 h-5 text-primary" />
               <p className="text-sm text-foreground">
-                Data seeded successfully! Go to the <a href="/" className="underline font-medium text-primary">homepage</a> to see it live.
+                Data seeded successfully! Go to the <Link to="/" className="underline font-medium text-primary">homepage</Link> to see it live.
               </p>
             </div>
           )}

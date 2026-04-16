@@ -30,6 +30,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const AppContent = () => {
   const location = useLocation();
@@ -96,7 +97,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename={routerBasename}>
           <SearchProvider>
             <AppContent />
           </SearchProvider>
