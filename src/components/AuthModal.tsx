@@ -22,7 +22,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type AuthMode = "login" | "signup" | "forgot";
+type AuthMode = "login" | "forgot";
 const googleProvider = new GoogleAuthProvider();
 
 const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean }>(
@@ -48,6 +48,7 @@ const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean 
 SocialIcon.displayName = "SocialIcon";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
+  const navigate = useNavigate();
   const { user, devLogin } = useAuth();
   const DEV_BYPASS_ENABLED = import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
   const [mode, setMode] = useState<AuthMode>("login");
@@ -145,7 +146,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       <DialogContent className="sm:max-w-md gap-3" aria-describedby="auth-modal-desc">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
+            {mode === "forgot" ? "Reset password" : "Welcome back"}
           </DialogTitle>
           <p id="auth-modal-desc" className="text-xs sm:text-sm text-muted-foreground">
             {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your business listings"}
@@ -209,19 +210,19 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </div>
             <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={loading}>
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {mode === "login" ? "Sign In" : "Sign Up"}
+              Sign In
             </Button>
           </form>
         )}
 
         {mode !== "forgot" && (
           <p className="text-center text-xs sm:text-sm text-muted-foreground">
-            {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+            Don't have an account?{" "}
             <button
               className="text-primary font-medium hover:underline"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
+              onClick={() => { onClose(); navigate("/signup"); }}
             >
-              {mode === "login" ? "Sign up" : "Sign in"}
+              Sign up
             </button>
           </p>
         )}
