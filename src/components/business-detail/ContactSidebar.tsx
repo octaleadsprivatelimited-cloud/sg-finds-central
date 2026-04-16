@@ -6,6 +6,8 @@ interface ContactSidebarProps {
   listing: {
     phone?: string;
     email?: string;
+    ownerEmail?: string;
+    contactEmail?: string;
     website?: string;
     address: string;
     uen: string;
@@ -13,6 +15,7 @@ interface ContactSidebarProps {
     contactDetails?: {
       whatsapp?: string;
       whatsappMessage?: string;
+      website?: string;
     };
   };
 }
@@ -27,8 +30,10 @@ const ContactSidebar = ({ listing }: ContactSidebarProps) => {
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(listing.address)}`, "_blank");
   };
 
-  const whatsappNumber = listing.contactDetails?.whatsapp || listing.whatsapp;
+  const whatsappNumber = listing.contactDetails?.whatsapp || listing.whatsapp || listing.phone;
   const whatsappMessage = listing.contactDetails?.whatsappMessage || "";
+  const displayEmail = listing.email || listing.contactEmail || listing.ownerEmail;
+  const displayWebsite = listing.website || listing.contactDetails?.website;
 
   const openWhatsApp = () => {
     if (!whatsappNumber) return;
