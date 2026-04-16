@@ -50,7 +50,7 @@ const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean 
 SocialIcon.displayName = "SocialIcon";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
-  const { user, role, loading, devLogin } = useAuth();
+  const { user, role, loading: authLoading, devLogin } = useAuth();
   const navigate = useNavigate();
   const DEV_BYPASS_ENABLED = import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
   const [mode, setMode] = useState<AuthMode>("login");
