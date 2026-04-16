@@ -22,20 +22,17 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == ownerId;
     }
 
-    // ── SUPERADMINS ──
     match /superadmins/{uid} {
       allow read: if isSignedIn() && request.auth.uid == uid;
       allow write: if false;
     }
 
-    // ── ADMINS ──
     match /admins/{uid} {
       allow read: if isSignedIn() && (request.auth.uid == uid || isSuperAdmin());
       allow create, delete: if isSuperAdmin();
       allow update: if false;
     }
 
-    // ── USERS ──
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId);
@@ -43,7 +40,6 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
 
-    // ── LISTINGS ──
     match /listings/{listingId} {
       allow read: if resource.data.status == "approved"
                   || (isSignedIn() && resource.data.ownerId == request.auth.uid)
@@ -54,24 +50,29 @@ service cloud.firestore {
                     && request.resource.data.status == "pending_approval";
 
       allow update: if isAdmin()
-                    || (isSignedIn()
-                        && resource.data.ownerId == request.auth.uid
-                        && request.resource.data.ownerId == resource.data.ownerId
-                        && (request.resource.data.status == "pending_approval"
-                            || request.resource.data.status == resource.data.status))
-                    || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount']));
+                    || (
+                      isSignedIn()
+                      && resource.data.ownerId == request.auth.uid
+                      && request.resource.data.ownerId == resource.data.ownerId
+                      && (
+                        request.resource.data.status == "pending_approval"
+                        || request.resource.data.status == resource.data.status
+                      )
+                    )
+                    || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount']);
 
       allow delete: if isAdmin();
 
       match /catalogue/{itemId} {
         allow read: if true;
         allow create, update, delete: if isAdmin()
-                      || (isSignedIn()
-                          && get(/databases/$(database)/documents/listings/$(listingId)).data.ownerId == request.auth.uid);
+                                      || (
+                                        isSignedIn()
+                                        && get(/databases/$(database)/documents/listings/$(listingId)).data.ownerId == request.auth.uid
+                                      );
       }
     }
 
-    // ── ENQUIRIES ──
     match /enquiries/{enquiryId} {
       allow create: if request.resource.data.keys().hasAll(['listingId', 'name', 'phone', 'status'])
                     && request.resource.data.status == "unread"
@@ -89,19 +90,16 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ── VIEW_LOGS ──
     match /view_logs/{logId} {
       allow create: if true;
       allow read: if isAdmin();
       allow update, delete: if false;
     }
 
-    // ── LISTING_VIEWERS ──
     match /listing_viewers/{viewerId} {
       allow read, create, update, delete: if true;
     }
 
-    // ── CONTACT_MESSAGES ──
     match /contact_messages/{msgId} {
       allow create: if request.resource.data.name is string
                     && request.resource.data.name.size() <= 100
@@ -109,27 +107,27 @@ service cloud.firestore {
                     && request.resource.data.email.size() <= 255
                     && request.resource.data.message is string
                     && request.resource.data.message.size() <= 2000;
+
       allow read: if isAdmin();
       allow update, delete: if isSuperAdmin();
     }
 
-    // ── FEATURED_TICKETS ──
     match /featured_tickets/{ticketId} {
       allow create: if isSignedIn()
                     && request.resource.data.ownerId == request.auth.uid;
+
       allow read: if isAdmin()
                   || (isSignedIn() && resource.data.ownerId == request.auth.uid);
+
       allow update, delete: if isAdmin();
     }
 
-    // ── NOTIFICATIONS ──
     match /notifications/{notificationId} {
       allow create: if isAdmin();
       allow read: if isAdmin();
       allow update, delete: if isSuperAdmin();
     }
 
-    // ── DEFAULT DENY ──
     match /{document=**} {
       allow read, write: if false;
     }
