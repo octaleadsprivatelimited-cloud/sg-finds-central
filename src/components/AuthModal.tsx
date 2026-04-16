@@ -107,7 +107,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         setLoading(false);
         return;
       }
-      onClose();
+      setPendingRedirect(true);
     } catch (err: any) {
       const code = err?.code || "";
       const friendlyMessages: Record<string, string> = {
@@ -149,7 +149,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       const provider = googleProvider;
       await signInWithPopup(auth, provider);
       toast.success(`Signed in with ${providerName.charAt(0).toUpperCase() + providerName.slice(1)}`);
-      onClose();
+      setPendingRedirect(true);
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         toast.error(err.message || `${providerName} sign-in failed`);
