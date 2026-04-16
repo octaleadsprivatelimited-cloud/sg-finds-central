@@ -168,7 +168,16 @@ const BusinessDashboard = () => {
         const q = query(collection(db, "listings"), where("ownerId", "==", user.uid));
         const snap = await getDocs(q);
         if (!snap.empty) {
-          setListings(snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing)));
+          const loadedListings = snap.docs.map(d => ({ id: d.id, ...d.data() } as Listing));
+          setListings(loadedListings);
+          
+          // Show welcome back toast on first load with business name
+          const hasShownWelcome = sessionStorage.getItem("dashboard_welcome_shown");
+          if (!hasShownWelcome && loadedListings.length > 0) {
+            const firstBusiness = loadedListings.find(l => l.status === "approved") || loadedListings[0];
+            toast.success(`Welcome back, ${firstBusiness.name}! 🎉`);
+            sessionStorage.setItem("dashboard_welcome_shown", "true");
+          }
         }
       } catch {}
       setLoadingListings(false);
