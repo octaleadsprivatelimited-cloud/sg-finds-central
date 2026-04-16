@@ -1719,6 +1719,12 @@ const Admin = () => {
                   <Input value={adminEditData.email || ""} onChange={e => setAdminEditData(prev => ({ ...prev, email: e.target.value }))} className="rounded-lg border-[hsl(220,15%,88%)]" />
                 </div>
               </div>
+              {adminEditData.ownerEmail && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-[hsl(220,15%,15%)]">Owner Registration Email</Label>
+                  <Input value={adminEditData.ownerEmail} readOnly className="rounded-lg border-[hsl(220,15%,88%)] bg-[hsl(220,20%,97%)] text-[hsl(220,10%,45%)]" />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium text-[hsl(220,15%,15%)]">Website</Label>
                 <Input value={adminEditData.website || ""} onChange={e => setAdminEditData(prev => ({ ...prev, website: e.target.value }))} className="rounded-lg border-[hsl(220,15%,88%)]" />
