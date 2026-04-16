@@ -1,6 +1,6 @@
 // Business Notification Email Templates
 // These templates generate HTML emails ready to be sent via any email provider.
-// Enable Lovable Cloud to activate email sending.
+// Hook them up to your email delivery provider to send them.
 
 export { brand, baseStyles, wrapEmail } from "./base-layout";
 
@@ -12,5 +12,4 @@ export { listingExpirySubject, listingExpiryHtml, type ListingExpiryData } from 
 export { imageApprovedSubject, imageApprovedHtml, type ImageApprovedData } from "./image-approved";
 export { imageRejectedSubject, imageRejectedHtml, type ImageRejectedData } from "./image-rejected";
 
-// Auth email templates will be scaffolded when Lovable Cloud is enabled.
-// They include: signup confirmation, password recovery, magic link, invite, and email change.
+// Additional auth email templates can be added here if needed.
