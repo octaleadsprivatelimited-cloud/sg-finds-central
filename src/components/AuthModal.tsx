@@ -9,9 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { auth } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
