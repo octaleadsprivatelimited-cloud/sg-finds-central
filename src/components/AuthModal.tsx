@@ -66,29 +66,16 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const handleEmailAuth = async () => {
     setLoading(true);
     try {
-      if (mode === "login") {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        if (!result.user.emailVerified) {
-          await sendEmailVerification(result.user, {
-            url: window.location.origin,
-          });
-          await auth.signOut();
-          toast.error("Email not verified. A new verification link has been sent to your inbox.");
-          setLoading(false);
-          return;
-        }
-        toast.success("Signed in successfully");
-      } else {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        await sendEmailVerification(result.user, {
-          url: window.location.origin,
-        });
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      if (!result.user.emailVerified) {
+        const { sendEmailVerification } = await import("firebase/auth");
+        await sendEmailVerification(result.user, { url: window.location.origin });
         await auth.signOut();
-        toast.success("Account created! Please check your email and verify your account before signing in.");
-        setMode("login");
+        toast.error("Email not verified. A new verification link has been sent to your inbox.");
         setLoading(false);
         return;
       }
+      toast.success("Signed in successfully");
       onClose();
     } catch (err: any) {
       const code = err?.code || "";
@@ -96,8 +83,6 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         "auth/wrong-password": "Incorrect password. Please try again.",
         "auth/invalid-credential": "Incorrect email or password. Please try again.",
         "auth/user-not-found": "No account found with this email.",
-        "auth/email-already-in-use": "An account with this email already exists.",
-        "auth/weak-password": "Password is too weak. Use at least 6 characters.",
         "auth/invalid-email": "Please enter a valid email address.",
         "auth/too-many-requests": "Too many attempts. Please try again later.",
         "auth/network-request-failed": "Network error. Please check your connection.",
