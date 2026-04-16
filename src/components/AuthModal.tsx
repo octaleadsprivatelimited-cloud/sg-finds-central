@@ -1,5 +1,4 @@
 import { useState, forwardRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,9 @@ import { Separator } from "@/components/ui/separator";
 import { auth } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
@@ -22,7 +23,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type AuthMode = "login" | "forgot";
+type AuthMode = "login" | "signup" | "forgot";
 const googleProvider = new GoogleAuthProvider();
 
 const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean }>(
@@ -48,7 +49,6 @@ const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean 
 SocialIcon.displayName = "SocialIcon";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
-  const navigate = useNavigate();
   const { user, devLogin } = useAuth();
   const DEV_BYPASS_ENABLED = import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
   const [mode, setMode] = useState<AuthMode>("login");
@@ -66,16 +66,29 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const handleEmailAuth = async () => {
     setLoading(true);
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      if (!result.user.emailVerified) {
-        const { sendEmailVerification } = await import("firebase/auth");
-        await sendEmailVerification(result.user, { url: window.location.origin });
+      if (mode === "login") {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        if (!result.user.emailVerified) {
+          await sendEmailVerification(result.user, {
+            url: window.location.origin,
+          });
+          await auth.signOut();
+          toast.error("Email not verified. A new verification link has been sent to your inbox.");
+          setLoading(false);
+          return;
+        }
+        toast.success("Signed in successfully");
+      } else {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(result.user, {
+          url: window.location.origin,
+        });
         await auth.signOut();
-        toast.error("Email not verified. A new verification link has been sent to your inbox.");
+        toast.success("Account created! Please check your email and verify your account before signing in.");
+        setMode("login");
         setLoading(false);
         return;
       }
-      toast.success("Signed in successfully");
       onClose();
     } catch (err: any) {
       const code = err?.code || "";
@@ -83,6 +96,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         "auth/wrong-password": "Incorrect password. Please try again.",
         "auth/invalid-credential": "Incorrect email or password. Please try again.",
         "auth/user-not-found": "No account found with this email.",
+        "auth/email-already-in-use": "An account with this email already exists.",
+        "auth/weak-password": "Password is too weak. Use at least 6 characters.",
         "auth/invalid-email": "Please enter a valid email address.",
         "auth/too-many-requests": "Too many attempts. Please try again later.",
         "auth/network-request-failed": "Network error. Please check your connection.",
@@ -131,7 +146,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       <DialogContent className="sm:max-w-md gap-3" aria-describedby="auth-modal-desc">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            {mode === "forgot" ? "Reset password" : "Welcome back"}
+            {mode === "forgot" ? "Reset password" : mode === "login" ? "Welcome back" : "Create account"}
           </DialogTitle>
           <p id="auth-modal-desc" className="text-xs sm:text-sm text-muted-foreground">
             {mode === "forgot" ? "Enter your email to receive a reset link" : "Sign in to manage your business listings"}
@@ -195,19 +210,19 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </div>
             <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={loading}>
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Sign In
+              {mode === "login" ? "Sign In" : "Sign Up"}
             </Button>
           </form>
         )}
 
         {mode !== "forgot" && (
           <p className="text-center text-xs sm:text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            {mode === "login" ? "Don't have an account? " : "Already have an account? "}
             <button
               className="text-primary font-medium hover:underline"
-              onClick={() => { onClose(); navigate("/signup"); }}
+              onClick={() => setMode(mode === "login" ? "signup" : "login")}
             >
-              Sign up
+              {mode === "login" ? "Sign up" : "Sign in"}
             </button>
           </p>
         )}
