@@ -1,11 +1,12 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -49,7 +50,8 @@ const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean 
 SocialIcon.displayName = "SocialIcon";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
-  const { user, devLogin } = useAuth();
+  const { user, role, loading, devLogin } = useAuth();
+  const navigate = useNavigate();
   const DEV_BYPASS_ENABLED = import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
