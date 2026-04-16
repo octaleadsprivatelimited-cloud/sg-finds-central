@@ -22,9 +22,15 @@ const BusinessEnquiryForm = ({ listingId, listingName, ownerId }: BusinessEnquir
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const checkLimit = useRateLimit(3, 60000);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { allowed, waitSec } = checkLimit();
+    if (!allowed) {
+      toast.error(`Too many attempts. Please wait ${waitSec}s before trying again.`);
+      return;
+    }
     if (!name.trim() || !phone.trim()) {
       toast.error("Please fill in name and mobile number");
       return;
