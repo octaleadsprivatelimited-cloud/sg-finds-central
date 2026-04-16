@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRateLimit } from "@/hooks/useRateLimit";
 import { Mail, MapPin, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +16,15 @@ const Contact = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const checkLimit = useRateLimit(3, 60000);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { allowed, waitSec } = checkLimit();
+    if (!allowed) {
+      toast.error(`Too many attempts. Please wait ${waitSec}s before trying again.`);
+      return;
+    }
     if (!name.trim() || !email.trim() || !message.trim()) {
       toast.error("Please fill in all required fields");
       return;
