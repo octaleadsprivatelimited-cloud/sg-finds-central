@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { auth, db } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -58,11 +58,27 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const [pendingRedirect, setPendingRedirect] = useState(false);
+
+  // Redirect based on role after successful login
+  useEffect(() => {
+    if (pendingRedirect && user && !authLoading) {
+      setPendingRedirect(false);
+      onClose();
+      if (role === "superadmin" || role === "admin") {
+        navigate("/admin");
+      } else if (role === "business_owner") {
+        navigate("/dashboard");
+      } else {
+        navigate("/add-listing");
+      }
+    }
+  }, [pendingRedirect, user, authLoading, role, navigate, onClose]);
 
   // Google One Tap — auto sign-in prompt when modal is open
   useGoogleOneTap({
     disabled: !open || !!user,
-    onSuccess: () => onClose(),
+    onSuccess: () => setPendingRedirect(true),
   });
 
   const handleEmailAuth = async () => {
