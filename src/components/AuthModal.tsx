@@ -1,4 +1,5 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -49,18 +50,35 @@ const SocialIcon = forwardRef<HTMLSpanElement, { name: string; loading: boolean 
 SocialIcon.displayName = "SocialIcon";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
-  const { user, devLogin } = useAuth();
+  const { user, role, loading: authLoading, devLogin } = useAuth();
+  const navigate = useNavigate();
   const DEV_BYPASS_ENABLED = import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEV_BYPASS === "true";
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const [pendingRedirect, setPendingRedirect] = useState(false);
+
+  // Redirect based on role after successful login
+  useEffect(() => {
+    if (pendingRedirect && user && !authLoading) {
+      setPendingRedirect(false);
+      onClose();
+      if (role === "superadmin" || role === "admin") {
+        navigate("/admin");
+      } else if (role === "business_owner") {
+        navigate("/dashboard");
+      } else {
+        navigate("/add-listing");
+      }
+    }
+  }, [pendingRedirect, user, authLoading, role, navigate, onClose]);
 
   // Google One Tap — auto sign-in prompt when modal is open
   useGoogleOneTap({
     disabled: !open || !!user,
-    onSuccess: () => onClose(),
+    onSuccess: () => setPendingRedirect(true),
   });
 
   const handleEmailAuth = async () => {
@@ -89,7 +107,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         setLoading(false);
         return;
       }
-      onClose();
+      setPendingRedirect(true);
     } catch (err: any) {
       const code = err?.code || "";
       const friendlyMessages: Record<string, string> = {
@@ -131,7 +149,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       const provider = googleProvider;
       await signInWithPopup(auth, provider);
       toast.success(`Signed in with ${providerName.charAt(0).toUpperCase() + providerName.slice(1)}`);
-      onClose();
+      setPendingRedirect(true);
     } catch (err: any) {
       if (err.code !== "auth/popup-closed-by-user") {
         toast.error(err.message || `${providerName} sign-in failed`);

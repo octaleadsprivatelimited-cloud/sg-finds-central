@@ -31,7 +31,7 @@ const GoogleIcon = () => (
 );
 
 const SignUp = () => {
-  const { user } = useAuth();
+  const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -41,9 +41,18 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
 
+  // Redirect authenticated users based on role
   useEffect(() => {
-    if (user) navigate("/add-listing");
-  }, [user, navigate]);
+    if (user && !authLoading) {
+      if (role === "superadmin" || role === "admin") {
+        navigate("/admin");
+      } else if (role === "business_owner") {
+        navigate("/dashboard");
+      } else {
+        navigate("/add-listing");
+      }
+    }
+  }, [user, role, authLoading, navigate]);
 
   // Google One Tap — auto sign-in prompt
   useGoogleOneTap({
