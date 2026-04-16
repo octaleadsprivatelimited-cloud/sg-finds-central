@@ -584,6 +584,7 @@ const AddListing = () => {
 
     setLoading(true);
     try {
+      const whatsApp = primaryContact === "whatsapp" ? whatsappNumber : "";
       await addDoc(collection(db, "listings"), {
         name, ownerName, uen, category, district, address, postalCode, unitNumber,
         shortDescription,
@@ -598,8 +599,11 @@ const AddListing = () => {
         complianceChecks,
         primaryContact,
         contactEmail,
+        email: contactEmail,
+        phone: whatsApp || "",
+        ownerEmail: user.email || "",
         contactDetails: {
-          whatsapp: primaryContact === "whatsapp" ? whatsappNumber : "",
+          whatsapp: whatsApp,
           whatsappMessage: primaryContact === "whatsapp" ? whatsappMessage : "",
           instagram: primaryContact === "instagram" ? instagramHandle : "",
           website: primaryContact === "website" ? websiteUrl : "",

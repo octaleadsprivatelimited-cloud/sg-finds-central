@@ -69,7 +69,15 @@ export interface Listing {
   priceRange?: string;
   imageUrls?: string[];
   ownerName?: string;
+  ownerEmail?: string;
   contactEmail?: string;
+  contactDetails?: {
+    whatsapp?: string;
+    whatsappMessage?: string;
+    instagram?: string;
+    website?: string;
+    secondary?: { method: string; value: string } | null;
+  };
   catalogueEnabled?: boolean;
   catalogueItems?: { id: string; title: string; description: string; price: string; image?: string }[];
   pendingLogoUrl?: string;
