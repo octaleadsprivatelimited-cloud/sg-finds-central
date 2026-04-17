@@ -112,7 +112,11 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
             <PopoverTrigger asChild>
               <button className="hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border-2 border-border/60 bg-card hover:border-primary/40 transition-colors text-sm font-medium shrink-0">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
-                <span className="max-w-[120px] truncate">{selectedDistrict === "All Districts" ? "All Areas" : selectedDistrict}</span>
+                <span className="max-w-[180px] truncate">
+                  {resolvedLocation
+                    ? `${resolvedLocation.pincode} · ${selectedDistrict === "All Districts" ? "SG" : selectedDistrict}`
+                    : selectedDistrict === "All Districts" ? "All Areas" : selectedDistrict}
+                </span>
                 <ChevronDown className="w-3 h-3 text-muted-foreground" />
               </button>
             </PopoverTrigger>
