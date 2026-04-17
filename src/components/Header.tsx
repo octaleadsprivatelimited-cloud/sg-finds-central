@@ -40,11 +40,44 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [locationOpen, setLocationOpen] = useState(false);
+  const [pincode, setPincode] = useState("");
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [pincodeError, setPincodeError] = useState("");
 
   const handleDistrictSelect = (d: string) => {
     setSelectedDistrict(d);
     setLocationOpen(false);
     if (onDistrictSelect) onDistrictSelect(d);
+  };
+
+  const handlePincodeLookup = async (val: string) => {
+    setPincodeError("");
+    if (!/^\d{6}$/.test(val)) {
+      setPincodeError("Enter a valid 6-digit Singapore postal code");
+      return;
+    }
+    setPincodeLoading(true);
+    try {
+      const { geocodeSingaporePostalCode } = await import('@/lib/geocode-pincode');
+      const result = await geocodeSingaporePostalCode(val);
+      if (!result) {
+        setPincodeError("Postal code not found");
+        return;
+      }
+      const { DISTRICT_COORDINATES } = await import('@/lib/districts');
+      let nearest = "All Districts";
+      let minDist = Infinity;
+      for (const [name, coords] of Object.entries(DISTRICT_COORDINATES)) {
+        const d = Math.sqrt(Math.pow(result.lat - coords.lat, 2) + Math.pow(result.lng - coords.lng, 2));
+        if (d < minDist) { minDist = d; nearest = name; }
+      }
+      setPincode("");
+      handleDistrictSelect(nearest);
+    } catch {
+      setPincodeError("Lookup failed, try again");
+    } finally {
+      setPincodeLoading(false);
+    }
   };
 
   const handleSignOut = async () => {
