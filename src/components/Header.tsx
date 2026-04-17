@@ -44,6 +44,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const [pincode, setPincode] = useState("");
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [pincodeError, setPincodeError] = useState("");
+  const [resolvedLocation, setResolvedLocation] = useState<{ address: string; pincode: string } | null>(null);
 
   const handleDistrictSelect = (d: string) => {
     setSelectedDistrict(d);
