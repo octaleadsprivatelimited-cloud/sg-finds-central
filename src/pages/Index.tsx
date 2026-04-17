@@ -72,7 +72,12 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
     }, 50);
   };
 
+  const isInitialPageMount = useRef(true);
   useEffect(() => {
+    if (isInitialPageMount.current) {
+      isInitialPageMount.current = false;
+      return;
+    }
     requestAnimationFrame(() => {
       if (listingsScrollRef.current) {
         listingsScrollRef.current.scrollTop = 0;
