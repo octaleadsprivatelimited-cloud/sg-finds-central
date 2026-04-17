@@ -147,6 +147,12 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                 {pincodeError && (
                   <p className="text-[11px] text-destructive mt-1">{pincodeError}</p>
                 )}
+                {resolvedLocation && !pincodeError && (
+                  <div className="mt-2 p-2 rounded-md bg-primary/5 border border-primary/20">
+                    <p className="text-[11px] font-semibold text-primary">📍 {resolvedLocation.pincode}</p>
+                    <p className="text-[11px] text-foreground/80 leading-tight mt-0.5 line-clamp-2">{resolvedLocation.address}</p>
+                  </div>
+                )}
               </div>
               <div className="border-t border-border/40 pt-2">
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Select District</label>
