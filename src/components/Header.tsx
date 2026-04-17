@@ -231,24 +231,10 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                       maxLength={6}
                       placeholder="e.g. 560123"
                       className="flex-1 h-8 px-2.5 rounded-md border-2 border-border/60 bg-background text-sm focus:outline-none focus:border-primary/50"
-                      onKeyDown={async (e) => {
+                      onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           const val = (e.target as HTMLInputElement).value.trim();
-                          if (/^\d{6}$/.test(val)) {
-                            const { geocodeSingaporePostalCode } = await import('@/lib/geocode-pincode');
-                            const result = await geocodeSingaporePostalCode(val);
-                            if (result) {
-                              // Find nearest district
-                              const { DISTRICT_COORDINATES } = await import('@/lib/districts');
-                              let nearest = "All Districts";
-                              let minDist = Infinity;
-                              for (const [name, coords] of Object.entries(DISTRICT_COORDINATES)) {
-                                const d = Math.sqrt(Math.pow(result.lat - coords.lat, 2) + Math.pow(result.lng - coords.lng, 2));
-                                if (d < minDist) { minDist = d; nearest = name; }
-                              }
-                              handleDistrictSelect(nearest);
-                            }
-                          }
+                          handlePincodeLookup(val);
                         }
                       }}
                     />
