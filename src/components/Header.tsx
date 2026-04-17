@@ -91,6 +91,17 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     }
   };
 
+  const handleClearLocation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setSelectedDistrict("All Districts");
+    setResolvedLocation(null);
+    setPincode("");
+    setPincodeError("");
+    if (onDistrictSelect) onDistrictSelect("All Districts");
+    if (onPincodeSearch) onPincodeSearch("");
+  };
+
   const handleSignOut = async () => {
     if (isDevMode) { devLogout(); return; }
     await signOut(auth);
@@ -117,7 +128,18 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                     ? `${resolvedLocation.pincode} · ${selectedDistrict === "All Districts" ? "SG" : selectedDistrict}`
                     : selectedDistrict === "All Districts" ? "All Areas" : selectedDistrict}
                 </span>
-                <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                {(resolvedLocation || selectedDistrict !== "All Districts") ? (
+                  <span
+                    role="button"
+                    aria-label="Clear location"
+                    onClick={handleClearLocation}
+                    className="ml-0.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </span>
+                ) : (
+                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                )}
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-72 p-3 max-h-[420px] overflow-y-auto" align="start">
@@ -233,7 +255,18 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                       ? `${resolvedLocation.pincode} · ${selectedDistrict === "All Districts" ? "SG" : selectedDistrict}`
                       : selectedDistrict === "All Districts" ? "All Areas" : selectedDistrict}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+                  {(resolvedLocation || selectedDistrict !== "All Districts") ? (
+                    <span
+                      role="button"
+                      aria-label="Clear location"
+                      onClick={handleClearLocation}
+                      className="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                    >
+                      <X className="w-3 h-3" />
+                    </span>
+                  ) : (
+                    <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+                  )}
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-72 p-3 max-h-80 overflow-y-auto" align="start">
