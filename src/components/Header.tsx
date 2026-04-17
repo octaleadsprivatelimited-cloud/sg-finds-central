@@ -78,7 +78,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
         if (d < minDist) { minDist = d; nearest = name; }
       }
       setSelectedDistrict(nearest);
-      setPincode("");
+      setResolvedLocation({ address: result.address, pincode: val });
       setLocationOpen(false);
       // Drop pin + zoom map to exact lat/lng via Index page handler.
       setTimeout(() => {
