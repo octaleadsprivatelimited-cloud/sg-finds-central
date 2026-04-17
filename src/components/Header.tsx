@@ -105,20 +105,50 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
                 <ChevronDown className="w-3 h-3 text-muted-foreground" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-56 p-2 max-h-72 overflow-y-auto" align="start">
-              {SINGAPORE_DISTRICTS.map((d) => (
-                <button
-                  key={d}
-                  onClick={() => handleDistrictSelect(d)}
-                  className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                    selectedDistrict === d
-                      ? "bg-primary text-primary-foreground font-semibold"
-                      : "hover:bg-secondary text-foreground"
-                  }`}
-                >
-                  {d === "All Districts" ? "All Areas" : d}
-                </button>
-              ))}
+            <PopoverContent className="w-72 p-3 max-h-[420px] overflow-y-auto" align="start">
+              {/* Pincode search */}
+              <div className="mb-3">
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Search by Postal Code</label>
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={pincode}
+                    placeholder="e.g. 560123"
+                    className="flex-1 h-8 px-2.5 rounded-md border-2 border-border/60 bg-background text-sm focus:outline-none focus:border-primary/50"
+                    onChange={(e) => { setPincode(e.target.value.replace(/\D/g, '')); setPincodeError(""); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handlePincodeLookup(pincode); }}
+                  />
+                  <Button
+                    size="sm"
+                    className="h-8 px-3 text-xs"
+                    disabled={pincodeLoading || pincode.length !== 6}
+                    onClick={() => handlePincodeLookup(pincode)}
+                  >
+                    {pincodeLoading ? "…" : "Find"}
+                  </Button>
+                </div>
+                {pincodeError && (
+                  <p className="text-[11px] text-destructive mt-1">{pincodeError}</p>
+                )}
+              </div>
+              <div className="border-t border-border/40 pt-2">
+                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Select District</label>
+                {SINGAPORE_DISTRICTS.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => handleDistrictSelect(d)}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                      selectedDistrict === d
+                        ? "bg-primary text-primary-foreground font-semibold"
+                        : "hover:bg-secondary text-foreground"
+                    }`}
+                  >
+                    {d === "All Districts" ? "All Areas" : d}
+                  </button>
+                ))}
+              </div>
             </PopoverContent>
           </Popover>
 
