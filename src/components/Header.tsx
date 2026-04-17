@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard,
   MapPin, User, Search, ChevronDown,
@@ -34,8 +34,9 @@ interface HeaderProps {
 
 const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const { user, isAdmin, isSuperAdmin, isDevMode, devLogout, role } = useAuth();
-  const { onDistrictSelect } = useSearch();
+  const { onDistrictSelect, onPincodeSearch } = useSearch();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
@@ -58,6 +59,9 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     }
     setPincodeLoading(true);
     try {
+      const wasOffHome = location.pathname !== "/";
+      if (wasOffHome) navigate("/");
+
       const { geocodeSingaporePostalCode } = await import('@/lib/geocode-pincode');
       const result = await geocodeSingaporePostalCode(val);
       if (!result) {
@@ -71,8 +75,13 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
         const d = Math.sqrt(Math.pow(result.lat - coords.lat, 2) + Math.pow(result.lng - coords.lng, 2));
         if (d < minDist) { minDist = d; nearest = name; }
       }
+      setSelectedDistrict(nearest);
       setPincode("");
-      handleDistrictSelect(nearest);
+      setLocationOpen(false);
+      // Drop pin + zoom map to exact lat/lng via Index page handler.
+      setTimeout(() => {
+        if (onPincodeSearch) onPincodeSearch(val);
+      }, wasOffHome ? 200 : 0);
     } catch {
       setPincodeError("Lookup failed, try again");
     } finally {
