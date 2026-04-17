@@ -91,6 +91,17 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     }
   };
 
+  const handleClearLocation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setSelectedDistrict("All Districts");
+    setResolvedLocation(null);
+    setPincode("");
+    setPincodeError("");
+    if (onDistrictSelect) onDistrictSelect("All Districts");
+    if (onPincodeSearch) onPincodeSearch("");
+  };
+
   const handleSignOut = async () => {
     if (isDevMode) { devLogout(); return; }
     await signOut(auth);
