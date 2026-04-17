@@ -49,6 +49,7 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const handleDistrictSelect = (d: string) => {
     setSelectedDistrict(d);
     setLocationOpen(false);
+    setResolvedLocation(null);
     if (onDistrictSelect) onDistrictSelect(d);
   };
 
