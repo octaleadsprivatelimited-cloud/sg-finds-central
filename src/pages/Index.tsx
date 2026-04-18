@@ -262,7 +262,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setCategory("All Categories")}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 ${
+              aria-pressed={category === "All Categories"}
+              className={`inline-flex items-center gap-1 px-3.5 min-h-[36px] rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                 category === "All Categories"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-secondary/80 text-muted-foreground border border-border/40"
@@ -274,7 +275,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 ${
+                aria-pressed={category === c.value}
+                className={`inline-flex items-center gap-1 px-3.5 min-h-[36px] rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                   category === c.value
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-secondary/80 text-muted-foreground border border-border/40"
