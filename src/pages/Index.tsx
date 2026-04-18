@@ -5,6 +5,7 @@ import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import ListingCard, { Listing, DEFAULT_OPERATING_HOURS, getIsOpenNow } from "@/components/ListingCard";
+import ListingCardSkeleton from "@/components/ListingCardSkeleton";
 import FeaturedListings from "@/components/FeaturedListings";
 
 import CategoryHighlights from "@/components/CategoryHighlights";
