@@ -184,6 +184,19 @@ html {
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
   }
+
+  /* Keyboard-only focus ring on interactive elements (skips inputs/selects which have their own) */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  [role="tab"]:focus-visible,
+  [role="menuitem"]:focus-visible,
+  [role="option"]:focus-visible,
+  summary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary) / 0.4);
+    border-radius: 8px;
+  }
 }
 
 @layer utilities {

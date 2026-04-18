@@ -74,24 +74,47 @@ const BusinessDetail = () => {
     fetchListing();
   }, [areaSlug, categorySlug, businessSlug, demoListing]);
 
+  // Always start business pages at the top
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  }, [businessSlug]);
+
   const listing = demoListing || firestoreListing;
   const { viewCount, liveViewers } = useViewTracking(listing?.id);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="min-h-screen bg-background">
+        <div className="border-b border-border/40">
+          <div className="container mx-auto px-4 py-3">
+            <div className="h-3 w-64 bg-secondary rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="container mx-auto px-4 pt-5">
+          <div className="aspect-[16/9] sm:aspect-[21/9] w-full rounded-2xl bg-secondary animate-pulse" />
+        </div>
+        <div className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="h-7 w-2/3 bg-secondary rounded animate-pulse" />
+            <div className="h-4 w-1/2 bg-secondary rounded animate-pulse" />
+            <div className="h-32 w-full bg-secondary/60 rounded-2xl animate-pulse mt-6" />
+          </div>
+          <div className="space-y-4">
+            <div className="h-[250px] w-full bg-secondary rounded-2xl animate-pulse" />
+            <div className="h-40 w-full bg-secondary/60 rounded-2xl animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
           <Building2 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-foreground mb-2">Business Not Found</h1>
-          <p className="text-sm text-muted-foreground mb-6">The business you're looking for doesn't exist.</p>
+          <p className="text-sm text-muted-foreground mb-6">The business you're looking for doesn't exist or has been removed.</p>
           <Button onClick={() => navigate("/")} className="rounded-full px-6">Back to Directory</Button>
         </div>
       </div>

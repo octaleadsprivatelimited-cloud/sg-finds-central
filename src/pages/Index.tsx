@@ -5,6 +5,7 @@ import { useSearch } from "@/contexts/SearchContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import ListingCard, { Listing, DEFAULT_OPERATING_HOURS, getIsOpenNow } from "@/components/ListingCard";
+import ListingCardSkeleton from "@/components/ListingCardSkeleton";
 import FeaturedListings from "@/components/FeaturedListings";
 
 import CategoryHighlights from "@/components/CategoryHighlights";
@@ -36,6 +37,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
+  const [isFetchingListings, setIsFetchingListings] = useState(true);
   useEffect(() => { setShowMap(true); }, [setShowMap]);
   useGoogleOneTap(); // Show Google One Tap on homepage for returning users
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -132,9 +134,21 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           setListings([...firestoreData, ...uniqueDemo]);
         }
       } catch { /* demo fallback */ }
+      finally { setIsFetchingListings(false); }
     };
     fetchListings();
   }, []);
+
+  // Reset all active filters back to defaults (for empty-state CTA)
+  const resetAllFilters = useCallback(() => {
+    setSearchQuery("");
+    setDistrict("All Districts");
+    setCategory("All Categories");
+    setRadiusKm(null);
+    setOpenNow(false);
+    setPincode("");
+    setPincodeAddress("");
+  }, [setSearchQuery]);
 
   const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
     const R = 6371;
@@ -248,7 +262,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setCategory("All Categories")}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 ${
+              aria-pressed={category === "All Categories"}
+              className={`inline-flex items-center gap-1 px-3.5 min-h-[36px] rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                 category === "All Categories"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-secondary/80 text-muted-foreground border border-border/40"
@@ -260,7 +275,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               <button
                 key={c.value}
                 onClick={() => setCategory(c.value === category ? "All Categories" : c.value)}
-                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 ${
+                aria-pressed={category === c.value}
+                className={`inline-flex items-center gap-1 px-3.5 min-h-[36px] rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                   category === c.value
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-secondary/80 text-muted-foreground border border-border/40"
@@ -315,11 +331,37 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
         {/* Listings */}
         <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
-          {sortedFiltered.length === 0 ? (
-            <div className="text-center py-12 bg-card rounded-xl border-2 border-border/60 retro-shadow">
+          {/* Results count */}
+          {!isFetchingListings && sortedFiltered.length > 0 && (
+            <div className="flex items-center justify-between px-1 pt-2 pb-1">
+              <p className="text-xs text-muted-foreground">
+                <span className="font-semibold text-foreground">{sortedFiltered.length}</span> {sortedFiltered.length === 1 ? "result" : "results"}
+                {hasActiveFilters && " for your filters"}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={resetAllFilters}
+                  className="text-[11px] font-semibold text-primary hover:underline"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          )}
+          {isFetchingListings ? (
+            <>
+              {Array.from({ length: 4 }).map((_, i) => <ListingCardSkeleton key={i} />)}
+            </>
+          ) : sortedFiltered.length === 0 ? (
+            <div className="text-center py-12 px-6 bg-card rounded-xl border-2 border-border/60 retro-shadow">
               <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-foreground font-semibold">No businesses found</p>
-              <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">Try widening your distance or clearing filters</p>
+              {hasActiveFilters && (
+                <Button onClick={resetAllFilters} size="sm" className="rounded-full">
+                  Reset filters
+                </Button>
+              )}
             </div>
           ) : (
             <>
@@ -470,11 +512,37 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
               <div ref={listingsScrollRef} className="max-h-[calc(100vh-64px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
-                  {sortedFiltered.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-xl border-2 border-border/60 retro-shadow">
+                  {/* Results count */}
+                  {!isFetchingListings && sortedFiltered.length > 0 && (
+                    <div className="flex items-center justify-between pt-3 pb-1">
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-semibold text-foreground">{sortedFiltered.length}</span> {sortedFiltered.length === 1 ? "result" : "results"}
+                        {hasActiveFilters && " for your filters"}
+                      </p>
+                      {hasActiveFilters && (
+                        <button
+                          onClick={resetAllFilters}
+                          className="text-xs font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {isFetchingListings ? (
+                    <>
+                      {Array.from({ length: 5 }).map((_, i) => <ListingCardSkeleton key={i} />)}
+                    </>
+                  ) : sortedFiltered.length === 0 ? (
+                    <div className="text-center py-16 px-6 bg-card rounded-xl border-2 border-border/60 retro-shadow">
                       <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
                       <p className="text-foreground font-semibold">No businesses found</p>
-                      <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
+                      <p className="text-sm text-muted-foreground mt-1 mb-4">Try widening your distance or clearing filters</p>
+                      {hasActiveFilters && (
+                        <Button onClick={resetAllFilters} size="sm" className="rounded-full">
+                          Reset filters
+                        </Button>
+                      )}
                     </div>
                   ) : (
                     <>
