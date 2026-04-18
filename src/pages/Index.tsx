@@ -37,6 +37,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
   const [district, setDistrict] = useState("All Districts");
   const [category, setCategory] = useState("All Categories");
   const [listings, setListings] = useState<Listing[]>(DEMO_LISTINGS);
+  const [isFetchingListings, setIsFetchingListings] = useState(true);
   useEffect(() => { setShowMap(true); }, [setShowMap]);
   useGoogleOneTap(); // Show Google One Tap on homepage for returning users
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -133,9 +134,21 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           setListings([...firestoreData, ...uniqueDemo]);
         }
       } catch { /* demo fallback */ }
+      finally { setIsFetchingListings(false); }
     };
     fetchListings();
   }, []);
+
+  // Reset all active filters back to defaults (for empty-state CTA)
+  const resetAllFilters = useCallback(() => {
+    setSearchQuery("");
+    setDistrict("All Districts");
+    setCategory("All Categories");
+    setRadiusKm(null);
+    setOpenNow(false);
+    setPincode("");
+    setPincodeAddress("");
+  }, [setSearchQuery]);
 
   const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
     const R = 6371;
