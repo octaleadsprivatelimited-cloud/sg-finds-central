@@ -512,11 +512,37 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
               <div ref={listingsScrollRef} className="max-h-[calc(100vh-64px)] overflow-y-auto scrollbar-hide pb-6">
                 <div className="space-y-4">
-                  {sortedFiltered.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-xl border-2 border-border/60 retro-shadow">
+                  {/* Results count */}
+                  {!isFetchingListings && sortedFiltered.length > 0 && (
+                    <div className="flex items-center justify-between pt-3 pb-1">
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-semibold text-foreground">{sortedFiltered.length}</span> {sortedFiltered.length === 1 ? "result" : "results"}
+                        {hasActiveFilters && " for your filters"}
+                      </p>
+                      {hasActiveFilters && (
+                        <button
+                          onClick={resetAllFilters}
+                          className="text-xs font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {isFetchingListings ? (
+                    <>
+                      {Array.from({ length: 5 }).map((_, i) => <ListingCardSkeleton key={i} />)}
+                    </>
+                  ) : sortedFiltered.length === 0 ? (
+                    <div className="text-center py-16 px-6 bg-card rounded-xl border-2 border-border/60 retro-shadow">
                       <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
                       <p className="text-foreground font-semibold">No businesses found</p>
-                      <p className="text-sm text-muted-foreground mt-1">Try adjusting your search or filters</p>
+                      <p className="text-sm text-muted-foreground mt-1 mb-4">Try widening your distance or clearing filters</p>
+                      {hasActiveFilters && (
+                        <Button onClick={resetAllFilters} size="sm" className="rounded-full">
+                          Reset filters
+                        </Button>
+                      )}
                     </div>
                   ) : (
                     <>
