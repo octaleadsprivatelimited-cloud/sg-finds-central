@@ -331,11 +331,37 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
         {/* Listings */}
         <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
-          {sortedFiltered.length === 0 ? (
-            <div className="text-center py-12 bg-card rounded-xl border-2 border-border/60 retro-shadow">
+          {/* Results count */}
+          {!isFetchingListings && sortedFiltered.length > 0 && (
+            <div className="flex items-center justify-between px-1 pt-2 pb-1">
+              <p className="text-xs text-muted-foreground">
+                <span className="font-semibold text-foreground">{sortedFiltered.length}</span> {sortedFiltered.length === 1 ? "result" : "results"}
+                {hasActiveFilters && " for your filters"}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={resetAllFilters}
+                  className="text-[11px] font-semibold text-primary hover:underline"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          )}
+          {isFetchingListings ? (
+            <>
+              {Array.from({ length: 4 }).map((_, i) => <ListingCardSkeleton key={i} />)}
+            </>
+          ) : sortedFiltered.length === 0 ? (
+            <div className="text-center py-12 px-6 bg-card rounded-xl border-2 border-border/60 retro-shadow">
               <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-foreground font-semibold">No businesses found</p>
-              <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">Try widening your distance or clearing filters</p>
+              {hasActiveFilters && (
+                <Button onClick={resetAllFilters} size="sm" className="rounded-full">
+                  Reset filters
+                </Button>
+              )}
             </div>
           ) : (
             <>
