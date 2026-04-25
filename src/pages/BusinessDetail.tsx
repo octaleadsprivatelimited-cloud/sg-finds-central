@@ -126,14 +126,48 @@ const BusinessDetail = () => {
     ? listing.imageUrls
     : GALLERY_MAP[listing.id] || [];
 
+  const ogImage = listing.coverImage || listing.imageUrls?.[0] || galleryPhotos[0];
+
+  // JSON-LD LocalBusiness schema for SEO
+  const jsonLd: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: listing.name,
+    description: listing.description,
+    url: shareUrl,
+    image: ogImage,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: listing.address,
+      addressLocality: listing.district,
+      postalCode: listing.postalCode,
+      addressCountry: "SG",
+    },
+    ...(listing.phone && { telephone: listing.phone }),
+    ...(listing.website && { sameAs: [listing.website] }),
+    ...(listing.lat && listing.lng && {
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: listing.lat,
+        longitude: listing.lng,
+      },
+    }),
+    ...(listing.category && {
+      "@type": ["LocalBusiness"],
+      additionalType: listing.category,
+    }),
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
       <SEOHead
         title={listing.name}
         description={listing.description || `${listing.name} — ${listing.category} in ${listing.district}, Singapore`}
-        image={listing.coverImage}
+        image={ogImage}
         url={shareUrl}
+        canonical={shareUrl}
         type="business.business"
+        jsonLd={jsonLd}
       />
       {/* Breadcrumb — Apple-style minimal */}
       <div className="border-b border-border/40">
