@@ -130,6 +130,12 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
     setResolvedLocation(null);
     setPincode("");
     setPincodeError("");
+    // Clear persisted location
+    try {
+      localStorage.removeItem("nearbuy_location");
+    } catch {
+      // Ignore storage errors
+    }
     if (onDistrictSelect) onDistrictSelect("All Districts");
     if (onPincodeSearch) onPincodeSearch("");
   };
