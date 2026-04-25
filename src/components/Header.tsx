@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Plus, Menu, X, LogOut, Shield, LayoutDashboard,
@@ -45,6 +45,38 @@ const Header = ({ showMap, onToggleMap, onDetectLocation }: HeaderProps) => {
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [pincodeError, setPincodeError] = useState("");
   const [resolvedLocation, setResolvedLocation] = useState<{ address: string; pincode: string } | null>(null);
+
+  // Load persisted location from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("nearbuy_location");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.selectedDistrict) setSelectedDistrict(parsed.selectedDistrict);
+        if (parsed.pincode) setPincode(parsed.pincode);
+        if (parsed.resolvedLocation) setResolvedLocation(parsed.resolvedLocation);
+        // Notify parent components to update map
+        if (parsed.selectedDistrict && onDistrictSelect) {
+          onDistrictSelect(parsed.selectedDistrict);
+        }
+        if (parsed.pincode && onPincodeSearch) {
+          onPincodeSearch(parsed.pincode);
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }, []);
+
+  // Persist location changes to localStorage
+  useEffect(() => {
+    try {
+      const data = { selectedDistrict, pincode, resolvedLocation };
+      localStorage.setItem("nearbuy_location", JSON.stringify(data));
+    } catch {
+      // Ignore storage errors
+    }
+  }, [selectedDistrict, pincode, resolvedLocation]);
 
   const handleDistrictSelect = (d: string) => {
     setSelectedDistrict(d);
