@@ -10,6 +10,7 @@ import { BUSINESS_CATEGORIES } from "@/lib/districts";
 import { getSubcategoriesForCategory } from "@/lib/listing-form-config";
 import ListingCard, { type Listing } from "@/components/ListingCard";
 import { getBusinessUrl, toSlug } from "@/lib/url-helpers";
+import SEOHead from "@/components/SEOHead";
 
 // Category images
 import tuitionImg from "@/assets/categories/education.webp";
@@ -272,8 +273,34 @@ const CityCategory = () => {
     ? `Find the best ${matchedCategory.toLowerCase()} businesses in ${locationName}. Browse verified listings, read reviews, and connect directly.`
     : `Explore top businesses across all categories in ${locationName}. Your trusted local business directory.`;
 
+  const canonicalUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/${citySlug}${categorySlug ? `/${categorySlug}` : ""}${activeSub ? `?sub=${activeSub}` : ""}`
+    : undefined;
+
+  // ItemList JSON-LD for category pages
+  const itemListJsonLd = matchedCategory && filtered.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: pageTitle,
+    description: pageDescription,
+    numberOfItems: filtered.length,
+    itemListElement: filtered.slice(0, 20).map((l, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      url: typeof window !== "undefined" ? `${window.location.origin}${getBusinessUrl(l)}` : undefined,
+      name: l.name,
+    })),
+  } : undefined;
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={pageTitle}
+        description={pageDescription}
+        url={canonicalUrl}
+        canonical={canonicalUrl}
+        jsonLd={itemListJsonLd}
+      />
       {/* Breadcrumb */}
       <div className="border-b border-border/50 bg-secondary/30">
         <div className="container mx-auto px-4 py-3">
