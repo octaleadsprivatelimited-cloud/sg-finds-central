@@ -462,13 +462,13 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
 
               <div className="flex items-center gap-2 bg-secondary/80 border border-border/40 rounded-full px-3 py-1.5 shrink-0">
                 <Slider
-                  value={[radiusKm ?? 10]}
+                  value={[radiusKm ?? 3.5]}
                   onValueChange={([v]) => {
-                    setRadiusKm(v);
+                    setRadiusKm(v >= 3.5 ? null : v);
                     if (!userLocation) handleDetectLocation();
                   }}
                   min={0.5}
-                  max={10}
+                  max={3.5}
                   step={0.5}
                   className="w-20"
                 />
