@@ -249,39 +249,6 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
             {isOpen === false && <span className="text-[10px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">Closed</span>}
           </div>
 
-          <div className="flex items-center gap-1.5 mt-2.5">
-            {displayPhone && (
-              <a
-                href={`tel:${displayPhone}`}
-                onClick={(e) => e.stopPropagation()}
-                className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-primary/5 hover:bg-primary/10 text-[11px] font-semibold text-primary active:scale-95 transition-all"
-              >
-                <Phone className="w-3 h-3" />Call
-              </a>
-            )}
-            {(listing.whatsapp || listing.phone) && (
-              <a
-                href={`https://wa.me/${(listing.whatsapp || listing.phone || "").replace(/[^0-9]/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[11px] font-semibold text-[#128C7E] active:scale-95 transition-all"
-              >
-                <img src={whatsappLogo} alt="" className="w-3.5 h-3.5" />Chat
-              </a>
-            )}
-            {listing.lat && listing.lng && (
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${listing.lat},${listing.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center justify-center w-9 h-8 rounded-xl bg-secondary/60 hover:bg-secondary text-foreground active:scale-95 transition-all"
-              >
-                <Navigation className="w-3.5 h-3.5" />
-              </a>
-            )}
-          </div>
         </div>
       </div>
 
