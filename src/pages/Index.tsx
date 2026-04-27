@@ -425,6 +425,11 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
         </div>
         </div>{/* end wrapper for sticky unstick */}
 
+        {/* Full category grid (mobile) — after listings */}
+        <section className="px-3 pt-3 pb-1" data-reveal>
+          <CategoryGrid />
+        </section>
+
         {/* Extras before footer (mobile) */}
         <section className="px-3 py-3" data-reveal>
           <CategoryHighlights />
