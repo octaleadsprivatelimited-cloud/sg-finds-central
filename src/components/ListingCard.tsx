@@ -221,8 +221,8 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
       <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradient} opacity-60`} />
 
       {/* ── MOBILE ── */}
-      <div className="flex gap-3 p-4 md:hidden">
-        <div className="w-14 h-14 shrink-0 rounded-2xl overflow-hidden bg-secondary/50 ring-1 ring-border/40">
+      <div className="flex gap-2.5 p-2.5 md:hidden">
+        <div className="w-11 h-11 shrink-0 rounded-xl overflow-hidden bg-secondary/50 ring-1 ring-border/40">
           <img
             src={listing.logoUrl || listing.coverImage || getPlaceholderLogo(listing.id || listing.name)}
             alt={listing.name}
@@ -232,23 +232,18 @@ const ListingCard = ({ listing, compact, highlighted, onSelect, onHover, distanc
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-foreground text-[15px] leading-tight truncate">{listing.name}</h3>
+            <h3 className="font-semibold text-foreground text-[13px] leading-tight truncate">{listing.name}</h3>
             {listing.verified && <span className="text-[10px] shrink-0">✓</span>}
           </div>
-          <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 mt-0.5 text-[11px] text-muted-foreground">
             <MapPin className="w-3 h-3" />
             <span className="truncate">{listing.district}</span>
             {distanceKm != null && (
               <span className="text-muted-foreground/60">· {distanceKm < 1 ? `${Math.round(distanceKm * 1000)}m` : `${distanceKm.toFixed(1)}km`}</span>
             )}
+            {isOpen === true && <span className="ml-auto text-[9px] font-semibold text-[hsl(var(--success))] bg-[hsl(var(--success))]/10 px-1.5 py-0.5 rounded-full">Open</span>}
+            {isOpen === false && <span className="ml-auto text-[9px] font-semibold text-destructive bg-destructive/10 px-1.5 py-0.5 rounded-full">Closed</span>}
           </div>
-
-          <div className="flex items-center justify-between mt-2.5">
-            <span className="text-xs font-medium text-primary">{listing.category}</span>
-            {isOpen === true && <span className="text-[10px] font-semibold text-[hsl(var(--success))] bg-[hsl(var(--success))]/10 px-2 py-0.5 rounded-full">Open</span>}
-            {isOpen === false && <span className="text-[10px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">Closed</span>}
-          </div>
-
         </div>
       </div>
 
