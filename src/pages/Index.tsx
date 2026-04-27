@@ -328,13 +328,8 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
           </div>
         </div>
 
-        {/* Full category grid (mobile) — accessible right under the sticky map */}
-        <section className="px-3 pt-3 pb-1" data-reveal>
-          <CategoryGrid />
-        </section>
-
         {/* Listings */}
-        <div ref={mobileListingsRef} className="px-3 pb-6 space-y-3">
+        <div ref={mobileListingsRef} className="px-3 pt-3 pb-6 space-y-3">
           {/* Results count */}
           {!isFetchingListings && sortedFiltered.length > 0 && (
             <div className="flex items-center justify-between px-1 pt-2 pb-1">
