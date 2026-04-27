@@ -307,7 +307,7 @@ const Index = ({ showMap, setShowMap, registerDetectLocation }: IndexProps) => {
               </span>
             </div>
           </div>
-          <div className="h-[200px] relative border-b-2 border-foreground/6">
+          <div className="h-[50vh] relative border-b-2 border-foreground/6">
             <MapView
               listings={sortedFiltered}
               selectedId={selectedListing?.id}
