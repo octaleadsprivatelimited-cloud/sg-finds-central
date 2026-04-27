@@ -27,17 +27,17 @@ const CategoryGrid = () => {
         </h2>
         <div className="h-px flex-1 bg-border" />
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2.5 md:gap-3">
+      <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-6 lg:grid-cols-11 gap-1.5 md:gap-3">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.name}
             onClick={() => navigate(`/singapore/${toSlug(cat.name)}`)}
-            className="group flex flex-col items-center gap-1.5 md:gap-2 p-2.5 md:p-3.5 rounded-xl bg-card border-2 border-border/60 hover:border-primary/30 retro-shadow-sm hover:retro-shadow transition-all duration-200 hover:-translate-y-1 active:translate-y-0 active:shadow-none"
+            className="group flex flex-col items-center gap-1 md:gap-2 p-1.5 md:p-3.5 rounded-xl bg-card border-2 border-border/60 hover:border-primary/30 retro-shadow-sm hover:retro-shadow transition-all duration-200 hover:-translate-y-1 active:translate-y-0 active:shadow-none"
           >
-            <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg bg-secondary/80 border border-border/40 flex items-center justify-center group-hover:bg-primary/5 transition-colors">
-              <span className="text-2xl md:text-3xl">{cat.emoji}</span>
+            <div className="w-9 h-9 md:w-14 md:h-14 rounded-lg bg-secondary/80 border border-border/40 flex items-center justify-center group-hover:bg-primary/5 transition-colors">
+              <span className="text-lg md:text-3xl">{cat.emoji}</span>
             </div>
-            <span className="text-[9px] md:text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2 uppercase tracking-wide">
+            <span className="text-[8px] md:text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2 uppercase tracking-tight md:tracking-wide">
               {cat.name}
             </span>
           </button>
