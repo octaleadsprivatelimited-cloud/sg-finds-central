@@ -27,7 +27,7 @@ const CategoryGrid = () => {
         </h2>
         <div className="h-px flex-1 bg-border" />
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2.5 md:gap-3">
+      <div className="grid grid-cols-6 sm:grid-cols-6 md:grid-cols-6 lg:grid-cols-11 gap-1.5 md:gap-3">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.name}
