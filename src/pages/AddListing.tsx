@@ -424,6 +424,7 @@ const AddListing = () => {
         setLocationLat(result.lat);
         setLocationLng(result.lng);
         if (!address) setAddress(result.address);
+        setDistrict(nearestDistrict(result.lat, result.lng));
         toast.success(`Location found: ${result.address}`);
       } else {
         setLocationLat(null);
