@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
-import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
+import { geocodeSingaporePostalCode, nearestDistrict } from "@/lib/geocode-pincode";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { processImageFiles } from "@/lib/image-utils";
@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
+import { BUSINESS_CATEGORIES } from "@/lib/districts";
 import {
   needsSubcategoryScreen, needsComplianceScreen, getComplianceGates,
   TUITION_SUBJECTS, TUITION_LANGUAGES, TUITION_LEVELS, TUITION_SYLLABI,
@@ -424,6 +424,7 @@ const AddListing = () => {
         setLocationLat(result.lat);
         setLocationLng(result.lng);
         if (!address) setAddress(result.address);
+        setDistrict(nearestDistrict(result.lat, result.lng));
         toast.success(`Location found: ${result.address}`);
       } else {
         setLocationLat(null);
@@ -447,6 +448,7 @@ const AddListing = () => {
         const lng = pos.coords.longitude;
         setLocationLat(lat);
         setLocationLng(lng);
+        setDistrict(nearestDistrict(lat, lng));
         // Reverse geocode using OneMap
         try {
           const res = await fetch(`https://www.onemap.gov.sg/api/public/revgeocode?location=${lat},${lng}&buffer=200&addressType=All`);
@@ -478,7 +480,7 @@ const AddListing = () => {
     if (!currentStep) return false;
     switch (currentStep.key) {
       case "category": {
-        if (!category || !district) return false;
+        if (!category) return false;
         // Subcategory validation inline
         if (needsSubcategoryScreen(category)) {
           if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
@@ -728,18 +730,8 @@ const AddListing = () => {
                     </Select>
                     <FieldError show={showErrors && !category} message="Please select a category" />
                   </div>
-                  <div className="space-y-2">
-                    <Label>District *</Label>
-                    <Select value={district} onValueChange={setDistrict}>
-                      <SelectTrigger><SelectValue placeholder="Select district" /></SelectTrigger>
-                      <SelectContent>
-                        {SINGAPORE_DISTRICTS.filter(d => d !== "All Districts").map(d => (
-                          <SelectItem key={d} value={d}>{d}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FieldError show={showErrors && !district} message="Please select a district" />
-                  </div>
+                  <p className="text-xs text-muted-foreground">Your district will be set automatically from your address postal code in the next steps.</p>
+
 
                   {/* Inline subcategory selection */}
                   {needsSubcategoryScreen(category) && (
