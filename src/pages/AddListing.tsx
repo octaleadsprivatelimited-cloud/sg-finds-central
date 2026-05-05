@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, GeoPoint, query, where, getDocs } from "firebase/firestore";
-import { geocodeSingaporePostalCode } from "@/lib/geocode-pincode";
+import { geocodeSingaporePostalCode, nearestDistrict } from "@/lib/geocode-pincode";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { processImageFiles } from "@/lib/image-utils";
