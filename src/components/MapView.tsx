@@ -251,7 +251,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                 width: isActive ? 44 : 36,
                 height: isActive ? 44 : 36,
                 borderRadius: "50%",
-                background: isActive ? "#16a34a" : "#31473A",
+                background: isActive ? "#E5482A" : "#B83A1F",
                 border: isActive ? "3px solid white" : "2.5px solid white",
                 display: "flex",
                 alignItems: "center",
@@ -259,7 +259,7 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
                 fontSize: isActive ? 18 : 15,
                 lineHeight: 1,
                 boxShadow: isActive
-                  ? "0 0 0 8px rgba(22,163,74,0.20), 0 4px 18px rgba(2,6,23,0.32)"
+                  ? "0 0 0 8px rgba(229,72,42,0.20), 0 4px 18px rgba(2,6,23,0.32)"
                   : "0 3px 12px rgba(2,6,23,0.30)",
                 cursor: "pointer",
                 transition: "all 0.15s ease",
