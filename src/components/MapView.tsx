@@ -119,9 +119,9 @@ const MapView = ({ listings, selectedId, hoveredId, onSelectListing, onHoverList
       map: mapRef.current,
       center,
       radius: radiusKm * 1000,
-      fillColor: "#4f7a5c",
+      fillColor: "#E5482A",
       fillOpacity: 0.08,
-      strokeColor: "#A1BE95",
+      strokeColor: "#E5482A",
       strokeOpacity: 0.55,
       strokeWeight: 1.5,
     });
