@@ -478,7 +478,7 @@ const AddListing = () => {
     if (!currentStep) return false;
     switch (currentStep.key) {
       case "category": {
-        if (!category || !district) return false;
+        if (!category) return false;
         // Subcategory validation inline
         if (needsSubcategoryScreen(category)) {
           if (category === "Tuition") return subjects.length > 0 && levels.length > 0 && syllabi.length > 0;
