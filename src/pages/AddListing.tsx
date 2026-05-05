@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { SINGAPORE_DISTRICTS, BUSINESS_CATEGORIES } from "@/lib/districts";
+import { BUSINESS_CATEGORIES } from "@/lib/districts";
 import {
   needsSubcategoryScreen, needsComplianceScreen, getComplianceGates,
   TUITION_SUBJECTS, TUITION_LANGUAGES, TUITION_LEVELS, TUITION_SYLLABI,
