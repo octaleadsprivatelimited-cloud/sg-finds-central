@@ -448,6 +448,7 @@ const AddListing = () => {
         const lng = pos.coords.longitude;
         setLocationLat(lat);
         setLocationLng(lng);
+        setDistrict(nearestDistrict(lat, lng));
         // Reverse geocode using OneMap
         try {
           const res = await fetch(`https://www.onemap.gov.sg/api/public/revgeocode?location=${lat},${lng}&buffer=200&addressType=All`);
