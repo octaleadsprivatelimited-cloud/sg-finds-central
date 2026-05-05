@@ -728,18 +728,8 @@ const AddListing = () => {
                     </Select>
                     <FieldError show={showErrors && !category} message="Please select a category" />
                   </div>
-                  <div className="space-y-2">
-                    <Label>District *</Label>
-                    <Select value={district} onValueChange={setDistrict}>
-                      <SelectTrigger><SelectValue placeholder="Select district" /></SelectTrigger>
-                      <SelectContent>
-                        {SINGAPORE_DISTRICTS.filter(d => d !== "All Districts").map(d => (
-                          <SelectItem key={d} value={d}>{d}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FieldError show={showErrors && !district} message="Please select a district" />
-                  </div>
+                  <p className="text-xs text-muted-foreground">Your district will be set automatically from your address postal code in the next steps.</p>
+
 
                   {/* Inline subcategory selection */}
                   {needsSubcategoryScreen(category) && (
