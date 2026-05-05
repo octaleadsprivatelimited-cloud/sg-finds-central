@@ -1,7 +1,22 @@
+import { DISTRICT_COORDINATES } from "./districts";
+
 export interface GeocodeResult {
   lat: number;
   lng: number;
   address: string;
+}
+
+/** Find the nearest Singapore district name for a given lat/lng. */
+export function nearestDistrict(lat: number, lng: number): string {
+  let best = "";
+  let bestDist = Infinity;
+  for (const [name, c] of Object.entries(DISTRICT_COORDINATES)) {
+    const dLat = lat - c.lat;
+    const dLng = lng - c.lng;
+    const d = dLat * dLat + dLng * dLng;
+    if (d < bestDist) { bestDist = d; best = name; }
+  }
+  return best;
 }
 
 /**
