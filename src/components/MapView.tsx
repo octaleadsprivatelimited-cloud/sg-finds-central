@@ -28,10 +28,32 @@ const GOOGLE_MAPS_API_KEY = "AIzaSyDDhWNlCm0mtDySOTuXixmbWnHP6Gr6EVc";
 const GOOGLE_MAPS_SCRIPT_ID = "google-maps-script";
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 };
 const MAP_STYLES = [
-  { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+  // Warm cream base tinted toward tango red
+  { elementType: "geometry", stylers: [{ color: "#fdf3ef" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#6b3a2e" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#fdf3ef" }] },
+  // Landscape softened with peach tint
+  { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#fbe9e1" }] },
+  { featureType: "landscape.man_made", elementType: "geometry", stylers: [{ color: "#fdeee6" }] },
+  // Roads — clean white with red-tinted highways
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
+  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#f3d2c4" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#fbd9cc" }] },
+  { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#e5482a" }] },
+  { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#7a3a2a" }] },
+  // POIs — reduced clutter, parks in muted warm green
+  { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#e8d9b5" }] },
+  { featureType: "poi.business", stylers: [{ visibility: "off" }] },
+  // Transit — subdued
+  { featureType: "transit", elementType: "labels", stylers: [{ visibility: "simplified" }] },
+  { featureType: "transit.line", elementType: "geometry", stylers: [{ color: "#d9b8a8" }] },
+  // Water — soft blue-grey for contrast against red palette
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#bcd4d8" }] },
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#4a6b70" }] },
+  // Administrative borders
+  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#d9a895" }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#b83a1f" }] },
 ];
 
 const getMapsScriptSrc = (apiKey: string) =>
